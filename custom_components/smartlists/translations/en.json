@@ -1,0 +1,95 @@
+{
+  "title": "SmartLists",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Create combined list",
+        "description": "Combines several to-do lists into one shared list.",
+        "data": {
+          "name": "Name of the combined list",
+          "sources": "Lists to combine",
+          "default_add_entity": "Default list for new items",
+          "mode": "Checking off affects",
+          "source_label": "Show source list in item name",
+          "sort": "Sort order",
+          "foreign_entities": "Foreign lists (check only, no rename/delete)"
+        },
+        "data_description": {
+          "sources": "Any to-do lists, e.g. shopping lists of several people.",
+          "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
+          "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
+          "foreign_entities": "Lists of other people that you may only check off."
+        }
+      }
+    },
+    "error": {
+      "no_sources": "Please select at least one list.",
+      "nested_combined_list": "Combined lists cannot be nested.",
+      "default_not_in_sources": "The default list must be one of the selected lists.",
+      "foreign_not_in_sources": "Foreign lists must also be selected above.",
+      "default_is_foreign": "A foreign list cannot be the default list."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Edit combined list",
+        "data": {
+          "sources": "Lists to combine",
+          "default_add_entity": "Default list for new items",
+          "mode": "Checking off affects",
+          "source_label": "Show source list in item name",
+          "sort": "Sort order",
+          "foreign_entities": "Foreign lists (check only, no rename/delete)"
+        },
+        "data_description": {
+          "sources": "Any to-do lists, e.g. shopping lists of several people.",
+          "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
+          "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
+          "foreign_entities": "Lists of other people that you may only check off."
+        }
+      }
+    },
+    "error": {
+      "no_sources": "Please select at least one list.",
+      "nested_combined_list": "Combined lists cannot be nested.",
+      "default_not_in_sources": "The default list must be one of the selected lists.",
+      "foreign_not_in_sources": "Foreign lists must also be selected above.",
+      "default_is_foreign": "A foreign list cannot be the default list."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "bidirectional": "Source list (bidirectional, default)",
+        "local": "This combined list only"
+      }
+    },
+    "source_label": {
+      "options": {
+        "suffix": "Suffix (Milk · Anna)",
+        "prefix": "Prefix ([Anna] Milk)",
+        "none": "Hide"
+      }
+    },
+    "sort": {
+      "options": {
+        "source": "By list (source order)",
+        "status": "Open first, then alphabetical",
+        "alphabetical": "Alphabetical",
+        "category": "By shopping category (fruit & veg, chilled, …)"
+      }
+    }
+  },
+  "exceptions": {
+    "item_not_found": {
+      "message": "Item {uid} not found – the list is reloading."
+    },
+    "no_default_list": {
+      "message": "No default list for new items is configured."
+    },
+    "foreign_list": {
+      "message": "Items from foreign lists can only be checked off."
+    }
+  }
+}

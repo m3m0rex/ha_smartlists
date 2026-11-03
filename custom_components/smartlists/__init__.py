@@ -1,9 +1,10 @@
 """SmartLists: kombinierte To-do-Listen für Home Assistant.
 
-Jeder Konfigurationseintrag ist eine kombinierte Liste, die mehrere vorhandene To-do-Listen
+Die Integration wird einmal eingerichtet (Einstellungen → Geräte & Dienste → Integrationen).
+Jede kombinierte Liste ist ein Unter-Eintrag davon und führt mehrere vorhandene To-do-Listen
 (Einkaufsliste, Local To-do, Google Tasks, Bring!, …) zu einer gemeinsamen To-do-Entität
-zusammenführt. Abhaken, Umbenennen und Löschen wirken je nach Modus direkt in der
-Ursprungsliste; neue Artikel landen in der eingestellten Standard-Liste.
+zusammen. Abhaken, Umbenennen und Löschen wirken je nach Modus direkt in der Ursprungsliste;
+neue Artikel landen in der eingestellten Standard-Liste.
 
 Haushaltsweit (unabhängig von einzelnen Listen): gemerkte Kategorien, Verlauf für Vorschläge,
 Tag-Regeln (@REWE …) – siehe learning.py – und die Lovelace-Karte unter /smartlists/.
@@ -13,10 +14,11 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from types import MappingProxyType
 
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import StaticPathConfig
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
@@ -24,7 +26,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 
 from . import websocket
-from .const import DOMAIN, STORAGE_VERSION
+from .const import DOMAIN, LEGACY_UNIQUE_ID, STORAGE_VERSION, SUBENTRY_COMBINED
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,25 +55,60 @@ async def _async_register_card(hass: HomeAssistant) -> None:
     add_extra_js_url(hass, f"{CARD_URL}?v={version}")
 
 
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """1.1 → 1.2: Bis 1.1 war jede kombinierte Liste ein eigener Helfer-Eintrag. Jetzt gibt es einen
+    Eintrag „SmartLists“ mit den Listen als Unter-Einträgen. Die alte unique_id wird mitgenommen,
+    damit entity_id, Dashboards, Automationen und lokale Häkchen gleich bleiben."""
+    if entry.version > 2:
+        return False  # neuere Version als dieser Code
+    if entry.version == 2:
+        return True
+    sub = ConfigSubentry(
+        data=MappingProxyType({**entry.data, **entry.options, LEGACY_UNIQUE_ID: entry.entry_id}),
+        subentry_type=SUBENTRY_COMBINED,
+        title=entry.title,
+        unique_id=None,
+    )
+    main = next(
+        (e for e in hass.config_entries.async_entries(DOMAIN) if e.version >= 2 and e.entry_id != entry.entry_id),
+        None,
+    )
+    if main is None:
+        # erster alter Eintrag wird zum Haupteintrag
+        hass.config_entries.async_update_entry(entry, version=2, title="SmartLists", data={}, options={})
+        hass.config_entries.async_add_subentry(entry, sub)
+        _LOGGER.info("SmartLists: Liste '%s' in die neue Struktur übernommen", sub.title)
+        return True
+    # weitere alte Einträge: als Unter-Eintrag beim Haupteintrag, alten Eintrag entfernen
+    hass.config_entries.async_add_subentry(main, sub)
+    _LOGGER.info("SmartLists: Liste '%s' zum Eintrag SmartLists verschoben", sub.title)
+    hass.async_create_task(hass.config_entries.async_remove(entry.entry_id))
+    return False
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Kombinierte Liste einrichten."""
+    """Integration einrichten: je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
 
 
 async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Nach Änderung der Optionen neu laden."""
+    """Liste hinzugefügt/geändert/entfernt → neu laden."""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Kombinierte Liste entfernen."""
+    """Integration entladen."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Gespeicherte lokale Häkchen beim Löschen der Liste mit entfernen."""
+    """Integration gelöscht: lokale Häkchen aller kombinierten Listen mit entfernen.
+    Das Gedächtnis (gemerkte Kategorien, Verlauf) bleibt erhalten, falls man neu einrichtet."""
     from homeassistant.helpers.storage import Store
 
-    await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}").async_remove()
+    from .todo import list_key
+
+    for subentry in entry.subentries.values():
+        await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{list_key(subentry)}").async_remove()

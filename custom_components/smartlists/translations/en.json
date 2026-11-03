@@ -3,59 +3,117 @@
   "config": {
     "step": {
       "user": {
-        "title": "Create combined list",
-        "description": "Combines several to-do lists into one shared list.",
-        "data": {
-          "name": "Name of the combined list",
-          "sources": "Lists to combine",
-          "default_add_entity": "Default list for new items",
-          "mode": "Checking off affects",
-          "source_label": "Show source list in item name",
-          "sort": "Sort order",
-          "foreign_entities": "Foreign lists (check only, no rename/delete)"
-        },
-        "data_description": {
-          "sources": "Any to-do lists, e.g. shopping lists of several people.",
-          "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
-          "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
-          "foreign_entities": "Lists of other people that you may only check off."
-        }
+        "title": "Set up SmartLists",
+        "description": "Afterwards you can add combined lists to the integration and use “Configure” for naming convention, controls and remembered categories. The Lovelace card “SmartLists” is available in your dashboards from now on."
       }
     },
-    "error": {
-      "no_sources": "Please select at least one list.",
-      "nested_combined_list": "Combined lists cannot be nested.",
-      "default_not_in_sources": "The default list must be one of the selected lists.",
-      "foreign_not_in_sources": "Foreign lists must also be selected above.",
-      "default_is_foreign": "A foreign list cannot be the default list."
+    "abort": {
+      "single_instance_allowed": "SmartLists is already set up. Add combined lists directly to the integration."
+    }
+  },
+  "config_subentries": {
+    "combined_list": {
+      "initiate_flow": {
+        "user": "Add combined list"
+      },
+      "entry_type": "Combined list",
+      "step": {
+        "user": {
+          "title": "Create combined list",
+          "description": "Combines several to-do lists into one shared list.",
+          "data": {
+            "name": "Name of the combined list",
+            "sources": "Lists to combine",
+            "default_add_entity": "Default list for new items",
+            "mode": "Checking off affects",
+            "source_label": "Show source list in item name",
+            "sort": "Sort order",
+            "foreign_entities": "Foreign lists (check only, no rename/delete)"
+          },
+          "data_description": {
+            "sources": "Any to-do lists, e.g. shopping lists of several people.",
+            "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
+            "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
+            "foreign_entities": "Lists of other people that you may only check off."
+          }
+        },
+        "reconfigure": {
+          "title": "Edit combined list",
+          "data": {
+            "name": "Name of the combined list",
+            "sources": "Lists to combine",
+            "default_add_entity": "Default list for new items",
+            "mode": "Checking off affects",
+            "source_label": "Show source list in item name",
+            "sort": "Sort order",
+            "foreign_entities": "Foreign lists (check only, no rename/delete)"
+          },
+          "data_description": {
+            "sources": "Any to-do lists, e.g. shopping lists of several people.",
+            "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
+            "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
+            "foreign_entities": "Lists of other people that you may only check off."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Please select at least one list.",
+        "nested_combined_list": "Combined lists cannot be nested.",
+        "default_not_in_sources": "The default list must be one of the selected lists.",
+        "foreign_not_in_sources": "Foreign lists must also be selected above.",
+        "default_is_foreign": "A foreign list cannot be the default list."
+      },
+      "abort": {
+        "reconfigure_successful": "Saved."
+      }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Edit combined list",
+        "title": "SmartLists – settings for everyone",
+        "description": "Each user can set personal differences via the gear icon in the card.",
+        "menu_options": {
+          "naming": "Naming convention (@store, *person, #tag)",
+          "controls": "Controls (default for everyone)",
+          "learned": "Remembered categories & history"
+        }
+      },
+      "naming": {
+        "title": "Naming convention",
+        "description": "A character in front of a word turns it into a badge, e.g. “Milk @REWE” → store badge REWE. Characters stay in the item name. “—” turns a kind off.",
         "data": {
-          "sources": "Lists to combine",
-          "default_add_entity": "Default list for new items",
-          "mode": "Checking off affects",
-          "source_label": "Show source list in item name",
-          "sort": "Sort order",
-          "foreign_entities": "Foreign lists (check only, no rename/delete)"
-        },
-        "data_description": {
-          "sources": "Any to-do lists, e.g. shopping lists of several people.",
-          "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
-          "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
-          "foreign_entities": "Lists of other people that you may only check off."
+          "prefix_store": "Store",
+          "prefix_person": "Person",
+          "prefix_tag": "Tag"
+        }
+      },
+      "controls": {
+        "title": "Controls – default for everyone",
+        "description": "Applies to every user who hasn't set their own in the card.",
+        "data": {
+          "press_gesture": "Gesture for the item menu",
+          "press_target": "Where the gesture works",
+          "press_result": "What the gesture does",
+          "menu_actions": "Menu entries",
+          "row_buttons": "Show pencil and bin in each row",
+          "shop_hide_checked": "Shopping mode: hide checked items",
+          "shop_keep_awake": "Shopping mode: keep screen on",
+          "shop_large": "Shopping mode: large rows",
+          "shop_tap_row": "Shopping mode: tap whole row to check"
+        }
+      },
+      "learned": {
+        "title": "Remembered categories & history",
+        "description": "{count} remembered assignments, {history} items in history. Selected assignments will be forgotten.",
+        "data": {
+          "forget": "Forget",
+          "clear_history": "Clear history (suggestions, frequently bought)"
         }
       }
     },
     "error": {
-      "no_sources": "Please select at least one list.",
-      "nested_combined_list": "Combined lists cannot be nested.",
-      "default_not_in_sources": "The default list must be one of the selected lists.",
-      "foreign_not_in_sources": "Foreign lists must also be selected above.",
-      "default_is_foreign": "A foreign list cannot be the default list."
+      "duplicate_prefix": "Each character can only be used for one kind."
     }
   },
   "selector": {
@@ -78,6 +136,36 @@
         "status": "Open first, then alphabetical",
         "alphabetical": "Alphabetical",
         "category": "By shopping category (fruit & veg, chilled, …)"
+      }
+    },
+    "press_gesture": {
+      "options": {
+        "long": "Long press",
+        "double": "Double click",
+        "right": "Right click",
+        "off": "Off"
+      }
+    },
+    "press_target": {
+      "options": {
+        "row": "Whole row",
+        "name": "Name only"
+      }
+    },
+    "press_result": {
+      "options": {
+        "menu": "Open menu",
+        "edit": "Edit directly",
+        "delete": "Delete (with confirmation)"
+      }
+    },
+    "menu_actions": {
+      "options": {
+        "rename": "Rename / edit",
+        "move": "Move",
+        "copy": "Copy",
+        "category": "Change category",
+        "delete": "Delete"
       }
     }
   },

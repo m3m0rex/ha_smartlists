@@ -99,28 +99,41 @@ Ordner `custom_components/smartlists` nach `/config/custom_components/smartlists
 
 ## Einrichtung
 
-*Einstellungen → Geräte & Dienste → Helfer → Helfer erstellen → **SmartLists***
+*Einstellungen → Geräte & Dienste → Integrationen → Integration hinzufügen → **SmartLists***
 
-Lege einen Namen fest, wähle die Listen aus und stelle Standard-Liste, Modus, Herkunftsanzeige und Sortierung ein.
-Pro kombinierter Liste legst du einen Helfer an. Ändern kannst du alles später über das Zahnrad des Helfers
-bzw. „Optionen".
+SmartLists wird einmal eingerichtet. Danach ist die Lovelace-Karte sofort verfügbar, und bei der
+Integration gibt es:
+
+- **„Kombinierte Liste hinzufügen“** – Name, Listen, Standard-Liste, Modus, Herkunftsanzeige, Sortierung,
+  fremde Listen. Jede Liste lässt sich später über ⋮ → *Neu konfigurieren* ändern oder löschen.
+- **„Konfigurieren“** – Einstellungen für den ganzen Haushalt:
+  - *Namenskonvention:* welches Zeichen Markt, Person bzw. Schlagwort einleitet (oder aus)
+  - *Bedienung – Standard für alle:* Geste fürs Artikel-Menü, Menü-Einträge, Einkaufsmodus
+  - *Gemerkte Kategorien & Verlauf:* einzelne Zuordnungen vergessen, Verlauf löschen
+
+Persönliche Abweichungen (pro Benutzer oder nur auf einem Gerät) stellt jeder selbst im Zahnrad der
+Karte ein; dort können Admins auch die Haushalts-Einstellungen ändern – beides zeigt dieselben Werte.
+
+**Update von 1.1:** Bisherige SmartLists-Helfer werden beim ersten Start automatisch zu Listen unter
+dem einen Eintrag „SmartLists“ umgezogen. entity_id, Dashboards, Automationen und lokale Häkchen
+bleiben erhalten.
 
 ## Hinweise
 
 - Kombinierte Listen lassen sich nicht ineinander verschachteln (Schutz vor Endlosschleifen).
 - Im Modus „Nur diese kombinierte Liste" werden die lokalen Häkchen in Home Assistant gespeichert
-  (`.storage/smartlists.<id>`) und beim Löschen des Helfers mit entfernt.
+  (`.storage/smartlists.<id>`) und beim Löschen der Integration mit entfernt.
 - Artikel ohne eindeutige ID (sehr alte Integrationen) werden übersprungen.
-- Voraussetzung: Home Assistant 2024.12 oder neuer.
+- Voraussetzung: Home Assistant 2025.3 oder neuer (Unter-Einträge für die Listen).
 
 ## Aufbau
 
 ```
 hacs.json
 custom_components/smartlists/
-  manifest.json      Metadaten (Typ: Helfer)
-  __init__.py        Einrichten/Entladen
-  config_flow.py     Einrichtung & Optionen über die Oberfläche
+  manifest.json      Metadaten (Typ: Dienst, einmal einrichtbar)
+  __init__.py        Einrichten/Entladen, Karte laden, Umzug von 1.1
+  config_flow.py     Einrichtung, kombinierte Listen (Unter-Einträge), Konfigurieren-Menü
   todo.py            die kombinierte To-do-Entität
   categories.py/json Kategorie-Paket (aus der App erzeugt, mit Produkten + Einheiten)
   itemtext.py        Artikeltext zerlegen: Menge, Einheit, Tags (@REWE …)

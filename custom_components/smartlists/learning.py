@@ -194,6 +194,13 @@ class Learning:
                 for key, _ in sorted(data.items(), key=lambda kv: kv[1].get("last", 0))[: len(data) - limit]:
                     data.pop(key, None)
 
+    @callback
+    def clear_history(self) -> None:
+        """Verlauf (Vorschläge, häufig gekauft, Tag-Verlauf) löschen – Kategorien bleiben."""
+        self.history.clear()
+        self.tag_history.clear()
+        self._changed()
+
     def unit_for(self, name: str) -> str | None:
         """Zuletzt benutzte Einheit, sonst die übliche aus dem Paket."""
         entry = self.history.get(normalize(name))

@@ -107,6 +107,20 @@ Regeln sinnvoll – Referenz: `custom_components/smartlists/itemtext.py`.
 Fehler: `{"success": false, "error": {"code": "smartlists_error", "message": "…"}}` – die Meldung ist
 deutsch und für Benutzer gedacht.
 
+### Kombinierte Listen erkennen (ohne WebSocket)
+
+Jede kombinierte SmartLists-Liste trägt in ihren Attributen (`/api/states`):
+
+```json
+{"smartlists_combined": true, "source_lists": ["todo.anna", "todo.max"], "foreign_lists": ["todo.max"],
+ "default_add_list": "todo.anna", "mode": "bidirectional"}
+```
+
+Die App zeigt solche Listen als Kombinierte Liste (verwaltet in HA, nicht in der App bearbeitbar) statt
+als normale Liste. `mode: bidirectional` → abhaken direkt in der Quelle; `mode: local` → abhaken über die
+kombinierte Liste selbst (`todo.update_item` auf deren Entität mit Item-uid `quelle::uid`), damit der
+Haken in HA gespeichert und überall gleich ist.
+
 ## 4. Kategorien, Vorschläge
 
 | Befehl | Felder | Zweck |

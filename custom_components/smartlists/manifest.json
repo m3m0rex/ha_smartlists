@@ -1,0 +1,13 @@
+{
+  "domain": "smartlists",
+  "name": "SmartLists",
+  "codeowners": ["@m3m0rex"],
+  "config_flow": true,
+  "dependencies": ["frontend", "http", "todo", "websocket_api"],
+  "documentation": "https://github.com/m3m0rex/ha_smartlists_hacs",
+  "integration_type": "helper",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/m3m0rex/ha_smartlists_hacs/issues",
+  "requirements": [],
+  "version": "1.1.0"
+}

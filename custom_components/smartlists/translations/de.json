@@ -1,0 +1,95 @@
+{
+  "title": "SmartLists",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kombinierte Liste anlegen",
+        "description": "Führt mehrere To-do-Listen zu einer gemeinsamen Liste zusammen (z.B. für den Großeinkauf).",
+        "data": {
+          "name": "Name der kombinierten Liste",
+          "sources": "Listen, die zusammengeführt werden",
+          "default_add_entity": "Standard-Liste für neue Artikel",
+          "mode": "Abhaken wirkt sich aus auf",
+          "source_label": "Herkunft im Artikelnamen anzeigen",
+          "sort": "Sortierung",
+          "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
+        },
+        "data_description": {
+          "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
+          "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
+          "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
+          "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+        }
+      }
+    },
+    "error": {
+      "no_sources": "Bitte mindestens eine Liste auswählen.",
+      "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
+      "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
+      "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
+      "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Kombinierte Liste bearbeiten",
+        "data": {
+          "sources": "Listen, die zusammengeführt werden",
+          "default_add_entity": "Standard-Liste für neue Artikel",
+          "mode": "Abhaken wirkt sich aus auf",
+          "source_label": "Herkunft im Artikelnamen anzeigen",
+          "sort": "Sortierung",
+          "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
+        },
+        "data_description": {
+          "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
+          "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
+          "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
+          "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+        }
+      }
+    },
+    "error": {
+      "no_sources": "Bitte mindestens eine Liste auswählen.",
+      "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
+      "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
+      "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
+      "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "bidirectional": "Ursprungsliste (beidseitig, Standard)",
+        "local": "Nur diese kombinierte Liste"
+      }
+    },
+    "source_label": {
+      "options": {
+        "suffix": "Hinten anhängen (Milch · Anna)",
+        "prefix": "Voranstellen ([Anna] Milch)",
+        "none": "Nicht anzeigen"
+      }
+    },
+    "sort": {
+      "options": {
+        "source": "Nach Liste (Reihenfolge der Quellen)",
+        "status": "Offene zuerst, dann alphabetisch",
+        "alphabetical": "Alphabetisch",
+        "category": "Nach Einkaufs-Kategorie (Obst & Gemüse, Kühlung, …)"
+      }
+    }
+  },
+  "exceptions": {
+    "item_not_found": {
+      "message": "Artikel {uid} wurde nicht gefunden – die Liste wird neu geladen."
+    },
+    "no_default_list": {
+      "message": "Für diese kombinierte Liste ist keine Standard-Liste zum Hinzufügen eingestellt."
+    },
+    "foreign_list": {
+      "message": "Artikel aus fremden Listen können nur abgehakt, aber nicht umbenannt oder gelöscht werden."
+    }
+  }
+}

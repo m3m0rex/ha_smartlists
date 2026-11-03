@@ -1,0 +1,353 @@
+"""Gemerkte Kategorien, Verlauf und Vorschläge – gilt für den ganzen Haushalt (alle HA-Benutzer).
+
+Gleiche Logik wie in der App (AppSettingsStore / HomeAssistantStore):
+  Kategorie = manuelle Zuordnung des Artikels
+            > gelerntes Stichwort (längster Teiltreffer, z.B. "milch" gelernt → trifft "Hafermilch")
+            > eingebautes Kategorie-Paket
+            > "Sonstiges"
+  Vorschläge = Verlauf (häufig/zuletzt) > Artikel aus aktuellen Listen > Produkte aus dem Paket
+
+Gespeichert in .storage/smartlists.learning.
+"""
+
+from __future__ import annotations
+
+import time
+from typing import Any
+
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.storage import Store
+
+from . import itemtext
+from .categories import FALLBACK_ID, CategoryIndex, normalize
+from .const import DOMAIN, SIGNAL_LEARNING_CHANGED
+
+STORAGE_KEY = f"{DOMAIN}.learning"
+STORAGE_VERSION = 1
+HISTORY_LIMIT = 2000
+TAG_HISTORY_LIMIT = 200
+
+MENU_ACTIONS = ("rename", "move", "copy", "category", "delete")
+# Erlaubte Bedien-Einstellungen pro Benutzer → erlaubte Werte
+USER_SETTINGS: dict[str, Any] = {
+    "press_gesture": ("long", "double", "right", "off"),
+    "press_target": ("row", "name"),
+    "press_result": ("menu", "edit", "delete"),
+    "menu_actions": "actions",
+    "row_buttons": bool,
+    "shop_hide_checked": bool,
+    "shop_keep_awake": bool,
+    "shop_large": bool,
+    "shop_tap_row": bool,
+}
+
+
+class Learning:
+    """Haushaltsweites Gedächtnis der Integration."""
+
+    def __init__(self, hass: HomeAssistant, categories: CategoryIndex) -> None:
+        self.hass = hass
+        self.categories = categories
+        self._store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, STORAGE_KEY)
+        self.manual: dict[str, str] = {}
+        self.learned: dict[str, str] = {}
+        # name_key → {"name", "count", "last", "unit"}
+        self.history: dict[str, dict[str, Any]] = {}
+        # "store:rewe" → {"kind", "value", "count", "last"}
+        self.tag_history: dict[str, dict[str, Any]] = {}
+        self.tag_rules: list[dict[str, str]] = list(itemtext.DEFAULT_TAG_RULES)
+        # HA-Benutzer-ID → Bedien-Einstellungen
+        self.users: dict[str, dict[str, Any]] = {}
+        # Haushalts-Standard für die Bedienung (setzen nur Admins)
+        self.ui_defaults: dict[str, Any] = {}
+        self._learned_sorted: list[tuple[str, str]] = []
+
+    async def async_load(self) -> None:
+        data = await self._store.async_load() or {}
+        self.manual = dict(data.get("manual", {}))
+        self.learned = dict(data.get("learned", {}))
+        self.history = dict(data.get("history", {}))
+        self.tag_history = dict(data.get("tag_history", {}))
+        self.users = dict(data.get("users", {}))
+        self.ui_defaults = dict(data.get("ui_defaults", {}))
+        try:
+            self.tag_rules = itemtext.validate_rules(data.get("settings", {}).get("tag_rules", itemtext.DEFAULT_TAG_RULES))
+        except ValueError:
+            self.tag_rules = list(itemtext.DEFAULT_TAG_RULES)
+        self._resort()
+
+    def _data(self) -> dict[str, Any]:
+        return {
+            "manual": self.manual,
+            "learned": self.learned,
+            "history": self.history,
+            "tag_history": self.tag_history,
+            "settings": {"tag_rules": self.tag_rules},
+            "users": self.users,
+            "ui_defaults": self.ui_defaults,
+        }
+
+    @callback
+    def _changed(self, *, categories: bool = False) -> None:
+        self._store.async_delay_save(self._data, 2.0)
+        if categories:
+            async_dispatcher_send(self.hass, SIGNAL_LEARNING_CHANGED)
+
+    def _resort(self) -> None:
+        self._learned_sorted = sorted(self.learned.items(), key=lambda kv: len(kv[0]), reverse=True)
+
+    # ------------------------------------------------------------------
+    # Text
+    # ------------------------------------------------------------------
+    def parse(self, text: str, *, typed: bool = False) -> itemtext.ParsedItem:
+        return itemtext.parse(text, self.tag_rules, allow_prefix_quantity=typed)
+
+    def encode(self, item: itemtext.ParsedItem) -> str:
+        return itemtext.encode(item, self.tag_rules)
+
+    @callback
+    def set_tag_rules(self, rules: Any) -> None:
+        self.tag_rules = itemtext.validate_rules(rules)
+        self._changed(categories=True)  # Anzeige aller Listen ändert sich
+
+    # ------------------------------------------------------------------
+    # Kategorien
+    # ------------------------------------------------------------------
+    def resolve(self, name: str) -> tuple[str, str]:
+        """(category_id, Herkunft) – Herkunft: manual | learned | pack | fallback.
+        `name` ist der bereinigte Name (ohne Menge/Tags)."""
+        key = normalize(name)
+        if not key:
+            return FALLBACK_ID, "fallback"
+        if (cid := self.manual.get(key)) and self.categories.valid(cid):
+            return cid, "manual"
+        for word, cid in self._learned_sorted:
+            if word in key and self.categories.valid(cid):
+                return cid, "learned"
+        if cid := self.categories.guess_or_none(key):
+            return cid, "pack"
+        return FALLBACK_ID, "fallback"
+
+    def resolve_text(self, text: str) -> str:
+        """Kategorie direkt aus einem gespeicherten HA-Namen ("Milch 2 l @REWE")."""
+        return self.resolve(self.parse(text).name)[0]
+
+    @callback
+    def set_category(self, name: str, category_id: str | None) -> None:
+        """Manuell zuordnen (oder mit None zurück auf automatisch). Lernt gleich mit – wie in der
+        App wird beim Zurücksetzen absichtlich nichts verlernt."""
+        key = normalize(name)
+        if not key:
+            return
+        if category_id is None:
+            self.manual.pop(key, None)
+        else:
+            if not self.categories.valid(category_id):
+                raise ValueError(f"Unbekannte Kategorie {category_id}")
+            self.manual[key] = category_id
+            self.learned[key] = category_id
+            self._resort()
+        self._changed(categories=True)
+
+    @callback
+    def forget(self, word: str) -> None:
+        key = normalize(word)
+        self.learned.pop(key, None)
+        self.manual.pop(key, None)
+        self._resort()
+        self._changed(categories=True)
+
+    def learned_list(self) -> list[dict[str, str]]:
+        return [
+            {"word": w, "category": c, "label": self.categories.label(c), "manual": w in self.manual}
+            for w, c in sorted(self.learned.items())
+        ]
+
+    # ------------------------------------------------------------------
+    # Verlauf
+    # ------------------------------------------------------------------
+    @callback
+    def record(self, text: str) -> None:
+        """Nach jedem Hinzufügen aufrufen – merkt Name, Einheit und Tags."""
+        item = self.parse(text)
+        key = normalize(item.name)
+        if not key:
+            return
+        now = int(time.time())
+        entry = self.history.get(key, {"count": 0})
+        entry.update(name=item.name, count=int(entry.get("count", 0)) + 1, last=now)
+        if item.unit:
+            entry["unit"] = item.unit
+        self.history[key] = entry
+        for tag in item.tags:
+            tkey = f'{tag["kind"]}:{tag["value"].lower()}'
+            t = self.tag_history.get(tkey, {"count": 0})
+            t.update(kind=tag["kind"], value=tag["value"], count=int(t.get("count", 0)) + 1, last=now)
+            self.tag_history[tkey] = t
+        self._prune()
+        self._changed()
+
+    def _prune(self) -> None:
+        for data, limit in ((self.history, HISTORY_LIMIT), (self.tag_history, TAG_HISTORY_LIMIT)):
+            if len(data) > limit:
+                for key, _ in sorted(data.items(), key=lambda kv: kv[1].get("last", 0))[: len(data) - limit]:
+                    data.pop(key, None)
+
+    def unit_for(self, name: str) -> str | None:
+        """Zuletzt benutzte Einheit, sonst die übliche aus dem Paket."""
+        entry = self.history.get(normalize(name))
+        if entry and entry.get("unit"):
+            return entry["unit"]
+        return self.categories.default_unit(name)
+
+    # ------------------------------------------------------------------
+    # Vorschläge
+    # ------------------------------------------------------------------
+    def suggest(self, query: str, list_names: list[str] | None = None, limit: int = 8) -> dict[str, Any]:
+        """Vorschläge fürs Eingabefeld. Tippt man gerade einen Tag ("@Re"), kommen Märkte/Tags."""
+        if (open_tag := itemtext.open_tag_query(query, self.tag_rules)) is not None:
+            return {"mode": "tag", "kind": open_tag[0], "suggestions": self._suggest_tags(*open_tag, limit)}
+
+        typed = self.parse(query, typed=True)
+        q = normalize(typed.name)
+        if not q:
+            return {"mode": "frequent", "suggestions": self._frequent(list_names or [], limit)}
+        scores: dict[str, tuple[int, str, str]] = {}
+
+        def consider(name: str, prefix_score: int, contains_score: int, source: str) -> None:
+            key = normalize(name)
+            if not key or key == q:
+                return
+            if key.startswith(q):
+                score = prefix_score
+            elif q in key:
+                score = contains_score
+            else:
+                return
+            if score > scores.get(key, (-1, "", ""))[0]:
+                scores[key] = (score, name.strip(), source)
+
+        for entry in self.history.values():
+            count = int(entry.get("count", 1))
+            consider(entry["name"], 10_000 + count, 1_000 + count, "history")
+        for name in list_names or []:
+            consider(self.parse(name).name, 50, 10, "list")
+        if len(q) >= 2:
+            for product in self.categories.products:
+                consider(product[0], 5, 1, "pack")
+
+        best = sorted(scores.values(), key=lambda s: (-s[0], s[1].casefold()))[:limit]
+        return {"mode": "name", "suggestions": [self._entry(name, source) for _, name, source in best]}
+
+    def _entry(self, name: str, source: str) -> dict[str, Any]:
+        cid, origin = self.resolve(name)
+        return {
+            "name": name,
+            "category": cid,
+            "category_label": self.categories.label(cid),
+            "category_source": origin,
+            "unit": self.unit_for(name),
+            "source": source,
+        }
+
+    def _frequent(self, list_names: list[str], limit: int) -> list[dict[str, Any]]:
+        """Leeres Eingabefeld: oft gekaufte Artikel, die gerade nicht auf der Liste stehen."""
+        present = {normalize(self.parse(n).name) for n in list_names}
+        now = time.time()
+
+        def score(e: dict[str, Any]) -> float:
+            # Häufigkeit zählt, lange nicht Gekauftes verliert langsam an Gewicht (Halbwert ~60 Tage)
+            age_days = max(0.0, (now - float(e.get("last", now))) / 86400)
+            return int(e.get("count", 1)) * 0.5 ** (age_days / 60)
+
+        ranked = sorted(
+            (e for k, e in self.history.items() if k not in present and int(e.get("count", 0)) >= 2),
+            key=score,
+            reverse=True,
+        )
+        return [self._entry(e["name"], "history") for e in ranked[:limit]]
+
+    def _suggest_tags(self, kind: str, partial: str, limit: int) -> list[dict[str, Any]]:
+        p = partial.lower()
+        found: dict[str, dict[str, Any]] = {}
+        for t in sorted(self.tag_history.values(), key=lambda t: (-int(t.get("count", 0)), -int(t.get("last", 0)))):
+            if t["kind"] == kind and t["value"].lower().startswith(p):
+                found.setdefault(t["value"].lower(), {"value": t["value"], "source": "history"})
+        if kind == "store":
+            for key, (label, _) in itemtext.KNOWN_STORES.items():
+                if key.startswith(p):
+                    found.setdefault(key, {"value": label, "source": "known"})
+        out = []
+        for entry in list(found.values())[:limit]:
+            label, color = itemtext.store_display(entry["value"]) if kind == "store" else (entry["value"], None)
+            out.append({**entry, "kind": kind, "label": label, "color": color})
+        return out
+
+    # ------------------------------------------------------------------
+    # Für Karte/App
+    # ------------------------------------------------------------------
+    def describe(self, text: str) -> dict[str, Any]:
+        """Alles, was eine Oberfläche zu einem Artikeltext braucht."""
+        item = self.parse(text)
+        cid, origin = self.resolve(item.name)
+        return {**item.as_dict(), "category": cid, "category_source": origin}
+
+    # ------------------------------------------------------------------
+    # Bedienung: eingebaute Werte < Haushalts-Standard (Admin) < Benutzer < Gerät (nur in der Karte)
+    # ------------------------------------------------------------------
+    def user_settings(self, user_id: str) -> dict[str, Any]:
+        return {"defaults": dict(self.ui_defaults), "settings": dict(self.users.get(user_id, {}))}
+
+    @callback
+    def set_user_settings(self, user_id: str, settings: dict[str, Any]) -> dict[str, Any]:
+        """Eigene Abweichungen vom Haushalts-Standard; leeres dict = alles wie Standard."""
+        self.users[user_id] = validate_ui(settings)
+        self._changed()
+        return self.user_settings(user_id)
+
+    @callback
+    def set_ui_defaults(self, settings: dict[str, Any], user_id: str) -> dict[str, Any]:
+        """Haushalts-Standard (nur Admins, Prüfung im WebSocket-Befehl)."""
+        self.ui_defaults = validate_ui(settings)
+        self._changed()
+        return self.user_settings(user_id)
+
+    def config(self) -> dict[str, Any]:
+        return {
+            "categories": self.categories.as_list(),
+            "tag_rules": self.tag_rules,
+            "tag_kinds": list(itemtext.TAG_KINDS),
+            "allowed_prefixes": itemtext.ALLOWED_PREFIXES,
+            "known_stores": [{"value": label, "color": color} for label, color in itemtext.KNOWN_STORES.values()],
+        }
+
+
+def validate_ui(settings: dict[str, Any]) -> dict[str, Any]:
+    """Nur bekannte Bedien-Einstellungen mit gültigen Werten übernehmen."""
+    clean: dict[str, Any] = {}
+    for key, value in settings.items():
+        allowed = USER_SETTINGS.get(key)
+        if allowed is None:
+            raise ValueError(f"Unbekannte Einstellung {key}")
+        if allowed is bool:
+            if not isinstance(value, bool):
+                raise ValueError(f"{key} muss an/aus sein")
+        elif allowed == "actions":
+            if not isinstance(value, list) or any(v not in MENU_ACTIONS for v in value):
+                raise ValueError(f"{key}: ungültige Menü-Einträge")
+        elif value not in allowed:
+            raise ValueError(f"{key}: ungültiger Wert {value}")
+        clean[key] = value
+    return clean
+
+
+async def async_get_learning(hass: HomeAssistant) -> Learning:
+    data = hass.data.setdefault(DOMAIN, {})
+    if "learning" not in data:
+        from .categories import async_get_categories
+
+        learning = Learning(hass, await async_get_categories(hass))
+        await learning.async_load()
+        data["learning"] = learning
+    return data["learning"]

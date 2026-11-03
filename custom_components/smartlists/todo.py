@@ -27,11 +27,13 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from .categories import CategoryIndex
+from .itemtext import person_from_list_name
 from .learning import Learning
 from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
     CONF_MODE,
+    CONF_SOURCE_AS_PERSON,
     CONF_SORT,
     CONF_SOURCE_LABEL,
     CONF_SOURCES,
@@ -109,6 +111,7 @@ class CombinedTodoListEntity(TodoListEntity):
         self._mode: str = opts.get(CONF_MODE, MODE_BIDIRECTIONAL)
         self._label: str = opts.get(CONF_SOURCE_LABEL, LABEL_SUFFIX)
         self._sort: str = opts.get(CONF_SORT, SORT_SOURCE)
+        self._source_as_person: bool = bool(opts.get(CONF_SOURCE_AS_PERSON, True))
         # Nur im Modus "lokal": abweichender Status je kombinierter UID.
         self._overrides: dict[str, str] = dict(stored.get("overrides", {}))
         # Zuordnung kombinierte UID -> (Quell-Entität, Quell-UID, Original-Name)
@@ -197,6 +200,7 @@ class CombinedTodoListEntity(TodoListEntity):
                     "note": item.description or "",
                     "checked": item.status == TodoItemStatus.COMPLETED,
                     "source": self._source_name(source) if len(self._sources) > 1 else None,
+                    "person": person_from_list_name(self._source_name(source), source) if self._source_as_person else None,
                     "foreign": source in self._foreign,
                 }
             )

@@ -28,13 +28,15 @@
             "mode": "Checking off affects",
             "source_label": "Show source list in item name",
             "sort": "Sort order",
-            "foreign_entities": "Foreign lists (check only, no rename/delete)"
+            "foreign_entities": "Foreign lists (check only, no rename/delete)",
+            "source_as_person": "Show source list as person"
           },
           "data_description": {
             "sources": "Any to-do lists, e.g. shopping lists of several people.",
             "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
-            "foreign_entities": "Lists of other people that you may only check off."
+            "foreign_entities": "Lists of other people that you may only check off.",
+            "source_as_person": "Items from e.g. todo.torben get the badge 👤 Torben – like *Torben in the name. Filler words like “shopping list” are dropped."
           }
         },
         "reconfigure": {
@@ -46,13 +48,15 @@
             "mode": "Checking off affects",
             "source_label": "Show source list in item name",
             "sort": "Sort order",
-            "foreign_entities": "Foreign lists (check only, no rename/delete)"
+            "foreign_entities": "Foreign lists (check only, no rename/delete)",
+            "source_as_person": "Show source list as person"
           },
           "data_description": {
             "sources": "Any to-do lists, e.g. shopping lists of several people.",
             "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
-            "foreign_entities": "Lists of other people that you may only check off."
+            "foreign_entities": "Lists of other people that you may only check off.",
+            "source_as_person": "Items from e.g. todo.torben get the badge 👤 Torben – like *Torben in the name. Filler words like “shopping list” are dropped."
           }
         }
       },

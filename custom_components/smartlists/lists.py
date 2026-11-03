@@ -101,8 +101,14 @@ async def get_list(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
     perms = list_permissions(hass, entity_id)
     entity = combined_entity(hass, entity_id)
     items = []
+    person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
     for raw in await raw_items(hass, entity_id):
         info = learning.describe(raw["text"])
+        # Herkunft als Person (kombinierte Liste, z.B. todo.torben → 👤 Torben) – außer im Artikel
+        # steht schon eine Person (*Anna) oder Personen-Tags sind abgeschaltet
+        person = raw.get("person")
+        if person and person_prefix and not any(t["kind"] == "person" for t in info["tags"]):
+            info["tags"] = [*info["tags"], {"kind": "person", "value": person, "prefix": person_prefix, "label": person, "implicit": True}]
         foreign = bool(raw.get("foreign"))
         items.append(
             {

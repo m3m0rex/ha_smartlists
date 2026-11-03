@@ -93,6 +93,9 @@ Regeln sinnvoll – Referenz: `custom_components/smartlists/itemtext.py`.
 ```
 
 - `type`: `combined` (kombinierte SmartLists-Liste) oder `list` (jede andere HA-To-do-Liste).
+- Tags mit `"implicit": true` stehen nicht im Text, sondern kommen aus der Herkunft: bei kombinierten
+  Listen wird die Quell-Liste als Person gewertet (`todo.torben` → 👤 Torben), sofern im Artikel keine
+  Person steht. Beim Bearbeiten nicht in den Text zurückschreiben.
 - Rechte: Bei normalen Listen das, was die Liste kann (`supported_features`). Bei kombinierten Listen
   sind Artikel aus fremden Quellen nur abhakbar.
 - `category_source`: `manual` (vom Benutzer gewählt), `learned` (aus ähnlichem Artikel gelernt),

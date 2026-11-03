@@ -31,6 +31,7 @@ from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
     CONF_MODE,
+    CONF_SOURCE_AS_PERSON,
     CONF_SORT,
     CONF_SOURCE_LABEL,
     CONF_SOURCES,
@@ -53,6 +54,7 @@ DEFAULTS: dict[str, Any] = {
     CONF_SOURCE_LABEL: LABEL_SUFFIX,
     CONF_SORT: SORT_SOURCE,
     CONF_FOREIGN: [],
+    CONF_SOURCE_AS_PERSON: True,
 }
 # Bedienung: eingebaute Werte (gleich wie UI_DEFAULTS in der Karte)
 UI_BUILTIN: dict[str, Any] = {
@@ -128,6 +130,7 @@ def combined_schema() -> dict[Any, Any]:
             [SORT_SOURCE, SORT_CATEGORY, SORT_STATUS, SORT_ALPHABETICAL], "sort"
         ),
         vol.Optional(CONF_FOREIGN, default=[]): _todo_selector(True),
+        vol.Optional(CONF_SOURCE_AS_PERSON, default=True): selector.BooleanSelector(),
     }
 
 

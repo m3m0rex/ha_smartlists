@@ -36,7 +36,7 @@
             "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
             "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
-            "source_as_person": "Artikel aus z.B. todo.torben bekommen das Badge 👤 Torben – wie *Torben im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
+            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
           }
         },
         "reconfigure": {
@@ -56,7 +56,7 @@
             "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
             "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
-            "source_as_person": "Artikel aus z.B. todo.torben bekommen das Badge 👤 Torben – wie *Torben im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
+            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
           }
         }
       },

@@ -36,6 +36,16 @@ const ICON = {
 };
 
 const SORT_MODES = ["category", "alpha", "added", "list"];
+// Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
+const CARD_DEFAULTS = {
+  sort: "category",
+  show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
+  show_undo: true, show_import: true, show_settings: true,
+  show_add: true, show_frequent: true,
+  show_stepper: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
+  show_completed: true, collapse_completed: true,
+  start_shopping: false,
+};
 const MENU_ACTIONS = ["rename", "move", "copy", "category", "delete"];
 // Bedienung: Standard < Einstellung des HA-Benutzers (in der Integration gespeichert, gilt auf allen
 // seinen Geräten) < optional abweichend nur für dieses Gerät (Browser-Speicher). Bewusst NICHT in der
@@ -386,6 +396,9 @@ const STYLE = `
   .empty, .msg { padding:20px 16px; text-align:center; color:var(--secondary-text-color); }
   .msg.err { color:var(--error-color,#db4437); padding:8px 16px; }
 
+  .compact .row { min-height:30px; padding-top:2px; padding-bottom:2px; }
+  .compact .group-title { padding-top:4px; }
+  .compact .head { padding-top:10px; }
   .row.press { cursor:default; -webkit-touch-callout:none; user-select:none; }
   .row.pressing { background:var(--secondary-background-color,#eee); transition:background .4s; }
   .menu { position:absolute; z-index:8; left:16px; right:16px; max-width:340px; margin:0 auto; background:var(--card-background-color,#fff);
@@ -460,19 +473,19 @@ class SmartListsCard extends HTMLElement {
   setConfig(config) {
     if (!config || !config.entity) throw new Error("Bitte 'entity' angeben (eine SmartLists-Liste).");
     if (this._config && this._config.entity !== config.entity) this._unsubscribe();
-    this._config = { sort: "category", show_completed: true, show_note: true, show_frequent: true, ...config };
+    this._config = { ...CARD_DEFAULTS, ...config };
     // alte Option group_by_category: false → A–Z
     if (config.group_by_category === false && !config.sort) this._config.sort = "alpha";
     let saved = null;
     try { saved = localStorage.getItem(`smartlists-sort:${config.entity}`); } catch (e) { /* privater Modus */ }
     this._sortMode = SORT_MODES.includes(saved) ? saved : this._config.sort;
     this._loadUi();
-    this._shopping = false;
+    this._shopping = !!this._config.start_shopping;
     this._menu = null;
     this._snack = null;
     this._data = null;
     this._editing = null;
-    this._collapsedDone = true;
+    this._collapsedDone = this._config.collapse_completed !== false;
     this._showSettings = false;
     this._rev = null;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
@@ -597,6 +610,10 @@ class SmartListsCard extends HTMLElement {
     this._card = h("ha-card", {}, this._headEl, this._searchEl, this._progressEl, this._settingsEl, this._importEl, this._addEl, this._freqEl, this._msgEl,
       this._listEl, this._snackEl, this._menuEl);
     fill(root, h("style", {}, STYLE), this._card);
+    this._card.classList.toggle("compact", !!this._config.compact);
+    this._card.classList.toggle("shopping", this._shopping);
+    if (this._config.max_height) this._listEl.style.cssText = `max-height:${Number(this._config.max_height)}px;overflow:auto`;
+    if (this._shopping && this._ui && this._ui.shop_keep_awake) this._wake(true);
   }
 
   _render() {
@@ -616,16 +633,16 @@ class SmartListsCard extends HTMLElement {
       h("div", { class: "title" }, this._config.title || d.name),
       d.type === "combined" ? h("span", { class: "badge combined" }, t.combined) : null,
       d.foreign ? h("span", { class: "badge foreign" }, t.foreign) : null,
-      h("span", { class: "count" }, this._searchQuery
+      !this._config.show_count ? null : h("span", { class: "count" }, this._searchQuery
         ? `${this._hitCount ?? 0} ${t.hits}`
         : this._shopping ? `${d.items.length - open.length}/${d.items.length} ${t.in_cart}` : `${open.length} ${t.open}`),
-      iconBtn(this._search != null ? ICON.close : ICON.search, t.search, () => this._toggleSearch()),
+      this._config.show_search ? iconBtn(this._search != null ? ICON.close : ICON.search, t.search, () => this._toggleSearch()) : null,
       d.permissions.add && this._config.show_import !== false
         ? iconBtn(this._showImport ? ICON.close : ICON.importIcon, t.imp, () => { this._showImport = !this._showImport; this._showSettings = false; this._renderSettings(); this._renderImport(); this._render(); })
         : null,
-      this._undo ? iconBtn(ICON.undo, `${t.undo}: ${this._undo.label}`, () => this._runUndo()) : null,
-      this._sortSelect(d),
-      h("button", { class: `icon-btn shopbtn ${this._shopping ? "on" : ""}`, type: "button", "aria-pressed": String(this._shopping),
+      this._undo && this._config.show_undo ? iconBtn(ICON.undo, `${t.undo}: ${this._undo.label}`, () => this._runUndo()) : null,
+      this._config.show_sort ? this._sortSelect(d) : null,
+      !this._config.show_shopping ? null : h("button", { class: `icon-btn shopbtn ${this._shopping ? "on" : ""}`, type: "button", "aria-pressed": String(this._shopping),
         title: this._shopping ? t.shop_off : t.shop_on, "aria-label": this._shopping ? t.shop_off : t.shop_on,
         onclick: () => this._toggleShopping() }, svg(ICON.cart, 18)),
       this._config.show_settings !== false
@@ -635,6 +652,7 @@ class SmartListsCard extends HTMLElement {
     const pct = d.items.length ? Math.round((100 * (d.items.length - open.length)) / d.items.length) : 0;
     fill(this._progressEl, this._shopping ? h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct),
       "aria-valuemin": "0", "aria-valuemax": "100" }, h("div", { style: `width:${pct}%` })) : "");
+    this._headEl.hidden = !this._config.show_header;
     this._renderAdd();
     fill(this._msgEl, this._error ? h("div", { class: "msg err" }, this._error) : "");
     this._renderList();
@@ -947,6 +965,7 @@ class SmartListsCard extends HTMLElement {
 
   /* ---------------- Eingabe ---------------- */
   _renderAdd() {
+    if (!this._config.show_add) return fill(this._addEl);
     const d = this._data;
     const allowed = d.permissions.add;
     if (this._addAllowed === allowed && this._addEl.firstChild) return;
@@ -1130,7 +1149,7 @@ class SmartListsCard extends HTMLElement {
     const el = this._freqEl;
     if (!el) return;
     const items = (this._frequent || []).slice(0, 8);
-    const show = this._config.show_frequent && items.length && this._data && this._data.permissions.add && !this._draft.text.trim();
+    const show = this._config.show_frequent && this._config.show_add && items.length && this._data && this._data.permissions.add && !this._draft.text.trim();
     if (!show) return fill(el, );
     fill(el, h("div", { class: "frequent" },
       h("span", { class: "lbl" }, this._t.frequent),
@@ -1172,7 +1191,12 @@ class SmartListsCard extends HTMLElement {
           onclick: () => { this._toggleSearch(); this._submit(term); } }, `„${term}“ ${t.add_this}`)) : null));
     } else if (!open.length && searching) { /* nur erledigte Treffer – unten anzeigen */ }
     else if (!open.length) out.push(h("div", { class: "empty" }, t.empty));
-    else if (mode === "category") {
+    else if (mode === "category" && this._config.show_category_titles === false) {
+      // nach Kategorie, aber ohne Überschriften: eine Liste mit Kategorie-Symbol vorne
+      const order = d.categories.map((c) => c.id);
+      emoji = true;
+      rows.push([...open].sort((a, b) => (order.indexOf(a.category) - order.indexOf(b.category)) || byName(a, b)).map((i) => this._row(i, d, true)));
+    } else if (mode === "category") {
       // wie in der App: Gruppen in fester Markt-Reihenfolge, innerhalb A–Z
       const order = d.categories.map((c) => c.id);
       grouped((i) => i.category, (keys) => keys.sort((a, b) => order.indexOf(a) - order.indexOf(b)),
@@ -1209,7 +1233,8 @@ class SmartListsCard extends HTMLElement {
     const qty = it.quantity != null ? `${it.pack_count > 1 ? it.pack_count + "× " : ""}${fmtQty(it.quantity)}` : "";
     const readonly = !p.toggle && !p.rename && !p.delete;
     const cat = d.categories.find((c) => c.id === it.category);
-    const tags = it.tags || [];
+    // Badges und Herkunft lassen sich pro Karte ausblenden
+    const tags = !this._config.show_tags ? [] : (it.tags || []).filter((x) => this._config.show_source || !x.implicit);
     // Reihenfolge: Name (+ Badges dahinter) | Menge | Einheit – jeweils eigene, gleich breite Spalte
     const ui = this._ui;
     const shop = this._shopping;
@@ -1228,8 +1253,8 @@ class SmartListsCard extends HTMLElement {
         h("div", { class: "name-line" },
           nameEl,
           tags.map(badge),
-          // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.torben → 👤 Torben)
-          it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
+          // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
+          this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
         this._config.show_note && it.note ? h("div", { class: "note" }, it.note) : null),
       h("span", { class: "qtycol" }, p.rename && it.quantity != null && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
@@ -1456,29 +1481,55 @@ class SmartListsCardEditor extends HTMLElement {
   set hass(hass) { this._hass = hass; if (this._form) this._form.hass = hass; }
   _build() {
     if (!this._form) {
+      const b = (name) => ({ name, selector: { boolean: {} } });
+      const section = (title, icon, schema, expanded = false) => ({ type: "expandable", name: "", flatten: true, title, icon, expanded, schema });
+      const LABELS = {
+        entity: "Liste", title: "Titel (leer = Name der Liste)", sort: "Standard-Sortierung",
+        show_header: "Kopfzeile anzeigen", show_count: "Anzahl offen / Treffer", show_search: "Suche (Lupe)",
+        show_sort: "Sortier-Auswahl", show_shopping: "Einkaufsmodus-Knopf", show_undo: "Rückgängig (↶)",
+        show_import: "Import-Knopf", show_settings: "Zahnrad (persönliche Einstellungen)",
+        show_add: "Eingabefeld zum Hinzufügen", show_frequent: "„Häufig gekauft“",
+        show_stepper: "Mengen-Stepper (− +)", show_tags: "Badges (@Markt, *Person, #Schlagwort)",
+        show_source: "Herkunft (Quell-Liste / Person)", show_note: "Notizen", show_category_titles: "Kategorie-Überschriften",
+        compact: "Kompakte Zeilen", max_height: "Maximale Höhe der Liste (px, leer = unbegrenzt)",
+        show_completed: "Erledigte anzeigen", collapse_completed: "Erledigte anfangs zugeklappt",
+        start_shopping: "Im Einkaufsmodus starten",
+      };
+      const HELP = {
+        show_settings: "Geste, Menü und Einkaufsmodus-Verhalten stellt jeder Benutzer für sich im Zahnrad ein.",
+        show_category_titles: "Aus: nach Kategorie sortiert, aber als eine Liste mit Kategorie-Symbol vorne.",
+        start_shopping: "Praktisch für ein Tablet in der Küche oder ein Dashboard nur fürs Einkaufen.",
+      };
       this._form = document.createElement("ha-form");
-      this._form.computeLabel = (s) => ({ entity: "Liste", title: "Titel (optional)", sort: "Standard-Sortierung",
-        show_completed: "Erledigte anzeigen", show_note: "Notizen anzeigen", show_frequent: "„Häufig gekauft“ anzeigen",
-        show_settings: "Zahnrad für Einstellungen anzeigen", show_import: "Import-Knopf anzeigen", show_stepper: "Mengen-Stepper (− +)" }[s.name] || s.name);
+      this._form.computeLabel = (s) => LABELS[s.name] || s.name;
+      this._form.computeHelper = (s) => HELP[s.name];
       this._form.schema = [
         { name: "entity", required: true, selector: { entity: { domain: "todo" } } },
         { name: "title", selector: { text: {} } },
         { name: "sort", selector: { select: { mode: "dropdown", options: [
-          { value: "category", label: "Nach Kategorie (gruppiert)" }, { value: "alpha", label: "A–Z" },
+          { value: "category", label: "Nach Kategorie" }, { value: "alpha", label: "A–Z" },
           { value: "added", label: "Reihenfolge des Hinzufügens" }, { value: "list", label: "Nach Quell-Liste (kombiniert)" }] } } },
-        { name: "show_completed", selector: { boolean: {} } },
-        { name: "show_note", selector: { boolean: {} } },
-        { name: "show_frequent", selector: { boolean: {} } },
-        { name: "show_settings", selector: { boolean: {} } },
-        { name: "show_import", selector: { boolean: {} } },
-        { name: "show_stepper", selector: { boolean: {} } },
+        section("Kopfzeile", "mdi:page-layout-header",
+          [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
+        section("Eingabe", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
+        section("Liste", "mdi:format-list-bulleted",
+          [b("show_stepper"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles"), b("compact"),
+            { name: "max_height", selector: { number: { min: 150, max: 2000, step: 50, mode: "box", unit_of_measurement: "px" } } }]),
+        section("Erledigte", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
+        section("Einkaufsmodus", "mdi:cart-outline", [b("start_shopping")]),
       ];
-      this._form.addEventListener("value-changed", (e) =>
-        this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: e.detail.value }, bubbles: true, composed: true })));
+      this._form.addEventListener("value-changed", (e) => {
+        // nur Abweichungen vom Standard speichern → schlankes YAML
+        const cfg = { ...e.detail.value };
+        for (const [k, v] of Object.entries(CARD_DEFAULTS)) if (cfg[k] === v) delete cfg[k];
+        if (cfg.max_height === "" || cfg.max_height == null) delete cfg.max_height;
+        if (!cfg.title) delete cfg.title;
+        this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: cfg }, bubbles: true, composed: true }));
+      });
       this.append(this._form);
     }
     this._form.hass = this._hass;
-    this._form.data = { sort: "category", show_completed: true, show_note: true, show_frequent: true, show_settings: true, show_import: true, show_stepper: true, ...this._config };
+    this._form.data = { ...CARD_DEFAULTS, ...this._config };
   }
 }
 

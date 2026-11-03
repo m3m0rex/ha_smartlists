@@ -104,7 +104,7 @@ async def get_list(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
     person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
     for raw in await raw_items(hass, entity_id):
         info = learning.describe(raw["text"])
-        # Herkunft als Person (kombinierte Liste, z.B. todo.torben → 👤 Torben) – außer im Artikel
+        # Herkunft als Person (kombinierte Liste, z.B. todo.peter → 👤 Peter) – außer im Artikel
         # steht schon eine Person (*Anna) oder Personen-Tags sind abgeschaltet
         person = raw.get("person")
         if person and person_prefix and not any(t["kind"] == "person" for t in info["tags"]):

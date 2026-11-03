@@ -1,152 +1,158 @@
-# SmartLists – kombinierte To-do-Listen für Home Assistant
+# SmartLists – combined to-do lists for Home Assistant
 
-Eigenständige Home-Assistant-Integration (HACS), unabhängig von der HA-SmartLists-App.
-Sie bringt die wichtigste Funktion der App direkt in Home Assistant: **mehrere To-do-Listen zu einer
-gemeinsamen Liste zusammenführen** – z.B. die Einkaufslisten von Anna und Max zu einer Liste „Großeinkauf".
+🇩🇪 [Deutsche Version](README.de.md)
 
-Die kombinierte Liste ist eine ganz normale To-do-Entität (`todo.grosseinkauf`). Sie funktioniert in der
-To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch in der HA-SmartLists-App.
+A standalone Home Assistant integration (HACS), independent of the HA SmartLists Android app.
+It brings the app's key feature straight into Home Assistant: **merge several to-do lists into one
+shared list** – e.g. Anna's and Max's shopping lists into one list "Weekly shop".
 
-## Funktionen
+A combined list is a regular to-do entity (`todo.weekly_shop`). It works in the to-do view, on
+dashboards, with voice assistants, in automations and in the HA SmartLists app.
 
-- Beliebige To-do-Listen kombinieren: Shopping List, Local To-do, Google Tasks, Bring!, CalDAV und andere.
-- **Abhaken, Umbenennen, Beschreibung ändern und Löschen** wirken direkt in der jeweiligen Ursprungsliste.
-- **Neue Artikel** landen in einer wählbaren Standard-Liste.
-- **Modus „Nur diese kombinierte Liste"**: Häkchen bleiben lokal in der kombinierten Liste, die
-  Ursprungslisten werden nicht verändert. Das entspricht „Nur lokal" in der App.
-- **Fremde Listen**: Artikel aus Listen anderer Personen kannst du nur abhaken, aber nicht
-  umbenennen oder löschen.
-- **Herkunft als Person**: Artikel aus `todo.torben` bekommen in Karte und Seite das Badge 👤 Torben
-  (wie `*Torben`); Füllwörter wie „Einkaufsliste“ werden weggelassen. Pro Liste abschaltbar.
-- **Herkunft anzeigen**: `Milch · Anna` oder `[Anna] Milch`; die Anzeige ist auch abschaltbar.
-- **Sortierung**: nach Liste, nach Einkaufs-Kategorie, offene zuerst oder alphabetisch.
-  Die Kategorie-Erkennung nutzt dasselbe Stichwort-Paket wie die App mit über 6000 Begriffen.
-- Attribute für Dashboards und Automationen: `open_items`, `completed_items`, `open_by_category`,
+## Features
+
+- Combine any to-do lists: Shopping List, Local To-do, Google Tasks, Bring!, CalDAV and others.
+- **Check off, rename, edit description and delete** act directly on the source list.
+- **New items** go to a default list of your choice.
+- **"This combined list only" mode**: checkmarks stay in the combined list, source lists are left
+  untouched (same as "local only" in the app).
+- **Foreign lists**: items from other people's lists can only be checked off, not renamed or deleted.
+- **Source as person**: items from `todo.peter` get the badge 👤 Peter in the card and the sidebar page
+  (same as `*Peter`); filler words like "shopping list" are dropped. Can be turned off per list.
+- **Show source**: `Milk · Anna` or `[Anna] Milk`, or off.
+- **Sorting**: by list, by shopping category, open first, or alphabetical. Category detection uses
+  the same keyword pack as the app (6,500 German terms, 1,049 products).
+- Attributes for dashboards and automations: `open_items`, `completed_items`, `open_by_category`,
   `source_lists`, `unavailable_sources`.
-- „Erledigte entfernen" (`todo.remove_completed_items`) funktioniert über alle Quell-Listen hinweg.
-- Aktualisiert sich automatisch, sobald sich eine Quell-Liste ändert.
+- "Remove completed" (`todo.remove_completed_items`) works across all source lists.
+- Updates automatically whenever a source list changes.
 
-## Gedächtnis für den ganzen Haushalt (neu in 1.1)
+## Household memory
 
-Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.learning`:
+Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 
-- **Kategorien merken:** Wird ein Artikel einmal von Hand einer Kategorie zugeordnet, gilt das künftig
-  auch für ähnliche Artikel („Hafermilch“ → Kühlung trifft später „Hafermilch Barista“). Reihenfolge wie
-  in der App: gemerkt > gelernt > eingebautes Paket > Sonstiges. Die Sortierung „nach Kategorie“ und
-  das Attribut `open_by_category` der kombinierten Listen nutzen das bereits.
-- **Verlauf & Vorschläge:** Häufig und zuletzt gekaufte Artikel, Artikel der Liste und 1049 Produkte aus
-  dem Paket der App; dazu die zuletzt benutzte bzw. übliche Einheit.
-- **Namenskonvention:** `@REWE` wird zum Markt-Badge (bekannte Märkte in Markenfarbe), `*Anna` zur Person,
-  `#bio` zum Schlagwort. Welches Zeichen was bedeutet, stellen Admins in der Karte ein (Zahnrad).
-  Die Tags bleiben im Artikelnamen stehen – andere Oberflächen sehen sie also weiter als Text.
-- **Bedienung:** Standard für alle (Admin) → je Benutzer abweichend → optional je Gerät abweichend.
+- **Remembered categories:** once an item is assigned to a category by hand, similar items follow
+  ("Hafermilch" → chilled also matches "Hafermilch Barista" later). Order as in the app:
+  remembered > learned > built-in pack > other.
+- **History & suggestions:** frequently and recently bought items, items on the list and the
+  products of the app's pack, plus the last used or usual unit.
+- **Naming convention:** `@REWE` becomes a store badge (known stores in their brand colour), `*Anna`
+  a person, `#organic` a tag. Admins choose which character means what. Tags stay in the item name,
+  so other interfaces still show them as text.
+- **Controls:** default for everyone (admin) → per user → optionally per device.
 
-Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird auch „2 kg Äpfel“ erkannt.
+Quantities are stored in the name, as in the app ("Milch 2 l @REWE"). "2 kg apples" is recognised
+while typing, too.
 
-## Seite „SmartLists“ in der Seitenleiste
+## Sidebar page "SmartLists"
 
-Nach dem Einrichten gibt es links in HA den Eintrag **SmartLists**: alle To-do-Listen (kombinierte
-zuerst) als Umschalter oben, darunter die Liste mit Badges, Kategorien, Stepper, Suche und
-Einkaufsmodus – ohne dass man ein Dashboard bauen muss. Die eingebaute To-do-Seite von HA zeigt
-Artikel nur als Text („Milch 2 l @REWE“); Badges gibt es nur auf dieser Seite und in der Karte.
-Ausblenden lässt sich der Eintrag wie jeder andere über *Seitenleiste bearbeiten*.
+After setup there is a **SmartLists** entry in the HA sidebar: all to-do lists (combined lists first)
+as tabs at the top, below them the list with badges, categories, quantity stepper, search and
+shopping mode – no dashboard needed. Home Assistant's built-in to-do page shows items as plain text
+only ("Milch 2 l @REWE"); badges are only available on this page and in the card. Hide the entry like
+any other via *Edit sidebar*.
 
-## Lovelace-Karte `custom:smartlists-card`
+## Lovelace card `custom:smartlists-card`
 
-Wird von der Integration automatisch geladen (keine Dashboard-Ressource nötig).
+Loaded automatically by the integration (no dashboard resource needed).
 
 ```yaml
 type: custom:smartlists-card
-entity: todo.grosseinkauf
+entity: todo.weekly_shop
 sort: category        # category | alpha | added | list
 ```
 
-Suche (Lupe; findet auch über Markt, Person, Notiz, Kategorie, „apfel“ findet „Äpfel“), Mengen-Stepper
-− +, ein Eingabefeld mit Live-Vorschau (Menge, Kategorie, Badges) und Vorschlägen (↑/↓, Tab, Enter),
-„Häufig gekauft“, Kategorie per Klick ändern (wird gemerkt), feste Spalten Name | Menge | Einheit,
-Sortierung (Kategorie, A–Z, Hinzugefügt, nach Liste), langes Drücken → Menü (Bearbeiten, Verschieben,
-Kopieren, Kategorie, Löschen), Einkaufsmodus (Bildschirm an, Erledigte ausblenden, große Zeilen, Zeile
-antippen), ↶ für die letzte Änderung, Import aus einer HA-To-do-Liste oder als Text.
+Search (also by store, person, note and category; "apfel" finds "Äpfel"), quantity stepper − +,
+a single input with live preview (quantity, category, badges) and suggestions (↑/↓, Tab, Enter),
+"frequently bought", change the category with one click (remembered), fixed columns
+name | quantity | unit, sorting (category, A–Z, added, by list), long press → menu (edit, move, copy,
+category, delete), shopping mode (screen stays on, hide checked, large rows, tap the row), ↶ to undo
+the last change, import from an HA to-do list or as text.
 
-Ein klickbares Mockup mit simulierten Daten liegt unter `mockup/card-mockup.html`
-(neu bauen: `python mockup/build_mockup.py`).
+All display options are available in the visual card editor, grouped into *Header*, *Input*, *List*,
+*Completed* and *Shopping mode* (e.g. hide search or stepper, compact rows, no category headings,
+maximum height, start in shopping mode). Personal controls (gesture, menu, shopping-mode behaviour)
+stay per user in the card's gear menu.
 
-### Stand
+A clickable mockup with simulated data is in `mockup/card-mockup.html`
+(rebuild: `python mockup/build_mockup.py`).
 
-Die Karte funktioniert in HA mit kombinierten SmartLists-Listen **und jeder normalen To-do-Liste**
-(Einkaufsliste, Local To-do, Google Tasks, Bring!, …). Erlaubt ist, was die Liste selbst kann; bei
-kombinierten Listen sind Artikel aus fremden Quellen nur abhakbar. Änderungen von anderen Geräten
-erscheinen live.
+### Status
 
-Noch offen: eigene Listen direkt in SmartLists und Freigaben pro Benutzer (A gibt B eine Liste mit
-bestimmten Rechten frei).
+The card works with combined SmartLists lists **and every regular to-do list** (Shopping List, Local
+To-do, Google Tasks, Bring!, …). Allowed is whatever the list itself supports; in combined lists,
+items from foreign sources can only be checked off. Changes from other devices appear live.
 
-### Schnittstelle für die App
+Not yet available: lists stored directly in SmartLists and sharing per user (A shares a list with B
+with specific permissions).
 
-Die HA-SmartLists-App kann sich mit der Integration koppeln (`smartlists/info`) und zeigt dann
-dieselben Badges, Kategorien und Vorschläge an. Alle Befehle, Antworten und das Textformat:
-[docs/app-api.md](docs/app-api.md).
+### Interface for the app
 
-Das Kategorie-Paket wird aus dem der App erzeugt: `python scripts/build_categories.py` (sucht die App im Nachbarordner `shopping_manager_app`).
+The HA SmartLists app can pair with the integration (`smartlists/info`) and then shows the same badges,
+categories and suggestions. All commands, responses and the text format:
+[docs/app-api.md](docs/app-api.md) (German).
+
+The category pack is generated from the app's pack: `python scripts/build_categories.py` (looks for the
+app in the sibling folder `shopping_manager_app`).
 
 ## Installation
 
-### Über HACS (benutzerdefiniertes Repository)
+### Via HACS (custom repository)
 
-1. HACS → ⋮ → *Benutzerdefinierte Repositories*
-2. URL `https://github.com/m3m0rex/ha_smartlists_hacs`, Typ **Integration** → Hinzufügen
-3. „SmartLists" herunterladen und Home Assistant neu starten.
+1. HACS → ⋮ → *Custom repositories*
+2. URL `https://github.com/m3m0rex/ha_smartlists_hacs`, type **Integration** → Add
+3. Download "SmartLists" and restart Home Assistant.
 
-### Manuell
+### Manual
 
-Ordner `custom_components/smartlists` nach `/config/custom_components/smartlists` kopieren und Home Assistant neu starten.
+Copy the folder `custom_components/smartlists` to `/config/custom_components/smartlists` and restart
+Home Assistant.
 
-## Einrichtung
+## Setup
 
-*Einstellungen → Geräte & Dienste → Integrationen → Integration hinzufügen → **SmartLists***
+*Settings → Devices & services → Integrations → Add integration → **SmartLists***
 
-SmartLists wird einmal eingerichtet. Danach ist die Lovelace-Karte sofort verfügbar, und bei der
-Integration gibt es:
+SmartLists is set up once. The Lovelace card and the sidebar page are available right away, and the
+integration offers:
 
-- **„Kombinierte Liste hinzufügen“** – Name, Listen, Standard-Liste, Modus, Herkunftsanzeige, Sortierung,
-  fremde Listen. Jede Liste lässt sich später über ⋮ → *Neu konfigurieren* ändern oder löschen.
-- **„Konfigurieren“** – Einstellungen für den ganzen Haushalt:
-  - *Namenskonvention:* welches Zeichen Markt, Person bzw. Schlagwort einleitet (oder aus)
-  - *Bedienung – Standard für alle:* Geste fürs Artikel-Menü, Menü-Einträge, Einkaufsmodus
-  - *Gemerkte Kategorien & Verlauf:* einzelne Zuordnungen vergessen, Verlauf löschen
+- **"Add combined list"** – name, lists, default list, mode, source display, sorting, foreign lists,
+  source as person. Each list can be changed or deleted later via ⋮ → *Reconfigure*.
+- **"Configure"** – settings for the whole household:
+  - *Naming convention:* which character starts a store, person or tag (or off)
+  - *Controls – default for everyone:* gesture for the item menu, menu entries, shopping mode
+  - *Remembered categories & history:* forget single assignments, clear history
 
-Persönliche Abweichungen (pro Benutzer oder nur auf einem Gerät) stellt jeder selbst im Zahnrad der
-Karte ein; dort können Admins auch die Haushalts-Einstellungen ändern – beides zeigt dieselben Werte.
+Personal differences (per user, or on one device only) are set by everyone themselves via the gear
+icon in the card; admins can change the household settings there as well – both show the same values.
 
-**Update von 1.1:** Bisherige SmartLists-Helfer werden beim ersten Start automatisch zu Listen unter
-dem einen Eintrag „SmartLists“ umgezogen. entity_id, Dashboards, Automationen und lokale Häkchen
-bleiben erhalten.
+**Updating from 1.1:** existing SmartLists helpers are moved automatically to lists under the single
+"SmartLists" entry on first start. entity_id, dashboards, automations and local checkmarks are kept.
 
-## Hinweise
+## Notes
 
-- Kombinierte Listen lassen sich nicht ineinander verschachteln (Schutz vor Endlosschleifen).
-- Im Modus „Nur diese kombinierte Liste" werden die lokalen Häkchen in Home Assistant gespeichert
-  (`.storage/smartlists.<id>`) und beim Löschen der Integration mit entfernt.
-- Artikel ohne eindeutige ID (sehr alte Integrationen) werden übersprungen.
-- Voraussetzung: Home Assistant 2025.3 oder neuer (Unter-Einträge für die Listen).
+- Combined lists cannot be nested (protection against loops).
+- In "this combined list only" mode the local checkmarks are stored in Home Assistant
+  (`.storage/smartlists.<id>`) and removed together with the integration.
+- Items without a unique ID (very old integrations) are skipped.
+- Requires Home Assistant 2025.3 or newer (sub-entries for the lists).
+- The user interface is available in German and English; category detection is German.
 
-## Aufbau
+## Structure
 
 ```
 hacs.json
 custom_components/smartlists/
-  manifest.json      Metadaten (Typ: Dienst, einmal einrichtbar)
-  __init__.py        Einrichten/Entladen, Karte laden, Umzug von 1.1
-  config_flow.py     Einrichtung, kombinierte Listen (Unter-Einträge), Konfigurieren-Menü
-  todo.py            die kombinierte To-do-Entität
-  categories.py/json Kategorie-Paket (aus der App erzeugt, mit Produkten + Einheiten)
-  itemtext.py        Artikeltext zerlegen: Menge, Einheit, Tags (@REWE …)
-  learning.py        Gedächtnis: Kategorien, Verlauf, Vorschläge, Tag-Regeln, Bedienung
-  lists.py           Listen lesen/ändern (kombinierte und normale To-do-Listen)
-  websocket.py       Befehle für Karte und App (siehe docs/app-api.md)
-  www/smartlists-card.js   Lovelace-Karte
-  strings.json, translations/   Texte (Deutsch/Englisch)
-scripts/build_categories.py     categories.json aus dem App-Paket erzeugen
-mockup/                         klickbares Mockup der Karte
-.github/workflows/validate.yml  hassfest + HACS-Prüfung bei jedem Push
+  manifest.json      metadata (type: service, single instance)
+  __init__.py        setup/unload, card and sidebar page, migration from 1.1
+  config_flow.py     setup, combined lists (sub-entries), configure menu
+  todo.py            the combined to-do entity
+  categories.py/json category pack (generated from the app, with products + units)
+  itemtext.py        parse item text: quantity, unit, tags (@REWE …)
+  learning.py        memory: categories, history, suggestions, tag rules, controls
+  lists.py           read/change lists (combined and regular to-do lists)
+  websocket.py       commands for card and app (see docs/app-api.md)
+  www/smartlists-card.js   Lovelace card and sidebar page
+  strings.json, translations/   texts (German/English)
+scripts/build_categories.py     generate categories.json from the app's pack
+mockup/                         clickable mockup of the card
 ```

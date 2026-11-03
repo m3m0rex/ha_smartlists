@@ -174,7 +174,7 @@ def encode(item: ParsedItem, rules: list[dict[str, str]]) -> str:
     return " ".join(p for p in parts if p)
 
 
-# Wörter, die in Listennamen nichts über die Person sagen ("Einkaufsliste Torben" → "Torben")
+# Wörter, die in Listennamen nichts über die Person sagen ("Einkaufsliste Peter" → "Peter")
 _LIST_NOISE = {
     "einkaufsliste", "einkaufslisten", "einkauf", "einkaufen", "liste", "listen", "todo", "to-do", "aufgaben",
     "shopping", "list", "grocery", "groceries", "von", "für", "fuer", "of", "for", "die", "der", "das", "meine", "my",
@@ -182,8 +182,8 @@ _LIST_NOISE = {
 
 
 def person_from_list_name(name: str, entity_id: str = "") -> str | None:
-    """Person aus dem Namen einer Liste ableiten: "Torben" bzw. todo.torben → "Torben",
-    "Einkaufsliste Torben" → "Torben". Es werden nur Füllwörter entfernt, nichts geraten
+    """Person aus dem Namen einer Liste ableiten: "Peter" bzw. todo.peter → "Peter",
+    "Einkaufsliste Peter" → "Peter". Es werden nur Füllwörter entfernt, nichts geraten
     (z.B. kein Genitiv-s). Bleibt nichts übrig ("Einkaufsliste"), gibt es keine Person."""
     raw = name or entity_id.split(".", 1)[-1].replace("_", " ")
     words = [w for w in re.split(r"[\s_\-–·:]+", raw.strip()) if w]

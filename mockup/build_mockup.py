@@ -134,7 +134,7 @@ const LISTS = {
     mk("Tomaten 1 kg @Lidl"), mk("Käse", { note: "Gouda, mittelalt" }), mk("Zahnpasta @dm"), mk("Cola 3 Fl"), mk("Pizza Salami 2 Stk"),
     mk("Reis", { checked: true })].map((it, i) => ({ ...it, source: ["Anna", "Max", "Anna", "Max", "Max", "Anna"][i],
       permissions: i % 2 === 0 ? { toggle: true, rename: true, delete: true } : { toggle: true, rename: false, delete: false } })) },
-  "todo.oma": { name: "Liste von Oma", type: "list", foreign: true, permissions: { toggle: false, rename: false, delete: false, add: false }, items: [
+  "todo.lisa": { name: "Liste von Lisa", type: "list", foreign: true, permissions: { toggle: false, rename: false, delete: false, add: false }, items: [
     mk("Kartoffeln 5 kg"), mk("Eier 10 Stk"), mk("Schokolade", { note: "Vollmilch" })] },
 };
 // Verlauf vorbelegen, damit "häufig gekauft" und Vorschläge etwas zeigen
@@ -142,7 +142,7 @@ const LISTS = {
  "Gurke","Gurke","Äpfel 1 kg @REWE","Äpfel 2 kg","Bananen 6 Stk","Bananen 5 Stk","Zahnpasta @dm","Zahnpasta"].forEach(record);
 
 const rev = {};
-const USER = { id: "u-julia", name: "Julia", is_admin: true };
+const USER = { id: "u-hans", name: "Hans", is_admin: true };
 const USERS = {};
 let HOUSE = {};  // Haushalts-Standard (Admin)
 // Eine ganz normale HA-To-do-Liste (z.B. "Einkaufsliste"-Integration) – nur zum Importieren
@@ -215,7 +215,7 @@ function push() { const hass = { states: states(), language: "de", user: USER, c
 const grid = document.getElementById("grid");
 [["todo.einkauf_familie", "Eigene Liste – nach Kategorie, Markt-Badges, gemerkte Einheiten", {}],
  ["todo.grosseinkauf", "Kombinierte Liste – A–Z, Artikel von Max sind nur abhakbar", { sort: "alpha" }],
- ["todo.oma", "Fremde Liste ohne Rechte – nur ansehen", { show_settings: false }]].forEach(([entity, cap, cfg]) => {
+ ["todo.lisa", "Fremde Liste ohne Rechte – nur ansehen", { show_settings: false }]].forEach(([entity, cap, cfg]) => {
   const wrap = document.createElement("div"); const c = document.createElement("div"); c.className = "cap"; c.textContent = cap;
   const card = document.createElement("smartlists-card"); card.setConfig({ entity, ...cfg }); wrap.append(c, card); grid.append(wrap); cards.push(card);
 });

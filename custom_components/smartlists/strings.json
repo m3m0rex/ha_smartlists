@@ -36,7 +36,7 @@
             "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
             "foreign_entities": "Lists of other people that you may only check off.",
-            "source_as_person": "Items from e.g. todo.torben get the badge 👤 Torben – like *Torben in the name. Filler words like “shopping list” are dropped."
+            "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped."
           }
         },
         "reconfigure": {
@@ -56,7 +56,7 @@
             "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
             "foreign_entities": "Lists of other people that you may only check off.",
-            "source_as_person": "Items from e.g. todo.torben get the badge 👤 Torben – like *Torben in the name. Filler words like “shopping list” are dropped."
+            "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped."
           }
         }
       },

@@ -219,7 +219,10 @@ class CombinedTodoListEntity(TodoListEntity):
         items = self._attr_todo_items or []
         done = sum(1 for i in items if i.status == TodoItemStatus.COMPLETED)
         return {
+            # Kennung für die App: diese Liste von SmartLists als Kombinierte Liste anzeigen
+            "smartlists_combined": True,
             "source_lists": self._sources,
+            "foreign_lists": sorted(self._foreign),
             "default_add_list": self._default_add,
             "mode": self._mode,
             "open_items": len(items) - done,

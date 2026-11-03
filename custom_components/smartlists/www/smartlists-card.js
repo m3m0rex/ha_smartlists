@@ -463,6 +463,7 @@ class SmartListsCard extends HTMLElement {
     this._hass = hass;
     if (first || !this._cfg) this._loadConfig();
     if (first) this._loadUserUi();
+    this._subscribe();
     const st = hass.states && hass.states[this._config.entity];
     const rev = st ? `${st.state}|${st.last_updated}` : "missing";
     if (rev !== this._rev) {
@@ -580,7 +581,7 @@ class SmartListsCard extends HTMLElement {
     fill(this._headEl, 
       h("div", { class: "title" }, this._config.title || d.name),
       d.type === "combined" ? h("span", { class: "badge combined" }, t.combined) : null,
-      d.foreign ? h("span", { class: "badge foreign" }, t.foreign) : d.type !== "combined" ? h("span", { class: "badge" }, t.own) : null,
+      d.foreign ? h("span", { class: "badge foreign" }, t.foreign) : null,
       h("span", { class: "count" }, this._shopping
         ? `${d.items.length - open.length}/${d.items.length} ${t.in_cart}` : `${open.length} ${t.open}`),
       d.permissions.add && this._config.show_import !== false
@@ -698,7 +699,28 @@ class SmartListsCard extends HTMLElement {
       }
     } catch (e) { /* nicht unterstützt (z.B. ohne HTTPS) */ }
   }
-  disconnectedCallback() { this._wake(false); }
+  connectedCallback() { if (this._hass) this._subscribe(); }
+  disconnectedCallback() { this._wake(false); this._unsubscribe(); }
+
+  // Live: Änderungen von anderen Geräten/Benutzern sofort zeigen (HA-eigenes todo/item/subscribe).
+  // Der Zustand der Liste ändert sich z.B. beim Umbenennen nicht – darum reicht "hass" allein nicht.
+  async _subscribe() {
+    const conn = this._hass && this._hass.connection;
+    if (!conn || this._unsub || this._subscribing) return;
+    this._subscribing = true;
+    const entity = this._config.entity;
+    try {
+      let first = true;
+      this._unsub = await conn.subscribeMessage(() => {
+        if (first) { first = false; return; } // erste Nachricht = aktueller Stand
+        if (!this._reloadSoon) this._reloadSoon = debounce(() => this._load(), 250);
+        this._reloadSoon();
+      }, { type: "todo/item/subscribe", entity_id: entity });
+    } catch (e) { this._unsub = null; } finally { this._subscribing = false; }
+  }
+  _unsubscribe() {
+    if (this._unsub) { try { this._unsub(); } catch (e) { /* */ } this._unsub = null; }
+  }
 
   async _toggleItem(it) {
     const checked = !it.checked;
@@ -1115,17 +1137,19 @@ class SmartListsCard extends HTMLElement {
     const text = h("input", { class: "text", value: it.text || it.name, "aria-label": it.name });
     const cat = h("select", { class: "cat", "aria-label": t.category },
       d.categories.map((c) => h("option", { value: c.id, selected: c.id === it.category }, c.label)));
-    const note = h("input", { class: "note-in", placeholder: t.note, value: it.note || "" });
+    // Notizen nur, wenn die Liste sie speichern kann (z.B. nicht bei der einfachen HA-Einkaufsliste)
+    const canNote = d.permissions.note !== false;
+    const note = canNote ? h("input", { class: "note-in", placeholder: t.note, value: it.note || "" }) : null;
     const save = async () => {
       this._editing = null;
       const parsed = parseText(text.value, this._cfg.tag_rules, this._cfg.known_stores, true);
       if (cat.value !== it.category) {
         try { await this._call("set_category", { name: parsed.name || it.name, category: cat.value }, false); } catch (e) { /* */ }
       }
-      this._change(`${it.name} ${t.changed}`, "update_item", { uid: it.uid, text: encodeText(parsed, this._cfg.tag_rules) || it.text, note: note.value },
+      this._change(`${it.name} ${t.changed}`, "update_item", { uid: it.uid, text: encodeText(parsed, this._cfg.tag_rules) || it.text, note: note ? note.value : it.note || "" },
         () => () => this._call("update_item", { uid: it.uid, text: it.text, note: it.note || "" }));
     };
-    [text, note].forEach((el) => el.addEventListener("keydown", (e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { this._editing = null; this._renderList(); } }));
+    [text, note].filter(Boolean).forEach((el) => el.addEventListener("keydown", (e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { this._editing = null; this._renderList(); } }));
     setTimeout(() => text.focus(), 0);
     return h("div", { class: "edit" }, text, cat, note,
       h("div", { class: "btns" },

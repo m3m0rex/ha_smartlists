@@ -13,8 +13,13 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
+from . import lists
 from .const import DOMAIN
 from .learning import Learning
+
+# Version der Befehlsschnittstelle. Erhöhen, wenn sich Befehle/Antworten inkompatibel ändern –
+# App und Karte prüfen das beim Koppeln (smartlists/info).
+API_VERSION = 1
 
 
 def _learning(hass: HomeAssistant) -> Learning:
@@ -23,8 +28,9 @@ def _learning(hass: HomeAssistant) -> Learning:
 
 @callback
 def async_register(hass: HomeAssistant) -> None:
-    for handler in (ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
-                    ws_user_settings, ws_set_user_settings):
+    for handler in (ws_info, ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
+                    ws_user_settings, ws_set_user_settings,
+                    ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
 
 
@@ -154,3 +160,117 @@ def ws_set_user_settings(hass: HomeAssistant, connection: websocket_api.ActiveCo
         connection.send_error(msg["id"], "invalid_settings", str(err))
         return
     connection.send_result(msg["id"], result)
+
+
+# ----------------------------------------------------------------------
+# Koppeln (App/Karte): ist die Integration da, welche Version, was kann sie?
+# ----------------------------------------------------------------------
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/info"})
+@websocket_api.async_response
+async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    from homeassistant.loader import async_get_integration
+
+    integration = await async_get_integration(hass, DOMAIN)
+    connection.send_result(
+        msg["id"],
+        {
+            "integration": DOMAIN,
+            "version": str(integration.version),
+            "api_version": API_VERSION,
+            "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings"],
+            "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
+            **_learning(hass).config(),
+        },
+    )
+
+
+# ----------------------------------------------------------------------
+# Listen
+# ----------------------------------------------------------------------
+def _list_command(schema: dict[Any, Any]):
+    """Gemeinsamer Rahmen: Fehler als verständliche Meldung, Änderungen im Namen des Benutzers."""
+
+    def wrap(func):
+        @websocket_api.websocket_command(schema)
+        @websocket_api.async_response
+        async def handler(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+            try:
+                result = await func(hass, msg, connection.context(msg))
+            except lists.ListError as err:
+                connection.send_error(msg["id"], "smartlists_error", str(err))
+                return
+            except Exception as err:  # noqa: BLE001 – Karte soll eine Meldung statt Hängen sehen
+                connection.send_error(msg["id"], "smartlists_error", str(err) or type(err).__name__)
+                return
+            connection.send_result(msg["id"], result)
+
+        handler.__name__ = func.__name__
+        return handler
+
+    return wrap
+
+
+@_list_command({vol.Required("type"): "smartlists/get_list", vol.Required("entity_id"): str})
+async def ws_get_list(hass, msg, context):
+    """Liste mit zerlegten Artikeln (Name, Menge, Einheit, Tags, Kategorie) und Rechten."""
+    return await lists.get_list(hass, msg["entity_id"])
+
+
+@_list_command({vol.Required("type"): "smartlists/lists"})
+async def ws_lists(hass, msg, context):
+    return {"lists": await lists.all_lists(hass)}
+
+
+@_list_command(
+    {
+        vol.Required("type"): "smartlists/add_item",
+        vol.Required("entity_id"): str,
+        vol.Required("text"): str,
+        vol.Optional("note", default=""): str,
+        vol.Optional("checked", default=False): bool,
+    }
+)
+async def ws_add_item(hass, msg, context):
+    return await lists.add_item(hass, msg["entity_id"], msg["text"], msg["note"], msg["checked"], context)
+
+
+@_list_command(
+    {
+        vol.Required("type"): "smartlists/update_item",
+        vol.Required("entity_id"): str,
+        vol.Required("uid"): str,
+        vol.Optional("checked"): bool,
+        vol.Optional("text"): str,
+        vol.Optional("note"): str,
+    }
+)
+async def ws_update_item(hass, msg, context):
+    return await lists.update_item(
+        hass, msg["entity_id"], msg["uid"], checked=msg.get("checked"), text=msg.get("text"), note=msg.get("note"),
+        context=context,
+    )
+
+
+@_list_command(
+    {vol.Required("type"): "smartlists/remove_items", vol.Required("entity_id"): str, vol.Required("uids"): [str]}
+)
+async def ws_remove_items(hass, msg, context):
+    return await lists.remove_items(hass, msg["entity_id"], msg["uids"], context)
+
+
+@_list_command({vol.Required("type"): "smartlists/clear_completed", vol.Required("entity_id"): str})
+async def ws_clear_completed(hass, msg, context):
+    return await lists.clear_completed(hass, msg["entity_id"], context)
+
+
+@_list_command(
+    {
+        vol.Required("type"): "smartlists/move_item",
+        vol.Required("entity_id"): str,
+        vol.Required("uid"): str,
+        vol.Required("target"): str,
+        vol.Optional("copy", default=False): bool,
+    }
+)
+async def ws_move_item(hass, msg, context):
+    return await lists.move_item(hass, msg["entity_id"], msg["uid"], msg["target"], msg["copy"], context)

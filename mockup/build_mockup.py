@@ -122,10 +122,10 @@ function suggest(query, listNames, limit) {
 
 /* Listen */
 let uid = 100;
-const full = { toggle: true, rename: true, delete: true, add: true };
+const full = { toggle: true, rename: true, delete: true, add: true, note: true };
 const mk = (text, o = {}) => ({ uid: "u" + (uid++), text, checked: false, note: "", ...o });
 const LISTS = {
-  "todo.einkauf_familie": { name: "Einkauf Familie", type: "own", foreign: false, permissions: full, items: [
+  "todo.einkauf_familie": { name: "Einkauf Familie", type: "list", foreign: false, permissions: full, items: [
     mk("Äpfel 1,5 kg @REWE", { note: "Elstar wenn möglich" }), mk("Bananen 6 Stk"), mk("Vollmilch 2 l @LIDL"), mk("Joghurt Natur 4× 150 g"),
     mk("Bauernbrot @Bäcker"), mk("Hackfleisch gemischt 500 g @REWE *Max"), mk("Spülmittel #nachfüllen", { note: "das grüne" }),
     mk("Bio-Vollkorn-Dinkelspaghetti aus regionalem Anbau extra lang 2 Pck @EDEKA"), mk("Süßkartoffel 1 kg"), mk("Toilettenpapier 1 Pck @dm"),
@@ -134,7 +134,7 @@ const LISTS = {
     mk("Tomaten 1 kg @Lidl"), mk("Käse", { note: "Gouda, mittelalt" }), mk("Zahnpasta @dm"), mk("Cola 3 Fl"), mk("Pizza Salami 2 Stk"),
     mk("Reis", { checked: true })].map((it, i) => ({ ...it, source: ["Anna", "Max", "Anna", "Max", "Max", "Anna"][i],
       permissions: i % 2 === 0 ? { toggle: true, rename: true, delete: true } : { toggle: true, rename: false, delete: false } })) },
-  "todo.oma": { name: "Liste von Oma", type: "own", foreign: true, permissions: { toggle: false, rename: false, delete: false, add: false }, items: [
+  "todo.oma": { name: "Liste von Oma", type: "list", foreign: true, permissions: { toggle: false, rename: false, delete: false, add: false }, items: [
     mk("Kartoffeln 5 kg"), mk("Eier 10 Stk"), mk("Schokolade", { note: "Vollmilch" })] },
 };
 // Verlauf vorbelegen, damit "häufig gekauft" und Vorschläge etwas zeigen

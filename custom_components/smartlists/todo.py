@@ -134,6 +134,10 @@ class CombinedTodoListEntity(TodoListEntity):
     async def async_added_to_hass(self) -> None:
         """Auf Änderungen der Quell-Listen hören und erstmalig laden."""
         await super().async_added_to_hass()
+        # für die Karte (lists.py) auffindbar machen
+        registry: dict[str, CombinedTodoListEntity] = self.hass.data[DOMAIN].setdefault("entities", {})
+        registry[self.entity_id] = self
+        self.async_on_remove(lambda: registry.pop(self.entity_id, None))
         if self._sources:
             self.async_on_remove(
                 async_track_state_change_event(self.hass, self._sources, self._async_source_changed)
@@ -175,6 +179,36 @@ class CombinedTodoListEntity(TodoListEntity):
 
     async def _async_interval_refresh(self, _now: datetime.datetime) -> None:
         await self._refresh_debouncer.async_call()
+
+    # ------------------------------------------------------------------
+    # Für die Karte (lists.py)
+    # ------------------------------------------------------------------
+    def card_items(self) -> list[dict[str, Any]]:
+        """Einträge mit Originaltext (ohne „· Anna“-Anhängsel), Quelle und Fremd-Kennzeichen."""
+        out: list[dict[str, Any]] = []
+        for item in self._attr_todo_items or []:
+            if not item.uid or item.uid not in self._index:
+                continue
+            source, _source_uid, original = self._index[item.uid]
+            out.append(
+                {
+                    "uid": item.uid,
+                    "text": original,
+                    "note": item.description or "",
+                    "checked": item.status == TodoItemStatus.COMPLETED,
+                    "source": self._source_name(source) if len(self._sources) > 1 else None,
+                    "foreign": source in self._foreign,
+                }
+            )
+        return out
+
+    @property
+    def source_names(self) -> list[str]:
+        return [self._source_name(s) for s in self._sources]
+
+    @property
+    def all_foreign(self) -> bool:
+        return bool(self._sources) and all(s in self._foreign for s in self._sources)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

@@ -62,26 +62,19 @@ Ein klickbares Mockup mit simulierten Daten liegt unter `mockup/card-mockup.html
 
 ### Stand
 
-Fertig und in HA nutzbar: Lern-/Vorschlags-/Einstellungs-Befehle (`websocket.py`), automatisches Laden
-der Karte, Kategorien in den kombinierten Listen.
+Die Karte funktioniert in HA mit kombinierten SmartLists-Listen **und jeder normalen To-do-Liste**
+(Einkaufsliste, Local To-do, Google Tasks, Bring!, …). Erlaubt ist, was die Liste selbst kann; bei
+kombinierten Listen sind Artikel aus fremden Quellen nur abhakbar. Änderungen von anderen Geräten
+erscheinen live.
 
-**Noch nicht im Backend:** die Listen-Befehle, die die Karte zum Anzeigen und Ändern nutzt
-(`smartlists/get_list`, `add_item`, `update_item`, `remove_items`, `clear_completed`, `lists`,
-`move_item`). Bis dahin funktioniert die Karte nur im Mockup. Geplant zusammen mit eigenen Listen und
-Freigaben pro Benutzer.
+Noch offen: eigene Listen direkt in SmartLists und Freigaben pro Benutzer (A gibt B eine Liste mit
+bestimmten Rechten frei).
 
-### WebSocket-API (für Karte und später die App)
+### Schnittstelle für die App
 
-| Befehl | Zweck |
-|---|---|
-| `smartlists/config` | Kategorien, Tag-Regeln, bekannte Märkte |
-| `smartlists/suggest` `{query, entity_id?}` | Vorschläge; leere Eingabe = häufig gekauft; `@Re` = Märkte |
-| `smartlists/describe` `{texts}` | Text zerlegen: Name, Menge, Einheit, Tags, Kategorie, übliche Einheit |
-| `smartlists/set_category` `{name, category\|null}` | Kategorie merken / zurück auf automatisch |
-| `smartlists/learned`, `smartlists/forget` `{word}` | Gemerktes anzeigen / vergessen (Admin) |
-| `smartlists/set_tag_rules` `{rules}` | Namenskonvention ändern (Admin) |
-| `smartlists/user_settings` | Haushalts-Standard + eigene Bedien-Einstellungen |
-| `smartlists/set_user_settings` `{settings, scope}` | `scope: user` (eigene) oder `household` (Admin) |
+Die HA-SmartLists-App kann sich mit der Integration koppeln (`smartlists/info`) und zeigt dann
+dieselben Badges, Kategorien und Vorschläge an. Alle Befehle, Antworten und das Textformat:
+[docs/app-api.md](docs/app-api.md).
 
 Das Kategorie-Paket wird aus dem der App erzeugt: `python scripts/build_categories.py` (sucht die App im Nachbarordner `shopping_manager_app`).
 
@@ -138,7 +131,8 @@ custom_components/smartlists/
   categories.py/json Kategorie-Paket (aus der App erzeugt, mit Produkten + Einheiten)
   itemtext.py        Artikeltext zerlegen: Menge, Einheit, Tags (@REWE …)
   learning.py        Gedächtnis: Kategorien, Verlauf, Vorschläge, Tag-Regeln, Bedienung
-  websocket.py       Befehle für Karte und App
+  lists.py           Listen lesen/ändern (kombinierte und normale To-do-Listen)
+  websocket.py       Befehle für Karte und App (siehe docs/app-api.md)
   www/smartlists-card.js   Lovelace-Karte
   strings.json, translations/   Texte (Deutsch/Englisch)
 scripts/build_categories.py     categories.json aus dem App-Paket erzeugen

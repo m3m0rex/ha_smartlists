@@ -4,6 +4,11 @@ from __future__ import annotations
 
 DOMAIN = "smartlists"
 
+# Unter-Eintrag-Typ für kombinierte Listen
+SUBENTRY_COMBINED = "combined_list"
+# Aus der Migration: unique_id der Entität vor 1.2 (damit entity_id gleich bleibt)
+LEGACY_UNIQUE_ID = "legacy_unique_id"
+
 CONF_SOURCES = "sources"
 CONF_DEFAULT_ADD = "default_add_entity"
 CONF_MODE = "mode"

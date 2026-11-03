@@ -3,59 +3,117 @@
   "config": {
     "step": {
       "user": {
-        "title": "Kombinierte Liste anlegen",
-        "description": "Führt mehrere To-do-Listen zu einer gemeinsamen Liste zusammen (z.B. für den Großeinkauf).",
-        "data": {
-          "name": "Name der kombinierten Liste",
-          "sources": "Listen, die zusammengeführt werden",
-          "default_add_entity": "Standard-Liste für neue Artikel",
-          "mode": "Abhaken wirkt sich aus auf",
-          "source_label": "Herkunft im Artikelnamen anzeigen",
-          "sort": "Sortierung",
-          "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
-        },
-        "data_description": {
-          "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
-          "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
-          "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
-          "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
-        }
+        "title": "SmartLists einrichten",
+        "description": "Danach kannst du bei der Integration kombinierte Listen hinzufügen und über „Konfigurieren“ Namenskonvention, Bedienung und gemerkte Kategorien einstellen. Die Lovelace-Karte „SmartLists“ steht ab jetzt im Dashboard zur Verfügung."
       }
     },
-    "error": {
-      "no_sources": "Bitte mindestens eine Liste auswählen.",
-      "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
-      "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
-      "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
-      "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein."
+    "abort": {
+      "single_instance_allowed": "SmartLists ist bereits eingerichtet. Kombinierte Listen fügst du direkt bei der Integration hinzu."
+    }
+  },
+  "config_subentries": {
+    "combined_list": {
+      "initiate_flow": {
+        "user": "Kombinierte Liste hinzufügen"
+      },
+      "entry_type": "Kombinierte Liste",
+      "step": {
+        "user": {
+          "title": "Kombinierte Liste anlegen",
+          "description": "Führt mehrere To-do-Listen zu einer gemeinsamen Liste zusammen (z.B. für den Großeinkauf).",
+          "data": {
+            "name": "Name der kombinierten Liste",
+            "sources": "Listen, die zusammengeführt werden",
+            "default_add_entity": "Standard-Liste für neue Artikel",
+            "mode": "Abhaken wirkt sich aus auf",
+            "source_label": "Herkunft im Artikelnamen anzeigen",
+            "sort": "Sortierung",
+            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
+          },
+          "data_description": {
+            "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
+            "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
+            "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
+            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+          }
+        },
+        "reconfigure": {
+          "title": "Kombinierte Liste bearbeiten",
+          "data": {
+            "name": "Name der kombinierten Liste",
+            "sources": "Listen, die zusammengeführt werden",
+            "default_add_entity": "Standard-Liste für neue Artikel",
+            "mode": "Abhaken wirkt sich aus auf",
+            "source_label": "Herkunft im Artikelnamen anzeigen",
+            "sort": "Sortierung",
+            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
+          },
+          "data_description": {
+            "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
+            "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
+            "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
+            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Bitte mindestens eine Liste auswählen.",
+        "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
+        "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
+        "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
+        "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein."
+      },
+      "abort": {
+        "reconfigure_successful": "Gespeichert."
+      }
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Kombinierte Liste bearbeiten",
+        "title": "SmartLists – Einstellungen für alle",
+        "description": "Persönliche Abweichungen stellt jeder Benutzer im Zahnrad der Karte ein.",
+        "menu_options": {
+          "naming": "Namenskonvention (@Markt, *Person, #Schlagwort)",
+          "controls": "Bedienung (Standard für alle)",
+          "learned": "Gemerkte Kategorien & Verlauf"
+        }
+      },
+      "naming": {
+        "title": "Namenskonvention",
+        "description": "Ein Zeichen vor einem Wort macht daraus ein Badge, z.B. „Milch @REWE“ → Markt-Badge REWE. Die Zeichen bleiben im Artikelnamen stehen. „—“ schaltet eine Art ab.",
         "data": {
-          "sources": "Listen, die zusammengeführt werden",
-          "default_add_entity": "Standard-Liste für neue Artikel",
-          "mode": "Abhaken wirkt sich aus auf",
-          "source_label": "Herkunft im Artikelnamen anzeigen",
-          "sort": "Sortierung",
-          "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
-        },
-        "data_description": {
-          "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
-          "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
-          "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
-          "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+          "prefix_store": "Markt",
+          "prefix_person": "Person",
+          "prefix_tag": "Schlagwort"
+        }
+      },
+      "controls": {
+        "title": "Bedienung – Standard für alle",
+        "description": "Gilt für jeden Benutzer, der in der Karte nichts Eigenes eingestellt hat.",
+        "data": {
+          "press_gesture": "Geste für das Artikel-Menü",
+          "press_target": "Wo die Geste greift",
+          "press_result": "Was die Geste macht",
+          "menu_actions": "Einträge im Menü",
+          "row_buttons": "Stift und Papierkorb in jeder Zeile zeigen",
+          "shop_hide_checked": "Einkaufsmodus: abgehakte ausblenden",
+          "shop_keep_awake": "Einkaufsmodus: Bildschirm anlassen",
+          "shop_large": "Einkaufsmodus: große Zeilen",
+          "shop_tap_row": "Einkaufsmodus: ganze Zeile antippen zum Abhaken"
+        }
+      },
+      "learned": {
+        "title": "Gemerkte Kategorien & Verlauf",
+        "description": "{count} gemerkte Zuordnungen, {history} Artikel im Verlauf. Ausgewählte Zuordnungen werden vergessen.",
+        "data": {
+          "forget": "Vergessen",
+          "clear_history": "Verlauf löschen (Vorschläge, häufig gekauft)"
         }
       }
     },
     "error": {
-      "no_sources": "Bitte mindestens eine Liste auswählen.",
-      "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
-      "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
-      "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
-      "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein."
+      "duplicate_prefix": "Jedes Zeichen darf nur für eine Art verwendet werden."
     }
   },
   "selector": {
@@ -78,6 +136,36 @@
         "status": "Offene zuerst, dann alphabetisch",
         "alphabetical": "Alphabetisch",
         "category": "Nach Einkaufs-Kategorie (Obst & Gemüse, Kühlung, …)"
+      }
+    },
+    "press_gesture": {
+      "options": {
+        "long": "Lange drücken",
+        "double": "Doppelklick",
+        "right": "Rechtsklick",
+        "off": "Aus"
+      }
+    },
+    "press_target": {
+      "options": {
+        "row": "Ganze Zeile",
+        "name": "Nur auf den Namen"
+      }
+    },
+    "press_result": {
+      "options": {
+        "menu": "Menü öffnen",
+        "edit": "Direkt bearbeiten",
+        "delete": "Löschen (mit Nachfrage)"
+      }
+    },
+    "menu_actions": {
+      "options": {
+        "rename": "Umbenennen / bearbeiten",
+        "move": "Verschieben",
+        "copy": "Kopieren",
+        "category": "Kategorie ändern",
+        "delete": "Löschen"
       }
     }
   },

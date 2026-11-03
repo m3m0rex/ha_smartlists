@@ -15,7 +15,7 @@ from homeassistant.components.todo import (
     TodoListEntity,
     TodoListEntityFeature,
 )
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_FRIENDLY_NAME, EVENT_CALL_SERVICE
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
@@ -45,7 +45,9 @@ from .const import (
     SORT_CATEGORY,
     SORT_SOURCE,
     SORT_STATUS,
+    LEGACY_UNIQUE_ID,
     SIGNAL_LEARNING_CHANGED,
+    SUBENTRY_COMBINED,
     STORAGE_VERSION,
     UID_SEPARATOR,
 )
@@ -58,19 +60,27 @@ PREFIX_TEMPLATE = "[{}] "
 FALLBACK_REFRESH = timedelta(minutes=5)
 
 
-def _options(entry: ConfigEntry) -> dict[str, Any]:
-    """Daten + Optionen zusammenführen (Optionen haben Vorrang)."""
-    return {**entry.data, **entry.options}
+def list_key(subentry: ConfigSubentry) -> str:
+    """Stabiler Schlüssel je kombinierter Liste (unique_id der Entität, Name der Speicherdatei).
+    Nach der Migration aus 1.1 bleibt der alte Schlüssel, damit entity_id und Häkchen erhalten bleiben."""
+    return str(subentry.data.get(LEGACY_UNIQUE_ID) or subentry.subentry_id)
 
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    """Kombinierte Liste als To-do-Entität anlegen."""
-    store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}")
-    stored = await store.async_load() or {}
+    """Je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     learning: Learning = hass.data[DOMAIN]["learning"]
-    async_add_entities([CombinedTodoListEntity(hass, entry, store, stored, learning)])
+    for subentry in entry.subentries.values():
+        if subentry.subentry_type != SUBENTRY_COMBINED:
+            continue
+        key = list_key(subentry)
+        store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.{key}")
+        stored = await store.async_load() or {}
+        async_add_entities(
+            [CombinedTodoListEntity(hass, dict(subentry.data), subentry.title, key, store, stored, learning)],
+            config_subentry_id=subentry.subentry_id,
+        )
 
 
 class CombinedTodoListEntity(TodoListEntity):
@@ -82,14 +92,14 @@ class CombinedTodoListEntity(TodoListEntity):
     def __init__(
         self,
         hass: HomeAssistant,
-        entry: ConfigEntry,
+        opts: dict[str, Any],
+        title: str,
+        unique_id: str,
         store: Store[dict[str, Any]],
         stored: dict[str, Any],
         learning: Learning,
     ) -> None:
-        opts = _options(entry)
         self.hass = hass
-        self._entry = entry
         self._store = store
         self._learning = learning
         self._categories: CategoryIndex = learning.categories
@@ -105,8 +115,8 @@ class CombinedTodoListEntity(TodoListEntity):
         self._index: dict[str, tuple[str, str, str]] = {}
         self._source_states: dict[str, dict[str, Any]] = {}
 
-        self._attr_unique_id = entry.entry_id
-        self._attr_name = entry.title
+        self._attr_unique_id = unique_id
+        self._attr_name = title
         self._attr_todo_items = []
         self._refresh_debouncer = Debouncer(
             hass, _LOGGER, cooldown=0.5, immediate=False, function=self._async_refresh

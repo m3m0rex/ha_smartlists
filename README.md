@@ -16,6 +16,8 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
   Ursprungslisten werden nicht verändert. Das entspricht „Nur lokal" in der App.
 - **Fremde Listen**: Artikel aus Listen anderer Personen kannst du nur abhaken, aber nicht
   umbenennen oder löschen.
+- **Herkunft als Person**: Artikel aus `todo.torben` bekommen in Karte und Seite das Badge 👤 Torben
+  (wie `*Torben`); Füllwörter wie „Einkaufsliste“ werden weggelassen. Pro Liste abschaltbar.
 - **Herkunft anzeigen**: `Milch · Anna` oder `[Anna] Milch`; die Anzeige ist auch abschaltbar.
 - **Sortierung**: nach Liste, nach Einkaufs-Kategorie, offene zuerst oder alphabetisch.
   Die Kategorie-Erkennung nutzt dasselbe Stichwort-Paket wie die App mit über 6000 Begriffen.
@@ -41,6 +43,14 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
 
 Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird auch „2 kg Äpfel“ erkannt.
 
+## Seite „SmartLists“ in der Seitenleiste
+
+Nach dem Einrichten gibt es links in HA den Eintrag **SmartLists**: alle To-do-Listen (kombinierte
+zuerst) als Umschalter oben, darunter die Liste mit Badges, Kategorien, Stepper, Suche und
+Einkaufsmodus – ohne dass man ein Dashboard bauen muss. Die eingebaute To-do-Seite von HA zeigt
+Artikel nur als Text („Milch 2 l @REWE“); Badges gibt es nur auf dieser Seite und in der Karte.
+Ausblenden lässt sich der Eintrag wie jeder andere über *Seitenleiste bearbeiten*.
+
 ## Lovelace-Karte `custom:smartlists-card`
 
 Wird von der Integration automatisch geladen (keine Dashboard-Ressource nötig).
@@ -51,7 +61,8 @@ entity: todo.grosseinkauf
 sort: category        # category | alpha | added | list
 ```
 
-Ein Eingabefeld mit Live-Vorschau (Menge, Kategorie, Badges) und Vorschlägen (↑/↓, Tab, Enter),
+Suche (Lupe; findet auch über Markt, Person, Notiz, Kategorie, „apfel“ findet „Äpfel“), Mengen-Stepper
+− +, ein Eingabefeld mit Live-Vorschau (Menge, Kategorie, Badges) und Vorschlägen (↑/↓, Tab, Enter),
 „Häufig gekauft“, Kategorie per Klick ändern (wird gemerkt), feste Spalten Name | Menge | Einheit,
 Sortierung (Kategorie, A–Z, Hinzugefügt, nach Liste), langes Drücken → Menü (Bearbeiten, Verschieben,
 Kopieren, Kategorie, Löschen), Einkaufsmodus (Bildschirm an, Erledigte ausblenden, große Zeilen, Zeile

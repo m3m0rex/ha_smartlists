@@ -174,6 +174,26 @@ def encode(item: ParsedItem, rules: list[dict[str, str]]) -> str:
     return " ".join(p for p in parts if p)
 
 
+# Wörter, die in Listennamen nichts über die Person sagen ("Einkaufsliste Torben" → "Torben")
+_LIST_NOISE = {
+    "einkaufsliste", "einkaufslisten", "einkauf", "einkaufen", "liste", "listen", "todo", "to-do", "aufgaben",
+    "shopping", "list", "grocery", "groceries", "von", "für", "fuer", "of", "for", "die", "der", "das", "meine", "my",
+}
+
+
+def person_from_list_name(name: str, entity_id: str = "") -> str | None:
+    """Person aus dem Namen einer Liste ableiten: "Torben" bzw. todo.torben → "Torben",
+    "Einkaufsliste Torben" → "Torben". Es werden nur Füllwörter entfernt, nichts geraten
+    (z.B. kein Genitiv-s). Bleibt nichts übrig ("Einkaufsliste"), gibt es keine Person."""
+    raw = name or entity_id.split(".", 1)[-1].replace("_", " ")
+    words = [w for w in re.split(r"[\s_\-–·:]+", raw.strip()) if w]
+    kept = [w for w in words if w.casefold() not in _LIST_NOISE]
+    if not kept:
+        return None
+    person = " ".join(kept)
+    return person[:1].upper() + person[1:]
+
+
 def open_tag_query(text: str, rules: list[dict[str, str]]) -> tuple[str, str] | None:
     """Tippt der Nutzer gerade einen Tag ("Milch @Re")? → (kind, angefangener Wert)."""
     if not text or text[-1].isspace():

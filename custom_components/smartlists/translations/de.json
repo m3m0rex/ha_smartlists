@@ -28,13 +28,15 @@
             "mode": "Abhaken wirkt sich aus auf",
             "source_label": "Herkunft im Artikelnamen anzeigen",
             "sort": "Sortierung",
-            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
+            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)",
+            "source_as_person": "Herkunft als Person anzeigen"
           },
           "data_description": {
             "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
             "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
-            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
+            "source_as_person": "Artikel aus z.B. todo.torben bekommen das Badge 👤 Torben – wie *Torben im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
           }
         },
         "reconfigure": {
@@ -46,13 +48,15 @@
             "mode": "Abhaken wirkt sich aus auf",
             "source_label": "Herkunft im Artikelnamen anzeigen",
             "sort": "Sortierung",
-            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)"
+            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)",
+            "source_as_person": "Herkunft als Person anzeigen"
           },
           "data_description": {
             "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
             "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
-            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst."
+            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
+            "source_as_person": "Artikel aus z.B. todo.torben bekommen das Badge 👤 Torben – wie *Torben im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
           }
         }
       },

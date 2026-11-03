@@ -16,6 +16,7 @@ import logging
 from pathlib import Path
 from types import MappingProxyType
 
+from homeassistant.components import frontend, panel_custom
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry, ConfigSubentry
@@ -32,7 +33,9 @@ from .learning import async_get_learning
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.TODO]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
-CARD_URL = f"/{DOMAIN}/smartlists-card.js"
+# eigener Pfad, damit er sich nicht mit der Seitenleisten-Seite /smartlists überschneidet
+CARD_URL = "/smartlists-files/smartlists-card.js"
+PANEL_URL_PATH = DOMAIN
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -52,7 +55,25 @@ async def _async_register_card(hass: HomeAssistant) -> None:
     except RuntimeError:
         return  # bereits registriert (z.B. Neuladen der Integration)
     version = (await async_get_integration(hass, DOMAIN)).version
-    add_extra_js_url(hass, f"{CARD_URL}?v={version}")
+    hass.data[DOMAIN]["card_url"] = f"{CARD_URL}?v={version}"
+    add_extra_js_url(hass, hass.data[DOMAIN]["card_url"])
+
+
+async def _async_register_panel(hass: HomeAssistant) -> None:
+    """Eigene Seite „SmartLists“ in der Seitenleiste: alle Listen mit der Karte, ohne Dashboard.
+    Die eingebaute To-do-Seite von HA zeigt nur Text – hier gibt es Badges, Kategorien, Stepper."""
+    try:
+        await panel_custom.async_register_panel(
+            hass,
+            frontend_url_path=PANEL_URL_PATH,
+            webcomponent_name="smartlists-panel",
+            sidebar_title="SmartLists",
+            sidebar_icon="mdi:cart-variant",
+            module_url=hass.data[DOMAIN].get("card_url", CARD_URL),
+            require_admin=False,
+        )
+    except ValueError:
+        pass  # schon registriert (Neuladen)
 
 
 async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -88,6 +109,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Integration einrichten: je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
+    await _async_register_panel(hass)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
@@ -100,6 +122,7 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Integration entladen."""
+    frontend.async_remove_panel(hass, PANEL_URL_PATH)
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 

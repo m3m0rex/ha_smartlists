@@ -15,6 +15,8 @@ CONF_MODE = "mode"
 CONF_SOURCE_LABEL = "source_label"
 CONF_SORT = "sort"
 CONF_FOREIGN = "foreign_entities"
+# Herkunft als Person werten: Artikel aus todo.torben bekommen das Badge 👤 Torben (wie *Torben)
+CONF_SOURCE_AS_PERSON = "source_as_person"
 
 # Abhaken wirkt sich aus auf …
 MODE_BIDIRECTIONAL = "bidirectional"  # … die Ursprungsliste (Standard)

@@ -28,6 +28,8 @@ const ICON = {
   tagIcon: "M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z",
   undo: "M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z",
   importIcon: "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z",
+  search: "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z",
+  minus: "M19,13H5V11H19V13Z",
   back: "M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z",
   close: "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z",
   brain: "M21.33,12.91C21.42,14.46 20.71,15.95 19.44,16.86L20.21,18.35C20.44,18.8 20.47,19.33 20.27,19.8C20.08,20.27 19.69,20.64 19.21,20.8L18.42,21.05C18.25,21.11 18.06,21.14 17.88,21.14C17.37,21.14 16.89,20.91 16.56,20.5L14.44,18C13.55,17.85 12.71,17.47 12,16.9C11.5,17.05 11,17.13 10.5,17.13C9.62,17.13 8.74,16.86 8,16.34C7.47,16.5 6.93,16.57 6.38,16.56C5.59,16.57 4.81,16.41 4.08,16.11C2.65,15.47 1.7,14.07 1.65,12.5C1.57,11.78 1.69,11.05 2,10.39C1.71,9.64 1.68,8.82 1.93,8.06C2.3,7.11 3,6.32 3.87,5.82C4.45,4.13 6.08,3 7.87,3.12C9.47,1.62 11.92,1.46 13.7,2.75C14.12,2.64 14.56,2.58 15,2.58C16.36,2.55 17.65,3.15 18.5,4.22C20.54,4.75 22,6.57 22.08,8.69C22.13,9.8 21.83,10.89 21.22,11.82C21.29,12.18 21.33,12.54 21.33,12.91",
@@ -58,6 +60,8 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
+    qty_less: "Menge verringern", qty_more: "Menge erhöhen", qty_changed: "Menge geändert",
+    search: "Suchen", search_placeholder: "In der Liste suchen …", hits: "Treffer", no_hits: "Nichts gefunden für", add_this: "hinzufügen",
     imp: "Importieren", imp_ha: "Aus Home Assistant", imp_text: "Als Text", imp_source: "Liste",
     imp_done: "Erledigte mit übernehmen", imp_skip_dupes: "Schon vorhandene überspringen", imp_go: "Übernehmen",
     imp_text_help: "Eine Zeile pro Artikel. Aufzählungen, [ ] / [x] und Nummern werden erkannt, ebenso Mengen und Tags.",
@@ -93,6 +97,8 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
+    qty_less: "Decrease quantity", qty_more: "Increase quantity", qty_changed: "quantity changed",
+    search: "Search", search_placeholder: "Search this list …", hits: "matches", no_hits: "Nothing found for", add_this: "add",
     imp: "Import", imp_ha: "From Home Assistant", imp_text: "As text", imp_source: "List",
     imp_done: "Include completed", imp_skip_dupes: "Skip items already on the list", imp_go: "Import",
     imp_text_help: "One item per line. Bullets, [ ] / [x] and numbers are recognised, as are quantities and tags.",
@@ -206,6 +212,10 @@ function parseImportText(text) {
     if (line) out.push({ text: line, checked });
   }
   return out;
+}
+// Für die Suche: klein, ohne Akzente/Umlaut-Punkte ("Äpfel" → "apfel"), ß → ss
+function searchKey(s) {
+  return String(s || "").toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 window.SmartListsText = { parseText, encodeText, openTagQuery, splitTags, parseImportText };
 
@@ -329,6 +339,13 @@ const STYLE = `
   .qtycol { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--primary-color); white-space:nowrap; font-size:.9rem; }
   .unitcol { text-align:left; color:var(--secondary-text-color); white-space:nowrap; font-size:.85rem; }
   .row.checked .qtycol { color:var(--secondary-text-color); font-weight:400; }
+  /* Mengen-Stepper − 2 + (wie in der App) */
+  .stepper { display:inline-flex; align-items:center; gap:2px; justify-content:flex-end; }
+  .stepper .sbtn { width:24px; height:24px; border-radius:50%; border:1px solid var(--divider-color,#ddd); background:none; padding:0;
+    display:inline-flex; align-items:center; justify-content:center; color:var(--secondary-text-color); cursor:pointer; flex:none; }
+  .stepper .sbtn:hover { border-color:var(--primary-color); color:var(--primary-color); }
+  .stepper .sval { min-width:1.6em; text-align:center; }
+  .shopping .row.large .stepper .sbtn { width:30px; height:30px; }
   .row:hover { background:var(--secondary-background-color,#f6f6f6); }
   .box { flex:none; width:22px; height:22px; border-radius:6px; border:2px solid var(--secondary-text-color); background:none;
     padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:transparent; }
@@ -417,6 +434,12 @@ const STYLE = `
   .imp-prev .ir .n { flex:1; min-width:0; overflow-wrap:anywhere; }
   .imp-prev .ir.checked .n { text-decoration:line-through; }
 
+  .searchbar { display:flex; align-items:center; gap:6px; padding:0 16px 10px; }
+  .searchbar input { flex:1; }
+  .iname mark { background:color-mix(in srgb, var(--warning-color,#f5a623) 35%, transparent); color:inherit; border-radius:2px; padding:0 1px; }
+  .nohits { padding:16px; text-align:center; color:var(--secondary-text-color); }
+  .nohits .btn { margin-top:6px; }
+
   .settings { padding:4px 16px 16px; border-top:1px solid var(--divider-color,#e0e0e0); }
   .settings h3 { font-size:.95rem; font-weight:600; margin:14px 0 2px; }
   .settings .help { font-size:.8rem; color:var(--secondary-text-color); margin:0 0 8px; }
@@ -436,6 +459,7 @@ const STYLE = `
 class SmartListsCard extends HTMLElement {
   setConfig(config) {
     if (!config || !config.entity) throw new Error("Bitte 'entity' angeben (eine SmartLists-Liste).");
+    if (this._config && this._config.entity !== config.entity) this._unsubscribe();
     this._config = { sort: "category", show_completed: true, show_note: true, show_frequent: true, ...config };
     // alte Option group_by_category: false → A–Z
     if (config.group_by_category === false && !config.sort) this._config.sort = "alpha";
@@ -498,7 +522,14 @@ class SmartListsCard extends HTMLElement {
   }
   async _load() {
     try {
-      this._data = await this._call("get_list");
+      const data = await this._call("get_list");
+      if (!data || !Array.isArray(data.items)) throw new Error("Unerwartete Antwort der SmartLists-Integration – bitte Integration aktualisieren.");
+      this._data = data;
+      // noch nicht gespeicherte Stepper-Werte beibehalten (sonst springt die Anzeige zurück)
+      for (const it of this._data.items) {
+        const pend = this._qtyPending && this._qtyPending[it.uid];
+        if (pend) { it.quantity = pend.quantity; it.pack_count = pend.pack_count; }
+      }
       this._error = null;
     } catch (e) {
       this._error = (e && e.message) || this._t.error;
@@ -553,6 +584,7 @@ class SmartListsCard extends HTMLElement {
     if (this._card) return;
     const root = this.shadowRoot;
     this._headEl = h("div", { class: "head" });
+    this._searchEl = h("div");
     this._settingsEl = h("div");
     this._importEl = h("div");
     this._addEl = h("div");
@@ -562,7 +594,7 @@ class SmartListsCard extends HTMLElement {
     this._progressEl = h("div");
     this._menuEl = h("div");
     this._snackEl = h("div");
-    this._card = h("ha-card", {}, this._headEl, this._progressEl, this._settingsEl, this._importEl, this._addEl, this._freqEl, this._msgEl,
+    this._card = h("ha-card", {}, this._headEl, this._searchEl, this._progressEl, this._settingsEl, this._importEl, this._addEl, this._freqEl, this._msgEl,
       this._listEl, this._snackEl, this._menuEl);
     fill(root, h("style", {}, STYLE), this._card);
   }
@@ -578,12 +610,16 @@ class SmartListsCard extends HTMLElement {
       return;
     }
     const open = d.items.filter((i) => !i.checked);
+    // Trefferzahl schon hier, der Kopf wird vor der Liste gezeichnet
+    this._hitCount = this._searchQuery ? d.items.filter((i) => this._matches(i, d)).length : 0;
     fill(this._headEl, 
       h("div", { class: "title" }, this._config.title || d.name),
       d.type === "combined" ? h("span", { class: "badge combined" }, t.combined) : null,
       d.foreign ? h("span", { class: "badge foreign" }, t.foreign) : null,
-      h("span", { class: "count" }, this._shopping
-        ? `${d.items.length - open.length}/${d.items.length} ${t.in_cart}` : `${open.length} ${t.open}`),
+      h("span", { class: "count" }, this._searchQuery
+        ? `${this._hitCount ?? 0} ${t.hits}`
+        : this._shopping ? `${d.items.length - open.length}/${d.items.length} ${t.in_cart}` : `${open.length} ${t.open}`),
+      iconBtn(this._search != null ? ICON.close : ICON.search, t.search, () => this._toggleSearch()),
       d.permissions.add && this._config.show_import !== false
         ? iconBtn(this._showImport ? ICON.close : ICON.importIcon, t.imp, () => { this._showImport = !this._showImport; this._showSettings = false; this._renderSettings(); this._renderImport(); this._render(); })
         : null,
@@ -837,6 +873,66 @@ class SmartListsCard extends HTMLElement {
       h("div", { class: "menu", role: "menu", style: `top:${top}px` }, body));
   }
 
+  /* ---------------- Mengen-Stepper ----------------
+   * Wie in der App: ±1, nie unter 0; bei Mehrfachpackungen ("4× 150 g") ändert sich die Anzahl
+   * der Packungen (nie unter 1). Schnelles Tippen wird gesammelt und nach kurzer Pause einmal
+   * gespeichert; die Anzeige ändert sich sofort. */
+  _stepQty(it, delta) {
+    const multi = it.pack_count > 1;
+    if (multi) it.pack_count = Math.max(1, it.pack_count + delta);
+    else it.quantity = Math.max(0, Math.round(((it.quantity || 0) + delta) * 1000) / 1000);
+    this._qtyPending = this._qtyPending || {};
+    const entry = this._qtyPending[it.uid] || { original: it.text, timer: null };
+    clearTimeout(entry.timer);
+    entry.quantity = it.quantity;
+    entry.pack_count = it.pack_count;
+    this._qtyPending[it.uid] = entry;
+    this._renderList();
+    entry.timer = setTimeout(() => {
+      delete this._qtyPending[it.uid];
+      const parsed = parseText(entry.original, this._cfg.tag_rules, this._cfg.known_stores);
+      const text = encodeText({ ...parsed, quantity: it.quantity, pack_count: it.pack_count }, this._cfg.tag_rules);
+      if (text === entry.original) return;
+      this._change(`${it.name}: ${this._t.qty_changed}`, "update_item", { uid: it.uid, text },
+        () => () => this._call("update_item", { uid: it.uid, text: entry.original }), { snack: false });
+    }, 600);
+  }
+
+  /* ---------------- Suche ---------------- */
+  get _searchQuery() { return this._search ? searchKey(this._search.trim()) : ""; }
+
+  _toggleSearch() {
+    if (this._search != null) { this._search = null; fill(this._searchEl); this._searchInput = null; }
+    else { this._search = ""; this._renderSearch(); setTimeout(() => this._searchInput && this._searchInput.focus(), 0); }
+    this._render();
+  }
+  _renderSearch() {
+    if (this._search == null) return fill(this._searchEl);
+    if (this._searchInput) return; // Feld bleibt beim Neuzeichnen erhalten (Fokus, Cursor)
+    const t = this._t;
+    this._searchInput = h("input", { type: "search", placeholder: t.search_placeholder, "aria-label": t.search, value: this._search, autocomplete: "off",
+      oninput: (e) => { this._search = e.target.value; this._render(); },
+      onkeydown: (e) => { if (e.key === "Escape") this._toggleSearch(); } });
+    fill(this._searchEl, h("div", { class: "searchbar" }, this._searchInput));
+  }
+  // Treffer in Name, Notiz, Tags, Quelle und Kategorie
+  _matches(it, d) {
+    const q = this._searchQuery;
+    if (!q) return true;
+    const cat = d.categories.find((c) => c.id === it.category);
+    const hay = [it.name, it.note, it.source, cat && cat.label, ...(it.tags || []).map((x) => x.label)].map(searchKey).join("\n");
+    return q.split(/\s+/).every((w) => hay.includes(w));
+  }
+  // Treffer im Namen markieren (Position über die normalisierte Form, Länge bleibt bis auf ß gleich)
+  _highlight(name) {
+    const q = this._searchQuery;
+    if (!q) return name;
+    const word = q.split(/\s+/)[0];
+    const i = searchKey(name).indexOf(word);
+    if (i < 0 || /ß/.test(name)) return name;
+    return [name.slice(0, i), h("mark", {}, name.slice(i, i + word.length)), name.slice(i + word.length)];
+  }
+
   _sortSelect(d) {
     const t = this._t;
     const modes = SORT_MODES.filter((m) => m !== "list" || d.type === "combined");
@@ -1046,8 +1142,11 @@ class SmartListsCard extends HTMLElement {
   _renderList() {
     const t = this._t;
     const d = this._data;
-    const open = d.items.filter((i) => !i.checked);
-    const done = d.items.filter((i) => i.checked);
+    const searching = !!this._searchQuery;
+    const visible = searching ? d.items.filter((i) => this._matches(i, d)) : d.items;
+    this._hitCount = visible.length;
+    const open = visible.filter((i) => !i.checked);
+    const done = visible.filter((i) => i.checked);
     const out = [];
     const mode = this._sortMode;
     const byName = (a, b) => a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
@@ -1065,7 +1164,14 @@ class SmartListsCard extends HTMLElement {
         rows.push(h("div", { class: "group-title full" }, `${labelOf(k)} · ${items.length}`), items.map((i) => this._row(i, d, false)));
       });
     };
-    if (!open.length) out.push(h("div", { class: "empty" }, t.empty));
+    if (searching && !visible.length) {
+      // nichts gefunden → direkt hinzufügen anbieten
+      const term = this._search.trim();
+      out.push(h("div", { class: "nohits" }, `${t.no_hits} „${term}“`,
+        d.permissions.add ? h("div", {}, h("button", { class: "btn primary", type: "button",
+          onclick: () => { this._toggleSearch(); this._submit(term); } }, `„${term}“ ${t.add_this}`)) : null));
+    } else if (!open.length && searching) { /* nur erledigte Treffer – unten anzeigen */ }
+    else if (!open.length) out.push(h("div", { class: "empty" }, t.empty));
     else if (mode === "category") {
       // wie in der App: Gruppen in fester Markt-Reihenfolge, innerhalb A–Z
       const order = d.categories.map((c) => c.id);
@@ -1082,13 +1188,15 @@ class SmartListsCard extends HTMLElement {
     if (rows.length) out.push(h("div", { class: `items ${emoji ? "emoji" : ""}` }, rows));
 
     const hideDone = this._shopping && this._ui.shop_hide_checked;
+    // bei der Suche erledigte Treffer immer zeigen (aufgeklappt), „Erledigte entfernen“ nur ohne Filter
+    const collapsed = this._collapsedDone && !searching;
     if (this._config.show_completed && done.length && !hideDone) {
-      out.push(h("div", { class: `done-head ${this._collapsedDone ? "collapsed" : ""}`,
+      out.push(h("div", { class: `done-head ${collapsed ? "collapsed" : ""}`,
         onclick: () => { this._collapsedDone = !this._collapsedDone; this._renderList(); } },
         svg(ICON.chevron, 18, "chev"), `${t.done} (${done.length})`, h("span", { class: "grow" }),
-        d.permissions.delete ? iconBtn(ICON.sweep, t.clear, (e) => { e.stopPropagation(); this._deleteItems(done, `${done.length} ${t.removed}`); }) : null));
+        d.permissions.delete && !searching ? iconBtn(ICON.sweep, t.clear, (e) => { e.stopPropagation(); this._deleteItems(done, `${done.length} ${t.removed}`); }) : null));
       const doneSorted = mode === "added" ? done : [...done].sort(byName);
-      if (!this._collapsedDone) out.push(h("div", { class: "items emoji" }, doneSorted.map((i) => this._row(i, d, true))));
+      if (!collapsed) out.push(h("div", { class: "items emoji" }, doneSorted.map((i) => this._row(i, d, true))));
     }
     fill(this._listEl, ...out);
     if (this._menu) this._renderMenu();
@@ -1107,7 +1215,7 @@ class SmartListsCard extends HTMLElement {
     const shop = this._shopping;
     const buttons = ui.row_buttons && !shop;
     const tapRow = shop && ui.shop_tap_row && p.toggle;
-    const nameEl = h("span", { class: "iname" }, it.name);
+    const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
     const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
       onclick: (e) => {
         if (this._suppressClick) { this._suppressClick = false; return; }
@@ -1120,9 +1228,15 @@ class SmartListsCard extends HTMLElement {
         h("div", { class: "name-line" },
           nameEl,
           tags.map(badge),
-          it.source ? h("span", { class: "chip" }, it.source) : null),
+          // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.torben → 👤 Torben)
+          it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
         this._config.show_note && it.note ? h("div", { class: "note" }, it.note) : null),
-      h("span", { class: "qtycol" }, qty),
+      h("span", { class: "qtycol" }, p.rename && it.quantity != null && this._config.show_stepper !== false
+        ? h("span", { class: "stepper" },
+          h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
+          h("span", { class: "sval" }, qty),
+          h("button", { class: "sbtn", type: "button", title: t.qty_more, "aria-label": t.qty_more, onclick: () => this._stepQty(it, 1) }, svg(ICON.plus, 14)))
+        : qty),
       h("span", { class: "unitcol", title: it.unit || "" }, it.unit || ""),
       h("div", { class: "actions" },
         readonly && !shop ? h("span", { class: "lock-ic", title: t.readonly }, svg(ICON.lock, 16)) : null,
@@ -1345,7 +1459,7 @@ class SmartListsCardEditor extends HTMLElement {
       this._form = document.createElement("ha-form");
       this._form.computeLabel = (s) => ({ entity: "Liste", title: "Titel (optional)", sort: "Standard-Sortierung",
         show_completed: "Erledigte anzeigen", show_note: "Notizen anzeigen", show_frequent: "„Häufig gekauft“ anzeigen",
-        show_settings: "Zahnrad für Einstellungen anzeigen", show_import: "Import-Knopf anzeigen" }[s.name] || s.name);
+        show_settings: "Zahnrad für Einstellungen anzeigen", show_import: "Import-Knopf anzeigen", show_stepper: "Mengen-Stepper (− +)" }[s.name] || s.name);
       this._form.schema = [
         { name: "entity", required: true, selector: { entity: { domain: "todo" } } },
         { name: "title", selector: { text: {} } },
@@ -1357,15 +1471,102 @@ class SmartListsCardEditor extends HTMLElement {
         { name: "show_frequent", selector: { boolean: {} } },
         { name: "show_settings", selector: { boolean: {} } },
         { name: "show_import", selector: { boolean: {} } },
+        { name: "show_stepper", selector: { boolean: {} } },
       ];
       this._form.addEventListener("value-changed", (e) =>
         this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: e.detail.value }, bubbles: true, composed: true })));
       this.append(this._form);
     }
     this._form.hass = this._hass;
-    this._form.data = { sort: "category", show_completed: true, show_note: true, show_frequent: true, show_settings: true, show_import: true, ...this._config };
+    this._form.data = { sort: "category", show_completed: true, show_note: true, show_frequent: true, show_settings: true, show_import: true, show_stepper: true, ...this._config };
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Seitenleisten-Seite „SmartLists“ (von der Integration registriert)  */
+/* ------------------------------------------------------------------ */
+const PANEL_KEY = "smartlists-panel-list";
+const PANEL_STYLE = `
+  :host { display:block; min-height:100vh; background:var(--primary-background-color,#fafafa); color:var(--primary-text-color); }
+  .toolbar { display:flex; align-items:center; gap:4px; height:56px; padding:0 12px; box-sizing:border-box;
+    background:var(--app-header-background-color, var(--primary-color)); color:var(--app-header-text-color, var(--text-primary-color,#fff));
+    font-size:20px; position:sticky; top:0; z-index:3; }
+  .toolbar .title { flex:1; margin-left:8px; }
+  .toolbar button { background:none; border:none; color:inherit; width:40px; height:40px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; }
+  .toolbar button:hover { background:rgba(255,255,255,.15); }
+  .chips { display:flex; gap:8px; overflow-x:auto; padding:12px 16px 4px; scrollbar-width:none; max-width:760px; margin:0 auto; }
+  .chip { flex:none; display:flex; align-items:center; gap:6px; border:1px solid var(--divider-color,#ddd); background:var(--card-background-color,#fff);
+    border-radius:18px; padding:6px 12px; font:inherit; font-size:.9rem; cursor:pointer; color:var(--primary-text-color); white-space:nowrap; }
+  .chip.on { background:var(--primary-color); border-color:var(--primary-color); color:var(--text-primary-color,#fff); }
+  .chip .n { font-size:.75rem; opacity:.75; }
+  .content { max-width:760px; margin:0 auto; padding:8px 16px 32px; box-sizing:border-box; }
+  .empty { text-align:center; padding:48px 16px; color:var(--secondary-text-color); }
+`;
+
+class SmartListsPanel extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._selected = null;
+    try { this._selected = localStorage.getItem(PANEL_KEY); } catch (e) { /* */ }
+  }
+  set hass(hass) {
+    this._hass = hass;
+    this._render();
+    if (this._card) this._card.hass = hass;
+  }
+  set narrow(v) { this._narrow = v; this._render(); }
+  set panel(p) { this._panelInfo = p; }
+
+  _lists() {
+    const st = (this._hass && this._hass.states) || {};
+    return Object.keys(st).filter((e) => e.startsWith("todo.") && st[e].state !== "unavailable")
+      .map((e) => ({ e, name: st[e].attributes.friendly_name || e, open: Number(st[e].state) || 0,
+        combined: Array.isArray(st[e].attributes.source_lists) }))
+      // kombinierte zuerst, dann alphabetisch
+      .sort((a, b) => (b.combined - a.combined) || a.name.localeCompare(b.name));
+  }
+
+  _render() {
+    if (!this._hass) return;
+    const lists = this._lists();
+    if (!this._selected || !lists.some((l) => l.e === this._selected)) this._selected = lists.length ? lists[0].e : null;
+    if (!this._root) {
+      this._chipsEl = h("div", { class: "chips", role: "tablist" });
+      this._contentEl = h("div", { class: "content" });
+      this._menuBtn = h("button", { type: "button", "aria-label": "Menü", title: "Menü",
+        onclick: () => this.dispatchEvent(new Event("hass-toggle-menu", { bubbles: true, composed: true })) }, svg(ICON_MENU, 24));
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists")), this._chipsEl, this._contentEl);
+      this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
+    }
+    this._menuBtn.hidden = !this._narrow;
+    fill(this._chipsEl, lists.map((l) => h("button", { type: "button", role: "tab", class: `chip ${l.e === this._selected ? "on" : ""}`,
+      "aria-selected": String(l.e === this._selected), onclick: () => this._select(l.e) },
+      l.name, h("span", { class: "n" }, String(l.open)))));
+    if (!this._selected) {
+      this._card = null;
+      fill(this._contentEl, h("div", { class: "empty" }, "Keine To-do-Listen gefunden. Lege unter Einstellungen → Geräte & Dienste → SmartLists eine kombinierte Liste an."));
+      return;
+    }
+    if (!this._card || this._cardEntity !== this._selected) {
+      // je Liste eine frische Karte (eigene Live-Verbindung, eigener Eingabezustand)
+      this._card = document.createElement("smartlists-card");
+      this._card.setConfig({ entity: this._selected });
+      this._cardEntity = this._selected;
+      fill(this._contentEl, this._card);
+      this._card.hass = this._hass;
+    }
+  }
+  _select(entity) {
+    this._selected = entity;
+    try { localStorage.setItem(PANEL_KEY, entity); } catch (e) { /* */ }
+    this._render();
+  }
+}
+const ICON_MENU = "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z";
+
+if (!customElements.get("smartlists-panel")) customElements.define("smartlists-panel", SmartListsPanel);
 
 if (!customElements.get("smartlists-card")) {
   customElements.define("smartlists-card", SmartListsCard);

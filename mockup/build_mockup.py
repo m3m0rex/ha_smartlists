@@ -153,6 +153,9 @@ const HA_PLAIN = { "todo.shopping_list": { name: "Einkaufsliste (HA)", items: [
 const view = (e) => { const L = LISTS[e]; return { entity_id: e, name: L.name, type: L.type, foreign: L.foreign, source_lists: L.source_lists,
   permissions: L.permissions, categories: CATS,
   items: L.items.map(i => { const p = parse(i.text); const [c, o] = resolve(p.name);
+    // wie lists.py: Herkunft als Person (kombinierte Liste), wenn im Artikel keine Person steht
+    const pp = S.rules.find(r => r.kind === "person");
+    if (i.source && pp && !p.tags.some(t => t.kind === "person")) p.tags.push({ kind: "person", value: i.source, prefix: pp.prefix, label: i.source, implicit: true });
     return { ...i, ...p, category: c, category_source: o, permissions: i.permissions || { toggle: L.permissions.toggle, rename: L.permissions.rename, delete: L.permissions.delete } }; }) }; };
 async function callWS(msg) {
   await new Promise(r => setTimeout(r, 40));

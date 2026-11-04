@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.2] – 2026-11-04
+
+### Fixed
+
+- Checking off an item in a combined list failed with "'str' object has no attribute 'value'"
+  (`todo.update_item`). Newer Home Assistant versions pass the item status as plain text; both
+  forms are handled now.
+
 ## [1.5.1] – 2026-11-04
 
 ### Added

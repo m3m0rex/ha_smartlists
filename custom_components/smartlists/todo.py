@@ -62,6 +62,13 @@ PREFIX_TEMPLATE = "[{}] "
 FALLBACK_REFRESH = timedelta(minutes=5)
 
 
+def _status_text(status: Any) -> str | None:
+    """TodoItemStatus oder str → "needs_action"/"completed" (None bleibt None)."""
+    if status is None:
+        return None
+    return str(getattr(status, "value", status))
+
+
 def list_key(subentry: ConfigSubentry) -> str:
     """Stabiler Schlüssel je kombinierter Liste (unique_id der Entität, Name der Speicherdatei).
     Nach der Migration aus 1.1 bleibt der alte Schlüssel, damit entity_id und Häkchen erhalten bleiben."""
@@ -409,12 +416,14 @@ class CombinedTodoListEntity(TodoListEntity):
             if item.description is not None:
                 data["description"] = item.description
 
-        status_changed = item.status is not None and (current is None or item.status != current.status)
+        # HA übergibt den Status je nach Version als TodoItemStatus oder als reinen Text ("completed")
+        new_status = _status_text(item.status)
+        status_changed = new_status is not None and (current is None or new_status != _status_text(current.status))
         if status_changed and self._mode == MODE_LOCAL:
-            self._overrides[item.uid] = str(item.status.value)  # type: ignore[index, union-attr]
+            self._overrides[item.uid] = new_status  # type: ignore[index, assignment]
             self._save()
         elif status_changed:
-            data["status"] = item.status.value  # type: ignore[union-attr]
+            data["status"] = new_status
 
         if len(data) > 2:
             await self._call("update_item", data)

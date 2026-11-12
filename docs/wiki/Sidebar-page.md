@@ -12,7 +12,7 @@ Toolbar buttons:
 - **Order** (⇅) – ◀ ▶ on each chip moves a list; with the mouse you can also drag a chip onto another.
   The order applies to the chips and the columns and is remembered per browser.
 - **Wide** – use the full screen width.
-- **⚙ Settings** – all settings in one place: *For me* (your controls), *Household* (naming
+- **⚙ Settings** – the general settings (each list's own settings are in the gear of its card): *For me* (your controls), *Household* (naming
   convention, remembered categories, voice & automations, connected devices, backup, controls for
   everyone – admins) and *This list* (sharing, details).
 

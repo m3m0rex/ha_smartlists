@@ -3,6 +3,19 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.7.0] – 2026-11-12
+
+### Changed
+
+- **Two settings menus**: in the card the slider icon opens the **general settings** (For me, Household),
+  the gear the **settings of this list**. On the sidebar page ⚙ at the top right is the general menu and
+  every list card only has its list gear – no duplicate menus any more.
+
+### Added
+
+- Works with the app's new *Send to Home Assistant* for combined lists: local source lists are moved to
+  Home Assistant and the combined list is connected right away (device of the phone).
+
 ## [2.6.2] – 2026-11-12
 
 ### Fixed

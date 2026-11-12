@@ -127,7 +127,8 @@
           "devices": "Appareils connectés (application)",
           "automation": "Voix et automatisations (Assist, éléments à racheter)",
           "app_lists": "Listes de l'app (reprendre les listes combinées)",
-          "packs": "Détection des catégories (packs de mots-clés)"
+          "packs": "Détection des catégories (packs de mots-clés)",
+          "overview": "Toutes les listes SmartLists"
         }
       },
       "naming": {
@@ -228,6 +229,10 @@
           "remove": "Supprimer",
           "again": "Continuer à modifier après l'enregistrement"
         }
+      },
+      "overview": {
+        "title": "Toutes les listes SmartLists",
+        "description": "**Listes combinées**\n{combined}\n\n**Listes**\n{lists}\n\n**Notes**\n{notes}\n\nLes listes créées par l'app appartiennent techniquement à l'intégration « Local To-do » (Home Assistant ne peut pas les déplacer ici) ; SmartLists les affiche et les utilise quand même partout. Nombre = articles à faire."
       }
     },
     "error": {
@@ -319,6 +324,9 @@
       },
       "app_version": {
         "name": "Version de l'application"
+      },
+      "expenses_month": {
+        "name": "Dépenses ce mois-ci"
       }
     }
   },
@@ -356,6 +364,24 @@
     "add_due_items": {
       "name": "Ajouter les éléments à racheter",
       "description": "Ajoute maintenant les éléments à racheter à la liste choisie sous « Voix et automatisations »."
+    },
+    "add_template": {
+      "name": "Ajouter un modèle",
+      "description": "Ajoute tous les articles d'un modèle (p. ex. « Crêpes ») à une liste – quantités adaptées aux portions ; les articles déjà présents voient leur quantité augmentée.",
+      "fields": {
+        "entity_id": {
+          "name": "Liste",
+          "description": "Liste"
+        },
+        "template": {
+          "name": "Modèle",
+          "description": "Nom ou ID du modèle."
+        },
+        "servings": {
+          "name": "Portions",
+          "description": "Facultatif ; adapte les quantités."
+        }
+      }
     }
   }
 }

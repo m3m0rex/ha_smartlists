@@ -48,6 +48,10 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 - **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
 - **Connected devices:** every phone with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
+- **Shopping helpers:** aisle order per store/branch, prices & monthly expenses, templates/recipes with
+  servings, barcode scan (Open Food Facts), statistics, notifications when others add items, and
+  **sharing a list via link or QR code** for people without an HA account – see the
+  [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers).
 
 Quantities are stored in the name, as in the app ("Milch 2 l @REWE"). "2 kg apples" is recognised
 while typing, too.

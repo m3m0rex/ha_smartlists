@@ -27,11 +27,15 @@ class _Store:
 
 if "homeassistant" not in sys.modules:
     _mod("homeassistant")
-    _mod("homeassistant.core", HomeAssistant=object, callback=lambda f: f)
+    _mod("homeassistant.core", HomeAssistant=object, callback=lambda f: f, Context=object)
     _mod("homeassistant.helpers")
     _mod("homeassistant.helpers.storage", Store=_Store)
     _mod("homeassistant.helpers.dispatcher", async_dispatcher_send=lambda *a: None)
     _mod("homeassistant.const", ATTR_FRIENDLY_NAME="friendly_name")
+    _mod("homeassistant.components")
+    _mod("homeassistant.components.http", HomeAssistantView=object)
+if "aiohttp" not in sys.modules:
+    _mod("aiohttp", web=types.SimpleNamespace(Request=object, Response=object, json_response=None))
 
 # Paket „smartlists“ direkt aus custom_components laden, ohne dessen __init__ (braucht echtes HA)
 _pkg = _mod("smartlists")

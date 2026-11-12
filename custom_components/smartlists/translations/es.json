@@ -127,7 +127,8 @@
           "devices": "Dispositivos conectados (app)",
           "automation": "Voz y automatizaciones (Assist, elementos pendientes)",
           "app_lists": "Listas de la app (adoptar listas combinadas)",
-          "packs": "Detección de categorías (paquetes de palabras clave)"
+          "packs": "Detección de categorías (paquetes de palabras clave)",
+          "overview": "Todas las listas de SmartLists"
         }
       },
       "naming": {
@@ -228,6 +229,10 @@
           "remove": "Quitar",
           "again": "Seguir editando después de guardar"
         }
+      },
+      "overview": {
+        "title": "Todas las listas de SmartLists",
+        "description": "**Listas combinadas**\n{combined}\n\n**Listas**\n{lists}\n\n**Notas**\n{notes}\n\nLas listas que crea la app pertenecen técnicamente a la integración «Local To-do» (Home Assistant no puede moverlas aquí); SmartLists las muestra y usa igualmente en todas partes. Número = artículos pendientes."
       }
     },
     "error": {
@@ -319,6 +324,9 @@
       },
       "app_version": {
         "name": "Versión de la app"
+      },
+      "expenses_month": {
+        "name": "Gastos este mes"
       }
     }
   },
@@ -356,6 +364,24 @@
     "add_due_items": {
       "name": "Añadir elementos pendientes",
       "description": "Añade ahora los elementos pendientes a la lista elegida en «Voz y automatizaciones»."
+    },
+    "add_template": {
+      "name": "Añadir plantilla",
+      "description": "Añade todos los artículos de una plantilla (p. ej. «Tortitas») a una lista – cantidades según las raciones; lo que ya está en la lista aumenta su cantidad.",
+      "fields": {
+        "entity_id": {
+          "name": "Lista",
+          "description": "Lista"
+        },
+        "template": {
+          "name": "Plantilla",
+          "description": "Nombre o ID de la plantilla."
+        },
+        "servings": {
+          "name": "Raciones",
+          "description": "Opcional; ajusta las cantidades."
+        }
+      }
     }
   }
 }

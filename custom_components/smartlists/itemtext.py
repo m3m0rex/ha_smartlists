@@ -275,6 +275,8 @@ def offer_summary(offer: dict[str, Any]) -> str:
 _LIST_NOISE = {
     "einkaufsliste", "einkaufslisten", "einkauf", "einkaufen", "liste", "listen", "todo", "to-do", "aufgaben",
     "shopping", "list", "grocery", "groceries", "von", "für", "fuer", "of", "for", "die", "der", "das", "meine", "my",
+    # Präfixe der Entitäts-IDs von App/Integration (todo.ha_smartlists_list_peter → Peter)
+    "ha", "smartlists", "merged",
 }
 
 

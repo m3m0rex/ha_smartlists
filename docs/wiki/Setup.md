@@ -34,3 +34,9 @@ Change or delete a list via ⋮ → *Reconfigure*.
 - **Voice & automations** – default list for Assist, automatically add due items, install the Assist
   sentences. See [[Automations and voice]].
 - **Connected devices** – phones with the HA SmartLists app. See [[App pairing and devices]].
+
+## Entity IDs
+
+New lists created by SmartLists use the same scheme as the app: own lists `todo.ha_smartlists_list_<name>`,
+combined lists `todo.ha_smartlists_list_merged_<name>`. The display name is the name you typed. Lists
+created before 2.8.0 keep their IDs.

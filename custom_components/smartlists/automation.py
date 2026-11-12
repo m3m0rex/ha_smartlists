@@ -200,6 +200,17 @@ class AddItemIntent(intent.IntentHandler):
         if entity_id is None:
             response.async_set_speech(sp["which_list"])
             return response
+        # „Setz Pfannkuchen auf die Einkaufsliste“: Name einer Vorlage → alle Artikel der Vorlage
+        extras = hass.data[DOMAIN].get("extras")
+        if extras and (tid := extras.find_template(slots["item"]["value"])):
+            try:
+                res = await add_template_items(hass, entity_id, tid, None, [], intent_obj.context)
+            except lists.ListError as err:
+                response.async_set_speech(str(err))
+                return response
+            name = hass.states.get(entity_id).attributes.get(ATTR_FRIENDLY_NAME, entity_id)
+            response.async_set_speech(sp["added"].format(items=f"{extras.templates[tid]['name']} ({res['added'] + res['increased']})", store="", list=name))
+            return response
         item = learning.parse(slots["item"]["value"], typed=True)
         store = slots.get("store", {}).get("value")
         rule = next((r for r in learning.tag_rules if r["kind"] == "store"), None)
@@ -303,6 +314,51 @@ def async_setup_services(hass: HomeAssistant) -> None:
         return {"added": await async_add_due_items(hass)}
 
     hass.services.async_register(DOMAIN, "add_due_items", _add_due, supports_response=SupportsResponse.OPTIONAL)
+
+    async def _add_template(call: ServiceCall) -> ServiceResponse:
+        extras = hass.data[DOMAIN]["extras"]
+        tid = call.data["template"] if call.data["template"] in extras.templates else extras.find_template(call.data["template"])
+        if tid is None:
+            raise lists.ListError(f"Vorlage nicht gefunden: {call.data['template']}")
+        return await add_template_items(hass, call.data["entity_id"], tid, call.data.get("servings"), [], call.context)
+
+    hass.services.async_register(DOMAIN, "add_template", _add_template, schema=vol.Schema({
+        vol.Required("entity_id"): cv.entity_id, vol.Required("template"): cv.string,
+        vol.Optional("servings"): vol.All(vol.Coerce(int), vol.Range(min=1, max=100)),
+    }), supports_response=SupportsResponse.OPTIONAL)
+
+
+async def add_template_items(hass: HomeAssistant, entity_id: str, template_id: str, servings: int | None,
+                             skip: list[int], context: Any) -> dict[str, Any]:
+    """Vorlage auf eine Liste: Mengen nach Portionen umrechnen; steht ein Artikel schon offen auf der Liste,
+    wird seine Menge erhöht (gleiche Einheit) statt ihn doppelt einzutragen."""
+    from .extras import scale_quantity
+
+    extras = hass.data[DOMAIN]["extras"]
+    learning = _learning(hass)
+    tpl = extras.templates.get(template_id)
+    if tpl is None:
+        raise lists.ListError("Vorlage nicht gefunden")
+    factor = servings / tpl["servings"] if servings and tpl.get("servings") else 1
+    current = await lists.raw_items(hass, entity_id)
+    added = increased = 0
+    for idx, text in enumerate(tpl["items"]):
+        if idx in skip:
+            continue
+        text = scale_quantity(text, factor)
+        item = learning.parse(text, typed=True)
+        key = item.name.casefold()
+        hit = next((c for c in current if not c["checked"] and learning.parse(c["text"]).name.casefold() == key), None)
+        if hit is not None:
+            have = learning.parse(hit["text"])
+            if item.quantity and (have.unit or "") == (item.unit or ""):
+                have.quantity = (have.quantity or 1) + item.quantity
+                await lists.update_item(hass, entity_id, hit["uid"], text=learning.encode(have), context=context)
+                increased += 1
+            continue
+        await lists.add_item(hass, entity_id, text, context=context)
+        added += 1
+    return {"added": added, "increased": increased}
 
 
 # ----------------------------------------------------------------------

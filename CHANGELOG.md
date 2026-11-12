@@ -3,6 +3,44 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.8.0] – 2026-11-12
+
+### Added
+
+- **Aisle order per store** (and optionally per branch/zone): shopping mode groups the list in the order of
+  the store's aisles. Household → Stores & zones → 🛤️ Order.
+- **Prices & expenses**: price per item (typed at the end, `Milk 2 l 1,19€`, in ✏️, or from the app's
+  offers), unit price and total in the list, expenses booked when checking off, weekly/monthly/yearly
+  overview per store, sensor *Expenses this month*.
+- **Templates & recipes**: 📋 in the card – add with servings (quantities scaled), untick items, increase
+  quantities of items already on the list; create from scratch or from the current list; Assist
+  ("Put pancakes on the shopping list") and action `smartlists.add_template`.
+- **Share via link / QR code** for people without an HA account: view only by default; optional "soft"
+  check (marked, stays open), real check off, adding; validity 2 h – 30 days or until revoked; revoke
+  any time. 256-bit keys, only hashes stored, nothing but item texts exposed.
+- **Notifications** when someone else adds or checks off items – per user: phone, lists, people, quiet
+  hours; bundled per minute.
+- **Barcode scan** with the camera (or typing the number); names via Open Food Facts (only the number is
+  sent, can be turned off) and remembered.
+- **Statistics**: bought most often with rhythm, not bought for a while, shares per category and store
+  (📊 on the sidebar page, tab *Statistics* in the general settings).
+
+- **Configure → All SmartLists lists**: every `todo.ha_smartlists_…` list (from the app or the
+  integration) grouped as combined lists, lists and notes, with entity ID, open items and origin.
+- **Sidebar page grouped**: chips are shown in three groups – *Combined lists*, *Lists*, *Notes*. Combined
+  lists reported by the app that are not connected yet appear dashed (📱) and can be connected with a tap
+  (admins).
+
+### Changed
+
+- **Entity IDs of new lists** follow the app's scheme: own lists `todo.ha_smartlists_list_<name>`,
+  combined lists `todo.ha_smartlists_list_merged_<name>` (note lists of the app: `todo.ha_smartlists_note…`).
+  Existing lists keep their IDs – no automations break.
+- Share links: changes via a link never alter household prices or suggestions, notifications for them
+  don't include the typed text, adding is limited to 6 per minute, request bodies to 2 KB, reading to
+  120 per minute; links of deleted lists (or lists that became notes) stop working immediately.
+- Placeholder examples no longer contain real place names or coordinates.
+
 ## [2.7.0] – 2026-11-12
 
 ### Changed

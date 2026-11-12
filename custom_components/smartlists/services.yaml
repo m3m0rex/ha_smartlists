@@ -39,3 +39,22 @@ get_items:
       selector:
         boolean:
 add_due_items:
+
+add_template:
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          domain: todo
+    template:
+      required: true
+      example: "Pfannkuchen"
+      selector:
+        text:
+    servings:
+      example: 4
+      selector:
+        number:
+          min: 1
+          max: 100

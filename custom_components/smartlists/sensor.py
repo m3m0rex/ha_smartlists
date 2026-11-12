@@ -38,6 +38,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         known.add(device_id)
         async_add_entities([LastSeenSensor(devices, device_id), AppVersionSensor(devices, device_id)])
 
+    # Ausgaben dieses Monats (gebucht beim Abhaken von Artikeln mit Preis) – für Dashboards
+    async_add_entities([ExpensesMonthSensor(hass)])
+
     for device_id in list(devices.devices):
         _add(device_id)
 
@@ -65,6 +68,29 @@ def _update_device_info(hass: HomeAssistant, devices: Devices, device_id: str) -
         return
     d = devices.devices[device_id]
     registry.async_update_device(device.id, sw_version=d.get("app_version"), model=d.get("model"))
+
+
+class ExpensesMonthSensor(SensorEntity):
+    _attr_has_entity_name = True
+    _attr_translation_key = "expenses_month"
+    _attr_icon = "mdi:cash-multiple"
+    _attr_native_unit_of_measurement = "€"
+    _attr_state_class = "total"
+    _attr_unique_id = "smartlists_expenses_month"
+    _attr_should_poll = True  # alle 30 s – Buchungen passieren beim Abhaken
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        self._extras = hass.data[DOMAIN]["extras"]
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, "household")}, name="SmartLists", manufacturer="SmartLists")
+
+    @property
+    def native_value(self) -> float:
+        return self._extras.month_total()
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        rows = self._extras.expense_report("month", 1)["rows"]
+        return {"stores": rows[-1]["stores"] if rows else {}}
 
 
 class _DeviceSensor(SensorEntity):

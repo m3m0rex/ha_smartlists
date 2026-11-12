@@ -200,6 +200,15 @@ Every change is enforced by the list entity for the requesting user – also thr
 | `smartlists/appearance` | – | badges & colours `{kinds, values}` + all known badges |
 | `smartlists/set_appearance` | `appearance` | (admin); invalid parts are dropped |
 | `smartlists/app_lists` | – | combined lists reported by apps, per device, with `connected` |
+| `smartlists/store_order` | `store, zone?, order[] \| null` | aisle order of categories (admin) |
+| `smartlists/set_price` | `name, price \| null, store?` | price per unit |
+| `smartlists/expenses` | `period (week\|month\|year), count` | totals per period and store |
+| `smartlists/templates` / `save_template` / `delete_template` | … | templates `{id, name, emoji, servings, items[]}` |
+| `smartlists/add_template` | `entity_id, template_id, servings?, skip[]` | add a template to a list |
+| `smartlists/stats` | `days` | top items, overdue, shares |
+| `smartlists/share_links` / `share_create` / `share_revoke` | `entity_id`, … | links per list; `share_create {check: off\|soft\|on, add, hours \| null}` returns the token once |
+| `smartlists/notify` / `set_notify` | `settings` | own notification settings |
+| `smartlists/barcode` | `code` | product name (memory → Open Food Facts) |
 | `smartlists/connect_app_list` | `device_id, list_id` | create a combined list from it (admin); attribute `smartlists_app_list: "<device_id>/<list_id>"` |
 | `smartlists/notes` | – | app notes: `mode` (`hidden`/`section`), `scope` (`owner`/`household`), lists with owner |
 | `smartlists/set_notes` | `mode?, scope?, owners?{entity: user_id \| null}` | (admin) |

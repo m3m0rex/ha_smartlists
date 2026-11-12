@@ -30,6 +30,7 @@ from . import automation, websocket
 from .const import DOMAIN, LEGACY_UNIQUE_ID, STORAGE_VERSION, SUBENTRY_COMBINED
 from .app_backups import async_get_app_backups
 from .devices import async_get_devices
+from .packs import async_get_packs
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ PANEL_URL_PATH = DOMAIN
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Einmal pro HA-Start: Gedächtnis laden, WebSocket-Befehle und Karte bereitstellen."""
+    await async_get_packs(hass)
     await async_get_learning(hass)
     await async_get_devices(hass)
     await async_get_app_backups(hass)

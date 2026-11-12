@@ -1,0 +1,302 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer SmartLists",
+        "description": "{count} listes de tâches trouvées. Choisissez-en deux ou plus pour créer tout de suite une liste combinée – ou laissez vide et utilisez plus tard « Ajouter une liste combinée » dans l'intégration. La carte « SmartLists » et la page de la barre latérale sont disponibles immédiatement.",
+        "data": {
+          "combine": "Combiner ces listes (facultatif)",
+          "name": "Nom de la liste combinée",
+          "default_add_entity": "Les nouveaux éléments vont dans"
+        },
+        "data_description": {
+          "combine": "Par ex. les listes de courses de plusieurs personnes."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "SmartLists est déjà configuré. Ajoutez les listes combinées directement dans l'intégration."
+    },
+    "error": {
+      "combine_two": "Veuillez choisir au moins deux listes – ou aucune."
+    }
+  },
+  "config_subentries": {
+    "combined_list": {
+      "initiate_flow": {
+        "user": "Ajouter une liste combinée"
+      },
+      "entry_type": "Liste combinée",
+      "step": {
+        "user": {
+          "title": "Créer une liste combinée",
+          "description": "Regroupe plusieurs listes de tâches en une liste commune.",
+          "data": {
+            "name": "Nom de la liste combinée",
+            "sources": "Listes à combiner",
+            "default_add_entity": "Liste par défaut pour les nouveaux éléments",
+            "mode": "Cocher s'applique à",
+            "source_label": "Afficher la liste source dans le nom de l'élément",
+            "sort": "Ordre de tri",
+            "foreign_entities": "Listes étrangères (cocher uniquement, pas de renommage/suppression)",
+            "source_as_person": "Afficher la liste source comme personne"
+          },
+          "data_description": {
+            "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
+            "default_add_entity": "Les éléments ajoutés à la liste combinée arrivent ici. Vide = ajout désactivé.",
+            "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
+            "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
+            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés."
+          }
+        },
+        "reconfigure": {
+          "title": "Modifier la liste combinée",
+          "data": {
+            "name": "Nom de la liste combinée",
+            "sources": "Listes à combiner",
+            "default_add_entity": "Liste par défaut pour les nouveaux éléments",
+            "mode": "Cocher s'applique à",
+            "source_label": "Afficher la liste source dans le nom de l'élément",
+            "sort": "Ordre de tri",
+            "foreign_entities": "Listes étrangères (cocher uniquement, pas de renommage/suppression)",
+            "source_as_person": "Afficher la liste source comme personne"
+          },
+          "data_description": {
+            "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
+            "default_add_entity": "Les éléments ajoutés à la liste combinée arrivent ici. Vide = ajout désactivé.",
+            "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
+            "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
+            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Veuillez sélectionner au moins une liste.",
+        "nested_combined_list": "Les listes combinées ne peuvent pas être imbriquées.",
+        "default_not_in_sources": "La liste par défaut doit faire partie des listes sélectionnées.",
+        "foreign_not_in_sources": "Les listes étrangères doivent aussi être sélectionnées ci-dessus.",
+        "default_is_foreign": "Une liste étrangère ne peut pas être la liste par défaut."
+      },
+      "abort": {
+        "reconfigure_successful": "Enregistré."
+      }
+    },
+    "own_list": {
+      "initiate_flow": {
+        "user": "Ajouter une liste propre"
+      },
+      "entry_type": "Liste propre",
+      "step": {
+        "user": {
+          "title": "Liste propre",
+          "description": "Une liste stockée par SmartLists lui-même. Le propriétaire et les administrateurs peuvent tout faire ; modifier = ajouter/changer/supprimer des éléments, cocher = cocher uniquement, voir = consulter uniquement. Remarque : la vue des listes de tâches intégrée à Home Assistant montre toutes les listes à tout le monde – elle est masquée dans la carte, la page et l'application SmartLists.",
+          "data": {
+            "name": "Nom",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir"
+          }
+        },
+        "reconfigure": {
+          "title": "Modifier la liste propre",
+          "description": "Une liste stockée par SmartLists lui-même. Le propriétaire et les administrateurs peuvent tout faire ; modifier = ajouter/changer/supprimer des éléments, cocher = cocher uniquement, voir = consulter uniquement. Remarque : la vue des listes de tâches intégrée à Home Assistant montre toutes les listes à tout le monde – elle est masquée dans la carte, la page et l'application SmartLists.",
+          "data": {
+            "name": "Nom",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir"
+          }
+        }
+      },
+      "abort": {
+        "reconfigure_successful": "Enregistré."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SmartLists – paramètres pour tous",
+        "description": "Chaque utilisateur peut définir ses propres différences via l'icône d'engrenage dans la carte.",
+        "menu_options": {
+          "naming": "Convention de nommage (@magasin, *personne, #mot-clé)",
+          "controls": "Commandes (par défaut pour tous)",
+          "learned": "Catégories mémorisées et historique",
+          "devices": "Appareils connectés (application)",
+          "automation": "Voix et automatisations (Assist, éléments à racheter)"
+        }
+      },
+      "naming": {
+        "title": "Convention de nommage",
+        "description": "Un caractère devant un mot le transforme en badge, par ex. « Lait @REWE » → badge de magasin REWE. Les caractères restent dans le nom de l'élément. « — » désactive un type.",
+        "data": {
+          "prefix_store": "Magasin",
+          "prefix_person": "Personne",
+          "prefix_tag": "Mot-clé"
+        }
+      },
+      "controls": {
+        "title": "Commandes – par défaut pour tous",
+        "description": "S'applique à chaque utilisateur qui n'a pas défini ses propres réglages dans la carte.",
+        "data": {
+          "press_gesture": "Geste pour le menu de l'élément",
+          "press_target": "Où le geste fonctionne",
+          "press_result": "Ce que fait le geste",
+          "menu_actions": "Entrées du menu",
+          "row_buttons": "Afficher le crayon et la corbeille sur chaque ligne",
+          "shop_hide_checked": "Mode courses : masquer les éléments cochés",
+          "shop_keep_awake": "Mode courses : garder l'écran allumé",
+          "shop_large": "Mode courses : grandes lignes",
+          "shop_tap_row": "Mode courses : toucher toute la ligne pour cocher"
+        }
+      },
+      "learned": {
+        "title": "Catégories mémorisées et historique",
+        "description": "{count} affectations mémorisées, {history} éléments dans l'historique. Les affectations sélectionnées seront oubliées.",
+        "data": {
+          "forget": "Oublier",
+          "clear_history": "Effacer l'historique (suggestions, achats fréquents)"
+        }
+      },
+      "devices": {
+        "title": "Appareils connectés",
+        "description": "{count} téléphones avec l'application HA SmartLists :\n\n{devices}\n\n⚠️ = non synchronisé depuis plus de 7 jours. Les appareils sélectionnés sont retirés de la liste ; un téléphone qui se reconnecte réapparaît. Pour révoquer l'accès, supprimez son jeton sous Profil → Jetons d'accès longue durée.",
+        "data": {
+          "remove": "Retirer de la liste"
+        }
+      },
+      "automation": {
+        "title": "Voix et automatisations",
+        "description": "À racheter selon votre rythme : {due}\\n\\nDes blueprints prêts à l'emploi pour « Je suis au magasin » et les notifications de localisation se trouvent dans le dépôt (wiki → Automations).",
+        "data": {
+          "voice_default_list": "Liste par défaut pour Assist",
+          "auto_due_list": "Ajouter automatiquement les éléments à racheter à cette liste",
+          "install_sentences": "Installer/mettre à jour les phrases Assist"
+        },
+        "data_description": {
+          "voice_default_list": "Utilisée quand une phrase ne nomme aucune liste (« Ajoute du lait à la liste »).",
+          "auto_due_list": "Toutes les heures : les éléments achetés régulièrement dont l'intervalle habituel est dépassé. Vide = désactivé.",
+          "install_sentences": "Copie les phrases dans config/custom_sentences (allemand, anglais, français, espagnol, italien, polonais) et recharge Assist."
+        }
+      }
+    },
+    "error": {
+      "duplicate_prefix": "Chaque caractère ne peut être utilisé que pour un seul type."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "bidirectional": "Liste source (bidirectionnel, par défaut)",
+        "local": "Cette liste combinée uniquement"
+      }
+    },
+    "source_label": {
+      "options": {
+        "suffix": "Suffixe (Lait · Anna)",
+        "prefix": "Préfixe ([Anna] Lait)",
+        "none": "Masquer"
+      }
+    },
+    "sort": {
+      "options": {
+        "source": "Par liste (ordre des sources)",
+        "status": "Non cochés d'abord, puis alphabétique",
+        "alphabetical": "Alphabétique",
+        "category": "Par catégorie de courses (fruits et légumes, frais, …)"
+      }
+    },
+    "press_gesture": {
+      "options": {
+        "long": "Appui long",
+        "double": "Double-clic",
+        "right": "Clic droit",
+        "off": "Désactivé"
+      }
+    },
+    "press_target": {
+      "options": {
+        "row": "Toute la ligne",
+        "name": "Nom uniquement"
+      }
+    },
+    "press_result": {
+      "options": {
+        "menu": "Ouvrir le menu",
+        "edit": "Modifier directement",
+        "delete": "Supprimer (avec confirmation)"
+      }
+    },
+    "menu_actions": {
+      "options": {
+        "rename": "Renommer / modifier",
+        "move": "Déplacer",
+        "copy": "Copier",
+        "category": "Changer de catégorie",
+        "delete": "Supprimer"
+      }
+    }
+  },
+  "exceptions": {
+    "item_not_found": {
+      "message": "Élément {uid} introuvable – la liste est en cours de rechargement."
+    },
+    "no_default_list": {
+      "message": "Aucune liste par défaut n'est configurée pour les nouveaux éléments."
+    },
+    "foreign_list": {
+      "message": "Les éléments des listes étrangères peuvent seulement être cochés."
+    },
+    "not_permitted": {
+      "message": "Vous n'êtes pas autorisé à faire cela sur « {list} »."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_seen": {
+        "name": "Vu pour la dernière fois"
+      },
+      "app_version": {
+        "name": "Version de l'application"
+      }
+    }
+  },
+  "services": {
+    "get_items": {
+      "name": "Obtenir les éléments",
+      "description": "Éléments non cochés d'une ou de toutes les listes, filtrés par magasin, personne, mot-clé ou catégorie (avec réponse, par ex. pour des notifications).",
+      "fields": {
+        "entity_id": {
+          "name": "Listes",
+          "description": "Vide = toutes les listes de tâches."
+        },
+        "store": {
+          "name": "Magasin",
+          "description": "Uniquement les éléments de ce magasin (@REWE)."
+        },
+        "person": {
+          "name": "Personne",
+          "description": "Uniquement les éléments pour cette personne (*Anna)."
+        },
+        "tag": {
+          "name": "Mot-clé",
+          "description": "Uniquement les éléments avec ce mot-clé (#bio)."
+        },
+        "category": {
+          "name": "Catégorie",
+          "description": "Uniquement cette catégorie de courses."
+        },
+        "include_completed": {
+          "name": "Inclure les éléments terminés",
+          "description": "Renvoyer aussi les éléments cochés."
+        }
+      }
+    },
+    "add_due_items": {
+      "name": "Ajouter les éléments à racheter",
+      "description": "Ajoute maintenant les éléments à racheter à la liste choisie sous « Voix et automatisations »."
+    }
+  }
+}

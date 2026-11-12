@@ -1,0 +1,22 @@
+# SmartLists – zdania dla Assist (kopiowane do config/custom_sentences/pl/smartlists.yaml)
+language: "pl"
+intents:
+  SmartListsAddItem:
+    data:
+      - sentences:
+          - "(dodaj|wpisz|dopisz) {item} [z {store}] (do|na) [mojej|naszej] {list}"
+          - "(potrzebujemy|potrzebuję) {item} [z {store}]"
+          - "kup {item} [w {store}]"
+  SmartListsListItems:
+    data:
+      - sentences:
+          - "co jest na [mojej|naszej] {list}"
+          - "co mam kupić w {store}"
+          - "co (potrzebujemy|musimy kupić) [w {store}]"
+lists:
+  item:
+    wildcard: true
+  list:
+    wildcard: true
+  store:
+    wildcard: true

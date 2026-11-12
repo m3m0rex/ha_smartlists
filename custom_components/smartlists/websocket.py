@@ -33,16 +33,17 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
+                    ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
 
 
-@websocket_api.websocket_command({vol.Required("type"): "smartlists/config"})
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/config", vol.Optional("language"): str})
 @callback
 def ws_config(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Kategorien, Tag-Regeln, bekannte Märkte."""
-    connection.send_result(msg["id"], _learning(hass).config())
+    """Kategorien (in der gewünschten Sprache), Tag-Regeln, bekannte Märkte."""
+    connection.send_result(msg["id"], _learning(hass).config(msg.get("language")))
 
 
 @websocket_api.websocket_command(
@@ -182,7 +183,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "version": str(integration.version),
             "api_version": API_VERSION,
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
-                         "shopping_event", "due_items", "export", "own_lists", "app_backups"],
+                         "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -217,10 +218,10 @@ def _list_command(schema: dict[Any, Any]):
     return wrap
 
 
-@_list_command({vol.Required("type"): "smartlists/get_list", vol.Required("entity_id"): str})
+@_list_command({vol.Required("type"): "smartlists/get_list", vol.Required("entity_id"): str, vol.Optional("language"): str})
 async def ws_get_list(hass, msg, context):
     """Liste mit zerlegten Artikeln (Name, Menge, Einheit, Tags, Kategorie) und Rechten."""
-    return await lists.get_list(hass, msg["entity_id"], msg["_user"])
+    return await lists.get_list(hass, msg["entity_id"], msg["_user"], msg.get("language"))
 
 
 @_list_command({vol.Required("type"): "smartlists/lists"})
@@ -561,3 +562,66 @@ def ws_app_backup_delete(hass: HomeAssistant, connection: websocket_api.ActiveCo
         return
     _backups(hass).delete(msg["device_id"])
     connection.send_result(msg["id"], {})
+
+
+# ----------------------------------------------------------------------
+# Keyword-Packs (Kategorie-Erkennung, siehe packs.py)
+# ----------------------------------------------------------------------
+def _packs(hass: HomeAssistant):
+    return hass.data[DOMAIN]["packs"]
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/packs"})
+@callback
+def ws_packs(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], {"packs": _packs(hass).describe()})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "smartlists/pack_upload", vol.Required("pack"): dict, vol.Optional("name"): str, vol.Optional("activate", default=True): bool}
+)
+@callback
+def ws_pack_upload(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Eigenes Pack hinzufügen (oder gleichnamiges ersetzen). Format: siehe categories.py."""
+    try:
+        result = _packs(hass).add_custom(msg["pack"], msg.get("name"), msg["activate"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_pack", str(err))
+        return
+    connection.send_result(msg["id"], {**result, "packs": _packs(hass).describe()})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/pack_delete", vol.Required("pack_id"): str})
+@callback
+def ws_pack_delete(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    try:
+        _packs(hass).delete_custom(msg["pack_id"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_pack", str(err))
+        return
+    connection.send_result(msg["id"], {"packs": _packs(hass).describe()})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/pack_set_active", vol.Required("active"): [str]})
+@callback
+def ws_pack_set_active(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Aktive Packs in Reihenfolge (vorne gewinnt bei gleichem Stichwort)."""
+    try:
+        _packs(hass).set_active(msg["active"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_pack", str(err))
+        return
+    connection.send_result(msg["id"], {"packs": _packs(hass).describe()})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/pack_export", vol.Required("pack_id"): str})
+@callback
+def ws_pack_export(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Pack als Datei herunterladen – Vorlage für eigene Packs."""
+    try:
+        connection.send_result(msg["id"], _packs(hass).export(msg["pack_id"]))
+    except KeyError:
+        connection.send_error(msg["id"], "not_found", "Pack nicht gefunden.")

@@ -3,6 +3,31 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] – 2026-11-12
+
+### Added
+
+- **Keyword packs for category detection.** Built in: German (the app's pack, 6,500 terms, 1,049
+  products) and new starter packs for **English, French, Spanish, Italian and Polish** (about 400
+  terms and 200 products each). Several packs can be active at once; on equal keywords the pack
+  higher up wins, otherwise the longest match. By default the pack in Home Assistant's language is
+  active.
+- **Custom packs:** admins upload their own packs (JSON) in the card's gear menu → *Household* →
+  *Category detection* – switch packs on/off, change their order, download any pack as a template.
+  The app's `category_pack_v2.json` format is accepted too. Up to 20 custom packs, 50,000 keywords each.
+- **Four more UI languages: French, Spanish, Italian and Polish** – card, card editor, sidebar page,
+  setup and options dialogs, services, and Assist sentences. Assist now answers in the language of
+  the conversation.
+- Category names follow the user's language (`language` in `smartlists/config` and `smartlists/get_list`;
+  category ids are unchanged).
+- WebSocket commands `smartlists/packs`, `pack_upload`, `pack_set_active`, `pack_delete`, `pack_export`.
+- Units in more languages are recognised in item text (e.g. `2 bottles`, `3 szt`, `Leche 2 botellas`).
+
+### Changed
+
+- The card editor (dashboard dialog) is now translated as well (previously German only).
+- `categories.json` was replaced by `packs/<language>.json`.
+
 ## [2.2.1] – 2026-11-12
 
 ### Added

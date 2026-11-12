@@ -178,7 +178,7 @@
         "data_description": {
           "voice_default_list": "Wenn man im Satz keine Liste nennt („Setz Milch auf die Liste“).",
           "auto_due_list": "Stündlich: Artikel, die ihr regelmäßig kauft und deren üblicher Abstand erreicht ist. Leer = aus.",
-          "install_sentences": "Kopiert die Sätze nach config/custom_sentences (Deutsch, Englisch) und lädt Assist neu."
+          "install_sentences": "Kopiert die Sätze nach config/custom_sentences (Deutsch, Englisch, Französisch, Spanisch, Italienisch, Polnisch) und lädt Assist neu."
         }
       }
     },

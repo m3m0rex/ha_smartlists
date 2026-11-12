@@ -24,7 +24,10 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
   (wie `*Peter`); Füllwörter wie „Einkaufsliste“ werden weggelassen. Pro Liste abschaltbar.
 - **Herkunft anzeigen**: `Milch · Anna` oder `[Anna] Milch`; die Anzeige ist auch abschaltbar.
 - **Sortierung**: nach Liste, nach Einkaufs-Kategorie, offene zuerst oder alphabetisch.
-  Die Kategorie-Erkennung nutzt dasselbe Stichwort-Paket wie die App mit über 6000 Begriffen.
+  Die Kategorie-Erkennung nutzt **Keyword-Packs**: eingebaut sind Deutsch (das Paket der App mit
+  6.500 Begriffen und 1.049 Produkten) sowie Start-Packs für Englisch, Französisch, Spanisch,
+  Italienisch und Polnisch (je ca. 400 Begriffe). Mehrere Packs können gleichzeitig aktiv sein, und
+  Admins können im Zahnrad der Karte → *Haushalt* → *Kategorie-Erkennung* **eigene Packs** (JSON) hochladen.
 - Attribute für Dashboards und Automationen: `open_items`, `completed_items`, `open_by_category`,
   `source_lists`, `unavailable_sources`.
 - „Erledigte entfernen" (`todo.remove_completed_items`) funktioniert über alle Quell-Listen hinweg.
@@ -165,7 +168,8 @@ custom_components/smartlists/
   lists.py           Listen lesen/ändern (kombinierte und normale To-do-Listen)
   websocket.py       Befehle für Karte und App (siehe docs/app-api.md)
   www/smartlists-card.js   Lovelace-Karte und Seite in der Seitenleiste
-  strings.json, translations/   Texte (Deutsch/Englisch)
+  strings.json, translations/   Texte (de, en, fr, es, it, pl)
+  packs/                        eingebaute Keyword-Packs (ein JSON pro Sprache)
 blueprints/automation/smartlists/   fertige Automationen
 tests/                          Tests (pytest, ohne HA)
 scripts/build_categories.py     categories.json aus dem App-Paket erzeugen

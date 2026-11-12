@@ -1,0 +1,22 @@
+# SmartLists – frasi per Assist (copiate in config/custom_sentences/it/smartlists.yaml)
+language: "it"
+intents:
+  SmartListsAddItem:
+    data:
+      - sentences:
+          - "(aggiungi|metti|scrivi) {item} [da {store}] (a|alla|nella|sulla) [mia|nostra] {list}"
+          - "(ci serve|mi serve|servono) {item} [da {store}]"
+          - "(abbiamo|ho) bisogno di {item} [da {store}]"
+  SmartListsListItems:
+    data:
+      - sentences:
+          - "cosa c'è (nella|sulla) [mia|nostra] {list}"
+          - "cosa devo comprare da {store}"
+          - "cosa ci serve [da {store}]"
+lists:
+  item:
+    wildcard: true
+  list:
+    wildcard: true
+  store:
+    wildcard: true

@@ -110,7 +110,7 @@ async def raw_items(hass: HomeAssistant, entity_id: str) -> list[dict[str, Any]]
     ]
 
 
-async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None) -> dict[str, Any]:
+async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None, language: str | None = None) -> dict[str, Any]:
     """Alles, was die Karte zum Anzeigen braucht. Mit `user` gelten bei eigenen Listen dessen Freigaben."""
     state = _state(hass, entity_id)
     learning = _learning(hass)
@@ -163,7 +163,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None)
         "source_lists": entity.source_names if entity is not None else [],
         "permissions": perms,
         "own": own_info,
-        "categories": learning.categories.as_list(),
+        "categories": learning.categories.as_list(language),
         "items": items,
     }
 

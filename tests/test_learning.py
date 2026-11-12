@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from smartlists.categories import _load
+from smartlists.categories import build_index, load_builtin_packs
 from smartlists.learning import Learning
 
 DAY = 86400
@@ -12,7 +12,7 @@ class _Hass:
 
 
 def _learning() -> Learning:
-    learning = Learning(_Hass(), _load())
+    learning = Learning(_Hass(), build_index([load_builtin_packs()["de"]], "de"))
     asyncio.run(learning.async_load())
     return learning
 

@@ -297,7 +297,7 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
+        return self.async_show_menu(step_id="init", menu_options=["overview", "naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
 
     # ---- Kategorie-Erkennung: Keyword-Packs (dasselbe wie in der Karte → Haushalt) ----------------
     def _packs(self):
@@ -414,6 +414,29 @@ class SmartListsOptionsFlow(OptionsFlow):
         return self.async_show_form(step_id="pack_edit", data_schema=vol.Schema(fields), description_placeholders={
             "name": info["name"], "count": str(info["terms"]), "sample": sample or "—",
             "hint": "⭐" if info["builtin"] else "✏️"})
+
+    async def async_step_overview(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Alle SmartLists-Listen (todo.ha_smartlists_… der App und der Integration) auf einen Blick.
+        Listen der App gehören technisch zur Integration „Local To-do“ – hier sind sie trotzdem aufgeführt."""
+        if user_input is not None:
+            return self._done()
+        from .notes import looks_like_notes
+
+        combined = self.hass.data.get(DOMAIN, {}).get("entities", {})
+        own = self.hass.data.get(DOMAIN, {}).get("own", {})
+        groups: dict[str, list[str]] = {"combined": [], "lists": [], "notes": []}
+        for st in sorted(self.hass.states.async_all("todo"), key=lambda s: s.entity_id):
+            eid = st.entity_id
+            name = st.attributes.get("friendly_name", eid)
+            ours = eid in combined or eid in own
+            if not (ours or eid.startswith("todo.ha_smartlists_") or looks_like_notes(eid, name)):
+                continue
+            kind = "notes" if looks_like_notes(eid, name) else "combined" if eid in combined or "_merged_" in eid else "lists"
+            origin = "SmartLists" if ours else "App"
+            groups[kind].append(f"- **{name}** `{eid}` · {st.state} · {origin}")
+        text = {k: "\n".join(v) or "—" for k, v in groups.items()}
+        return self.async_show_form(step_id="overview", data_schema=vol.Schema({}),
+                                    description_placeholders=text)
 
     async def async_step_app_lists(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Kombinierte Listen aus der App übernehmen – sie gehören dann zum jeweiligen Handy-Gerät."""

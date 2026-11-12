@@ -25,6 +25,14 @@ from .own import permissions_for, role_for
 from .learning import Learning
 from .notes import get_notes
 
+
+def _extras(hass: HomeAssistant):
+    return hass.data.get(DOMAIN, {}).get("extras")
+
+
+def _shares(hass: HomeAssistant):
+    return hass.data.get(DOMAIN, {}).get("shares")
+
 STATUS_DONE = "completed"
 STATUS_OPEN = "needs_action"
 
@@ -146,6 +154,9 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
     items = []
     person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
     notes = is_notes(hass, entity_id)
+    extras = _extras(hass)
+    shares = _shares(hass)
+    soft = shares.soft_checked(entity_id) if shares else {}
     for raw in await raw_items(hass, entity_id):
         if notes:
             # Notizliste der App: Titel + Text, keine Kategorie/Menge/Tags (wie in der App)
@@ -164,9 +175,19 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         if person and person_prefix and not any(t["kind"] == "person" for t in info["tags"]):
             info["tags"] = [*info["tags"], {"kind": "person", "value": person, "prefix": person_prefix, "label": person, "implicit": True}]
         foreign = bool(raw.get("foreign"))
+        # Preis: Angebot der App > von Hand/zuletzt bezahlt (Integration)
+        # total = für die Menge auf der Liste, unit_price = je Einheit (bzw. Stück)
+        price = None
+        qty = (info.get("quantity") or 1) * (info.get("pack_count") or 1)
+        if offer and offer.get("price") is not None:
+            price = {"total": round(float(offer["price"]), 2), "unit_price": round(float(offer["price"]) / qty, 2), "source": "offer"}
+        elif extras and (p := extras.price_for(info["name"])):
+            price = {"total": round(float(p["price"]) * qty, 2), "unit_price": p["price"], "source": p.get("source", "manual"), "at": p.get("at")}
         items.append(
             {
                 **info,
+                "price": price,
+                "soft_checked": raw["uid"] in soft,
                 "uid": raw["uid"],
                 "text": raw["text"],
                 "note": note,
@@ -229,10 +250,22 @@ async def add_item(
     note: str = "",
     checked: bool = False,
     context: Context | None = None,
+    from_share: bool = False,
 ) -> dict[str, Any]:
     """Hinzufügen; liefert die uid des neuen Artikels (für „Rückgängig“).
     HA meldet die uid beim Hinzufügen nicht zurück – sie wird über den Vorher/Nachher-Vergleich ermittelt."""
     text = text.strip()
+    # Preis am Ende ("Milch 2 l 1,19€") gehört nicht in den Namen – wird als Preis gemerkt
+    if not from_share and not is_notes(hass, entity_id) and (extras := _extras(hass)) is not None:
+        from .extras import split_price
+
+        text, price = split_price(text)
+        if price is not None:
+            learning = _learning(hass)
+            item = learning.parse(text)
+            store = next((t["value"] for t in item.tags if t["kind"] == "store"), None)
+            # gespeichert wird der Preis je Einheit (2 l für 2,38 € → 1,19 €/l), damit andere Mengen stimmen
+            extras.set_price(item.name, price / ((item.quantity or 1) * (item.pack_count or 1)), store)
     if not text:
         raise ListError("Leerer Artikel")
     perms = list_permissions(hass, entity_id)
@@ -243,7 +276,7 @@ async def add_item(
     if note and perms["note"]:
         data["description"] = note
     await _call(hass, "add_item", data, context)
-    if combined_entity(hass, entity_id) is None and not is_notes(hass, entity_id):
+    if combined_entity(hass, entity_id) is None and not is_notes(hass, entity_id) and not from_share:
         # kombinierte Listen merken sich den Verlauf selbst beim Hinzufügen
         _learning(hass).record(text)
     new = [i for i in await raw_items(hass, entity_id) if i["uid"] not in before]
@@ -267,6 +300,7 @@ async def update_item(
     data: dict[str, Any] = {"entity_id": entity_id, "item": uid}
     if checked is not None:
         data["status"] = STATUS_DONE if checked else STATUS_OPEN
+        await _book(hass, entity_id, uid, checked, context)
     if text is not None and text.strip():
         current = next((i for i in await raw_items(hass, entity_id) if i["uid"] == uid), None)
         if current is None:
@@ -281,6 +315,29 @@ async def update_item(
     if len(data) > 2:
         await _call(hass, "update_item", data, context)
     return {"uid": uid}
+
+
+async def _book(hass: HomeAssistant, entity_id: str, uid: str, checked: bool, context: Context | None) -> None:
+    """Abhaken → Ausgabe buchen (wenn ein Preis bekannt ist), wieder öffnen → zurücknehmen; „soft“ löschen."""
+    extras = _extras(hass)
+    if extras is None or is_notes(hass, entity_id):
+        return
+    current = next((i for i in await raw_items(hass, entity_id) if i["uid"] == uid), None)
+    if current is None or bool(current["checked"]) == checked:
+        return
+    item = _learning(hass).parse(current["text"])
+    _, offer, _ = split_offer(current.get("note"))
+    store = next((t["value"] for t in item.tags if t["kind"] == "store"), None) or (offer or {}).get("store")
+    if checked:
+        offer_price = offer.get("price") if offer else None
+        qty = (item.quantity or 1) * (item.pack_count or 1)
+        # Angebotspreis gilt für den ganzen Artikel → als Preis je Einheit umrechnen
+        extras.book(item.name, qty, store, context.user_id if context else None, entity_id,
+                    price=offer_price / qty if offer_price else None)
+        if (shares := _shares(hass)) is not None:
+            shares.clear_soft(entity_id, uid)
+    else:
+        extras.unbook(item.name, entity_id)
 
 
 async def remove_items(hass: HomeAssistant, entity_id: str, uids: list[str], context: Context | None = None) -> dict[str, Any]:

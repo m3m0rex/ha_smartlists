@@ -127,7 +127,8 @@
           "devices": "Dispositivi connessi (app)",
           "automation": "Voce e automazioni (Assist, articoli in scadenza)",
           "app_lists": "Liste dall'app (adotta liste combinate)",
-          "packs": "Riconoscimento categorie (pacchetti di parole chiave)"
+          "packs": "Riconoscimento categorie (pacchetti di parole chiave)",
+          "overview": "Tutte le liste SmartLists"
         }
       },
       "naming": {
@@ -228,6 +229,10 @@
           "remove": "Rimuovi",
           "again": "Continua a modificare dopo il salvataggio"
         }
+      },
+      "overview": {
+        "title": "Tutte le liste SmartLists",
+        "description": "**Liste combinate**\n{combined}\n\n**Liste**\n{lists}\n\n**Note**\n{notes}\n\nLe liste create dall'app appartengono tecnicamente all'integrazione «Local To-do» (Home Assistant non può spostarle qui); SmartLists le mostra e le usa comunque ovunque. Numero = articoli da fare."
       }
     },
     "error": {
@@ -319,6 +324,9 @@
       },
       "app_version": {
         "name": "Versione app"
+      },
+      "expenses_month": {
+        "name": "Spese di questo mese"
       }
     }
   },
@@ -356,6 +364,24 @@
     "add_due_items": {
       "name": "Aggiungi articoli in scadenza",
       "description": "Aggiunge ora gli articoli in scadenza alla lista scelta in “Voce e automazioni”."
+    },
+    "add_template": {
+      "name": "Aggiungi modello",
+      "description": "Aggiunge tutti gli articoli di un modello (es. «Pancake») a una lista – quantità adattate alle porzioni; gli articoli già presenti aumentano di quantità.",
+      "fields": {
+        "entity_id": {
+          "name": "Lista",
+          "description": "Lista"
+        },
+        "template": {
+          "name": "Modello",
+          "description": "Nome o ID del modello."
+        },
+        "servings": {
+          "name": "Porzioni",
+          "description": "Facoltativo; adatta le quantità."
+        }
+      }
     }
   }
 }

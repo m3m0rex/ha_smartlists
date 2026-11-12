@@ -20,6 +20,10 @@ const ICON = {
   sweep: "M15,16H19V18H15V16M15,8H22V10H15V8M15,12H21V14H15V12M3,18A2,2 0 0,0 5,20H11A2,2 0 0,0 13,18V8H3V18M14,5H11L10,4H6L5,5H2V7H14V5Z",
   history: "M13.5,8H12V13L16.28,15.54L17,14.33L13.5,12.25V8M13,3A9,9 0 0,0 4,12H1L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3",
   list: "M3,4H7V8H3V4M9,5V7H21V5H9M3,10H7V14H3V10M9,11V13H21V11H9M3,16H7V20H3V16M9,17V19H21V17H9",
+  template: "M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V9H7V7M7,11H17V13H7V11M7,15H14V17H7V15Z",
+  barcode: "M2,6H4V18H2V6M5,6H6V18H5V6M7,6H10V18H7V6M11,6H12V18H11V6M14,6H16V18H14V6M17,6H20V18H17V6M21,6H22V18H21V6Z",
+  chart: "M22,21H2V3H4V19H6V10H10V19H12V6H16V19H18V14H22V21Z",
+  share: "M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z",
   tune: "M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z",
   gear: "M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z",
   sort: "M18 21L14 17H17V7H14L18 3L22 7H19V17H22M2 19V17H12V19M2 13V11H9V13M2 7V5H6V7H2Z",
@@ -37,14 +41,14 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.7.0";
+const CARD_VERSION = "2.8.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
   sort: "category",
   show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
   show_undo: true, show_import: true, show_settings: true,
-  show_add: true, show_frequent: true,
+  show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
   drag_drop: true, show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
   show_completed: true, collapse_completed: true,
   start_shopping: false,
@@ -228,6 +232,99 @@ const TEXTS = {
     p_settings_hint: "Liste antippen, für die „Diese Liste“ gilt. Für mich und Haushalt gelten für alle Listen.",
     list_settings_hint: "Bedienung, Haushalt und Kategorien: ⚙ oben rechts auf der Seite.",
     settings_list: "Einstellungen dieser Liste", settings_global: "Allgemeine Einstellungen", list_settings_hint_card: "Bedienung, Haushalt und Kategorien: Regler-Symbol daneben.",
+    tpl: "Vorlagen",
+    scan: "Strichcode scannen",
+    price_sum: "Summe",
+    soft_checked: "von außen markiert (Link)",
+    soft_checked_help: "Jemand hat das über einen geteilten Link als erledigt markiert – der Artikel bleibt offen, bis du ihn abhakst.",
+    price: "Preis",
+    aisle: "Reihenfolge",
+    price_paid: "zuletzt bezahlt",
+    price_manual: "eigener Preis",
+    price_last: "zuletzt",
+    tpl_servings: "Portionen",
+    tpl_new: "Neue Vorlage",
+    tpl_from_list: "Liste als Vorlage",
+    tpl_increase: "steht schon auf der Liste → Menge wird erhöht",
+    tpl_servings_help: "Mengen werden umgerechnet",
+    tpl_increased: "Menge erhöht",
+    tpl_name: "Name, z. B. Pfannkuchen",
+    tpl_items_placeholder: "Mehl 250 g\nMilch 0,5 l\nEier 3",
+    tpl_items: "Artikel",
+    tpl_items_help: "Ein Artikel pro Zeile, mit Menge und Tags wie in der Liste. Portionen (optional) = für wie viele die Mengen gelten.",
+    tpl_edit: "Vorlage bearbeiten",
+    scan_help: "Strichcode in den roten Strich halten – oder die Zahl darunter eintippen.",
+    scan_code: "Strichcode-Nummer",
+    scan_unknown: "Produkt nicht gefunden – Name bitte selbst eintippen.",
+    scan_find: "Suchen",
+    scan_no_camera: "Kamera-Scan wird hier nicht unterstützt (z. B. iPhone-Safari, Firefox) – Nummer eintippen.",
+    aisle_down: "Nach unten",
+    aisle_help: "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist.",
+    aisle_all_branches: "alle Filialen",
+    aisle_reset: "Standard",
+    notify_to: "An mein Handy",
+    notify_no_phone: "Kein Handy mit Companion-App gefunden.",
+    notify_added: "Bei neuen Artikeln",
+    notify_checked: "Wenn etwas abgehakt wird",
+    notify_lists: "Listen",
+    notify_all_lists: "alle, die ich sehen darf",
+    notify_from: "Von wem",
+    notify_quiet: "Ruhezeit",
+    notify_quiet_none: "keine",
+    notify: "Benachrichtigungen",
+    notify_help: "Wenn jemand anderes etwas ändert – nie bei eigenen Änderungen. Mehrere Änderungen innerhalb einer Minute kommen als eine Nachricht.",
+    stats_90: "90 Tage",
+    stats_year: "Jahr",
+    stats_all: "alles",
+    stats_top: "Am häufigsten gekauft",
+    stats_every: "alle",
+    stats_none: "Noch zu wenig Verlauf.",
+    stats_overdue: "Lange nicht gekauft",
+    stats_add: "Auf die Liste",
+    stats_usually: "sonst alle",
+    stats_since: "seit",
+    stats_shares: "Nach Kategorie · Markt",
+    stats: "Statistik",
+    stats_help: "Aus dem vorhandenen Verlauf – es werden keine zusätzlichen Daten gesammelt.",
+    exp_week: "Woche",
+    exp_month: "Monat",
+    exp_year: "Jahr",
+    exp_none: "Noch keine Ausgaben – sie werden beim Abhaken von Artikeln mit Preis gebucht.",
+    exp_no_store: "ohne Markt",
+    exp: "Ausgaben",
+    exp_help: "Gebucht beim Abhaken (Preis × Menge). Preise kommen aus Angeboten, von Hand (z. B. „Milch 2 l 1,19€“ oder ✏️) oder vom letzten Einkauf.",
+    share_view: "nur ansehen",
+    share_soft: "„soft“ abhaken (bleibt offen)",
+    share_check: "richtig abhaken",
+    share_mode: "Abhaken",
+    share_mode_help: "„soft“: Du siehst, was markiert wurde – der Artikel bleibt in deiner Liste offen.",
+    share_add: "Darf hinzufügen",
+    share_valid: "Gültig",
+    share_2h: "2 Stunden",
+    share_1d: "1 Tag",
+    share_7d: "7 Tage",
+    share_30d: "30 Tage",
+    share_forever: "bis zum Widerruf",
+    share_create: "Link erstellen",
+    share_active: "Aktive Links",
+    share_revoke: "Widerrufen",
+    share_expired: "abgelaufen",
+    share_until: "bis",
+    share_opened: "geöffnet",
+    share_once: "Den Link gibt es nur jetzt – er wird nicht gespeichert. Später: widerrufen und neu erstellen.",
+    share_local: "Das ist eine Adresse aus deinem Heimnetz – von außen funktioniert der Link nur mit externer URL (Einstellungen → System → Netzwerk).",
+    share_copied: "kopiert",
+    share_copy: "Link kopieren",
+    share_send: "Teilen …",
+    share: "Teilen per Link",
+    share_help: "Für Leute ohne Home-Assistant-Konto. Sie sehen nur diese Liste (ohne Notizen) – sonst nichts aus Home Assistant. Standard: nur ansehen.",
+    barcode_lookup: "Strichcodes online nachschlagen",
+    barcode_lookup_help: "Open Food Facts, es wird nur die Nummer gesendet. Aus: nur schon bekannte Codes.",
+    tab_stats: "Statistik",
+    l_show_templates: "Vorlagen-Knopf (📋)",
+    l_show_scan: "Strichcode-Knopf",
+    l_show_prices: "Preise und Summe",
+    p_group_combined: "Kombinierte Listen", p_group_lists: "Listen", p_group_notes: "Notizen", app_list_pending: "Kombinierte Liste aus der App – noch nicht in Home Assistant verbunden", app_list_admin: "Verbinden kann ein Home-Assistant-Admin (hier antippen oder unter Verbundene Geräte).", share_combined: "Achtung: Eine kombinierte Liste teilt die Artikel aller ihrer Quell-Listen.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -353,6 +450,99 @@ const TEXTS = {
     p_settings_hint: "Tap the list that “This list” refers to. For me and Household apply to all lists.",
     list_settings_hint: "Controls, household and categories: ⚙ at the top right of the page.",
     settings_list: "Settings of this list", settings_global: "General settings", list_settings_hint_card: "Controls, household and categories: the slider icon next to it.",
+    tpl: "Templates",
+    scan: "Scan barcode",
+    price_sum: "Total",
+    soft_checked: "marked from outside (link)",
+    soft_checked_help: "Someone marked this as done via a shared link – the item stays open until you check it off.",
+    price: "Price",
+    aisle: "Order",
+    price_paid: "last paid",
+    price_manual: "own price",
+    price_last: "last time",
+    tpl_servings: "Servings",
+    tpl_new: "New template",
+    tpl_from_list: "List as template",
+    tpl_increase: "already on the list → quantity is increased",
+    tpl_servings_help: "Quantities are scaled",
+    tpl_increased: "quantity increased",
+    tpl_name: "Name, e.g. Pancakes",
+    tpl_items_placeholder: "Flour 250 g\nMilk 0.5 l\nEggs 3",
+    tpl_items: "Items",
+    tpl_items_help: "One item per line, with quantity and tags as in the list. Servings (optional) = how many the quantities are for.",
+    tpl_edit: "Edit template",
+    scan_help: "Hold the barcode across the red line – or type the number below it.",
+    scan_code: "Barcode number",
+    scan_unknown: "Product not found – please type the name yourself.",
+    scan_find: "Look up",
+    scan_no_camera: "Camera scanning is not supported here (e.g. iPhone Safari, Firefox) – type the number.",
+    aisle_down: "Move down",
+    aisle_help: "This is how shopping mode sorts when this store is selected.",
+    aisle_all_branches: "all branches",
+    aisle_reset: "Default",
+    notify_to: "To my phone",
+    notify_no_phone: "No phone with the companion app found.",
+    notify_added: "On new items",
+    notify_checked: "When something is checked off",
+    notify_lists: "Lists",
+    notify_all_lists: "all I can see",
+    notify_from: "From whom",
+    notify_quiet: "Quiet hours",
+    notify_quiet_none: "none",
+    notify: "Notifications",
+    notify_help: "When someone else changes something – never for your own changes. Several changes within a minute arrive as one message.",
+    stats_90: "90 days",
+    stats_year: "Year",
+    stats_all: "all",
+    stats_top: "Bought most often",
+    stats_every: "every",
+    stats_none: "Not enough history yet.",
+    stats_overdue: "Not bought for a while",
+    stats_add: "Add to list",
+    stats_usually: "usually every",
+    stats_since: "since",
+    stats_shares: "By category · store",
+    stats: "Statistics",
+    stats_help: "From the existing history – no additional data is collected.",
+    exp_week: "Week",
+    exp_month: "Month",
+    exp_year: "Year",
+    exp_none: "No expenses yet – they are booked when items with a price are checked off.",
+    exp_no_store: "no store",
+    exp: "Expenses",
+    exp_help: "Booked when checking off (price × quantity). Prices come from offers, by hand (e.g. “Milk 2 l 1.19€” or ✏️) or from the last purchase.",
+    share_view: "view only",
+    share_soft: "“soft” check (stays open)",
+    share_check: "really check off",
+    share_mode: "Checking off",
+    share_mode_help: "“soft”: you see what was marked – the item stays open in your list.",
+    share_add: "May add",
+    share_valid: "Valid",
+    share_2h: "2 hours",
+    share_1d: "1 day",
+    share_7d: "7 days",
+    share_30d: "30 days",
+    share_forever: "until revoked",
+    share_create: "Create link",
+    share_active: "Active links",
+    share_revoke: "Revoke",
+    share_expired: "expired",
+    share_until: "until",
+    share_opened: "opened",
+    share_once: "The link is shown only now – it is not stored. Later: revoke and create a new one.",
+    share_local: "This is an address from your home network – from outside the link only works with an external URL (Settings → System → Network).",
+    share_copied: "copied",
+    share_copy: "Copy link",
+    share_send: "Share …",
+    share: "Share via link",
+    share_help: "For people without a Home Assistant account. They only see this list (without notes) – nothing else from Home Assistant. Default: view only.",
+    barcode_lookup: "Look up barcodes online",
+    barcode_lookup_help: "Open Food Facts, only the number is sent. Off: only codes already known.",
+    tab_stats: "Statistics",
+    l_show_templates: "Templates button (📋)",
+    l_show_scan: "Barcode button",
+    l_show_prices: "Prices and total",
+    p_group_combined: "Combined lists", p_group_lists: "Lists", p_group_notes: "Notes", app_list_pending: "Combined list from the app – not connected in Home Assistant yet", app_list_admin: "A Home Assistant admin can connect it (tap here or under Connected devices).", share_combined: "Note: a combined list shares the items of all its source lists.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -478,6 +668,99 @@ const TEXTS = {
     p_settings_hint: "Touche la liste à laquelle « Cette liste » se rapporte. Pour moi et Foyer valent pour toutes les listes.",
     list_settings_hint: "Commandes, foyer et catégories : ⚙ en haut à droite de la page.",
     settings_list: "Paramètres de cette liste", settings_global: "Paramètres généraux", list_settings_hint_card: "Commandes, foyer et catégories : l'icône de réglage à côté.",
+    tpl: "Modèles",
+    scan: "Scanner le code-barres",
+    price_sum: "Total",
+    soft_checked: "marqué de l'extérieur (lien)",
+    soft_checked_help: "Quelqu'un l'a marqué comme fait via un lien partagé – l'article reste ouvert jusqu'à ce que tu le coches.",
+    price: "Prix",
+    aisle: "Ordre",
+    price_paid: "dernier prix payé",
+    price_manual: "prix perso",
+    price_last: "la dernière fois",
+    tpl_servings: "Portions",
+    tpl_new: "Nouveau modèle",
+    tpl_from_list: "Liste comme modèle",
+    tpl_increase: "déjà sur la liste → la quantité est augmentée",
+    tpl_servings_help: "Les quantités sont recalculées",
+    tpl_increased: "quantité augmentée",
+    tpl_name: "Nom, ex. Crêpes",
+    tpl_items_placeholder: "Farine 250 g\nLait 0,5 l\nŒufs 3",
+    tpl_items: "Articles",
+    tpl_items_help: "Un article par ligne, avec quantité et tags comme dans la liste. Portions (facultatif) = pour combien de personnes valent les quantités.",
+    tpl_edit: "Modifier le modèle",
+    scan_help: "Place le code-barres sur la ligne rouge – ou tape le numéro en dessous.",
+    scan_code: "Numéro du code-barres",
+    scan_unknown: "Produit introuvable – tape le nom toi-même.",
+    scan_find: "Rechercher",
+    scan_no_camera: "Le scan par caméra n'est pas pris en charge ici (ex. Safari sur iPhone, Firefox) – tape le numéro.",
+    aisle_down: "Descendre",
+    aisle_help: "C'est l'ordre du mode courses quand ce magasin est sélectionné.",
+    aisle_all_branches: "toutes les succursales",
+    aisle_reset: "Par défaut",
+    notify_to: "Sur mon téléphone",
+    notify_no_phone: "Aucun téléphone avec l'application Companion trouvé.",
+    notify_added: "Nouveaux articles",
+    notify_checked: "Quand quelque chose est coché",
+    notify_lists: "Listes",
+    notify_all_lists: "toutes celles que je vois",
+    notify_from: "De qui",
+    notify_quiet: "Heures calmes",
+    notify_quiet_none: "aucune",
+    notify: "Notifications",
+    notify_help: "Quand quelqu'un d'autre modifie quelque chose – jamais pour tes propres modifications. Plusieurs modifications en une minute arrivent en un seul message.",
+    stats_90: "90 jours",
+    stats_year: "Année",
+    stats_all: "tout",
+    stats_top: "Achetés le plus souvent",
+    stats_every: "tous les",
+    stats_none: "Pas encore assez d'historique.",
+    stats_overdue: "Pas acheté depuis longtemps",
+    stats_add: "Ajouter à la liste",
+    stats_usually: "d'habitude tous les",
+    stats_since: "depuis",
+    stats_shares: "Par catégorie · magasin",
+    stats: "Statistiques",
+    stats_help: "À partir de l'historique existant – aucune donnée supplémentaire n'est collectée.",
+    exp_week: "Semaine",
+    exp_month: "Mois",
+    exp_year: "Année",
+    exp_none: "Pas encore de dépenses – elles sont comptabilisées quand des articles avec un prix sont cochés.",
+    exp_no_store: "sans magasin",
+    exp: "Dépenses",
+    exp_help: "Comptabilisées en cochant (prix × quantité). Les prix viennent des offres, de toi (ex. « Lait 2 l 1,19€ » ou ✏️) ou du dernier achat.",
+    share_view: "lecture seule",
+    share_soft: "cocher « soft » (reste ouvert)",
+    share_check: "vraiment cocher",
+    share_mode: "Cocher",
+    share_mode_help: "« soft » : tu vois ce qui a été marqué – l'article reste ouvert dans ta liste.",
+    share_add: "Peut ajouter",
+    share_valid: "Validité",
+    share_2h: "2 heures",
+    share_1d: "1 jour",
+    share_7d: "7 jours",
+    share_30d: "30 jours",
+    share_forever: "jusqu'à révocation",
+    share_create: "Créer un lien",
+    share_active: "Liens actifs",
+    share_revoke: "Révoquer",
+    share_expired: "expiré",
+    share_until: "jusqu'au",
+    share_opened: "ouvert",
+    share_once: "Le lien n'est affiché que maintenant – il n'est pas enregistré. Plus tard : révoque-le et crées-en un nouveau.",
+    share_local: "C'est une adresse de ton réseau local – depuis l'extérieur, le lien ne fonctionne qu'avec une URL externe (Paramètres → Système → Réseau).",
+    share_copied: "copié",
+    share_copy: "Copier le lien",
+    share_send: "Partager …",
+    share: "Partager par lien",
+    share_help: "Pour les personnes sans compte Home Assistant. Elles ne voient que cette liste (sans notes) – rien d'autre de Home Assistant. Par défaut : lecture seule.",
+    barcode_lookup: "Rechercher les codes-barres en ligne",
+    barcode_lookup_help: "Open Food Facts, seul le numéro est envoyé. Désactivé : uniquement les codes déjà connus.",
+    tab_stats: "Statistiques",
+    l_show_templates: "Bouton modèles (📋)",
+    l_show_scan: "Bouton code-barres",
+    l_show_prices: "Prix et total",
+    p_group_combined: "Listes combinées", p_group_lists: "Listes", p_group_notes: "Notes", app_list_pending: "Liste combinée de l'app – pas encore associée dans Home Assistant", app_list_admin: "Un admin Home Assistant peut l'associer (touche ici ou sous Appareils connectés).", share_combined: "Attention : une liste combinée partage les articles de toutes ses listes sources.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -603,6 +886,99 @@ const TEXTS = {
     p_settings_hint: "Toca la lista a la que se refiere «Esta lista». Para mí y Hogar valen para todas las listas.",
     list_settings_hint: "Controles, hogar y categorías: ⚙ arriba a la derecha de la página.",
     settings_list: "Ajustes de esta lista", settings_global: "Ajustes generales", list_settings_hint_card: "Controles, hogar y categorías: el icono de controles al lado.",
+    tpl: "Plantillas",
+    scan: "Escanear código de barras",
+    price_sum: "Total",
+    soft_checked: "marcado desde fuera (enlace)",
+    soft_checked_help: "Alguien lo marcó como hecho mediante un enlace compartido – el artículo sigue abierto hasta que lo marques tú.",
+    price: "Precio",
+    aisle: "Orden",
+    price_paid: "último pagado",
+    price_manual: "precio propio",
+    price_last: "la última vez",
+    tpl_servings: "Raciones",
+    tpl_new: "Nueva plantilla",
+    tpl_from_list: "Lista como plantilla",
+    tpl_increase: "ya está en la lista → se aumenta la cantidad",
+    tpl_servings_help: "Las cantidades se recalculan",
+    tpl_increased: "cantidad aumentada",
+    tpl_name: "Nombre, p. ej. Tortitas",
+    tpl_items_placeholder: "Harina 250 g\nLeche 0,5 l\nHuevos 3",
+    tpl_items: "Artículos",
+    tpl_items_help: "Un artículo por línea, con cantidad y etiquetas como en la lista. Raciones (opcional) = para cuántos son las cantidades.",
+    tpl_edit: "Editar plantilla",
+    scan_help: "Coloca el código de barras sobre la línea roja – o escribe el número de debajo.",
+    scan_code: "Número del código de barras",
+    scan_unknown: "Producto no encontrado – escribe el nombre tú mismo.",
+    scan_find: "Buscar",
+    scan_no_camera: "El escaneo con cámara no es compatible aquí (p. ej. Safari en iPhone, Firefox) – escribe el número.",
+    aisle_down: "Bajar",
+    aisle_help: "Así ordena el modo compra cuando esta tienda está seleccionada.",
+    aisle_all_branches: "todas las sucursales",
+    aisle_reset: "Predeterminado",
+    notify_to: "A mi móvil",
+    notify_no_phone: "No se encontró ningún móvil con la app Companion.",
+    notify_added: "Con artículos nuevos",
+    notify_checked: "Cuando se marca algo",
+    notify_lists: "Listas",
+    notify_all_lists: "todas las que puedo ver",
+    notify_from: "De quién",
+    notify_quiet: "Horas de silencio",
+    notify_quiet_none: "ninguna",
+    notify: "Notificaciones",
+    notify_help: "Cuando otra persona cambia algo – nunca por tus propios cambios. Varios cambios en un minuto llegan como un solo mensaje.",
+    stats_90: "90 días",
+    stats_year: "Año",
+    stats_all: "todo",
+    stats_top: "Comprado con más frecuencia",
+    stats_every: "cada",
+    stats_none: "Todavía no hay suficiente historial.",
+    stats_overdue: "Hace tiempo que no se compra",
+    stats_add: "Añadir a la lista",
+    stats_usually: "normalmente cada",
+    stats_since: "desde",
+    stats_shares: "Por categoría · tienda",
+    stats: "Estadísticas",
+    stats_help: "A partir del historial existente – no se recopilan datos adicionales.",
+    exp_week: "Semana",
+    exp_month: "Mes",
+    exp_year: "Año",
+    exp_none: "Aún no hay gastos – se registran al marcar artículos con precio.",
+    exp_no_store: "sin tienda",
+    exp: "Gastos",
+    exp_help: "Se registran al marcar (precio × cantidad). Los precios vienen de ofertas, a mano (p. ej. «Leche 2 l 1,19€» o ✏️) o de la última compra.",
+    share_view: "solo ver",
+    share_soft: "marcar «soft» (sigue abierto)",
+    share_check: "marcar de verdad",
+    share_mode: "Marcar",
+    share_mode_help: "«soft»: ves lo que se ha marcado – el artículo sigue abierto en tu lista.",
+    share_add: "Puede añadir",
+    share_valid: "Validez",
+    share_2h: "2 horas",
+    share_1d: "1 día",
+    share_7d: "7 días",
+    share_30d: "30 días",
+    share_forever: "hasta revocarlo",
+    share_create: "Crear enlace",
+    share_active: "Enlaces activos",
+    share_revoke: "Revocar",
+    share_expired: "caducado",
+    share_until: "hasta",
+    share_opened: "abierto",
+    share_once: "El enlace solo se muestra ahora – no se guarda. Más tarde: revócalo y crea uno nuevo.",
+    share_local: "Esta es una dirección de tu red doméstica – desde fuera el enlace solo funciona con una URL externa (Ajustes → Sistema → Red).",
+    share_copied: "copiado",
+    share_copy: "Copiar enlace",
+    share_send: "Compartir …",
+    share: "Compartir por enlace",
+    share_help: "Para personas sin cuenta de Home Assistant. Solo ven esta lista (sin notas) – nada más de Home Assistant. Predeterminado: solo ver.",
+    barcode_lookup: "Buscar códigos de barras en línea",
+    barcode_lookup_help: "Open Food Facts, solo se envía el número. Desactivado: solo códigos ya conocidos.",
+    tab_stats: "Estadísticas",
+    l_show_templates: "Botón de plantillas (📋)",
+    l_show_scan: "Botón de código de barras",
+    l_show_prices: "Precios y total",
+    p_group_combined: "Listas combinadas", p_group_lists: "Listas", p_group_notes: "Notas", app_list_pending: "Lista combinada de la app – aún no vinculada en Home Assistant", app_list_admin: "Un admin de Home Assistant puede vincularla (toca aquí o en Dispositivos conectados).", share_combined: "Atención: una lista combinada comparte los artículos de todas sus listas de origen.",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -728,6 +1104,99 @@ const TEXTS = {
     p_settings_hint: "Tocca la lista a cui si riferisce «Questa lista». Per me e Casa valgono per tutte le liste.",
     list_settings_hint: "Comandi, casa e categorie: ⚙ in alto a destra nella pagina.",
     settings_list: "Impostazioni di questa lista", settings_global: "Impostazioni generali", list_settings_hint_card: "Comandi, casa e categorie: l'icona dei cursori accanto.",
+    tpl: "Modelli",
+    scan: "Scansiona codice a barre",
+    price_sum: "Totale",
+    soft_checked: "segnato dall'esterno (link)",
+    soft_checked_help: "Qualcuno l'ha segnato come fatto tramite un link condiviso – l'articolo resta aperto finché non lo spunti tu.",
+    price: "Prezzo",
+    aisle: "Ordine",
+    price_paid: "ultimo pagato",
+    price_manual: "prezzo personale",
+    price_last: "l'ultima volta",
+    tpl_servings: "Porzioni",
+    tpl_new: "Nuovo modello",
+    tpl_from_list: "Lista come modello",
+    tpl_increase: "già nella lista → la quantità viene aumentata",
+    tpl_servings_help: "Le quantità vengono ricalcolate",
+    tpl_increased: "quantità aumentata",
+    tpl_name: "Nome, es. Pancake",
+    tpl_items_placeholder: "Farina 250 g\nLatte 0,5 l\nUova 3",
+    tpl_items: "Articoli",
+    tpl_items_help: "Un articolo per riga, con quantità e tag come nella lista. Porzioni (facoltativo) = per quante persone valgono le quantità.",
+    tpl_edit: "Modifica modello",
+    scan_help: "Tieni il codice a barre sulla linea rossa – oppure digita il numero sotto.",
+    scan_code: "Numero del codice a barre",
+    scan_unknown: "Prodotto non trovato – digita tu il nome.",
+    scan_find: "Cerca",
+    scan_no_camera: "La scansione con fotocamera qui non è supportata (es. Safari su iPhone, Firefox) – digita il numero.",
+    aisle_down: "Sposta giù",
+    aisle_help: "Così ordina la modalità spesa quando è selezionato questo negozio.",
+    aisle_all_branches: "tutte le filiali",
+    aisle_reset: "Predefinito",
+    notify_to: "Al mio telefono",
+    notify_no_phone: "Nessun telefono con l'app Companion trovato.",
+    notify_added: "Per nuovi articoli",
+    notify_checked: "Quando qualcosa viene spuntato",
+    notify_lists: "Liste",
+    notify_all_lists: "tutte quelle che vedo",
+    notify_from: "Da chi",
+    notify_quiet: "Ore di silenzio",
+    notify_quiet_none: "nessuna",
+    notify: "Notifiche",
+    notify_help: "Quando qualcun altro modifica qualcosa – mai per le tue modifiche. Più modifiche entro un minuto arrivano come un unico messaggio.",
+    stats_90: "90 giorni",
+    stats_year: "Anno",
+    stats_all: "tutto",
+    stats_top: "Acquistati più spesso",
+    stats_every: "ogni",
+    stats_none: "Cronologia ancora insufficiente.",
+    stats_overdue: "Non acquistato da tempo",
+    stats_add: "Aggiungi alla lista",
+    stats_usually: "di solito ogni",
+    stats_since: "da",
+    stats_shares: "Per categoria · negozio",
+    stats: "Statistiche",
+    stats_help: "Dalla cronologia esistente – non vengono raccolti dati aggiuntivi.",
+    exp_week: "Settimana",
+    exp_month: "Mese",
+    exp_year: "Anno",
+    exp_none: "Ancora nessuna spesa – viene registrata quando spunti articoli con un prezzo.",
+    exp_no_store: "senza negozio",
+    exp: "Spese",
+    exp_help: "Registrate alla spunta (prezzo × quantità). I prezzi vengono dalle offerte, a mano (es. «Latte 2 l 1,19€» o ✏️) o dall'ultimo acquisto.",
+    share_view: "solo visualizzazione",
+    share_soft: "spunta «soft» (resta aperto)",
+    share_check: "spunta davvero",
+    share_mode: "Spuntare",
+    share_mode_help: "«soft»: vedi cosa è stato segnato – l'articolo resta aperto nella tua lista.",
+    share_add: "Può aggiungere",
+    share_valid: "Validità",
+    share_2h: "2 ore",
+    share_1d: "1 giorno",
+    share_7d: "7 giorni",
+    share_30d: "30 giorni",
+    share_forever: "fino alla revoca",
+    share_create: "Crea link",
+    share_active: "Link attivi",
+    share_revoke: "Revoca",
+    share_expired: "scaduto",
+    share_until: "fino al",
+    share_opened: "aperto",
+    share_once: "Il link viene mostrato solo ora – non viene salvato. In seguito: revocalo e creane uno nuovo.",
+    share_local: "Questo è un indirizzo della tua rete domestica – dall'esterno il link funziona solo con un URL esterno (Impostazioni → Sistema → Rete).",
+    share_copied: "copiato",
+    share_copy: "Copia link",
+    share_send: "Condividi …",
+    share: "Condividi tramite link",
+    share_help: "Per persone senza account Home Assistant. Vedono solo questa lista (senza note) – nient'altro di Home Assistant. Predefinito: solo visualizzazione.",
+    barcode_lookup: "Cerca codici a barre online",
+    barcode_lookup_help: "Open Food Facts, viene inviato solo il numero. Disattivato: solo codici già noti.",
+    tab_stats: "Statistiche",
+    l_show_templates: "Pulsante modelli (📋)",
+    l_show_scan: "Pulsante codice a barre",
+    l_show_prices: "Prezzi e totale",
+    p_group_combined: "Liste combinate", p_group_lists: "Liste", p_group_notes: "Note", app_list_pending: "Lista combinata dall'app – non ancora collegata in Home Assistant", app_list_admin: "Un admin di Home Assistant può collegarla (tocca qui o in Dispositivi collegati).", share_combined: "Attenzione: una lista combinata condivide gli articoli di tutte le sue liste di origine.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -853,6 +1322,99 @@ const TEXTS = {
     p_settings_hint: "Dotknij listy, której dotyczy „Ta lista”. Dla mnie i Dom dotyczą wszystkich list.",
     list_settings_hint: "Sterowanie, dom i kategorie: ⚙ w prawym górnym rogu strony.",
     settings_list: "Ustawienia tej listy", settings_global: "Ustawienia ogólne", list_settings_hint_card: "Sterowanie, dom i kategorie: ikona suwaków obok.",
+    tpl: "Szablony",
+    scan: "Skanuj kod kreskowy",
+    price_sum: "Suma",
+    soft_checked: "oznaczone z zewnątrz (link)",
+    soft_checked_help: "Ktoś oznaczył to jako zrobione przez udostępniony link – produkt pozostaje otwarty, dopóki go nie odhaczysz.",
+    price: "Cena",
+    aisle: "Kolejność",
+    price_paid: "ostatnio zapłacono",
+    price_manual: "własna cena",
+    price_last: "ostatnio",
+    tpl_servings: "Porcje",
+    tpl_new: "Nowy szablon",
+    tpl_from_list: "Lista jako szablon",
+    tpl_increase: "już jest na liście → ilość zostanie zwiększona",
+    tpl_servings_help: "Ilości są przeliczane",
+    tpl_increased: "ilość zwiększona",
+    tpl_name: "Nazwa, np. Naleśniki",
+    tpl_items_placeholder: "Mąka 250 g\nMleko 0,5 l\nJajka 3",
+    tpl_items: "Produkty",
+    tpl_items_help: "Jeden produkt w wierszu, z ilością i tagami jak na liście. Porcje (opcjonalnie) = dla ilu osób są podane ilości.",
+    tpl_edit: "Edytuj szablon",
+    scan_help: "Przytrzymaj kod kreskowy na czerwonej linii – albo wpisz numer pod nim.",
+    scan_code: "Numer kodu kreskowego",
+    scan_unknown: "Nie znaleziono produktu – wpisz nazwę samodzielnie.",
+    scan_find: "Szukaj",
+    scan_no_camera: "Skanowanie aparatem nie jest tu obsługiwane (np. Safari na iPhonie, Firefox) – wpisz numer.",
+    aisle_down: "W dół",
+    aisle_help: "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep.",
+    aisle_all_branches: "wszystkie oddziały",
+    aisle_reset: "Domyślnie",
+    notify_to: "Na mój telefon",
+    notify_no_phone: "Nie znaleziono telefonu z aplikacją Companion.",
+    notify_added: "Przy nowych produktach",
+    notify_checked: "Gdy coś zostanie odhaczone",
+    notify_lists: "Listy",
+    notify_all_lists: "wszystkie, które widzę",
+    notify_from: "Od kogo",
+    notify_quiet: "Godziny ciszy",
+    notify_quiet_none: "brak",
+    notify: "Powiadomienia",
+    notify_help: "Gdy ktoś inny coś zmieni – nigdy przy twoich własnych zmianach. Kilka zmian w ciągu minuty przychodzi jako jedna wiadomość.",
+    stats_90: "90 dni",
+    stats_year: "Rok",
+    stats_all: "wszystko",
+    stats_top: "Najczęściej kupowane",
+    stats_every: "co",
+    stats_none: "Za mało historii.",
+    stats_overdue: "Dawno niekupowane",
+    stats_add: "Dodaj do listy",
+    stats_usually: "zwykle co",
+    stats_since: "od",
+    stats_shares: "Wg kategorii · sklepu",
+    stats: "Statystyki",
+    stats_help: "Na podstawie istniejącej historii – nie są zbierane żadne dodatkowe dane.",
+    exp_week: "Tydzień",
+    exp_month: "Miesiąc",
+    exp_year: "Rok",
+    exp_none: "Brak wydatków – są księgowane przy odhaczaniu produktów z ceną.",
+    exp_no_store: "bez sklepu",
+    exp: "Wydatki",
+    exp_help: "Księgowane przy odhaczaniu (cena × ilość). Ceny pochodzą z ofert, wpisane ręcznie (np. „Mleko 2 l 4,99€” lub ✏️) lub z ostatniego zakupu.",
+    share_view: "tylko podgląd",
+    share_soft: "odhaczanie „soft” (pozostaje otwarte)",
+    share_check: "naprawdę odhaczaj",
+    share_mode: "Odhaczanie",
+    share_mode_help: "„soft”: widzisz, co zostało oznaczone – produkt pozostaje otwarty na twojej liście.",
+    share_add: "Może dodawać",
+    share_valid: "Ważność",
+    share_2h: "2 godziny",
+    share_1d: "1 dzień",
+    share_7d: "7 dni",
+    share_30d: "30 dni",
+    share_forever: "do odwołania",
+    share_create: "Utwórz link",
+    share_active: "Aktywne linki",
+    share_revoke: "Odwołaj",
+    share_expired: "wygasł",
+    share_until: "do",
+    share_opened: "otwarty",
+    share_once: "Link jest widoczny tylko teraz – nie jest zapisywany. Później: odwołaj go i utwórz nowy.",
+    share_local: "To adres z twojej sieci domowej – z zewnątrz link działa tylko z zewnętrznym adresem URL (Ustawienia → System → Sieć).",
+    share_copied: "skopiowano",
+    share_copy: "Kopiuj link",
+    share_send: "Udostępnij …",
+    share: "Udostępnij przez link",
+    share_help: "Dla osób bez konta Home Assistant. Widzą tylko tę listę (bez notatek) – nic więcej z Home Assistant. Domyślnie: tylko podgląd.",
+    barcode_lookup: "Wyszukuj kody kreskowe online",
+    barcode_lookup_help: "Open Food Facts, wysyłany jest tylko numer. Wyłączone: tylko już znane kody.",
+    tab_stats: "Statystyki",
+    l_show_templates: "Przycisk szablonów (📋)",
+    l_show_scan: "Przycisk kodu kreskowego",
+    l_show_prices: "Ceny i suma",
+    p_group_combined: "Listy połączone", p_group_lists: "Listy", p_group_notes: "Notatki", app_list_pending: "Lista połączona z aplikacji – jeszcze niepołączona w Home Assistant", app_list_admin: "Admin Home Assistant może ją połączyć (dotknij tutaj lub w Połączonych urządzeniach).", share_combined: "Uwaga: lista połączona udostępnia produkty wszystkich swoich list źródłowych.",
   },
 };
 
@@ -1076,6 +1638,189 @@ function slZoneDialog(root, hass, t, name) {
   });
 }
 
+/* Kleiner QR-Code-Erzeuger (Byte-Modus, Fehlerkorrektur M, Version 1–15) – ohne externe Bibliothek.
+ * Nach dem Verfahren von Project Nayuki (MIT). qrMatrix(text) → Array von Zeilen (true = dunkel). */
+const QR_ECC_M = { // je Version: [EC-Codewörter je Block, Blöcke]
+  1: [10, 1], 2: [16, 1], 3: [26, 1], 4: [18, 2], 5: [24, 2], 6: [16, 4], 7: [18, 4], 8: [22, 4], 9: [22, 5], 10: [26, 5],
+  11: [30, 5], 12: [22, 8], 13: [22, 9], 14: [24, 9], 15: [24, 10],
+};
+function qrRawModules(ver) {
+  let r = (16 * ver + 128) * ver + 64;
+  if (ver >= 2) { const n = Math.floor(ver / 7) + 2; r -= (25 * n - 10) * n - 55; if (ver >= 7) r -= 36; }
+  return r;
+}
+function qrAlignPos(ver) {
+  if (ver === 1) return [];
+  const n = Math.floor(ver / 7) + 2;
+  const step = ver === 32 ? 26 : Math.ceil((ver * 4 + 4) / (n * 2 - 2)) * 2;
+  const out = [6];
+  for (let p = ver * 4 + 10; out.length < n; p -= step) out.splice(1, 0, p);
+  return out;
+}
+function rsDivisor(degree) {
+  const res = new Array(degree).fill(0); res[degree - 1] = 1;
+  let root = 1;
+  for (let i = 0; i < degree; i++) {
+    for (let j = 0; j < res.length; j++) { res[j] = rsMul(res[j], root); if (j + 1 < res.length) res[j] ^= res[j + 1]; }
+    root = rsMul(root, 0x02);
+  }
+  return res;
+}
+function rsRemainder(data, div) {
+  const res = div.map(() => 0);
+  for (const b of data) {
+    const f = b ^ res.shift(); res.push(0);
+    div.forEach((c, i) => { res[i] ^= rsMul(c, f); });
+  }
+  return res;
+}
+function rsMul(x, y) {
+  let z = 0;
+  for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11d); z ^= ((y >>> i) & 1) * x; }
+  return z & 0xff;
+}
+function qrMatrix(text) {
+  const bytes = Array.from(new TextEncoder().encode(text));
+  let ver = 1;
+  for (; ver <= 15; ver++) {
+    const [ecLen, blocks] = QR_ECC_M[ver];
+    const dataCap = Math.floor(qrRawModules(ver) / 8) - ecLen * blocks;
+    const need = 4 + (ver < 10 ? 8 : 16) + bytes.length * 8;
+    if (need <= dataCap * 8) break;
+  }
+  if (ver > 15) throw new Error("text too long for QR");
+  const [ecLen, numBlocks] = QR_ECC_M[ver];
+  const rawCw = Math.floor(qrRawModules(ver) / 8);
+  const dataCw = rawCw - ecLen * numBlocks;
+  // Bitstrom
+  const bits = [];
+  const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+  put(0b0100, 4); put(bytes.length, ver < 10 ? 8 : 16); bytes.forEach((b) => put(b, 8));
+  put(0, Math.min(4, dataCw * 8 - bits.length));
+  put(0, (8 - (bits.length % 8)) % 8);
+  for (let pad = 0xec; bits.length < dataCw * 8; pad ^= 0xec ^ 0x11) put(pad, 8);
+  const data = [];
+  for (let i = 0; i < bits.length; i += 8) data.push(bits.slice(i, i + 8).reduce((a, b) => (a << 1) | b, 0));
+  // Blöcke + Fehlerkorrektur, verschränkt
+  const shortBlocks = numBlocks - (rawCw % numBlocks);
+  const shortLen = Math.floor(rawCw / numBlocks);
+  const div = rsDivisor(ecLen);
+  const blocks = [];
+  for (let i = 0, k = 0; i < numBlocks; i++) {
+    const dat = data.slice(k, k + shortLen - ecLen + (i < shortBlocks ? 0 : 1));
+    k += dat.length;
+    const ecc = rsRemainder(dat, div);
+    if (i < shortBlocks) dat.push(0);
+    blocks.push(dat.concat(ecc));
+  }
+  const cw = [];
+  for (let i = 0; i < blocks[0].length; i++) blocks.forEach((b, j) => { if (i !== shortLen - ecLen || j >= shortBlocks) cw.push(b[i]); });
+  // Matrix
+  const size = ver * 4 + 17;
+  const m = Array.from({ length: size }, () => new Array(size).fill(false));
+  const fn = Array.from({ length: size }, () => new Array(size).fill(false));
+  const set = (x, y, v) => { m[y][x] = v; fn[y][x] = true; };
+  for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+  const finder = (cx, cy) => {
+    for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+      const d = Math.max(Math.abs(dx), Math.abs(dy)), x = cx + dx, y = cy + dy;
+      if (x >= 0 && x < size && y >= 0 && y < size) set(x, y, d !== 2 && d !== 4);
+    }
+  };
+  finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+  const al = qrAlignPos(ver);
+  al.forEach((a, i) => al.forEach((b, j) => {
+    if ((i === 0 && j === 0) || (i === 0 && j === al.length - 1) || (i === al.length - 1 && j === 0)) return;
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(a + dx, b + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+  }));
+  const drawFormat = (mask) => {
+    const dataBits = (0 << 3) | mask; // ECC M = 00
+    let rem = dataBits;
+    for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+    const b = ((dataBits << 10) | rem) ^ 0x5412;
+    const bit = (i) => ((b >>> i) & 1) !== 0;
+    for (let i = 0; i <= 5; i++) set(8, i, bit(i));
+    set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8));
+    for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+    for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i));
+    for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i));
+    set(8, size - 8, true);
+  };
+  drawFormat(0);
+  if (ver >= 7) {
+    let rem = ver;
+    for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >>> 11) * 0x1f25);
+    const b = (ver << 12) | rem;
+    for (let i = 0; i < 18; i++) {
+      const v = ((b >>> i) & 1) !== 0, a = size - 11 + (i % 3), c = Math.floor(i / 3);
+      set(a, c, v); set(c, a, v);
+    }
+  }
+  // Daten im Zickzack
+  let i = 0;
+  for (let right = size - 1; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let vert = 0; vert < size; vert++) for (let j = 0; j < 2; j++) {
+      const x = right - j, upward = ((right + 1) & 2) === 0, y = upward ? size - 1 - vert : vert;
+      if (!fn[y][x] && i < cw.length * 8) { m[y][x] = ((cw[i >>> 3] >>> (7 - (i & 7))) & 1) !== 0; i++; }
+    }
+  }
+  // Maske mit geringster Strafe wählen
+  const masks = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x) => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+    (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => ((x * y) % 2) + ((x * y) % 3) === 0,
+    (x, y) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0, (x, y) => (((x + y) % 2) + ((x * y) % 3)) % 2 === 0];
+  const apply = (k) => { for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!fn[y][x] && masks[k](x, y)) m[y][x] = !m[y][x]; };
+  const penalty = () => {
+    let p = 0;
+    const line = (get) => {
+      for (let a = 0; a < size; a++) {
+        let run = 1;
+        for (let b = 1; b <= size; b++) {
+          if (b < size && get(a, b) === get(a, b - 1)) run++;
+          else { if (run >= 5) p += run - 2; run = 1; }
+        }
+        for (let b = 0; b + 10 < size + 1; b++) {
+          const s = Array.from({ length: 11 }, (_, k) => (b + k < size ? get(a, b + k) : false));
+          const pat = [true, false, true, true, true, false, true];
+          const w = [false, false, false, false];
+          if ((pat.every((v, k) => s[k] === v) && w.every((v, k) => s[7 + k] === v)) ||
+              (w.every((v, k) => s[k] === v) && pat.every((v, k) => s[4 + k] === v))) p += 40;
+        }
+      }
+    };
+    line((a, b) => m[a][b]); line((a, b) => m[b][a]);
+    for (let y = 0; y < size - 1; y++) for (let x = 0; x < size - 1; x++) {
+      const c = m[y][x];
+      if (c === m[y][x + 1] && c === m[y + 1][x] && c === m[y + 1][x + 1]) p += 3;
+    }
+    const dark = m.flat().filter(Boolean).length, total = size * size;
+    p += (Math.ceil(Math.abs(dark * 20 - total * 10) / total) - 1) * 10;
+    return p;
+  };
+  let best = 0, bestP = Infinity;
+  for (let k = 0; k < 8; k++) {
+    apply(k); drawFormat(k);
+    const p = penalty();
+    if (p < bestP) { bestP = p; best = k; }
+    apply(k);
+  }
+  apply(best); drawFormat(best);
+  return m;
+}
+// als SVG (mit Ruhezone), für <img src> bzw. direkt einfügen
+function qrSvg(text, px = 4) {
+  const m = qrMatrix(text);
+  const n = m.length + 8;
+  let d = "";
+  m.forEach((row, y) => row.forEach((v, x) => { if (v) d += `M${x + 4},${y + 4}h1v1h-1z`; }));
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" width="${n * px}" height="${n * px}" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+}
+
+// Anzeigename eines Marktes ("rewe" → "REWE") aus den bekannten Märkten
+const itemStoreLabel = (key, cfg) => { const k = ((cfg && cfg.known_stores) || []).find((x) => String(x.value).toLowerCase() === key); return k ? k.value : key; };
+// Geldbetrag in der Sprache von HA ("2,38 €")
+const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: "EUR" }).format(v));
+
 // Für die Suche: klein, ohne Akzente/Umlaut-Punkte ("Äpfel" → "apfel"), ß → ss
 function searchKey(s) {
   return String(s || "").toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -1263,6 +2008,33 @@ const STYLE = `
   .tag.hash { background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); font-weight:600; border-radius:9px; }
   .tag.s-filled.person, .tag.s-filled.hash { border-radius:4px; }
   .notes { padding:4px 12px 12px; display:grid; gap:10px; }
+  .priceline { font-size:.78rem; color:var(--secondary-text-color); font-variant-numeric:tabular-nums; }
+  .priceline b { color:var(--primary-text-color); font-weight:600; }
+  .softchk { font-size:.74rem; color:var(--sl-accent); }
+  .sumbar { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 16px; background:var(--secondary-background-color,#f2f2f2); font-variant-numeric:tabular-nums; }
+  .sumbar small { color:var(--secondary-text-color); font-weight:400; }
+  .edit .price-in { width:120px; }
+  .tplbar { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; padding:8px 12px 10px; }
+  .tcard { position:relative; text-align:left; border:1px solid var(--divider-color,#ddd); border-radius:12px; padding:10px; background:var(--secondary-background-color,#f6f6f6); font:inherit; color:inherit; cursor:pointer; }
+  .tcard b { display:block; overflow-wrap:anywhere; } .tcard small { color:var(--secondary-text-color); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .tcard.new { border-style:dashed; display:grid; place-items:center; color:var(--sl-accent); }
+  .tcard .ed { position:absolute; top:4px; right:4px; }
+  .bars { display:flex; align-items:flex-end; gap:6px; height:120px; margin:8px 0 22px; }
+  .bars .b { flex:1; display:flex; flex-direction:column-reverse; border-radius:6px 6px 0 0; overflow:hidden; position:relative; min-height:2px; }
+  .bars .b span { position:absolute; bottom:-18px; left:-4px; right:-4px; text-align:center; font-size:.68rem; color:var(--secondary-text-color); }
+  .legend { display:flex; gap:10px; flex-wrap:wrap; font-size:.78rem; color:var(--secondary-text-color); }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:-1px; }
+  .statrow { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 10px; padding:4px 0; }
+  .statrow .bar2 { grid-column:1/-1; height:5px; border-radius:3px; background:var(--divider-color,#ddd); overflow:hidden; }
+  .statrow .bar2 i { display:block; height:100%; background:var(--sl-accent); }
+  .qr { display:grid; place-items:center; margin:8px 0; } .qr svg { width:180px; height:180px; border-radius:8px; }
+  .sharelink { font:600 .78rem ui-monospace,monospace; overflow-wrap:anywhere; padding:8px; border-radius:8px; background:var(--secondary-background-color,#f2f2f2); }
+  .aisle { display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--divider-color,#ddd); border-radius:10px; margin:5px 0; background:var(--secondary-background-color,#f6f6f6); }
+  .aisle .n { width:22px; height:22px; border-radius:50%; background:var(--sl-accent); color:var(--text-primary-color,#fff); display:grid; place-items:center; font-size:.72rem; font-weight:700; flex:none; }
+  .aisle .grow { flex:1; }
+  .scanbox { position:relative; border-radius:12px; overflow:hidden; background:#000; aspect-ratio:4/3; margin:0 0 10px; }
+  .scanbox video { width:100%; height:100%; object-fit:cover; display:block; }
+  .scanbox::after { content:""; position:absolute; left:12%; right:12%; top:50%; height:2px; background:var(--error-color,#db4437); box-shadow:0 0 8px var(--error-color,#db4437); }
   .notes.grid { grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); }
   .notes.list { grid-template-columns:minmax(0,1fr); }
   .notecard { text-align:left; font:inherit; color:inherit; cursor:pointer; border:1px solid var(--divider-color,#e0e0e0); border-radius:12px;
@@ -1645,12 +2417,13 @@ class SmartListsCard extends HTMLElement {
     this._importEl = h("div");
     this._addEl = h("div");
     this._freqEl = h("div");
+    this._tplEl = h("div");
     this._msgEl = h("div");
     this._listEl = h("div");
     this._progressEl = h("div");
     this._menuEl = h("div");
     this._snackEl = h("div");
-    this._card = h("ha-card", {}, this._headEl, this._searchEl, this._filterEl, this._progressEl, this._settingsEl, this._importEl, this._addEl, this._freqEl, this._msgEl,
+    this._card = h("ha-card", {}, this._headEl, this._searchEl, this._filterEl, this._progressEl, this._settingsEl, this._importEl, this._tplEl, this._addEl, this._freqEl, this._msgEl,
       this._listEl, this._snackEl, this._menuEl);
     fill(root, h("style", {}, STYLE), this._card);
     this._bindDropZone();
@@ -1698,6 +2471,8 @@ class SmartListsCard extends HTMLElement {
         : null,
       this._undo && this._config.show_undo ? iconBtn(ICON.undo, `${t.undo}: ${this._undo.label}`, () => this._runUndo()) : null,
       this._config.show_sort ? this._sortSelect(d) : null,
+      d.type !== "notes" && d.permissions.add && this._config.show_templates !== false
+        ? iconBtn(this._showTpl ? ICON.close : ICON.template, t.tpl, () => { this._showTpl = !this._showTpl; this._renderTemplates(); this._render(); }) : null,
       !this._config.show_shopping ? null : h("button", { class: `icon-btn shopbtn ${this._shopping ? "on" : ""}`, type: "button", "aria-pressed": String(this._shopping),
         title: this._shopping ? t.shop_off : t.shop_on, "aria-label": this._shopping ? t.shop_off : t.shop_on,
         onclick: () => this._toggleShopping() }, svg(ICON.cart, 18)),
@@ -1728,6 +2503,7 @@ class SmartListsCard extends HTMLElement {
       this._headEl.prepend(iconBtn(ICON.chevron, this._t.mini_close, () => { this._miniOpen = false; this._render(); }, "collapse"));
     }
     this._renderFilterBar(d);
+    this._renderTemplates();
     this._renderAdd();
     fill(this._msgEl, this._error ? h("div", { class: "msg err" }, this._error) : "");
     this._renderList();
@@ -1814,7 +2590,7 @@ class SmartListsCard extends HTMLElement {
         const z = st[zone];
         if (!z) continue;
         // Person-Zustand = Name der Zone; zusätzlich: Zone zählt Personen (attributes.persons)
-        if (me.state === z.attributes.friendly_name || (z.attributes.persons || []).includes(me.entity_id)) return store;
+        if (me.state === z.attributes.friendly_name || (z.attributes.persons || []).includes(me.entity_id)) { this._shopZone = zone; return store; }
       }
     }
     return null;
@@ -2341,7 +3117,8 @@ class SmartListsCard extends HTMLElement {
     this._previewEl = h("div", { class: "preview" });
     this._suggEl = h("ul", { class: "sugg", role: "listbox", hidden: true });
     this._pickEl = h("div", { class: "catpick", hidden: true });
-    fill(this._addEl, h("div", { class: "add" }, h("div", { class: "add-row" }, this._input, this._goBtn), this._previewEl, this._suggEl, this._pickEl));
+    const scanBtn = this._config.show_scan !== false ? iconBtn(ICON.barcode, t.scan, () => this._scanDialog(), "scanbtn") : null;
+    fill(this._addEl, h("div", { class: "add" }, h("div", { class: "add-row" }, this._input, scanBtn, this._goBtn), this._previewEl, this._suggEl, this._pickEl));
     this._renderPreview();
   }
 
@@ -2622,12 +3399,12 @@ class SmartListsCard extends HTMLElement {
     else if (!open.length) out.push(h("div", { class: "empty" }, t.empty));
     else if (mode === "category" && this._config.show_category_titles === false) {
       // nach Kategorie, aber ohne Überschriften: eine Liste mit Kategorie-Symbol vorne
-      const order = d.categories.map((c) => c.id);
+      const order = this._catOrder(d);
       emoji = true;
       rows.push([...open].sort((a, b) => (order.indexOf(a.category) - order.indexOf(b.category)) || byName(a, b)).map((i) => this._row(i, d, true)));
     } else if (mode === "category") {
-      // wie in der App: Gruppen in fester Markt-Reihenfolge, innerhalb A–Z
-      const order = d.categories.map((c) => c.id);
+      // wie in der App: Gruppen in fester Markt-Reihenfolge, innerhalb A–Z (im Einkaufsmodus: Gänge des Marktes)
+      const order = this._catOrder(d);
       grouped((i) => i.category, (keys) => keys.sort((a, b) => order.indexOf(a) - order.indexOf(b)),
         (k) => { const c = d.categories.find((x) => x.id === k); return c ? c.label : k; });
     } else if (mode === "list" && d.type === "combined") {
@@ -2640,12 +3417,19 @@ class SmartListsCard extends HTMLElement {
     }
     if (this._config.view === "tiles" && open.length) {
       // Kacheln: gleiche Reihenfolge wie die Liste, ohne Gruppen-Überschriften
-      const order = d.categories.map((c) => c.id);
+      const order = this._catOrder(d);
       const tiles = mode === "category" ? [...open].sort((a, b) => (order.indexOf(a.category) - order.indexOf(b.category)) || byName(a, b))
         : mode === "alpha" ? [...open].sort(byName) : open;
       out.splice(0, out.length, ...out.filter((x) => x.className === "nohits" || x.className === "empty"));
       out.push(h("div", { class: "tiles" }, tiles.map((i) => this._tile(i, d))));
     } else if (rows.length) out.push(h("div", { class: `items ${emoji ? "emoji" : ""}` }, rows));
+    // Summe, sobald Preise bekannt sind: offen und (im Einkaufsmodus) im Wagen
+    const sumOf = (list) => list.reduce((a, i) => a + (i.price && i.price.total ? i.price.total : 0), 0);
+    if (this._config.show_prices !== false && d.items.some((i) => i.price)) {
+      const openSum = sumOf(open), cartSum = sumOf(done);
+      out.push(h("div", { class: "sumbar" }, h("span", {}, t.price_sum, " ", h("small", {}, `${t.open} ${fmtMoney(openSum, this._hass.language)}${cartSum ? ` · ${t.in_cart} ${fmtMoney(cartSum, this._hass.language)}` : ""}`)),
+        h("b", {}, fmtMoney(openSum + cartSum, this._hass.language))));
+    }
 
     const hideDone = this._shopping && this._ui.shop_hide_checked;
     // bei der Suche erledigte Treffer immer zeigen (aufgeklappt), „Erledigte entfernen“ nur ohne Filter
@@ -2692,6 +3476,8 @@ class SmartListsCard extends HTMLElement {
           // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
           this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
         it.offer && this._config.show_offer !== false ? this._offerLine(it, tags) : null,
+        !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
+        it.soft_checked && !it.checked ? h("div", { class: "softchk", title: t.soft_checked_help }, "✓ ", t.soft_checked) : null,
         this._config.show_note && it.note ? h("div", { class: "note" }, it.note) : null),
       h("span", { class: "qtycol" }, p.rename && it.quantity != null && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
@@ -2717,18 +3503,26 @@ class SmartListsCard extends HTMLElement {
     // Notizen nur, wenn die Liste sie speichern kann (z.B. nicht bei der einfachen HA-Einkaufsliste)
     const canNote = d.permissions.note !== false;
     const note = canNote ? h("input", { class: "note-in", placeholder: t.note, value: it.note || "" }) : null;
+    // Preis je Einheit (bzw. Stück) – gilt für diesen Artikel, auch wenn er später wieder auf die Liste kommt
+    const priceIn = h("input", { class: "price-in", type: "number", min: "0", step: "0.01", inputmode: "decimal", placeholder: `${t.price} €${it.unit ? " / " + it.unit : ""}`,
+      "aria-label": t.price, value: it.price && it.price.source !== "offer" && it.price.unit_price != null ? String(it.price.unit_price) : "" });
     const save = async () => {
       this._editing = null;
       const parsed = parseText(text.value, this._cfg.tag_rules, this._cfg.known_stores, true);
+      const before = it.price && it.price.source !== "offer" ? it.price.unit_price : null;
+      const nowP = priceIn.value === "" ? null : Number(priceIn.value);
+      if (nowP !== before && !(nowP != null && Number.isNaN(nowP))) {
+        try { await this._call("set_price", { name: parsed.name || it.name, price: nowP, store: (parsed.tags.find((x) => x.kind === "store") || {}).value || null }, false); } catch (e) { /* */ }
+      }
       if (cat.value !== it.category) {
         try { await this._call("set_category", { name: parsed.name || it.name, category: cat.value }, false); } catch (e) { /* */ }
       }
       this._change(`${it.name} ${t.changed}`, "update_item", { uid: it.uid, text: encodeText(parsed, this._cfg.tag_rules) || it.text, note: note ? note.value : it.note || "" },
         () => () => this._call("update_item", { uid: it.uid, text: it.text, note: it.note || "" }));
     };
-    [text, note].filter(Boolean).forEach((el) => el.addEventListener("keydown", (e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { this._editing = null; this._renderList(); } }));
+    [text, note, priceIn].filter(Boolean).forEach((el) => el.addEventListener("keydown", (e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { this._editing = null; this._renderList(); } }));
     setTimeout(() => text.focus(), 0);
-    return h("div", { class: "edit" }, text, cat, note,
+    return h("div", { class: "edit" }, text, cat, note, this._config.show_prices !== false ? priceIn : null,
       h("div", { class: "btns" },
         h("button", { class: "btn", type: "button", onclick: () => { this._editing = null; this._renderList(); } }, t.cancel),
         h("button", { class: "btn primary", type: "button", onclick: save }, t.save)));
@@ -2863,6 +3657,10 @@ class SmartListsCard extends HTMLElement {
     const t = this._t;
     const device = this._uiScope === "device";
     const chip = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, onclick: fn }, label);
+    return [this._controlsSection(device, chip), this._notifySection()];
+  }
+  _controlsSection(device, chip) {
+    const t = this._t;
     return this._sec("✋", t.ui, t.ui_me_help, [
       h("div", { class: "chips", style: "margin-bottom:6px" },
         chip(!device, t.scope_user, () => this._setScope("user")), chip(device, t.scope_device, () => this._setScope("device"))),
@@ -2884,6 +3682,7 @@ class SmartListsCard extends HTMLElement {
     const d = this._data;
     const out = [];
     if (d && d.own && d.own.can_share) out.push(this._sharing());
+    if (d && d.type !== "notes" && (this._isAdmin || (d.own && d.own.role === "owner"))) out.push(this._shareLinkSection());
     const type = !d ? "?" : d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : t.type_list;
     out.push(this._sec("ℹ️", t.about_list, null, [
       this._setRow(t.type, h("span", { class: "val" }, type)),
@@ -3203,7 +4002,10 @@ class SmartListsCard extends HTMLElement {
         const linked = st.zones || (st.zone ? [st.zone] : []);
         return h("div", { class: "srow2 storerow" },
           h("div", { class: "sl" }, badge({ kind: "store", value: st.value, label: st.label, color: st.color }),
-            h("small", {}, linked.length ? `${linked.length} ${t.zone_count}` : t.zone_none)),
+            h("small", {}, linked.length ? `${linked.length} ${t.zone_count}` : t.zone_none),
+            h("button", { class: "btn2", type: "button", style: "height:28px;padding:0 10px;margin-top:4px;font-size:.8rem",
+              onclick: () => this._aisleEditor(body, st, linked, () => this._call("stores", {}, false).then((r) => draw(r.stores))) },
+              "🛤️ " + t.aisle + (((this._cfg && this._cfg.store_order) || {})[st.key] ? " ✓" : ""))),
           h("div", { class: "zchips" },
             linked.map((z) => h("span", { class: "zchip" }, "📍 ", nameOf(z),
               h("button", { type: "button", title: t.zone_unlink, "aria-label": `${t.zone_unlink}: ${nameOf(z)}`, onclick: () => link(st.key, linked.filter((x) => x !== z)) }, "×"))),
@@ -3255,6 +4057,347 @@ class SmartListsCard extends HTMLElement {
   // Seitenleisten-Seite neu laden lassen (Notizen ein/aus ändert die Listen-Auswahl)
   _refreshPanel() { window.dispatchEvent(new CustomEvent("smartlists-lists-changed")); }
 
+  /* ---------------- 2.8: Markt-Reihenfolge, Preise, Vorlagen, Scannen, Statistik, Teilen, Benachrichtigungen ---------------- */
+  // Reihenfolge der Kategorien: im Einkaufsmodus für einen Markt dessen Gänge (Filiale vor Markt), sonst Standard
+  _catOrder(d) {
+    const base = d.categories.map((c) => c.id);
+    const so = (this._cfg && this._cfg.store_order) || {};
+    if (!this._shopping || !this._shopStore) return base;
+    const order = (this._shopZone && so[`${this._shopStore}@${this._shopZone}`]) || so[this._shopStore];
+    return order ? [...order, ...base.filter((c) => !order.includes(c))] : base;
+  }
+  _priceLine(it) {
+    const t = this._t, p = it.price, lang = this._hass.language;
+    const qty = (it.quantity || 1) * (it.pack_count || 1);
+    const per = qty !== 1 && p.unit_price != null ? ` · ${fmtMoney(p.unit_price, lang)}${it.unit ? "/" + it.unit : ""}` : "";
+    return h("div", { class: "priceline", title: p.source === "paid" ? t.price_paid : t.price_manual },
+      p.source === "paid" ? "~ " : "", h("b", {}, fmtMoney(p.total, lang)), per, p.source === "paid" ? ` ${t.price_last}` : "");
+  }
+
+  // Vorlagen-Leiste über dem Eingabefeld (Knopf 📋 in der Kopfzeile)
+  async _renderTemplates() {
+    const el = this._tplEl;
+    if (!el) return;
+    if (!this._showTpl || !this._data) return fill(el);
+    const t = this._t;
+    if (!this._tpls) {
+      fill(el, h("div", { class: "shelp", style: "padding:8px 14px" }, t.loading));
+      try { this._tpls = (await this._call("templates", {}, false)).templates; } catch (e) { this._tpls = []; }
+    }
+    const tiles = this._tpls.map((tp) => h("button", { type: "button", class: "tcard", onclick: () => this._templateDialog(tp) },
+      h("b", {}, `${tp.emoji ? tp.emoji + " " : ""}${tp.name}`),
+      h("small", {}, `${tp.items.length} ${t.imp_count}${tp.servings ? ` · ${tp.servings} ${t.tpl_servings}` : ""} · ${tp.items.slice(0, 3).join(", ")}`),
+      h("span", { class: "ed" }, iconBtn(ICON.pencil, t.edit, (e) => { e.stopPropagation(); this._templateEditor(tp); }))));
+    fill(el, h("div", { class: "grp", style: "padding:8px 14px 0" }, t.tpl),
+      h("div", { class: "tplbar" }, tiles,
+        h("button", { type: "button", class: "tcard new", onclick: () => this._templateEditor(null) }, "＋ " + t.tpl_new),
+        this._data.items.some((i) => !i.checked) ? h("button", { type: "button", class: "tcard new", onclick: () => this._templateEditor({
+          name: "", emoji: "", servings: null, items: this._data.items.filter((i) => !i.checked).map((i) => i.text) }, true) }, "📥 " + t.tpl_from_list) : null));
+  }
+  _dialog(title, body, actions, width = 460) {
+    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) back.remove(); } },
+      h("style", {}, DIALOG_STYLE),
+      h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": title, style: `max-width:${width}px;max-height:90vh;overflow:auto` },
+        h("h2", {}, title), body, h("div", { class: "row", style: "margin-top:12px" }, actions)));
+    this.shadowRoot.append(back);
+    return back;
+  }
+  // Vorlage hinzufügen: Portionen wählen, einzelne Artikel abwählen
+  _templateDialog(tp) {
+    const t = this._t;
+    let servings = tp.servings || null;
+    const skip = new Set();
+    const listEl = h("div");
+    const scale = (text) => {
+      if (!servings || !tp.servings || servings === tp.servings) return text;
+      const p = parseText(text, this._cfg.tag_rules, this._cfg.known_stores, true);
+      if (p.quantity == null) return text;
+      p.quantity = Math.round(p.quantity * servings / tp.servings * 100) / 100;
+      return encodeText(p, this._cfg.tag_rules);
+    };
+    const present = new Set(this._data.items.filter((i) => !i.checked).map((i) => i.name.toLowerCase()));
+    const draw = () => fill(listEl, tp.items.map((text, i) => {
+      const p = parseText(text, this._cfg.tag_rules, this._cfg.known_stores, true);
+      return h("label", { class: "srow2", style: "cursor:pointer" },
+        h("input", { type: "checkbox", checked: !skip.has(i), style: "width:auto;height:auto;margin:0", onchange: (e) => { if (e.target.checked) skip.delete(i); else skip.add(i); } }),
+        h("div", { class: "sl" }, scale(text), present.has(p.name.toLowerCase()) ? h("small", {}, t.tpl_increase) : null));
+    }));
+    draw();
+    const body = h("div", {},
+      tp.servings ? this._setRow(t.tpl_servings, h("input", { type: "number", min: "1", max: "100", value: String(servings), style: "width:80px;margin:0",
+        oninput: (e) => { servings = Math.max(1, Number(e.target.value) || tp.servings); draw(); } }), t.tpl_servings_help) : null,
+      listEl);
+    const dlg = this._dialog(`${tp.emoji ? tp.emoji + " " : ""}${tp.name}`, body, [
+      h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel),
+      h("button", { type: "button", class: "ok", onclick: async () => {
+        dlg.remove();
+        try {
+          const r = await this._call("add_template", { template_id: tp.id, servings, skip: [...skip] });
+          this._toast(`${tp.name}: ${r.added} ${t.added}${r.increased ? `, ${r.increased} ${t.tpl_increased}` : ""}`);
+          await this._load();
+        } catch (err) { this._error = (err && err.message) || t.error; this._render(); }
+      } }, t.pack_add)]);
+  }
+  // Vorlage anlegen/bearbeiten: Name, Symbol, Portionen, ein Artikel pro Zeile
+  _templateEditor(tp, fromList = false) {
+    const t = this._t;
+    const name = h("input", { value: (tp && tp.name) || "", placeholder: t.tpl_name, "aria-label": t.tpl_name, maxlength: "60" });
+    const emoji = h("input", { value: (tp && tp.emoji) || "", placeholder: "🥞", "aria-label": t.look_icon, maxlength: "4", style: "width:64px;text-align:center" });
+    const servings = h("input", { type: "number", min: "1", max: "100", value: tp && tp.servings ? String(tp.servings) : "", placeholder: t.tpl_servings, "aria-label": t.tpl_servings, style: "width:110px" });
+    const items = h("textarea", { rows: "8", placeholder: t.tpl_items_placeholder, "aria-label": t.tpl_items,
+      style: "width:100%;box-sizing:border-box;border-radius:10px;border:1px solid var(--divider-color,#ccc);background:var(--secondary-background-color,#f2f2f2);color:inherit;font:inherit;padding:10px 12px;margin:0 0 6px" });
+    items.value = ((tp && tp.items) || []).join("\n");
+    const body = h("div", {}, h("div", { style: "display:flex;gap:8px" }, emoji, name), servings,
+      h("p", {}, t.tpl_items_help), items);
+    const actions = [];
+    if (tp && tp.id) actions.push(h("button", { type: "button", style: "margin-right:auto;color:var(--error-color,#db4437)", onclick: async () => {
+      dlg.remove(); await this._call("delete_template", { template_id: tp.id }, false); this._tpls = null; this._renderTemplates();
+    } }, t.delete));
+    actions.push(h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel),
+      h("button", { type: "button", class: "ok", onclick: async () => {
+        const lines = items.value.split("\n").map((x) => x.trim()).filter(Boolean);
+        if (!name.value.trim() || !lines.length) return;
+        try {
+          await this._call("save_template", { ...(tp && tp.id ? { template_id: tp.id } : {}), name: name.value.trim(), items: lines,
+            emoji: emoji.value.trim(), servings: servings.value ? Number(servings.value) : null }, false);
+          dlg.remove(); this._tpls = null; this._showTpl = true; this._renderTemplates();
+        } catch (err) { this._toast((err && err.message) || t.error); }
+      } }, t.save));
+    const dlg = this._dialog(tp && tp.id ? t.tpl_edit : fromList ? t.tpl_from_list : t.tpl_new, body, actions);
+    setTimeout(() => name.focus(), 30);
+  }
+  _toast(text) {
+    clearTimeout(this._toastT);
+    const el = h("div", { class: "msg" }, text);
+    fill(this._msgEl, el);
+    this._toastT = setTimeout(() => { if (this._msgEl.firstChild === el) fill(this._msgEl); }, 4000);
+  }
+
+  // Strichcode scannen (Kamera, BarcodeDetector) oder eintippen → Name über SmartLists/Open Food Facts ins Eingabefeld
+  async _scanDialog() {
+    const t = this._t;
+    const video = h("video", { autoplay: "", playsinline: "", muted: "" });
+    const box = h("div", { class: "scanbox" }, video);
+    const info = h("p", {}, t.scan_help);
+    const code = h("input", { inputmode: "numeric", placeholder: t.scan_code, "aria-label": t.scan_code, maxlength: "14" });
+    let stream = null, timer = null, done = false;
+    const stop = () => { done = true; clearInterval(timer); if (stream) stream.getTracks().forEach((tr) => tr.stop()); };
+    const lookup = async (value) => {
+      if (!/^\d{6,14}$/.test(value)) return;
+      stop();
+      info.textContent = t.loading;
+      try {
+        const r = await this._call("barcode", { code: value }, false);
+        if (!r.found) { info.textContent = t.scan_unknown; return; }
+        dlg.remove();
+        const text = [r.name, r.brand && !r.name.toLowerCase().includes(r.brand.toLowerCase()) ? `(${r.brand})` : ""].filter(Boolean).join(" ");
+        if (this._input) { this._input.value = text; this._input.dispatchEvent(new Event("input")); this._input.focus(); }
+      } catch (err) { info.textContent = (err && err.message) || t.error; }
+    };
+    code.addEventListener("keydown", (e) => { if (e.key === "Enter") lookup(code.value.trim()); });
+    const dlg = this._dialog(t.scan, h("div", {}, "BarcodeDetector" in window ? box : null, info, code), [
+      h("button", { type: "button", onclick: () => { stop(); dlg.remove(); } }, t.cancel),
+      h("button", { type: "button", class: "ok", onclick: () => lookup(code.value.trim()) }, t.scan_find)]);
+    const observer = new MutationObserver(() => { if (!dlg.isConnected) { stop(); observer.disconnect(); } });
+    if (this.shadowRoot && observer.observe) observer.observe(this.shadowRoot, { childList: true });
+    if (!("BarcodeDetector" in window) || !navigator.mediaDevices) { info.textContent = t.scan_no_camera; return; }
+    try {
+      const detector = new window.BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"] });
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      if (done) { stop(); return; }
+      video.srcObject = stream;
+      timer = setInterval(async () => {
+        if (done || video.readyState < 2) return;
+        try { const hits = await detector.detect(video); if (hits.length) lookup(hits[0].rawValue); } catch (e) { /* */ }
+      }, 300);
+    } catch (err) { box.remove(); info.textContent = t.scan_no_camera; }
+  }
+
+  // Reihenfolge der Gänge für einen Markt (optional je Filiale) – ▲▼
+  _aisleEditor(body, st, zones, onClose) {
+    const t = this._t;
+    const saved = [...body.childNodes];
+    const so = (this._cfg && this._cfg.store_order) || {};
+    const cats = categoryOptions(this._lang);
+    let zone = "";
+    let order = [];
+    const load = () => { const cur = so[zone ? `${st.key}@${zone}` : st.key] || (zone ? so[st.key] : null); order = cur ? [...cur] : cats.map(([id]) => id); };
+    load();
+    const status = h("span", { class: "ok2" });
+    const listEl = h("div");
+    const label = (id) => (cats.find(([c]) => c === id) || [id, id])[1];
+    const move = (i, d) => { const j = i + d; if (j < 0 || j >= order.length) return; [order[i], order[j]] = [order[j], order[i]]; draw(); };
+    const draw = () => fill(listEl, order.map((id, i) => h("div", { class: "aisle" }, h("span", { class: "n" }, String(i + 1)), h("span", { class: "grow" }, label(id)),
+      iconBtn(ICON.chevron, t.pack_up, () => move(i, -1), "up"), iconBtn(ICON.chevron, t.aisle_down, () => move(i, 1)))));
+    const save = async (o) => {
+      try {
+        const r = await this._call("store_order", { store: st.key, zone: zone || null, order: o }, false);
+        this._cfg = { ...this._cfg, store_order: r.store_order };
+        status.textContent = "✓ " + t.saved;
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    fill(body,
+      h("div", { class: "srow2", style: "border-top:none" }, iconBtn(ICON.back, t.p_back, () => { fill(body, ...saved); onClose && onClose(); }),
+        h("div", { class: "sl" }, h("b", {}, `${st.label} – ${t.aisle}`), h("small", {}, t.aisle_help)),
+        zones.length ? h("select", { "aria-label": t.zone, onchange: (e) => { zone = e.target.value; load(); draw(); } },
+          h("option", { value: "" }, t.aisle_all_branches),
+          zones.map((z) => h("option", { value: z }, (this._hass.states[z] && this._hass.states[z].attributes.friendly_name) || z))) : null),
+      listEl,
+      h("div", { class: "acts" }, status,
+        h("button", { class: "btn2", type: "button", onclick: () => { save(null); order = cats.map(([id]) => id); draw(); } }, t.aisle_reset),
+        h("button", { class: "btn2 primary", type: "button", onclick: () => save(order) }, t.save)));
+    draw();
+  }
+
+  // Für mich → Benachrichtigungen (jeder für sich)
+  _notifySection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
+    let cur = null, services = [], users = [];
+    const save = async (patch) => {
+      cur = { ...cur, ...patch };
+      try { cur = (await this._call("set_notify", { settings: cur }, false)).settings; status.textContent = "✓ " + t.saved; draw(); }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    const lists = () => Object.keys(this._hass.states).filter((e) => e.startsWith("todo.") && !isNotesEntity(e, this._hass.states[e].attributes.friendly_name))
+      .map((e) => [e, this._hass.states[e].attributes.friendly_name || e]);
+    const chipOf = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, "aria-pressed": String(on), onclick: fn }, label);
+    const draw = () => {
+      const q = cur.quiet;
+      fill(body,
+        this._setRow(t.notify_to, h("select", { "aria-label": t.notify_to, onchange: (e) => save({ service: e.target.value || null }) },
+          h("option", { value: "" }, "— " + t.g_off),
+          services.map((sv) => h("option", { value: sv, selected: cur.service === sv }, sv.replace(/^mobile_app_/, "").replace(/_/g, " ")))),
+          services.length ? null : t.notify_no_phone),
+        this._setRow(t.notify_added, this._switch(cur.added, (v) => save({ added: v }), t.notify_added)),
+        this._setRow(t.notify_checked, this._switch(cur.checked, (v) => save({ checked: v }), t.notify_checked)),
+        h("div", { class: "grp" }, t.notify_lists),
+        h("div", { class: "chips" }, chipOf(!cur.lists.length, t.notify_all_lists, () => save({ lists: [] })),
+          lists().map(([e, n]) => chipOf(cur.lists.includes(e), n, () => save({ lists: cur.lists.includes(e) ? cur.lists.filter((x) => x !== e) : [...cur.lists, e] })))),
+        users.length ? h("div", { class: "grp" }, t.notify_from) : null,
+        users.length ? h("div", { class: "chips" }, users.filter((u) => u.id !== (this._hass.user && this._hass.user.id)).map((u) =>
+          chipOf(!cur.muted.includes(u.id), u.name, () => save({ muted: cur.muted.includes(u.id) ? cur.muted.filter((x) => x !== u.id) : [...cur.muted, u.id] })))) : null,
+        this._setRow(t.notify_quiet, h("select", { "aria-label": t.notify_quiet, onchange: (e) => save({ quiet: e.target.value ? e.target.value.split("-").map(Number) : null }) },
+          [["", t.notify_quiet_none], ["22-7", "22–7"], ["21-7", "21–7"], ["23-8", "23–8"]].map(([v, l]) =>
+            h("option", { value: v, selected: (q ? q.join("-") : "") === v }, l)))),
+        h("div", { class: "acts" }, status));
+    };
+    Promise.all([this._call("notify", {}, false), this._call("users", {}, false).catch(() => ({ users: [] }))])
+      .then(([r, u]) => { cur = r.settings; services = r.services; users = u.users || []; draw(); }).catch(() => fill(body, t.error));
+    return this._sec("🔔", t.notify, t.notify_help, [body]);
+  }
+
+  // Statistik + Ausgaben (Reiter „Statistik“ der allgemeinen Einstellungen bzw. 📊 auf der Seite)
+  _paneStats() { return [this._statsSection(), this._expensesSection()]; }
+  _statsSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    let days = 90;
+    const load = () => this._call("stats", { days }, false).then(draw).catch(() => fill(body, t.error));
+    const chipOf = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, onclick: fn }, label);
+    const draw = (r) => {
+      const max = Math.max(1, ...r.top.map((x) => x.count));
+      fill(body,
+        h("div", { class: "chips" }, [[90, t.stats_90], [365, t.stats_year], [0, t.stats_all]].map(([d, l]) => chipOf(days === d, l, () => { days = d; load(); }))),
+        h("div", { class: "grp" }, t.stats_top),
+        r.top.length ? r.top.slice(0, 10).map((x) => h("div", { class: "statrow" }, h("span", {}, x.name),
+          h("span", { class: "shelp", style: "padding:0" }, `${x.count}×${x.every_days ? ` · ${t.stats_every} ${x.every_days} ${t.days}` : ""}`),
+          h("div", { class: "bar2" }, h("i", { style: `width:${Math.round(100 * x.count / max)}%` }))))
+          : h("div", { class: "shelp" }, t.stats_none),
+        r.overdue.length ? h("div", { class: "grp" }, t.stats_overdue) : null,
+        r.overdue.map((x) => this._setRow(x.name, this._data && this._data.permissions.add
+          ? h("button", { class: "btn2", type: "button", onclick: async (e) => { e.target.disabled = true; await this._call("add_item", { text: x.name }); this._load(); } }, "＋ " + t.stats_add)
+          : null, `${t.stats_usually} ${x.every_days} ${t.days} · ${t.stats_since} ${x.since_days} ${t.days}`)),
+        r.categories.length ? h("div", { class: "grp" }, t.stats_shares) : null,
+        h("div", { class: "chips" }, r.categories.slice(0, 6).map((c) => h("span", { class: "chip2" }, `${c.label} ${c.share} %`)),
+          r.stores.map((x) => h("span", { class: "chip2" }, `${x.label} ${x.share} %`))));
+    };
+    load();
+    return this._sec("📊", t.stats, t.stats_help, [body]);
+  }
+  _expensesSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    let period = "month";
+    const lang = this._hass.language;
+    const colorOf = (store) => {
+      if (!store) return "#9e9e9e";
+      const known = ((this._cfg && this._cfg.known_stores) || []).find((k) => String(k.value).toLowerCase() === store);
+      return (known && known.color) || hashColor(store);
+    };
+    const chipOf = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, onclick: fn }, label);
+    const load = () => this._call("expenses", { period, count: 6 }, false).then(draw).catch(() => fill(body, t.error));
+    const draw = (r) => {
+      const max = Math.max(1, ...r.rows.map((x) => x.total));
+      const totals = {};
+      r.rows.forEach((row) => Object.entries(row.stores).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; }));
+      const last = r.rows[r.rows.length - 1];
+      fill(body,
+        h("div", { class: "chips" }, [["week", t.exp_week], ["month", t.exp_month], ["year", t.exp_year]].map(([p, l]) => chipOf(period === p, l, () => { period = p; load(); }))),
+        r.rows.length ? h("div", { class: "bars" }, r.rows.map((row) => h("div", { class: "b", title: `${row.period}: ${fmtMoney(row.total, lang)}`, style: `height:${Math.max(3, Math.round(100 * row.total / max))}%` },
+          Object.entries(row.stores).map(([k, v]) => h("div", { style: `flex:${v};background:${colorOf(k)}` })),
+          h("span", {}, row.period.slice(period === "year" ? 0 : 5))))) : h("div", { class: "shelp" }, t.exp_none),
+        r.rows.length ? h("div", { class: "legend" }, Object.entries(totals).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
+          h("span", {}, h("i", { style: `background:${colorOf(k)}` }), `${k ? itemStoreLabel(k, this._cfg) : t.exp_no_store} ${fmtMoney(v, lang)}`))) : null,
+        last ? h("p", { class: "shelp", style: "padding:6px 0 0" }, `${last.period}: ${fmtMoney(last.total, lang)} (Ø ${fmtMoney(r.average, lang)})`) : null);
+    };
+    load();
+    return this._sec("💶", t.exp, t.exp_help, [body]);
+  }
+
+  // Diese Liste → Teilen per Link (Standard: nur ansehen; Optionen beim Erstellen)
+  _shareLinkSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
+    let check = "off", add = false, hours = 168, links = [];
+    const lang = this._hass.language;
+    const base = () => {
+      const c = this._hass.config || {};
+      return String(c.external_url || (this._hass.auth && this._hass.auth.data && this._hass.auth.data.hassUrl) || location.origin).replace(/\/$/, "");
+    };
+    const fmtDate = (ts) => new Date(ts * 1000).toLocaleString(lang || "de", { dateStyle: "short", timeStyle: "short" });
+    const modeLabel = (m) => ({ off: t.share_view, soft: t.share_soft, on: t.share_check }[m]);
+    const created = h("div");
+    const draw = () => fill(body,
+      this._setRow(t.share_mode, h("select", { "aria-label": t.share_mode, onchange: (e) => { check = e.target.value; } },
+        [["off", t.share_view], ["soft", t.share_soft], ["on", t.share_check]].map(([v, l]) => h("option", { value: v, selected: check === v }, l))), t.share_mode_help),
+      this._setRow(t.share_add, this._switch(add, (v) => { add = v; }, t.share_add)),
+      this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { hours = e.target.value ? Number(e.target.value) : null; } },
+        [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]].map(([v, l]) =>
+          h("option", { value: String(v), selected: String(hours ?? "") === String(v) }, l)))),
+      this._data && this._data.type === "combined" ? h("div", { class: "shelp", style: "padding:6px 0" }, "⚠️ " + t.share_combined) : null,
+      h("div", { class: "acts" }, status, h("button", { class: "btn2 primary", type: "button", onclick: create }, "🔗 " + t.share_create)),
+      created,
+      links.length ? h("div", { class: "grp" }, t.share_active) : null,
+      ...links.map((l) => this._setRow(`${modeLabel(l.check)}${l.add ? " + " + t.share_add : ""}`,
+        iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; draw(); }, "danger"),
+        `${l.expired ? "⚠️ " + t.share_expired : l.expires ? `${t.share_until} ${fmtDate(l.expires)}` : t.share_forever} · ${l.opens}× ${t.share_opened}`)));
+    const create = async () => {
+      try {
+        const r = await this._call("share_create", { check, add, hours });
+        const url = base() + r.path;
+        links = (await this._call("share_links", {})).links;
+        draw();
+        const isLocal = /\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|[^/]*\.local)/i.test(url);
+        let svgText = "";
+        try { svgText = qrSvg(url, 4); } catch (e) { svgText = ""; }
+        const qrBox = h("div", { class: "qr" });
+        qrBox.innerHTML = svgText;
+        fill(created, h("div", { class: "sec", style: "margin:8px 0" }, h("div", { class: "sbody", style: "padding-top:10px" },
+          h("div", { class: "shelp" }, t.share_once),
+          isLocal ? h("div", { class: "shelp", style: "color:var(--warning-color,#ff9800)" }, "⚠️ " + t.share_local) : null,
+          qrBox, h("div", { class: "sharelink" }, url),
+          h("div", { class: "acts" },
+            h("button", { class: "btn2", type: "button", onclick: async () => { try { await navigator.clipboard.writeText(url); status.textContent = "✓ " + t.share_copied; } catch (e) { status.textContent = url; } } }, t.share_copy),
+            navigator.share ? h("button", { class: "btn2 primary", type: "button", onclick: () => navigator.share({ title: this._data ? this._data.name : "SmartLists", url }).catch(() => {}) }, t.share_send) : null))));
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    this._call("share_links", {}).then((r) => { links = r.links; draw(); }).catch((err) => fill(body, h("div", { class: "shelp" }, (err && err.message) || t.error)));
+    return this._sec("🔗", t.share, t.share_help, [body]);
+  }
+
   _learnedSection() {
     const t = this._t;
     const listEl = h("div", { class: "learned2" }, h("div", { class: "shelp", style: "padding:10px" }, t.loading));
@@ -3294,6 +4437,10 @@ class SmartListsCard extends HTMLElement {
       fill(body,
         this._setRow(t.auto_voice_default_list, pick("voice_default_list"), t.auto_voice_help),
         this._setRow(t.auto_auto_due_list, pick("auto_due_list"), t.auto_due_help),
+        this._setRow(t.barcode_lookup, this._switch(cur.barcode_lookup !== false, async (on) => {
+          try { await this._call("set_automation", { settings: { ...cur, barcode_lookup: on } }, false); cur.barcode_lookup = on; status.textContent = "✓ " + t.saved; }
+          catch (err) { status.textContent = (err && err.message) || t.error; }
+        }, t.barcode_lookup), t.barcode_lookup_help),
         h("div", { class: "acts" }, status, h("button", { class: "btn2", type: "button", onclick: async () => {
           try { const res = await this._call("install_sentences", {}, false); status.textContent = `✓ ${t.sentences_installed}: ${res.languages.join(", ")}`; }
           catch (err) { status.textContent = (err && err.message) || t.error; }
@@ -3406,17 +4553,18 @@ class SmartListsCard extends HTMLElement {
     if (!this._showSettings || !this._cfg) return fill(el);
     const t = this._t;
     // settings_scope: "list" (Karten auf der Seite) = nur „Diese Liste“; "global" (⚙ der Seite) = Für mich + Haushalt
-    const scope = this._config.settings_scope === "global" || this._config.settings_scope === "list"
+    const scope = ["global", "list", "stats"].includes(this._config.settings_scope)
       ? this._config.settings_scope : this._settingsScope || "global";
-    const allowed = scope === "list" ? ["list"] : scope === "global" ? ["me", "house"] : ["me", "house", "list"];
+    const allowed = scope === "list" ? ["list"] : scope === "stats" ? ["stats"] : ["me", "house", "stats"];
     const tab = allowed.includes(this._setTab) ? this._setTab : allowed[0];
     const tabBtn = (id, label, extra) => h("button", { type: "button", role: "tab", class: tab === id ? "on" : "", "aria-selected": String(tab === id),
       onclick: () => { this._setTab = id; this._renderSettings(); } }, label, extra);
-    const pane = tab === "house" ? this._paneHouse() : tab === "list" ? this._paneList() : this._paneMe();
+    const pane = tab === "house" ? this._paneHouse() : tab === "list" ? this._paneList() : tab === "stats" ? this._paneStats() : this._paneMe();
     fill(el, h("div", { class: "sl-settings" },
       allowed.length > 1 ? h("div", { class: "tabs2", role: "tablist" },
         allowed.includes("me") ? tabBtn("me", t.tab_me) : null,
         allowed.includes("house") ? tabBtn("house", t.tab_house, h("span", { class: "tag" }, t.admin)) : null,
+        allowed.includes("stats") ? tabBtn("stats", t.tab_stats) : null,
         allowed.includes("list") ? tabBtn("list", t.tab_list) : null) : null,
       pane,
       scope === "list" ? h("p", { class: "shelp", style: "padding:0 4px" }, this._config.settings_scope === "list" ? t.list_settings_hint : t.list_settings_hint_card) : null,
@@ -3483,9 +4631,9 @@ class SmartListsCardEditor extends HTMLElement {
       ]),
       section("header", "mdi:page-layout-header",
         [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-      section("input", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
+      section("input", "mdi:plus-box-outline", [b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan")]),
       section("list", "mdi:format-list-bulleted",
-        [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
+        [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_prices"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
       section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
       section("shop", "mdi:cart-outline", [b("start_shopping")]),
     ];
@@ -3553,6 +4701,10 @@ const PANEL_STYLE = `
   .chip.ordering { cursor:grab; } .chip.drop { outline:2px dashed var(--primary-color); outline-offset:2px; }
   .chip .mv { padding:0 4px; opacity:.8; cursor:pointer; } .chip .mv:hover { opacity:1; }
   .chips .sep { flex:none; width:1px; align-self:stretch; background:var(--divider-color,#ddd); margin:0 4px; }
+  .chips { flex-direction:column; gap:6px; overflow:visible; }
+  .cgroup { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .cgroup .glabel { flex:0 0 100%; font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--secondary-text-color); margin-top:4px; }
+  .chip.pending { border-style:dashed; color:var(--secondary-text-color); }
   .empty { text-align:center; padding:48px 16px; color:var(--secondary-text-color); }
 `;
 const ICON_COLUMNS = "M3,3H11V21H3V3M13,3H21V21H13V3M5,5V19H9V5H5M15,5V19H19V5H15Z";
@@ -3591,6 +4743,9 @@ class SmartListsPanel extends HTMLElement {
     this._visibleKey = key;
     this._hass.callWS({ type: "smartlists/lists" }).then((r) => { this._visible = new Map(r.lists.map((l) => [l.entity_id, l.type])); this._render(); })
       .catch(() => { this._visible = null; });
+    // kombinierte Listen aus der App, die noch nicht in HA verbunden sind (Chip „verbinden“)
+    this._hass.callWS({ type: "smartlists/app_lists" }).then((r) => { this._appLists = r.lists.filter((l) => !l.connected); this._render(); })
+      .catch(() => { this._appLists = []; });
   }
   get _t() { return TEXTS[((this._hass && this._hass.language) || "de").slice(0, 2)] || TEXTS.en; }
   async _newList() {
@@ -3649,14 +4804,17 @@ class SmartListsPanel extends HTMLElement {
       this._newBtn = h("button", { type: "button", title: this._t.new_list, "aria-label": this._t.new_list, onclick: () => this._newList() }, svg(ICON.plus, 22));
       // Einstellungen: dieselbe Ansicht wie im Zahnrad der Karte, aber auf der ganzen Seite
       this._gearBtn = h("button", { type: "button", title: t.p_settings, "aria-label": t.p_settings,
-        onclick: () => { this._settingsOpen = !this._settingsOpen; this._render(); } }, svg(ICON.gear, 22));
-      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._orderBtn, this._colBtn, this._wideBtn, this._gearBtn),
+        onclick: () => { this._settingsOpen = this._settingsOpen === "global" ? false : "global"; this._render(); } }, svg(ICON.gear, 22));
+      this._statsBtn = h("button", { type: "button", title: t.stats, "aria-label": t.stats,
+        onclick: () => { this._settingsOpen = this._settingsOpen === "stats" ? false : "stats"; this._render(); } }, svg(ICON.chart, 22));
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._orderBtn, this._colBtn, this._wideBtn, this._statsBtn, this._gearBtn),
         this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }
     this._menuBtn.hidden = !this._narrow;
-    this._gearBtn.classList.toggle("on", !!this._settingsOpen);
-    this._gearBtn.setAttribute("aria-pressed", String(!!this._settingsOpen));
+    this._gearBtn.classList.toggle("on", this._settingsOpen === "global");
+    this._gearBtn.setAttribute("aria-pressed", String(this._settingsOpen === "global"));
+    this._statsBtn.classList.toggle("on", this._settingsOpen === "stats");
     [this._newBtn, this._orderBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen; });
     this._orderBtn.classList.toggle("on", !!this._ordering);
     this._orderBtn.setAttribute("aria-pressed", String(!!this._ordering));
@@ -3665,10 +4823,11 @@ class SmartListsPanel extends HTMLElement {
       if (!lists.some((l) => l.e === this._settingsEntity)) this._settingsEntity = sel[0] || (lists[0] && lists[0].e);
       const entity = this._settingsEntity;
       if (!entity) { fill(this._contentEl, h("div", { class: "empty" }, this._t.p_empty)); return; }
-      if (!this._settingsCard || this._settingsCard._config.entity !== entity) {
+      const scope = this._settingsOpen === "stats" ? "stats" : "global";
+      if (!this._settingsCard || this._settingsCard._config.entity !== entity || this._settingsCard._config.settings_scope !== scope) {
         const tab = this._settingsCard && this._settingsCard._setTab;
         this._settingsCard = document.createElement("smartlists-card");
-        this._settingsCard.setConfig({ entity, settings_only: true, settings_scope: "global" });
+        this._settingsCard.setConfig({ entity, settings_only: true, settings_scope: scope });
         if (tab) this._settingsCard._setTab = tab;
       }
       this._settingsCard.hass = this._hass;
@@ -3699,11 +4858,21 @@ class SmartListsPanel extends HTMLElement {
       el.addEventListener("dragend", () => { this._dragChip = null; });
       return el;
     };
-    const shop = lists.filter((l) => !l.notes);
+    // getrennt nach Art: Kombinierte Listen | Listen | Notizen (je Gruppe eigene Reihenfolge)
+    const combined = lists.filter((l) => !l.notes && l.combined);
+    const normal = lists.filter((l) => !l.notes && !l.combined);
     const notes = lists.filter((l) => l.notes);
-    fill(this._chipsEl, shop.map((l, i) => chip(l, i, shop)),
-      notes.length ? h("span", { class: "sep", "aria-hidden": "true" }) : null,
-      notes.map((l, i) => chip(l, i, notes)));
+    const pending = (this._appLists || []);
+    const group = (label, items, extra) => (items.length || (extra && extra.length) ? h("div", { class: "cgroup" },
+      h("span", { class: "glabel" }, label), items.map((l, i) => chip(l, i, items)), extra) : null);
+    const pendingChips = pending.map((a) => h("button", { type: "button", class: "chip pending", title: this._t.app_list_pending,
+      onclick: async () => {
+        if (!(this._hass.user && this._hass.user.is_admin)) { await slDialog(this.shadowRoot, { title: a.name, text: this._t.app_list_admin, ok: "OK", cancel: this._t.cancel }); return; }
+        if (!(await slDialog(this.shadowRoot, { title: a.name, text: `${this._t.app_list_pending}: ${a.sources.join(", ")}`, ok: this._t.app_list_connect, cancel: this._t.cancel }))) return;
+        try { await this._hass.callWS({ type: "smartlists/connect_app_list", device_id: a.device_id, list_id: a.id }); this._visibleKey = null; this._pendingSelect = a.name; }
+        catch (err) { await slDialog(this.shadowRoot, { title: this._t.error, text: (err && err.message) || this._t.error, ok: "OK", cancel: this._t.cancel }); }
+      } }, "📱 ", a.name, h("span", { class: "n" }, "＋")));
+    fill(this._chipsEl, group(this._t.p_group_combined, combined, pendingChips), group(this._t.p_group_lists, normal), group(this._t.p_group_notes, notes));
     fill(this._hintEl, this._ordering ? this._t.p_order_hint : this._prefs.columns ? this._t.p_hint : "");
     if (!sel.length) {
       this._cards.clear();

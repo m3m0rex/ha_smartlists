@@ -1,7 +1,8 @@
 # Sidebar page
 
-The integration adds **SmartLists** to the sidebar (`/smartlists`). It shows all to-do lists as tabs,
-combined lists first, each rendered like the card.
+The integration adds **SmartLists** to the sidebar (`/smartlists`). It shows all to-do lists as tabs in
+three groups – **Combined lists**, **Lists** and **Notes** – each rendered like the card. Combined lists
+created in the app that are not connected yet appear dashed with 📱; tap to connect (admins).
 
 Toolbar buttons:
 

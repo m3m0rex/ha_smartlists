@@ -127,7 +127,8 @@
           "devices": "Connected devices (app)",
           "automation": "Voice & automations (Assist, due items)",
           "app_lists": "Lists from the app (take over combined lists)",
-          "packs": "Category detection (keyword packs)"
+          "packs": "Category detection (keyword packs)",
+          "overview": "All SmartLists lists"
         }
       },
       "naming": {
@@ -228,6 +229,10 @@
           "remove": "Remove",
           "again": "Continue editing after saving"
         }
+      },
+      "overview": {
+        "title": "All SmartLists lists",
+        "description": "**Combined lists**\n{combined}\n\n**Lists**\n{lists}\n\n**Notes**\n{notes}\n\nLists created by the app technically belong to the “Local To-do” integration (Home Assistant cannot move them here); SmartLists still shows and uses them everywhere. Number = open items."
       }
     },
     "error": {
@@ -319,6 +324,9 @@
       },
       "app_version": {
         "name": "App version"
+      },
+      "expenses_month": {
+        "name": "Expenses this month"
       }
     }
   },
@@ -356,6 +364,24 @@
     "add_due_items": {
       "name": "Add due items",
       "description": "Adds due items now to the list chosen under “Voice & automations”."
+    },
+    "add_template": {
+      "name": "Add template",
+      "description": "Adds all items of a template (e.g. “Pancakes”) to a list – quantities scaled to the servings; items already on the list get their quantity increased.",
+      "fields": {
+        "entity_id": {
+          "name": "List",
+          "description": "List"
+        },
+        "template": {
+          "name": "Template",
+          "description": "Name or ID of the template."
+        },
+        "servings": {
+          "name": "Servings",
+          "description": "Optional; scales the quantities."
+        }
+      }
     }
   }
 }

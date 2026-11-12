@@ -25,7 +25,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event, async_track_time_interval
 from homeassistant.helpers.storage import Store
-from homeassistant.util import dt as dt_util
+from homeassistant.util import dt as dt_util, slugify
 
 from .categories import CategoryIndex
 from .itemtext import join_offer, offer_summary, person_from_list_name, split_offer
@@ -146,6 +146,9 @@ class CombinedTodoListEntity(TodoListEntity):
 
         self._attr_unique_id = unique_id
         self._attr_name = title
+        # Neue kombinierte Listen: todo.ha_smartlists_list_merged_<name> (wie die App ihre Listen benennt).
+        # Gilt nur beim ersten Anlegen – bestehende Entitäten behalten ihre ID.
+        self.entity_id = f"todo.ha_smartlists_list_merged_{slugify(title) or 'list'}"
         self._attr_todo_items = []
         self._refresh_debouncer = Debouncer(
             hass, _LOGGER, cooldown=0.5, immediate=False, function=self._async_refresh
@@ -506,6 +509,8 @@ class OwnTodoListEntity(TodoListEntity):
         self._items: list[dict[str, Any]] = [i for i in stored.get("items", []) if i.get("uid")]
         self._attr_unique_id = f"own_{subentry.subentry_id}"
         self._attr_name = subentry.title
+        # Neue eigene Listen: todo.ha_smartlists_list_<name> (gleiches Schema wie in der App)
+        self.entity_id = f"todo.ha_smartlists_list_{slugify(subentry.title) or 'list'}"
         self._owner_name = ""
         self._share_names: dict[str, str] = {}
 

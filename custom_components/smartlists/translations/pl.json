@@ -127,7 +127,8 @@
           "devices": "Połączone urządzenia (aplikacja)",
           "automation": "Głos i automatyzacje (Assist, produkty do kupienia)",
           "app_lists": "Listy z aplikacji (przejmij listy połączone)",
-          "packs": "Rozpoznawanie kategorii (pakiety słów kluczowych)"
+          "packs": "Rozpoznawanie kategorii (pakiety słów kluczowych)",
+          "overview": "Wszystkie listy SmartLists"
         }
       },
       "naming": {
@@ -228,6 +229,10 @@
           "remove": "Usuń",
           "again": "Edytuj dalej po zapisaniu"
         }
+      },
+      "overview": {
+        "title": "Wszystkie listy SmartLists",
+        "description": "**Listy połączone**\n{combined}\n\n**Listy**\n{lists}\n\n**Notatki**\n{notes}\n\nListy utworzone przez aplikację technicznie należą do integracji „Local To-do” (Home Assistant nie może ich tu przenieść); SmartLists i tak je wszędzie pokazuje i używa. Liczba = produkty do kupienia."
       }
     },
     "error": {
@@ -319,6 +324,9 @@
       },
       "app_version": {
         "name": "Wersja aplikacji"
+      },
+      "expenses_month": {
+        "name": "Wydatki w tym miesiącu"
       }
     }
   },
@@ -356,6 +364,24 @@
     "add_due_items": {
       "name": "Dodaj produkty do kupienia",
       "description": "Dodaje teraz produkty do kupienia do listy wybranej w „Głos i automatyzacje”."
+    },
+    "add_template": {
+      "name": "Dodaj szablon",
+      "description": "Dodaje wszystkie produkty szablonu (np. „Naleśniki”) do listy – ilości przeliczone na porcje; produkty już na liście dostają większą ilość.",
+      "fields": {
+        "entity_id": {
+          "name": "Lista",
+          "description": "Lista"
+        },
+        "template": {
+          "name": "Szablon",
+          "description": "Nazwa lub ID szablonu."
+        },
+        "servings": {
+          "name": "Porcje",
+          "description": "Opcjonalnie; przelicza ilości."
+        }
+      }
     }
   }
 }

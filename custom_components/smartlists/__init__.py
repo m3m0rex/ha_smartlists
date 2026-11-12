@@ -21,8 +21,8 @@ from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.const import Platform
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import config_validation as cv, entity_registry as er
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 
@@ -32,6 +32,9 @@ from .app_backups import async_get_app_backups
 from .devices import async_get_devices
 from .packs import async_get_packs
 from .notes import async_get_notes
+from .extras import async_get_extras
+from .shares import async_get_shares, async_register_views
+from .notify import async_get_notifier
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,6 +52,18 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     await async_get_devices(hass)
     await async_get_app_backups(hass)
     await async_get_notes(hass)
+    await async_get_extras(hass)
+    await async_get_shares(hass)
+    async_register_views(hass)  # geteilte Links (ohne Anmeldung, nur mit 256-Bit-Schlüssel)
+
+    @callback
+    def _entity_removed(event) -> None:
+        # Liste gelöscht → ihre Links ungültig (eine neue Liste gleichen Namens erbt sie nicht)
+        if event.data.get("action") == "remove" and str(event.data.get("entity_id", "")).startswith("todo."):
+            hass.data[DOMAIN]["shares"].drop_entity(event.data["entity_id"])
+
+    hass.bus.async_listen(er.EVENT_ENTITY_REGISTRY_UPDATED, _entity_removed)
+    (await async_get_notifier(hass)).start()
     websocket.async_register(hass)
     automation.async_setup_services(hass)
     automation.async_setup_intents(hass)

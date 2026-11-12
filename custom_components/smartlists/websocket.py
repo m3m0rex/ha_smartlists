@@ -33,7 +33,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -43,7 +43,10 @@ def async_register(hass: HomeAssistant) -> None:
 @callback
 def ws_config(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Kategorien (in der gewünschten Sprache), Tag-Regeln, bekannte Märkte."""
-    connection.send_result(msg["id"], _learning(hass).config(msg.get("language")))
+    extras = hass.data[DOMAIN].get("extras")
+    connection.send_result(msg["id"], {**_learning(hass).config(msg.get("language")),
+                                       "store_order": extras.store_order if extras else {},
+                                       "templates": len(extras.templates) if extras else 0})
 
 
 @websocket_api.websocket_command(
@@ -184,7 +187,8 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "api_version": API_VERSION,
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
-                         "notes", "store_zones", "appearance", "app_lists"],
+                         "notes", "store_zones", "appearance", "app_lists",
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -379,7 +383,9 @@ async def ws_due(hass: HomeAssistant, connection: websocket_api.ActiveConnection
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/export", vol.Optional("include_history", default=True): bool})
 @callback
 def ws_export(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    connection.send_result(msg["id"], _learning(hass).export(msg["include_history"]))
+    data = _learning(hass).export(msg["include_history"])
+    data["extras"] = _extras(hass).export()  # Reihenfolgen, Preise, Vorlagen, Strichcodes, Ausgaben
+    connection.send_result(msg["id"], data)
 
 
 @websocket_api.require_admin
@@ -390,6 +396,7 @@ def ws_export(hass: HomeAssistant, connection: websocket_api.ActiveConnection, m
 def ws_import(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     try:
         counts = _learning(hass).import_data(msg["data"], msg["replace"])
+        _extras(hass).import_data(msg["data"].get("extras") or {})
     except ValueError as err:
         connection.send_error(msg["id"], "invalid_import", str(err))
         return
@@ -783,3 +790,167 @@ def ws_connect_app_list(hass: HomeAssistant, connection: websocket_api.ActiveCon
         connection.send_error(msg["id"], "smartlists_error", str(err))
         return
     connection.send_result(msg["id"], {"subentry_id": sub_id, "lists": app_lists.describe(hass)})
+
+
+
+# ======================================================================
+# 2.8: Markt-Reihenfolge, Preise & Ausgaben, Vorlagen, Statistik, Teilen, Benachrichtigungen, Strichcodes
+# ======================================================================
+def _extras(hass: HomeAssistant):
+    return hass.data[DOMAIN]["extras"]
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/store_order", vol.Required("store"): str,
+                                  vol.Optional("zone"): vol.Any(str, None), vol.Optional("order"): vol.Any([str], None)})
+@callback
+def ws_store_order(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Gang-Reihenfolge der Kategorien für einen Markt (optional je Zone). order=None → Standard."""
+    try:
+        result = _extras(hass).set_store_order(msg["store"], msg.get("order"), msg.get("zone"))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+        return
+    connection.send_result(msg["id"], {"store_order": result})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_price", vol.Required("name"): str,
+                                  vol.Optional("price"): vol.Any(vol.Coerce(float), None), vol.Optional("store"): vol.Any(str, None)})
+@callback
+def ws_set_price(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Preis je Einheit für einen Artikel merken (None = vergessen)."""
+    price = msg.get("price")
+    if price is not None and not 0 <= price < 100000:
+        connection.send_error(msg["id"], "invalid", "Preis ungültig")
+        return
+    _extras(hass).set_price(msg["name"], price, msg.get("store"))
+    connection.send_result(msg["id"], {})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/expenses",
+                                  vol.Optional("period", default="month"): vol.In(["week", "month", "year"]),
+                                  vol.Optional("count", default=6): vol.All(int, vol.Range(min=1, max=24))})
+@callback
+def ws_expenses(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], _extras(hass).expense_report(msg["period"], msg["count"]))
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/templates"})
+@callback
+def ws_templates(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], {"templates": [{"id": k, **v} for k, v in _extras(hass).templates.items()]})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/save_template", vol.Optional("template_id"): str,
+                                  vol.Required("name"): str, vol.Required("items"): [str], vol.Optional("emoji", default=""): str,
+                                  vol.Optional("servings"): vol.Any(vol.All(int, vol.Range(min=1, max=100)), None)})
+@callback
+def ws_save_template(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    try:
+        tid = _extras(hass).save_template(msg.get("template_id"), msg["name"], msg["items"], msg["emoji"], msg.get("servings"))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+        return
+    connection.send_result(msg["id"], {"template_id": tid})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_template", vol.Required("template_id"): str})
+@callback
+def ws_delete_template(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    _extras(hass).delete_template(msg["template_id"])
+    connection.send_result(msg["id"], {})
+
+
+@_list_command({vol.Required("type"): "smartlists/add_template", vol.Required("entity_id"): str, vol.Required("template_id"): str,
+                vol.Optional("servings"): vol.Any(vol.All(int, vol.Range(min=1, max=100)), None), vol.Optional("skip", default=[]): [int]})
+async def ws_add_template(hass, msg, context):
+    from .automation import add_template_items
+
+    return await add_template_items(hass, msg["entity_id"], msg["template_id"], msg.get("servings"), msg["skip"], context)
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/stats", vol.Optional("days", default=90): vol.All(int, vol.Range(min=0, max=3650))})
+@callback
+def ws_stats(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    from .extras import stats
+
+    connection.send_result(msg["id"], stats(_learning(hass), _extras(hass), msg["days"]))
+
+
+def _may_share(hass: HomeAssistant, entity_id: str, user: Any) -> str | None:
+    """Fehlermeldung, wenn der Benutzer diese Liste nicht teilen darf (sonst None)."""
+    if not entity_id.startswith("todo.") or hass.states.get(entity_id) is None:
+        return "Liste nicht gefunden."
+    if lists.is_notes(hass, entity_id):
+        return "Notizlisten lassen sich nicht teilen."
+    if user.is_admin:
+        return None
+    if lists.own_entity(hass, entity_id) is not None and lists.own_role(hass, entity_id, user) == "owner":
+        return None
+    return "Teilen dürfen Admins und der Besitzer einer eigenen Liste."
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/share_links", vol.Required("entity_id"): str})
+@callback
+def ws_share_links(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if (err := _may_share(hass, msg["entity_id"], connection.user)) is not None:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, err)
+        return
+    connection.send_result(msg["id"], {"links": hass.data[DOMAIN]["shares"].for_list(msg["entity_id"])})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/share_create", vol.Required("entity_id"): str,
+                                  vol.Optional("check", default="off"): vol.In(["off", "soft", "on"]),
+                                  vol.Optional("add", default=False): bool,
+                                  vol.Optional("hours"): vol.Any(vol.All(int, vol.Range(min=1, max=24 * 365)), None)})
+@callback
+def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Link erstellen. Der Schlüssel kommt nur in dieser Antwort vor (gespeichert wird nur sein Hash)."""
+    if (err := _may_share(hass, msg["entity_id"], connection.user)) is not None:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, err)
+        return
+    try:
+        link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, msg["check"], msg["add"],
+                                                   hours=msg.get("hours", 24 * 7))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+        return
+    connection.send_result(msg["id"], {**link, "path": f"/smartlists-share/{link['token']}"})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/share_revoke", vol.Required("entity_id"): str, vol.Required("link_id"): str})
+@callback
+def ws_share_revoke(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if (err := _may_share(hass, msg["entity_id"], connection.user)) is not None:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, err)
+        return
+    hass.data[DOMAIN]["shares"].revoke(msg["link_id"], msg["entity_id"])
+    connection.send_result(msg["id"], {"links": hass.data[DOMAIN]["shares"].for_list(msg["entity_id"])})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/notify"})
+@callback
+def ws_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Eigene Benachrichtigungs-Einstellungen + verfügbare Handys (notify.mobile_app_…)."""
+    n = hass.data[DOMAIN]["notifier"]
+    connection.send_result(msg["id"], {"settings": n.get(connection.user.id), "services": n.services()})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_notify", vol.Required("settings"): dict})
+@callback
+def ws_set_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    n = hass.data[DOMAIN]["notifier"]
+    service = (msg["settings"].get("service") or "").removeprefix("notify.")
+    if service and service not in n.services():
+        connection.send_error(msg["id"], "invalid", "Unbekanntes Handy (notify-Dienst)")
+        return
+    connection.send_result(msg["id"], {"settings": n.set(connection.user.id, msg["settings"])})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/barcode", vol.Required("code"): vol.All(str, vol.Match(r"^\d{6,14}$"))})
+@websocket_api.async_response
+async def ws_barcode(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Strichcode → Produkt. Erst aus dem eigenen Speicher, sonst Open Food Facts (nur der Code wird gesendet)."""
+    from .barcode import async_lookup
+
+    connection.send_result(msg["id"], await async_lookup(hass, msg["code"]))

@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.7.1] – 2026-11-12
+
+### Changed
+
+- Licensed under the MIT license (`LICENSE`); the HA SmartLists Android app remains a separate project.
+- Prepared for the default HACS / Marketplace catalog: validation workflow (Hassfest + HACS action)
+  without exceptions and with a weekly run, short catalog name "SmartLists".
+
 ## [1.7.0] – 2026-11-12
 
 ### Added

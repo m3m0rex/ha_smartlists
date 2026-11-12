@@ -69,3 +69,19 @@ def test_share_links_secure():
     soft = s.create("todo.einkauf", "u1", check="soft", hours=2)
     assert s.revoke(soft["id"], "todo.anders") is False and s.revoke(soft["id"], "todo.einkauf") is True
     assert s.resolve(soft["token"]) is None
+
+
+def test_delete_expense_and_trip():
+    e = _extras()
+    e.set_price("Milch", 1.0)
+    a = e.book("Milch", 1, None, "u1", "todo.x")
+    b = e.book("Milch", 2, None, "u2", "todo.x")
+    assert e.delete_expense(b["id"], user_id="u1") is False  # fremde Buchung
+    assert e.delete_expense(b["id"]) is True and e.month_total() == 1.0
+    e.expenses.append({"t": 1, "name": "Alt", "amount": 5, "store": None, "user": None, "list": "todo.x"})  # vor 2.9.0
+    assert e.delete_expense("1:Alt") is True
+    e.mark_checked("todo.x", "uid1", True)
+    assert "uid1" in e.checked_at["todo.x"]
+    start = e.finish_trip("todo.x")
+    assert e.trips["todo.x"] == start and "todo.x" not in e.checked_at
+    assert a["id"]

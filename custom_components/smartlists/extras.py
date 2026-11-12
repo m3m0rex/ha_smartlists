@@ -53,6 +53,9 @@ class Extras:
         # id → {"name", "emoji", "servings", "items": [Text, …]}
         self.templates: dict[str, dict[str, Any]] = {}
         self.barcodes: dict[str, dict[str, Any]] = {}
+        # Einkauf: wann wurde ein Artikel abgehakt, wann wurde der letzte Einkauf beendet (je Liste)
+        self.checked_at: dict[str, dict[str, int]] = {}
+        self.trips: dict[str, int] = {}
 
     async def async_load(self) -> None:
         data = await self._store.async_load() or {}
@@ -61,13 +64,21 @@ class Extras:
         self.expenses = list(data.get("expenses") or [])[-MAX_EXPENSES:]
         self.templates = dict(data.get("templates") or {})
         self.barcodes = dict(data.get("barcodes") or {})
+        self.checked_at = {k: dict(v) for k, v in (data.get("checked_at") or {}).items()}
+        self.trips = dict(data.get("trips") or {})
 
     def _data(self) -> dict[str, Any]:
         return {"store_order": self.store_order, "prices": self.prices, "expenses": self.expenses,
-                "templates": self.templates, "barcodes": self.barcodes}
+                "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
+        from homeassistant.helpers.dispatcher import async_dispatcher_send
+
+        from .const import SIGNAL_DATA_CHANGED
+
+        if hasattr(self.hass, "loop"):
+            async_dispatcher_send(self.hass, SIGNAL_DATA_CHANGED)
 
     # ---- Markt-Reihenfolge ------------------------------------------------
     @callback
@@ -107,8 +118,8 @@ class Extras:
         if not info or info.get("price") is None:
             return None
         amount = round(float(info["price"]) * (quantity if quantity and quantity > 0 else 1), 2)
-        entry = {"t": int(time.time()), "name": name, "amount": amount, "store": (store or "").lower() or None,
-                 "user": user, "list": entity_id}
+        entry = {"id": secrets.token_hex(5), "t": int(time.time()), "name": name, "amount": amount,
+                 "store": (store or "").lower() or None, "user": user, "list": entity_id}
         self.expenses.append(entry)
         self.expenses = self.expenses[-MAX_EXPENSES:]
         if price is not None:
@@ -126,6 +137,45 @@ class Extras:
                 self.expenses.pop(i)
                 self._save()
                 return
+
+    @callback
+    def mark_checked(self, entity_id: str, uid: str, checked: bool) -> None:
+        marks = self.checked_at.setdefault(entity_id, {})
+        if checked:
+            marks[uid] = int(time.time())
+            if len(marks) > 500:
+                for k, _ in sorted(marks.items(), key=lambda kv: kv[1])[: len(marks) - 500]:
+                    marks.pop(k)
+        else:
+            marks.pop(uid, None)
+        self._save()
+
+    @callback
+    def finish_trip(self, entity_id: str) -> int:
+        """„Einkauf beendet“: Summe „im Wagen“ beginnt wieder bei 0 (Abgehaktes bleibt abgehakt)."""
+        self.trips[entity_id] = int(time.time())
+        self.checked_at.pop(entity_id, None)
+        self._save()
+        return self.trips[entity_id]
+
+    @staticmethod
+    def expense_id(e: dict[str, Any]) -> str:
+        return e.get("id") or f"{e['t']}:{e['name']}"  # Buchungen vor 2.9.0 haben keine ID
+
+    def expense_entries(self, user_id: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+        """Letzte Buchungen (neueste zuerst); user_id = nur eigene."""
+        rows = [e for e in self.expenses if user_id is None or e.get("user") == user_id]
+        return [{**e, "id": self.expense_id(e)} for e in reversed(rows[-limit:])]
+
+    @callback
+    def delete_expense(self, expense_id: str, user_id: str | None = None) -> bool:
+        """Falsche Buchung löschen (Admins: alle, sonst nur eigene)."""
+        for i, e in enumerate(self.expenses):
+            if self.expense_id(e) == expense_id and (user_id is None or e.get("user") == user_id):
+                self.expenses.pop(i)
+                self._save()
+                return True
+        return False
 
     def expense_report(self, period: str = "month", count: int = 6) -> dict[str, Any]:
         """Summen je Zeitraum (month|week|year) und Markt, neueste zuletzt."""

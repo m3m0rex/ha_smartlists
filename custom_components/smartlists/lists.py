@@ -188,6 +188,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
                 **info,
                 "price": price,
                 "soft_checked": raw["uid"] in soft,
+                "checked_at": (extras.checked_at.get(entity_id) or {}).get(raw["uid"]) if extras else None,
                 "uid": raw["uid"],
                 "text": raw["text"],
                 "note": note,
@@ -211,6 +212,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         "permissions": perms,
         "own": own_info,
         "categories": [] if notes else learning.categories.as_list(language),
+        "trip_start": extras.trips.get(entity_id) if extras else None,
         "items": items,
     }
 
@@ -328,6 +330,7 @@ async def _book(hass: HomeAssistant, entity_id: str, uid: str, checked: bool, co
     item = _learning(hass).parse(current["text"])
     _, offer, _ = split_offer(current.get("note"))
     store = next((t["value"] for t in item.tags if t["kind"] == "store"), None) or (offer or {}).get("store")
+    extras.mark_checked(entity_id, uid, checked)
     if checked:
         offer_price = offer.get("price") if offer else None
         qty = (item.quantity or 1) * (item.pack_count or 1)

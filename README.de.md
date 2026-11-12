@@ -140,6 +140,10 @@ bleiben erhalten.
 - Artikel ohne eindeutige ID (sehr alte Integrationen) werden übersprungen.
 - Voraussetzung: Home Assistant 2025.3 oder neuer (Unter-Einträge für die Listen).
 
+## Lizenz
+
+MIT – siehe [LICENSE](LICENSE). Die Android-App HA SmartLists ist ein eigenes Projekt mit eigener Lizenz.
+
 ## Aufbau
 
 ```

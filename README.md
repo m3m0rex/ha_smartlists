@@ -140,6 +140,10 @@ icon in the card; admins can change the household settings there as well – bot
 - Requires Home Assistant 2025.3 or newer (sub-entries for the lists).
 - The user interface is available in German and English; category detection is German.
 
+## License
+
+MIT – see [LICENSE](LICENSE). The HA SmartLists Android app is a separate project with its own license.
+
 ## Structure
 
 ```

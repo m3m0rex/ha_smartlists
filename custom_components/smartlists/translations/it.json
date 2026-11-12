@@ -217,7 +217,7 @@
           "name": "Nome (facoltativo)",
           "json": "Pacchetto (JSON)"
         },
-        "description": "Formato: {\"terms\": {\"latte d'avena\": \"kuehlung\"}} – oppure il category_pack_v2.json dell'app. Lo stesso nome sostituisce un pacchetto personale esistente."
+        "description": "Formato: {example} – oppure il category_pack_v2.json dell'app. Lo stesso nome sostituisce un pacchetto personale esistente."
       },
       "pack_edit": {
         "title": "Modifica {name}",

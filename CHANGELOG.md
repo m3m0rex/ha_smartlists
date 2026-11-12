@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.6.2] – 2026-11-12
+
+### Fixed
+
+- Hassfest: the example JSON in the "Paste pack as JSON" description is now passed as a placeholder
+  (curly braces in translations are not allowed). New test checks all translation placeholders.
+
 ## [2.6.1] – 2026-11-12
 
 ### Fixed

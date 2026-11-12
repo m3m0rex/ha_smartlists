@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.5.0";
+const CARD_VERSION = "2.5.1";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -222,6 +222,7 @@ const TEXTS = {
     look_add_help: "Mit Zeichen davor, z. B. @Kaufland, *Max oder #vegan – auch wenn es noch nicht benutzt wurde.",
     zone_count: "Zonen", zone_unlink: "Zone lösen", zone_add: "Zone",
     app_list: "kombinierte Liste der App", app_list_connected: "verbunden", app_list_connect: "Verbinden",
+    zone_name: "Name der Zone, z. B. REWE Standort Test", zone_radius: "Radius", zone_coords: "Koordinaten oder Karten-Link", zone_coords_placeholder: "52.5200, 13.4050 oder Link aus Google/Apple/OSM-Karten", zone_coords_bad: "Keine Koordinaten erkannt.", zone_locating: "Standort wird ermittelt …", zone_no_location: "Standort nicht verfügbar – andere Option wählen.", zone_where: "Wo?", zone_here_opt: "Aktueller Standort (dieses Gerät)", zone_home_opt: "Zuhause", zone_map_opt: "Auf der Karte wählen", zone_after: "Feinjustieren jederzeit unter Einstellungen → Bereiche & Zonen.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -342,6 +343,7 @@ const TEXTS = {
     look_add_help: "With its character, e.g. @Kaufland, *Max or #vegan – even if not used yet.",
     zone_count: "zones", zone_unlink: "Unlink zone", zone_add: "Zone",
     app_list: "combined list of the app", app_list_connected: "connected", app_list_connect: "Connect",
+    zone_name: "Zone name, e.g. REWE Standort Test", zone_radius: "Radius", zone_coords: "Coordinates or map link", zone_coords_placeholder: "52.5200, 13.4050 or a Google/Apple/OSM maps link", zone_coords_bad: "No coordinates recognised.", zone_locating: "Getting location …", zone_no_location: "Location not available – choose another option.", zone_where: "Where?", zone_here_opt: "Current location (this device)", zone_home_opt: "Home", zone_map_opt: "Pick on the map", zone_after: "Fine-tune any time under Settings → Areas & zones.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -462,6 +464,7 @@ const TEXTS = {
     look_add_help: "Avec son caractère, p. ex. @Kaufland, *Max ou #vegan – même s'il n'est pas encore utilisé.",
     zone_count: "zones", zone_unlink: "Dissocier la zone", zone_add: "Zone",
     app_list: "liste combinée de l'app", app_list_connected: "associée", app_list_connect: "Associer",
+    zone_name: "Nom de la zone, p. ex. Carrefour Centre", zone_radius: "Rayon", zone_coords: "Coordonnées ou lien de carte", zone_coords_placeholder: "48.8566, 2.3522 ou un lien Google/Apple/OSM", zone_coords_bad: "Aucune coordonnée reconnue.", zone_locating: "Localisation en cours …", zone_no_location: "Position indisponible – choisis une autre option.", zone_where: "Où ?", zone_here_opt: "Position actuelle (cet appareil)", zone_home_opt: "Domicile", zone_map_opt: "Choisir sur la carte", zone_after: "À ajuster à tout moment dans Paramètres → Pièces et zones.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -582,6 +585,7 @@ const TEXTS = {
     look_add_help: "Con su carácter, p. ej. @Kaufland, *Max o #vegano – aunque aún no se haya usado.",
     zone_count: "zonas", zone_unlink: "Desvincular zona", zone_add: "Zona",
     app_list: "lista combinada de la app", app_list_connected: "vinculada", app_list_connect: "Vincular",
+    zone_name: "Nombre de la zona, p. ej. Mercadona Centro", zone_radius: "Radio", zone_coords: "Coordenadas o enlace de mapa", zone_coords_placeholder: "40.4168, -3.7038 o un enlace de Google/Apple/OSM", zone_coords_bad: "No se reconocen coordenadas.", zone_locating: "Obteniendo ubicación …", zone_no_location: "Ubicación no disponible – elige otra opción.", zone_where: "¿Dónde?", zone_here_opt: "Ubicación actual (este dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Elegir en el mapa", zone_after: "Ajústala cuando quieras en Ajustes → Áreas y zonas.",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -702,6 +706,7 @@ const TEXTS = {
     look_add_help: "Con il suo carattere, es. @Kaufland, *Max o #vegano – anche se non è ancora stato usato.",
     zone_count: "zone", zone_unlink: "Scollega zona", zone_add: "Zona",
     app_list: "lista combinata dell'app", app_list_connected: "collegata", app_list_connect: "Collega",
+    zone_name: "Nome della zona, es. Esselunga Centro", zone_radius: "Raggio", zone_coords: "Coordinate o link della mappa", zone_coords_placeholder: "45.4642, 9.1900 o un link Google/Apple/OSM", zone_coords_bad: "Nessuna coordinata riconosciuta.", zone_locating: "Rilevamento posizione …", zone_no_location: "Posizione non disponibile – scegli un'altra opzione.", zone_where: "Dove?", zone_here_opt: "Posizione attuale (questo dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Scegli sulla mappa", zone_after: "Regolala quando vuoi in Impostazioni → Aree e zone.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -822,6 +827,7 @@ const TEXTS = {
     look_add_help: "Ze znakiem, np. @Kaufland, *Max lub #wege – nawet jeśli jeszcze nie była używana.",
     zone_count: "stref", zone_unlink: "Odłącz strefę", zone_add: "Strefa",
     app_list: "lista połączona aplikacji", app_list_connected: "połączona", app_list_connect: "Połącz",
+    zone_name: "Nazwa strefy, np. Biedronka Centrum", zone_radius: "Promień", zone_coords: "Współrzędne lub link do mapy", zone_coords_placeholder: "52.2297, 21.0122 lub link z Google/Apple/OSM", zone_coords_bad: "Nie rozpoznano współrzędnych.", zone_locating: "Ustalanie lokalizacji …", zone_no_location: "Lokalizacja niedostępna – wybierz inną opcję.", zone_where: "Gdzie?", zone_here_opt: "Obecna lokalizacja (to urządzenie)", zone_home_opt: "Dom", zone_map_opt: "Wybierz na mapie", zone_after: "Dostosuj w dowolnej chwili w Ustawienia → Obszary i strefy.",
   },
 };
 
@@ -959,6 +965,91 @@ function slDialog(root, opts) {
 
 // Gerade gezogener Artikel (Ziehen & Ablegen zwischen Karten im selben Fenster)
 let SL_DRAG = null;
+
+/* Zone anlegen: Name, Ort (aktueller Standort / Zuhause / Karte / Koordinaten bzw. Karten-Link), Radius.
+ * Die Karte nutzt HAs eigenen Orts-Editor (ha-locations-editor), sofern das Frontend ihn geladen hat –
+ * sonst bleiben Standort, Zuhause und Koordinaten. → Promise<{name, latitude, longitude, radius} | null> */
+function parseCoords(text) {
+  const s = String(text || "").trim();
+  const pats = [/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/, /[?&](?:q|ll|query|center)=(-?\d+(?:\.\d+)?)(?:,|%2C)\s*(-?\d+(?:\.\d+)?)/i,
+    /mlat=(-?\d+(?:\.\d+)?).*mlon=(-?\d+(?:\.\d+)?)/i, /#map=\d+\/(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)/, /^(-?\d+(?:[.,]\d+)?)\s*[,; ]\s*(-?\d+(?:[.,]\d+)?)$/];
+  for (const re of pats) {
+    const m = re.exec(s);
+    if (m) {
+      const lat = Number(m[1].replace(",", ".")), lon = Number(m[2].replace(",", "."));
+      if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) return { latitude: lat, longitude: lon };
+    }
+  }
+  return null;
+}
+function slZoneDialog(root, hass, t, name) {
+  return new Promise((resolve) => {
+    const home = { latitude: hass.config && hass.config.latitude, longitude: hass.config && hass.config.longitude };
+    let pos = null, mode = "here";
+    const nameIn = h("input", { value: name || "", "aria-label": t.zone_name, placeholder: t.zone_name, maxlength: "60" });
+    const radiusIn = h("input", { type: "number", min: "20", max: "5000", step: "10", value: "100", "aria-label": t.zone_radius, style: "width:100px;margin:0" });
+    const coordIn = h("input", { placeholder: t.zone_coords_placeholder, "aria-label": t.zone_coords });
+    const info = h("p", { style: "margin:8px 0" });
+    const mapBox = h("div", { style: "height:240px;border-radius:10px;overflow:hidden;margin:0 0 10px" });
+    const hasMap = !!customElements.get("ha-locations-editor");
+    const ok = h("button", { type: "button", class: "ok" }, t.create);
+    const update = () => {
+      coordIn.hidden = mode !== "coords";
+      mapBox.hidden = mode !== "map";
+      if (mode === "home") pos = home;
+      if (mode === "coords") pos = parseCoords(coordIn.value);
+      info.textContent = pos && pos.latitude != null ? `📍 ${Number(pos.latitude).toFixed(5)}, ${Number(pos.longitude).toFixed(5)}`
+        : mode === "here" ? t.zone_locating : mode === "coords" && coordIn.value ? t.zone_coords_bad : "";
+      ok.disabled = !(pos && pos.latitude != null && nameIn.value.trim());
+    };
+    const locate = () => {
+      pos = null; update();
+      if (!navigator.geolocation) { info.textContent = t.zone_no_location; return; }
+      navigator.geolocation.getCurrentPosition((p) => { if (mode === "here") { pos = { latitude: p.coords.latitude, longitude: p.coords.longitude }; update(); } },
+        () => { if (mode === "here") info.textContent = t.zone_no_location; }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+    };
+    const showMap = () => {
+      if (!hasMap) return;
+      const start = pos && pos.latitude != null ? pos : home;
+      pos = { ...start };
+      const ed = document.createElement("ha-locations-editor");
+      ed.hass = hass;
+      ed.style.height = "100%";
+      ed.locations = [{ id: "new", latitude: start.latitude, longitude: start.longitude, radius: Number(radiusIn.value) || 100,
+        radius_color: "var(--accent-color)", icon: "mdi:cart", location_editable: true, radius_editable: true }];
+      ed.addEventListener("location-updated", (e) => { pos = { latitude: e.detail.location[0], longitude: e.detail.location[1] }; update(); });
+      ed.addEventListener("radius-updated", (e) => { radiusIn.value = String(Math.round(e.detail.radius)); });
+      fill(mapBox, ed);
+      update();
+    };
+    const opt = (value, label) => h("label", { style: "display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer" },
+      h("input", { type: "radio", name: "zpos", value, checked: value === mode, style: "width:auto;height:auto;margin:0",
+        onchange: () => { mode = value; if (value === "here") locate(); else if (value === "map") showMap(); else update(); } }), label);
+    const close = (v) => { back.remove(); resolve(v); };
+    ok.addEventListener("click", () => {
+      if (ok.disabled) return;
+      close({ name: nameIn.value.trim(), latitude: Number(pos.latitude), longitude: Number(pos.longitude), radius: Math.max(20, Number(radiusIn.value) || 100) });
+    });
+    nameIn.addEventListener("input", update);
+    coordIn.addEventListener("input", update);
+    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) close(null); } },
+      h("style", {}, DIALOG_STYLE),
+      h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": t.zone_new, style: "max-width:460px" },
+        h("h2", {}, t.zone_new),
+        nameIn,
+        h("div", { style: "margin:0 0 6px;font-weight:600" }, t.zone_where),
+        opt("here", "📍 " + t.zone_here_opt), opt("home", "🏠 " + t.zone_home_opt),
+        hasMap ? opt("map", "🗺️ " + t.zone_map_opt) : null, opt("coords", "⌨️ " + t.zone_coords),
+        coordIn, mapBox, info,
+        h("label", { style: "display:flex;align-items:center;gap:8px;margin:0 0 14px" }, t.zone_radius, radiusIn, "m"),
+        h("p", {}, t.zone_after),
+        h("div", { class: "row" }, h("button", { type: "button", onclick: () => close(null) }, t.cancel), ok)));
+    root.append(back);
+    coordIn.hidden = true; mapBox.hidden = true;
+    locate();
+    setTimeout(() => nameIn.focus(), 30);
+  });
+}
 
 // Für die Suche: klein, ohne Akzente/Umlaut-Punkte ("Äpfel" → "apfel"), ß → ss
 function searchKey(s) {
@@ -1153,6 +1244,11 @@ const STYLE = `
   .look-row input.icon { width:46px; text-align:center; height:30px; }
   .look-row select { width:auto !important; }
   .zchips { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; align-items:center; }
+  .srow2.storerow { flex-wrap:wrap; align-items:flex-start; }
+  .storerow .sl { flex:0 0 auto; min-width:90px; }
+  .storerow .sl small { white-space:nowrap; margin-top:4px; }
+  .storerow .zchips { flex:1 1 240px; }
+  .storerow .zchips select { width:auto !important; min-width:110px; }
   .zchip { display:inline-flex; align-items:center; gap:2px; border:1px solid var(--divider-color,#ddd); border-radius:14px; padding:2px 4px 2px 10px; font-size:.8rem; }
   .zchip button { background:none; border:none; color:var(--secondary-text-color); cursor:pointer; font-size:1rem; line-height:1; padding:0 4px; }
   .tags { display:flex; gap:4px; margin-left:auto; flex-wrap:wrap; justify-content:flex-end; }
@@ -2964,16 +3060,12 @@ class SmartListsCard extends HTMLElement {
       } catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const createZone = async (store) => {
-      const name = await slDialog(this.shadowRoot, { title: t.zone_new, text: t.zone_new_help, input: true, value: store || "", ok: t.create, cancel: t.cancel });
-      if (!name) return;
-      const pos = await new Promise((resolve) => {
-        const home = { latitude: this._hass.config && this._hass.config.latitude, longitude: this._hass.config && this._hass.config.longitude, here: false };
-        if (!navigator.geolocation) return resolve(home);
-        navigator.geolocation.getCurrentPosition((p) => resolve({ latitude: p.coords.latitude, longitude: p.coords.longitude, here: true }),
-          () => resolve(home), { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 });
-      });
+      // fragt Name, Ort (Standort / Zuhause / Karte / Koordinaten) und Radius
+      const z = await slZoneDialog(this.shadowRoot, this._hass, t, store || "");
+      if (!z) return;
+      const name = z.name;
       try {
-        await this._hass.callWS({ type: "zone/create", name, icon: "mdi:cart", latitude: pos.latitude, longitude: pos.longitude, radius: 100, passive: false });
+        await this._hass.callWS({ type: "zone/create", name, icon: "mdi:cart", latitude: z.latitude, longitude: z.longitude, radius: z.radius, passive: false });
         // auf die neue Zone warten (Entität erscheint kurz danach)
         let zone = null;
         for (let i = 0; i < 20 && !zone; i++) {
@@ -2984,7 +3076,7 @@ class SmartListsCard extends HTMLElement {
         if (!zone) { status.textContent = t.zone_wait; return; }
         const key = String(store || name).trim().replace(/^@/, "").toLowerCase();
         await link(key, [...(((this._cfg && this._cfg.store_zones) || {})[key] || []), zone]);
-        status.textContent = `✓ ${zone} · ${pos.here ? t.zone_here : t.zone_home}`;
+        status.textContent = `✓ ${name}`;
       } catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const draw = (stores) => {
@@ -2993,7 +3085,7 @@ class SmartListsCard extends HTMLElement {
       // je Markt beliebig viele Zonen (Filialen): Chips mit ×, dazu Auswahl „＋ Zone“
       fill(body, ...stores.map((st) => {
         const linked = st.zones || (st.zone ? [st.zone] : []);
-        return h("div", { class: "srow2" },
+        return h("div", { class: "srow2 storerow" },
           h("div", { class: "sl" }, badge({ kind: "store", value: st.value, label: st.label, color: st.color }),
             h("small", {}, linked.length ? `${linked.length} ${t.zone_count}` : t.zone_none)),
           h("div", { class: "zchips" },

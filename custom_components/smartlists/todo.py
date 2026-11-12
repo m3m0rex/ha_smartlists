@@ -20,6 +20,7 @@ from homeassistant.const import ATTR_ENTITY_ID, ATTR_FRIENDLY_NAME, EVENT_CALL_S
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.debounce import Debouncer
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event, async_track_time_interval
@@ -31,6 +32,8 @@ from .itemtext import join_offer, offer_summary, person_from_list_name, split_of
 from .learning import Learning
 from .own import async_user_info, permissions_for, role_for
 from .const import (
+    CONF_APP_DEVICE,
+    CONF_APP_LIST,
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
     CONF_MODE,
@@ -126,6 +129,13 @@ class CombinedTodoListEntity(TodoListEntity):
         self._label: str = opts.get(CONF_SOURCE_LABEL, LABEL_SUFFIX)
         self._sort: str = opts.get(CONF_SORT, SORT_SOURCE)
         self._source_as_person: bool = bool(opts.get(CONF_SOURCE_AS_PERSON, True))
+        # aus der App übernommen → Entität gehört zum Handy (Gerät „App …“), die App blendet ihre eigene aus
+        self._app_device: str | None = opts.get(CONF_APP_DEVICE) or None
+        self._app_list: str | None = opts.get(CONF_APP_LIST) or None
+        if self._app_device:
+            from .sensor import device_identifier
+
+            self._attr_device_info = DeviceInfo(identifiers={device_identifier(self._app_device)})
         # Nur im Modus "lokal": abweichender Status je kombinierter UID.
         self._overrides: dict[str, str] = dict(stored.get("overrides", {}))
         # Zuordnung kombinierte UID -> (Quell-Entität, Quell-UID, Original-Name)
@@ -241,6 +251,7 @@ class CombinedTodoListEntity(TodoListEntity):
             "foreign_lists": sorted(self._foreign),
             "default_add_list": self._default_add,
             "mode": self._mode,
+            **({"smartlists_app_list": f"{self._app_device}/{self._app_list}"} if self._app_device and self._app_list else {}),
             "open_items": len(items) - done,
             "completed_items": done,
             "unavailable_sources": [s for s in self._sources if s not in self._source_states],

@@ -89,7 +89,8 @@ layout: columns
 ## Stores & zones
 
 *⚙ → Household → Stores & zones* (admins) lists the stores you use (`@REWE`, `@Lidl`, …) and the known
-chains. For each, pick an existing Home Assistant **zone** or choose *＋ New zone …*: SmartLists creates a
+chains. Each store can have **several zones** (one per branch – REWE Nord, REWE Süd, …): pick existing
+Home Assistant zones via *＋ Zone* (× unlinks one) or choose *＋ New zone …*: SmartLists creates a
 zone at this device's current location (or at home if location is not available) with a radius of
 100 m – fine-tune it under *Settings → Areas & zones*. *＋ Store with zone* adds a new store right away.
 Your person must be tracked (companion app) for the automatic selection.

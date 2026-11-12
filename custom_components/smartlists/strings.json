@@ -125,7 +125,8 @@
           "controls": "Controls (default for everyone)",
           "learned": "Remembered categories & history",
           "devices": "Connected devices (app)",
-          "automation": "Voice & automations (Assist, due items)"
+          "automation": "Voice & automations (Assist, due items)",
+          "app_lists": "Lists from the app (take over combined lists)"
         }
       },
       "naming": {
@@ -179,6 +180,13 @@
           "voice_default_list": "Used when a sentence names no list (“Put milk on the list”).",
           "auto_due_list": "Hourly: items you buy regularly whose usual interval has passed. Empty = off.",
           "install_sentences": "Copies the sentences to config/custom_sentences (German, English, French, Spanish, Italian, Polish) and reloads Assist."
+        }
+      },
+      "app_lists": {
+        "title": "Lists from the app",
+        "description": "{count} combined lists from phones with the HA SmartLists app:\n\n{lists}\n\n➕ = not connected yet, ✅ = connected. Connected lists are created here as combined lists and belong to the respective phone (devices). The app then shows the list from Home Assistant instead of its own. A list is missing? Tap “Sync SmartLists” in the app once.",
+        "data": {
+          "connect": "Connect"
         }
       }
     },

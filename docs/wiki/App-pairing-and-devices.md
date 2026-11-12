@@ -37,3 +37,16 @@ the phone's token under *Profile → Security → Long-lived access tokens*. Use
 everyone gets their own settings.
 
 Interface details for developers: [`docs/app-api.md`](https://github.com/m3m0rex/ha_smartlists/blob/main/docs/app-api.md).
+
+## Combined lists from the app
+
+Combined lists created **in the app** (from Home Assistant lists) are reported to the integration when
+the app syncs. You find them
+
+- in the card's gear menu → *Household → Connected devices*, below the phone, with **Connect**, and
+- under *Settings → Devices & services → SmartLists → Configure → Lists from the app*.
+
+Connecting creates a real combined list in Home Assistant with the same sources. It **belongs to the
+phone's device** (it shows up on the device page) and can be edited like any combined list. From then on
+the app shows the list from Home Assistant instead of its own, so it is not there twice. Lists that
+also contain local (non-HA) lists of the app cannot be connected.

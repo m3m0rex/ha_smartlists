@@ -221,7 +221,8 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
             if not errors:
                 name = user_input.pop(CONF_NAME)
                 # interne Felder (z.B. legacy_unique_id aus der Migration) behalten
-                keep = {k: v for k, v in subentry.data.items() if k.startswith("legacy_")}
+                # … und die Verknüpfung mit der App (Liste gehört zum Handy)
+                keep = {k: v for k, v in subentry.data.items() if k.startswith("legacy_") or k in ("app_device", "app_list")}
                 return self.async_update_and_abort(
                     self._get_entry(), subentry, title=name, data={**keep, **user_input}
                 )
@@ -295,7 +296,30 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned", "automation", "devices"])
+        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned", "automation", "devices", "app_lists"])
+
+    async def async_step_app_lists(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Kombinierte Listen aus der App übernehmen – sie gehören dann zum jeweiligen Handy-Gerät."""
+        from . import app_lists
+
+        rows = app_lists.describe(self.hass)
+        if user_input is not None:
+            for key in user_input.get("connect") or []:
+                device_id, _, list_id = key.partition("/")
+                try:
+                    app_lists.connect(self.hass, device_id, list_id)
+                except ValueError:
+                    continue
+            return self._done()
+        open_rows = [r for r in rows if not r["connected"]]
+        done = [r for r in rows if r["connected"]]
+        listing = "\n".join(f"- {'✅' if r['connected'] else '➕'} **{r['name']}** ({r['device_name']}): "
+                             f"{', '.join(r['sources'])}" for r in [*open_rows, *done]) or "—"
+        options = [selector.SelectOptionDict(value=r["key"], label=f"{r['name']} – {r['device_name']}") for r in open_rows]
+        schema = vol.Schema({vol.Optional("connect", default=[]): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=options, multiple=True, mode=selector.SelectSelectorMode.LIST))}) if options else vol.Schema({})
+        return self.async_show_form(step_id="app_lists", data_schema=schema,
+                                    description_placeholders={"count": str(len(rows)), "lists": listing})
 
     def _done(self) -> ConfigFlowResult:
         # Optionen unverändert lassen → kein unnötiges Neuladen der Integration

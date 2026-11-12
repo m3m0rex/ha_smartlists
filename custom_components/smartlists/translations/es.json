@@ -125,7 +125,8 @@
           "controls": "Controles (predeterminados para todos)",
           "learned": "Categorías recordadas e historial",
           "devices": "Dispositivos conectados (app)",
-          "automation": "Voz y automatizaciones (Assist, elementos pendientes)"
+          "automation": "Voz y automatizaciones (Assist, elementos pendientes)",
+          "app_lists": "Listas de la app (adoptar listas combinadas)"
         }
       },
       "naming": {
@@ -179,6 +180,13 @@
           "voice_default_list": "Se usa cuando una frase no nombra ninguna lista («Pon leche en la lista»).",
           "auto_due_list": "Cada hora: elementos que compras con regularidad cuyo intervalo habitual ha pasado. Vacío = desactivado.",
           "install_sentences": "Copia las frases a config/custom_sentences (alemán, inglés, francés, español, italiano, polaco) y recarga Assist."
+        }
+      },
+      "app_lists": {
+        "title": "Listas de la app",
+        "description": "{count} listas combinadas de móviles con la app HA SmartLists:\n\n{lists}\n\n➕ = aún sin vincular, ✅ = vinculada. Las listas vinculadas se crean aquí como listas combinadas y pertenecen al móvil correspondiente (dispositivos). La app muestra entonces la lista de Home Assistant en lugar de la suya. ¿Falta una lista? Toca una vez «Sincronizar SmartLists» en la app.",
+        "data": {
+          "connect": "Vincular"
         }
       }
     },

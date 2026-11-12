@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.4.0";
+const CARD_VERSION = "2.5.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -215,6 +215,13 @@ const TEXTS = {
     notes_lists: "Notizlisten und Besitzer", notes_none: "Keine Notizliste der App gefunden.", notes_no_owner: "unbekannt (nur Admins)",
     p_order: "Reihenfolge ändern", p_order_hint: "◀ ▶ verschiebt eine Liste. Mit der Maus: Chip auf einen anderen ziehen. Die Reihenfolge gilt auch für die Spalten.",
     p_left: "Nach links", p_right: "Nach rechts",
+    look: "Badges & Farben", look_help: "Aussehen der Badges für den ganzen Haushalt. Farben und Namen der Märkte gelten auch in der App. Leer bzw. ↺ = Standard.",
+    look_style: "Stil", look_filled: "gefüllt", look_soft: "dezent", look_outline: "Rahmen", look_text: "nur Text",
+    look_color: "Farbe", look_icon: "Symbol davor", look_label: "Anzeigename", look_kinds: "Je Art", look_values: "Einzelne Badges",
+    look_search: "Badge suchen … (z. B. rewe)", look_more: "Weitere über die Suche finden.", look_add: "Badge einfärben",
+    look_add_help: "Mit Zeichen davor, z. B. @Kaufland, *Max oder #vegan – auch wenn es noch nicht benutzt wurde.",
+    zone_count: "Zonen", zone_unlink: "Zone lösen", zone_add: "Zone",
+    app_list: "kombinierte Liste der App", app_list_connected: "verbunden", app_list_connect: "Verbinden",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -328,6 +335,13 @@ const TEXTS = {
     notes_lists: "Note lists and owners", notes_none: "No note list of the app found.", notes_no_owner: "unknown (admins only)",
     p_order: "Change order", p_order_hint: "◀ ▶ moves a list. With the mouse: drag a chip onto another. The order also applies to the columns.",
     p_left: "Move left", p_right: "Move right",
+    look: "Badges & colours", look_help: "How badges look for the whole household. Store colours and names also apply in the app. Empty or ↺ = default.",
+    look_style: "Style", look_filled: "filled", look_soft: "subtle", look_outline: "outline", look_text: "text only",
+    look_color: "Colour", look_icon: "Symbol in front", look_label: "Display name", look_kinds: "Per kind", look_values: "Individual badges",
+    look_search: "Search badge … (e.g. rewe)", look_more: "Find more via search.", look_add: "Colour a badge",
+    look_add_help: "With its character, e.g. @Kaufland, *Max or #vegan – even if not used yet.",
+    zone_count: "zones", zone_unlink: "Unlink zone", zone_add: "Zone",
+    app_list: "combined list of the app", app_list_connected: "connected", app_list_connect: "Connect",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -441,6 +455,13 @@ const TEXTS = {
     notes_lists: "Listes de notes et propriétaires", notes_none: "Aucune liste de notes de l'app trouvée.", notes_no_owner: "inconnu (admins seulement)",
     p_order: "Changer l'ordre", p_order_hint: "◀ ▶ déplace une liste. À la souris : glisse une puce sur une autre. L'ordre vaut aussi pour les colonnes.",
     p_left: "Vers la gauche", p_right: "Vers la droite",
+    look: "Badges & couleurs", look_help: "Apparence des badges pour tout le foyer. Les couleurs et noms des magasins s'appliquent aussi dans l'app. Vide ou ↺ = par défaut.",
+    look_style: "Style", look_filled: "plein", look_soft: "discret", look_outline: "contour", look_text: "texte seul",
+    look_color: "Couleur", look_icon: "Symbole devant", look_label: "Nom affiché", look_kinds: "Par type", look_values: "Badges individuels",
+    look_search: "Chercher un badge … (p. ex. carrefour)", look_more: "Trouve les autres via la recherche.", look_add: "Colorer un badge",
+    look_add_help: "Avec son caractère, p. ex. @Kaufland, *Max ou #vegan – même s'il n'est pas encore utilisé.",
+    zone_count: "zones", zone_unlink: "Dissocier la zone", zone_add: "Zone",
+    app_list: "liste combinée de l'app", app_list_connected: "associée", app_list_connect: "Associer",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -554,6 +575,13 @@ const TEXTS = {
     notes_lists: "Listas de notas y propietarios", notes_none: "No se encontró ninguna lista de notas de la app.", notes_no_owner: "desconocido (solo admins)",
     p_order: "Cambiar el orden", p_order_hint: "◀ ▶ mueve una lista. Con el ratón: arrastra una etiqueta sobre otra. El orden vale también para las columnas.",
     p_left: "A la izquierda", p_right: "A la derecha",
+    look: "Etiquetas y colores", look_help: "Aspecto de las etiquetas para todo el hogar. Los colores y nombres de las tiendas también valen en la app. Vacío o ↺ = predeterminado.",
+    look_style: "Estilo", look_filled: "relleno", look_soft: "suave", look_outline: "borde", look_text: "solo texto",
+    look_color: "Color", look_icon: "Símbolo delante", look_label: "Nombre mostrado", look_kinds: "Por tipo", look_values: "Etiquetas individuales",
+    look_search: "Buscar etiqueta … (p. ej. mercadona)", look_more: "Encuentra más con la búsqueda.", look_add: "Colorear una etiqueta",
+    look_add_help: "Con su carácter, p. ej. @Kaufland, *Max o #vegano – aunque aún no se haya usado.",
+    zone_count: "zonas", zone_unlink: "Desvincular zona", zone_add: "Zona",
+    app_list: "lista combinada de la app", app_list_connected: "vinculada", app_list_connect: "Vincular",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -667,6 +695,13 @@ const TEXTS = {
     notes_lists: "Liste di note e proprietari", notes_none: "Nessuna lista di note dell'app trovata.", notes_no_owner: "sconosciuto (solo admin)",
     p_order: "Cambia ordine", p_order_hint: "◀ ▶ sposta una lista. Col mouse: trascina un chip su un altro. L'ordine vale anche per le colonne.",
     p_left: "A sinistra", p_right: "A destra",
+    look: "Badge e colori", look_help: "Aspetto dei badge per tutta la casa. Colori e nomi dei negozi valgono anche nell'app. Vuoto o ↺ = predefinito.",
+    look_style: "Stile", look_filled: "pieno", look_soft: "tenue", look_outline: "contorno", look_text: "solo testo",
+    look_color: "Colore", look_icon: "Simbolo davanti", look_label: "Nome visualizzato", look_kinds: "Per tipo", look_values: "Singoli badge",
+    look_search: "Cerca badge … (es. esselunga)", look_more: "Trova gli altri con la ricerca.", look_add: "Colora un badge",
+    look_add_help: "Con il suo carattere, es. @Kaufland, *Max o #vegano – anche se non è ancora stato usato.",
+    zone_count: "zone", zone_unlink: "Scollega zona", zone_add: "Zona",
+    app_list: "lista combinata dell'app", app_list_connected: "collegata", app_list_connect: "Collega",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -780,6 +815,13 @@ const TEXTS = {
     notes_lists: "Listy notatek i właściciele", notes_none: "Nie znaleziono listy notatek aplikacji.", notes_no_owner: "nieznany (tylko admini)",
     p_order: "Zmień kolejność", p_order_hint: "◀ ▶ przesuwa listę. Myszą: przeciągnij jeden chip na inny. Kolejność dotyczy też kolumn.",
     p_left: "W lewo", p_right: "W prawo",
+    look: "Plakietki i kolory", look_help: "Wygląd plakietek dla całego domu. Kolory i nazwy sklepów obowiązują też w aplikacji. Puste lub ↺ = domyślne.",
+    look_style: "Styl", look_filled: "wypełniony", look_soft: "delikatny", look_outline: "obramowanie", look_text: "tylko tekst",
+    look_color: "Kolor", look_icon: "Symbol z przodu", look_label: "Nazwa wyświetlana", look_kinds: "Wg rodzaju", look_values: "Pojedyncze plakietki",
+    look_search: "Szukaj plakietki … (np. biedronka)", look_more: "Pozostałe znajdziesz przez wyszukiwanie.", look_add: "Pokoloruj plakietkę",
+    look_add_help: "Ze znakiem, np. @Kaufland, *Max lub #wege – nawet jeśli jeszcze nie była używana.",
+    zone_count: "stref", zone_unlink: "Odłącz strefę", zone_add: "Strefa",
+    app_list: "lista połączona aplikacji", app_list_connected: "połączona", app_list_connect: "Połącz",
   },
 };
 
@@ -978,12 +1020,30 @@ function hashColor(s) {
   for (const c of s.toLowerCase()) x = (x * 31 + c.charCodeAt(0)) >>> 0;
   return `hsl(${x % 360} 55% 42%)`;
 }
-function badge(tag) {
-  if (tag.kind === "store") {
-    return h("span", { class: "tag store", style: `background:${tag.color || hashColor(tag.value)}`, title: tag.label }, tag.label);
-  }
-  if (tag.kind === "person") return h("span", { class: "tag person", title: tag.label }, "👤 ", tag.label);
-  return h("span", { class: "tag hash", title: tag.label }, "#", tag.label);
+/* Badges & Farben des Haushalts (smartlists/config → appearance). Wird beim Laden gesetzt; ohne
+ * Einstellung sehen Badges aus wie bisher (Markt gefüllt in Markenfarbe, Person/Schlagwort dezent). */
+let SL_LOOK = { kinds: {}, values: {} };
+const BADGE_STYLES = ["filled", "soft", "outline", "text"];
+const BADGE_DEFAULTS = { store: { style: "filled", icon: "" }, person: { style: "soft", icon: "👤" }, tag: { style: "soft", icon: "#" } };
+function textOn(color) {
+  // helle Farben → dunkle Schrift (Lesbarkeit bei „gefüllt“)
+  const m = /^#([0-9a-f]{6})$/i.exec(color || "");
+  if (!m) return "#fff";
+  const n = parseInt(m[1], 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  return 0.299 * r + 0.587 * g + 0.114 * b > 170 ? "#1a1a1a" : "#fff";
+}
+function badge(tag, look = SL_LOOK) {
+  const kind = tag.kind === "store" || tag.kind === "person" ? tag.kind : "tag";
+  const k = { ...BADGE_DEFAULTS[kind], ...((look.kinds || {})[kind] || {}) };
+  const v = (look.values || {})[`${kind}:${String(tag.value).toLowerCase()}`] || {};
+  const label = (kind === "store" && v.label) || tag.label || tag.value;
+  const color = v.color || (kind === "store" ? tag.color || k.color || hashColor(String(tag.value)) : k.color);
+  const css = !color ? "" : k.style === "filled" ? `background:${color};color:${textOn(color)}`
+    : k.style === "soft" ? `background:color-mix(in srgb, ${color} 18%, transparent);color:${color}`
+    : `color:${color}`;
+  const cls = { store: "store", person: "person", tag: "hash" }[kind];
+  const icon = k.icon ? (kind === "person" ? `${k.icon} ` : k.icon) : "";
+  return h("span", { class: `tag ${cls} s-${k.style}`, style: css, title: label }, icon, label);
 }
 
 const STYLE = `
@@ -1085,6 +1145,16 @@ const STYLE = `
   .tag.store { color:#fff; }
   .tag.person { background:color-mix(in srgb, var(--info-color,#7b61ff) 15%, transparent); color:var(--info-color,#7b61ff); font-weight:600; border-radius:9px; }
   .tag.hash { background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); font-weight:600; border-radius:9px; }
+  .tag.s-filled.person, .tag.s-filled.hash { border-radius:4px; }
+  .tag.s-outline { background:none !important; border:1px solid currentColor; padding:0 6px; }
+  .tag.s-text { background:none !important; padding:0 2px; }
+  .look-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .look-row input[type=color] { width:36px; height:30px; padding:0 2px; border:1px solid var(--divider-color,#ddd); border-radius:8px; background:none; cursor:pointer; flex:none; }
+  .look-row input.icon { width:46px; text-align:center; height:30px; }
+  .look-row select { width:auto !important; }
+  .zchips { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; align-items:center; }
+  .zchip { display:inline-flex; align-items:center; gap:2px; border:1px solid var(--divider-color,#ddd); border-radius:14px; padding:2px 4px 2px 10px; font-size:.8rem; }
+  .zchip button { background:none; border:none; color:var(--secondary-text-color); cursor:pointer; font-size:1rem; line-height:1; padding:0 4px; }
   .tags { display:flex; gap:4px; margin-left:auto; flex-wrap:wrap; justify-content:flex-end; }
   .catemoji { text-align:center; }
   .offer { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:2px; font-size:.78rem; color:var(--secondary-text-color); }
@@ -1342,6 +1412,7 @@ class SmartListsCard extends HTMLElement {
   async _loadConfig() {
     try {
       this._cfg = await this._call("config", { language: this._lang }, false);
+      if (this._cfg && this._cfg.appearance) SL_LOOK = this._cfg.appearance;
       // Version der Integration für die Anzeige im Zahnrad (hilft bei „neue Funktion fehlt“)
       this._call("info", {}, false).then((i) => {
         this._version = i.version;
@@ -1598,11 +1669,14 @@ class SmartListsCard extends HTMLElement {
     const st = this._hass.states;
     const me = Object.values(st).find((s) => s.entity_id.startsWith("person.") && s.attributes.user_id === (this._hass.user && this._hass.user.id));
     if (!me) return null;
-    for (const [store, zone] of Object.entries(zones)) {
-      const z = st[zone];
-      if (!z) continue;
-      // Person-Zustand = Name der Zone; zusätzlich: Zone zählt Personen (state = Anzahl, attributes.persons)
-      if (me.state === z.attributes.friendly_name || (z.attributes.persons || []).includes(me.entity_id)) return store;
+    for (const [store, list] of Object.entries(zones)) {
+      // mehrere Zonen je Markt (Filialen); ältere Integration: eine Zone als Text
+      for (const zone of Array.isArray(list) ? list : [list]) {
+        const z = st[zone];
+        if (!z) continue;
+        // Person-Zustand = Name der Zone; zusätzlich: Zone zählt Personen (attributes.persons)
+        if (me.state === z.attributes.friendly_name || (z.attributes.persons || []).includes(me.entity_id)) return store;
+      }
     }
     return null;
   }
@@ -1857,8 +1931,15 @@ class SmartListsCard extends HTMLElement {
       }
     } catch (e) { /* nicht unterstützt (z.B. ohne HTTPS) */ }
   }
-  connectedCallback() { if (this._hass) this._subscribe(); }
-  disconnectedCallback() { this._wake(false); this._unsubscribe(); }
+  connectedCallback() {
+    if (this._hass) this._subscribe();
+    // Badges & Farben geändert (in irgendeiner Karte) → neu zeichnen
+    if (!this._onLook) { this._onLook = () => this._render(); window.addEventListener("smartlists-look-changed", this._onLook); }
+  }
+  disconnectedCallback() {
+    this._wake(false); this._unsubscribe();
+    if (this._onLook) { window.removeEventListener("smartlists-look-changed", this._onLook); this._onLook = null; }
+  }
 
   // Live: Änderungen von anderen Geräten/Benutzern sofort zeigen (HA-eigenes todo/item/subscribe).
   // Der Zustand der Liste ändert sich z.B. beim Umbenennen nicht – darum reicht "hass" allein nicht.
@@ -2583,7 +2664,7 @@ class SmartListsCard extends HTMLElement {
   _paneHouse() {
     const t = this._t;
     if (!this._isAdmin) return h("p", { class: "shelp", style: "padding:8px 4px" }, t.admin_only);
-    return [this._namingSection(), this._storesSection(), this._notesSection(), this._packsSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
+    return [this._namingSection(), this._appearanceSection(), this._storesSection(), this._notesSection(), this._packsSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
       this._sec("✋", t.ui_house, t.scope_help_household, [...this._controls("household"),
         h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi("household") }, t.reset))])];
   }
@@ -2776,6 +2857,96 @@ class SmartListsCard extends HTMLElement {
     load(false);
   }
 
+  // Badges & Farben: Aussehen je Art (Markt/Person/Schlagwort) und einzelner Badges, Farben/Namen der Märkte.
+  // Alles optional – leere Angaben = eingebautes Aussehen. Gilt für den Haushalt (auch für die App: Märkte).
+  _appearanceSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
+    let look = { kinds: {}, values: {} }, tags = [], query = "";
+    const save = debounce(async () => {
+      try {
+        const r = await this._call("set_appearance", { appearance: look }, false);
+        look = r.appearance; tags = r.tags; SL_LOOK = look;
+        if (this._cfg) this._cfg = { ...this._cfg, appearance: look };
+        status.textContent = "✓ " + t.saved;
+        window.dispatchEvent(new CustomEvent("smartlists-look-changed"));
+        draw();
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    }, 400);
+    const sample = { store: { kind: "store", value: "REWE", label: "REWE", color: "#cc071e" }, person: { kind: "person", value: "Anna", label: "Anna" }, tag: { kind: "tag", value: "bio", label: "bio" } };
+    const colorInput = (value, onchange, label) => h("input", { type: "color", value: value || "#888888", "aria-label": label, title: label,
+      oninput: (e) => onchange(e.target.value) });
+    const reset = (onclick, label) => h("button", { class: "btn2", type: "button", style: "height:30px;padding:0 10px", title: label, "aria-label": label, onclick }, "↺");
+    const kindRow = (kind) => {
+      const k = look.kinds[kind] || {};
+      const setK = (patch) => {
+        const next = { ...k, ...patch };
+        Object.keys(next).forEach((x) => (next[x] == null || next[x] === "") && delete next[x]);
+        look = { ...look, kinds: { ...look.kinds, [kind]: next } };
+        if (!Object.keys(next).length) delete look.kinds[kind];
+        draw(); save();
+      };
+      return h("div", { class: "srow2" },
+        h("div", { class: "sl" }, t["kind_" + kind], h("small", {}, badge(sample[kind], look))),
+        h("div", { class: "look-row" },
+          h("select", { "aria-label": `${t["kind_" + kind]}: ${t.look_style}`, onchange: (e) => setK({ style: e.target.value === BADGE_DEFAULTS[kind].style ? null : e.target.value }) },
+            BADGE_STYLES.map((st) => h("option", { value: st, selected: (k.style || BADGE_DEFAULTS[kind].style) === st }, t["look_" + st]))),
+          kind === "store" ? null : colorInput(k.color, (c) => setK({ color: c }), `${t["kind_" + kind]}: ${t.look_color}`),
+          kind === "store" ? null : h("input", { class: "icon", value: k.icon != null ? k.icon : BADGE_DEFAULTS[kind].icon, maxlength: "4", "aria-label": t.look_icon, title: t.look_icon,
+            onchange: (e) => setK({ icon: e.target.value === BADGE_DEFAULTS[kind].icon ? null : e.target.value }) }),
+          reset(() => { const n = { ...look.kinds }; delete n[kind]; look = { ...look, kinds: n }; draw(); save(); }, t.reset_default)));
+    };
+    const listEl = h("div");
+    const drawValues = () => {
+      const q = searchKey(query);
+      const rows = tags.filter((x) => !q || searchKey(x.label + " " + x.value).includes(q)).slice(0, 60);
+      fill(listEl, ...rows.map((x) => {
+        const cur = look.values[x.key] || {};
+        const setV = (patch) => {
+          const next = { ...cur, ...patch };
+          Object.keys(next).forEach((y) => (next[y] == null || next[y] === "") && delete next[y]);
+          const values = { ...look.values };
+          if (Object.keys(next).length) values[x.key] = next; else delete values[x.key];
+          look = { ...look, values };
+          drawValues(); save();
+        };
+        const preview = { kind: x.kind, value: x.value, label: x.kind === "store" ? (cur.label || x.label) : x.label, color: x.kind === "store" ? x.color : null };
+        return h("div", { class: "srow2" },
+          h("div", { class: "sl" }, badge(preview, look), x.count ? h("small", {}, `${x.count}×`) : null),
+          h("div", { class: "look-row" },
+            x.kind === "store" ? h("input", { class: "search2", style: "width:110px;margin:0", value: cur.label || "", placeholder: x.label, "aria-label": `${x.label}: ${t.look_label}`, title: t.look_label,
+              onchange: (e) => setV({ label: e.target.value.trim() || null }) }) : null,
+            colorInput(cur.color || (x.kind === "store" ? x.color : null), (c) => setV({ color: c }), `${x.label}: ${t.look_color}`),
+            Object.keys(cur).length ? reset(() => setV({ color: null, label: null }), t.reset_default) : null));
+      }), tags.length > 60 && !query ? h("div", { class: "shelp" }, t.look_more) : null);
+    };
+    const draw = () => {
+      fill(body,
+        h("div", { class: "grp" }, t.look_kinds), kindRow("store"), kindRow("person"), kindRow("tag"),
+        h("div", { class: "grp" }, t.look_values),
+        h("input", { type: "search", class: "search2", placeholder: t.look_search, "aria-label": t.look_search, value: query, oninput: (e) => { query = e.target.value; drawValues(); } }),
+        listEl,
+        h("div", { class: "acts" }, status, h("button", { class: "btn2", type: "button", onclick: async () => {
+          // neues Badge vorab einfärben: "@Kaufland", "*Max", "#vegan"
+          const v = await slDialog(this.shadowRoot, { title: t.look_add, text: t.look_add_help, input: true, placeholder: "@Kaufland", ok: t.pack_add, cancel: t.cancel });
+          if (!v) return;
+          const rules = (this._cfg && this._cfg.tag_rules) || [];
+          const rule = rules.find((r) => v.startsWith(r.prefix));
+          const kind = rule ? rule.kind : "store";
+          const value = (rule ? v.slice(rule.prefix.length) : v).trim();
+          if (!value) return;
+          const key = `${kind}:${value.toLowerCase()}`;
+          if (!tags.some((x) => x.key === key)) tags = [{ key, kind, value, label: value, color: null, count: 0, custom: {} }, ...tags];
+          look = { ...look, values: { ...look.values, [key]: { color: kind === "store" ? "#1747b5" : "#7b61ff" } } };
+          query = ""; draw(); save();
+        } }, "＋ " + t.look_add)));
+      drawValues();
+    };
+    this._call("appearance", {}, false).then((r) => { look = r.appearance; tags = r.tags; draw(); }).catch(() => fill(body, t.error));
+    return this._sec("🎨", t.look, t.look_help, [body]);
+  }
+
   // Märkte & Zonen: Markt (@REWE) mit einer HA-Zone verknüpfen oder dafür direkt eine Zone anlegen.
   // Im Einkaufsmodus zeigt die Karte dann automatisch nur den Markt, in dessen Zone man gerade ist.
   _storesSection() {
@@ -2784,9 +2955,9 @@ class SmartListsCard extends HTMLElement {
     const status = h("span", { class: "ok2" });
     const zones = () => Object.values(this._hass.states).filter((s) => s.entity_id.startsWith("zone."))
       .map((s) => [s.entity_id, s.attributes.friendly_name || s.entity_id]).sort((a, b) => a[1].localeCompare(b[1]));
-    const link = async (store, zone) => {
+    const link = async (store, zones) => {
       try {
-        const r = await this._call("set_store_zone", { store, zone: zone || null }, false);
+        const r = await this._call("set_store_zone", { store, zones }, false);
         status.textContent = "✓ " + t.saved;
         this._cfg = { ...this._cfg, store_zones: r.store_zones };
         draw(r.stores);
@@ -2811,19 +2982,30 @@ class SmartListsCard extends HTMLElement {
           zone = hit && hit.entity_id;
         }
         if (!zone) { status.textContent = t.zone_wait; return; }
-        await link(store || name, zone);
+        const key = String(store || name).trim().replace(/^@/, "").toLowerCase();
+        await link(key, [...(((this._cfg && this._cfg.store_zones) || {})[key] || []), zone]);
         status.textContent = `✓ ${zone} · ${pos.here ? t.zone_here : t.zone_home}`;
       } catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const draw = (stores) => {
       const zs = zones();
-      fill(body, ...stores.map((st) => this._setRow(
-        h("span", {}, badge({ kind: "store", value: st.value, label: st.label, color: st.color })),
-        h("select", { "aria-label": `${st.label}: ${t.zone}`, onchange: (e) => (e.target.value === "__new" ? (e.target.value = st.zone || "", createZone(st.label)) : link(st.key, e.target.value)) },
-          h("option", { value: "" }, "— " + t.zone_none),
-          zs.map(([id, n]) => h("option", { value: id, selected: st.zone === id }, n)),
-          h("option", { value: "__new" }, "＋ " + t.zone_new + " …")),
-        st.zone && !this._hass.states[st.zone] ? "⚠️ " + st.zone : null)),
+      const nameOf = (id) => (this._hass.states[id] ? this._hass.states[id].attributes.friendly_name || id : `⚠️ ${id}`);
+      // je Markt beliebig viele Zonen (Filialen): Chips mit ×, dazu Auswahl „＋ Zone“
+      fill(body, ...stores.map((st) => {
+        const linked = st.zones || (st.zone ? [st.zone] : []);
+        return h("div", { class: "srow2" },
+          h("div", { class: "sl" }, badge({ kind: "store", value: st.value, label: st.label, color: st.color }),
+            h("small", {}, linked.length ? `${linked.length} ${t.zone_count}` : t.zone_none)),
+          h("div", { class: "zchips" },
+            linked.map((z) => h("span", { class: "zchip" }, "📍 ", nameOf(z),
+              h("button", { type: "button", title: t.zone_unlink, "aria-label": `${t.zone_unlink}: ${nameOf(z)}`, onclick: () => link(st.key, linked.filter((x) => x !== z)) }, "×"))),
+            h("select", { "aria-label": `${st.label}: ${t.zone_add}`, onchange: (e) => {
+              const v = e.target.value; e.target.value = "";
+              if (v === "__new") createZone(st.label); else if (v) link(st.key, [...linked, v]);
+            } }, h("option", { value: "" }, "＋ " + t.zone_add),
+              zs.filter(([id]) => !linked.includes(id)).map(([id, n]) => h("option", { value: id }, n)),
+              h("option", { value: "__new" }, "＋ " + t.zone_new + " …"))));
+      }),
         h("div", { class: "acts" }, status,
           h("a", { class: "btn2", href: "/config/zone", target: "_top", style: "display:inline-flex;align-items:center;text-decoration:none" }, t.zone_manage),
           h("button", { class: "btn2", type: "button", onclick: async () => {
@@ -2917,14 +3099,26 @@ class SmartListsCard extends HTMLElement {
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
     const count = h("span", { class: "cnt" });
     const fmt = (ts) => (ts ? new Date(ts * 1000).toLocaleString(this._hass.language || "de", { dateStyle: "short", timeStyle: "short" }) : "?");
+    let appLists = [];
+    const status = h("span", { class: "ok2" });
     const draw = (devices) => {
       count.textContent = String(devices.length);
       if (!devices.length) return fill(body, h("div", { class: "shelp", style: "padding:6px 0" }, t.no_devices));
-      fill(body, ...devices.map((dv) => this._setRow(`${dv.stale ? "⚠️ " : ""}${dv.name}`,
+      fill(body, ...devices.flatMap((dv) => [this._setRow(`${dv.stale ? "⚠️ " : ""}${dv.name}`,
         iconBtn(ICON.close, t.remove_device, async () => draw((await this._call("remove_device", { device_id: dv.device_id }, false)).devices), "danger"),
-        `${dv.user_name || "?"} · ${dv.model || ""} · App ${dv.app_version || "?"} · Android ${dv.os_version || "?"} · ${t.last_seen} ${fmt(dv.last_seen)}`)));
+        `${dv.user_name || "?"} · ${dv.model || ""} · App ${dv.app_version || "?"} · Android ${dv.os_version || "?"} · ${t.last_seen} ${fmt(dv.last_seen)}`),
+        // kombinierte Listen dieser App: verbinden = in HA als kombinierte Liste anlegen (gehört zum Handy)
+        ...appLists.filter((l) => l.device_id === dv.device_id).map((l) => h("div", { class: "srow2", style: "padding-left:16px" },
+          h("div", { class: "sl" }, "↳ ", l.name, h("small", {}, `${t.app_list} · ${l.sources.join(", ")}${l.missing.length ? ` · ⚠️ ${l.missing.join(", ")}` : ""}`)),
+          l.connected ? h("span", { class: "val" }, "✓ " + t.app_list_connected)
+            : this._isAdmin ? h("button", { class: "btn2", type: "button", onclick: async () => {
+              try { appLists = (await this._call("connect_app_list", { device_id: l.device_id, list_id: l.id }, false)).lists; status.textContent = "✓ " + t.app_list_connected; draw(devices); }
+              catch (err) { status.textContent = (err && err.message) || t.error; }
+            } }, t.app_list_connect) : null))]),
+        h("div", { class: "acts" }, status));
     };
-    this._call("devices", {}, false).then((r) => draw(r.devices)).catch(() => fill(body, t.error));
+    Promise.all([this._call("devices", {}, false), this._call("app_lists", {}, false).catch(() => ({ lists: [] }))])
+      .then(([r, a]) => { appLists = a.lists || []; draw(r.devices); }).catch(() => fill(body, t.error));
     const sec = this._sec("📱", t.devices, t.devices_help, [body]);
     sec.firstChild.append(count);
     return sec;

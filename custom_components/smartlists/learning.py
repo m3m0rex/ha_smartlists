@@ -12,6 +12,7 @@ Gespeichert in .storage/smartlists.learning.
 
 from __future__ import annotations
 
+import re
 import time
 from typing import Any
 
@@ -69,6 +70,7 @@ class Learning:
         self.ui_defaults: dict[str, Any] = {}
         # Haushalt: Sprachassistent / Automationen (Standard-Liste für Assist, fällige Artikel automatisch)
         self.automation: dict[str, Any] = {}
+        self.appearance: dict[str, Any] = {"kinds": {}, "values": {}}
         self._learned_sorted: list[tuple[str, str]] = []
 
     async def async_load(self) -> None:
@@ -80,6 +82,8 @@ class Learning:
         self.users = dict(data.get("users", {}))
         self.ui_defaults = dict(data.get("ui_defaults", {}))
         self.automation = dict(data.get("automation", {}))
+        self.appearance = validate_appearance(data.get("appearance") or {})
+        self._apply_appearance()
         try:
             self.tag_rules = itemtext.validate_rules(data.get("settings", {}).get("tag_rules", itemtext.DEFAULT_TAG_RULES))
         except ValueError:
@@ -96,6 +100,7 @@ class Learning:
             "users": self.users,
             "ui_defaults": self.ui_defaults,
             "automation": self.automation,
+            "appearance": self.appearance,
         }
 
     @callback
@@ -250,24 +255,31 @@ class Learning:
 
     # Märkte ↔ Zonen: "rewe" → "zone.rewe_innenstadt". Im Einkaufsmodus wird automatisch der Markt
     # gewählt, in dessen Zone die eigene Person gerade ist.
+    # Ein Markt kann mehrere Zonen haben (mehrere Filialen): "rewe" → ["zone.rewe_nord", "zone.rewe_sued"].
+    # Früher (2.4.0) stand dort eine einzelne Zone als Text – wird beim Lesen zur Liste.
     @property
-    def store_zones(self) -> dict[str, str]:
-        return dict(self.automation.get("store_zones") or {})
+    def store_zones(self) -> dict[str, list[str]]:
+        raw = self.automation.get("store_zones") or {}
+        return {k: ([v] if isinstance(v, str) else [z for z in v if isinstance(z, str)]) for k, v in raw.items() if v}
 
-    def set_store_zone(self, store: str, zone: str | None) -> dict[str, str]:
+    def set_store_zone(self, store: str, zone: str | None = None, zones: list[str] | None = None,
+                       add: bool = False) -> dict[str, list[str]]:
+        """zones = komplette Liste; zone = eine Zone (add=True: hinzufügen, sonst ersetzen; None = alle lösen)."""
         key = store.strip().lstrip("@").lower()
         if not key:
             raise ValueError("Markt fehlt")
-        zones = self.store_zones
-        if zone:
-            if not zone.startswith("zone."):
-                raise ValueError("Keine Zone (zone.…)")
-            zones[key] = zone
+        current = self.store_zones
+        new = list(zones) if zones is not None else ([*current.get(key, []), zone] if add and zone else [zone] if zone else [])
+        new = list(dict.fromkeys(z for z in new if z))
+        if any(not z.startswith("zone.") for z in new):
+            raise ValueError("Keine Zone (zone.…)")
+        if new:
+            current[key] = new
         else:
-            zones.pop(key, None)
-        self.automation["store_zones"] = zones
+            current.pop(key, None)
+        self.automation["store_zones"] = current
         self._changed()
-        return zones
+        return current
 
     def stores(self) -> list[dict[str, Any]]:
         """Bekannte Märkte: schon benutzte (@REWE in Artikeln) + bekannte Ketten + verknüpfte."""
@@ -281,8 +293,9 @@ class Learning:
         for key in self.store_zones:
             out.setdefault(key, {"value": key, "label": key, "color": None, "count": 0})
         zones = self.store_zones
-        rows = [{**v, "key": k, "zone": zones.get(k)} for k, v in out.items()]
-        return sorted(rows, key=lambda r: (r["zone"] is None, -r["count"], r["label"].casefold()))
+        # "zone" (erste) bleibt für ältere Karten/App erhalten, "zones" = alle
+        rows = [{**v, "key": k, "zones": zones.get(k, []), "zone": (zones.get(k) or [None])[0]} for k, v in out.items()]
+        return sorted(rows, key=lambda r: (not r["zones"], -r["count"], r["label"].casefold()))
 
     # ------------------------------------------------------------------
     # Export / Import der Haushalts-Einstellungen
@@ -316,6 +329,9 @@ class Learning:
             self.ui_defaults = validate_ui(data["ui_defaults"])
         if isinstance(data.get("automation"), dict):
             self.automation = dict(data["automation"])
+        if isinstance(data.get("appearance"), dict):
+            self.appearance = validate_appearance(data["appearance"])
+            self._apply_appearance()
         # nur bekannte Kategorien behalten
         for key in ("manual", "learned"):
             target = getattr(self, key)
@@ -460,9 +476,89 @@ class Learning:
             "tag_rules": self.tag_rules,
             "tag_kinds": list(itemtext.TAG_KINDS),
             "allowed_prefixes": itemtext.ALLOWED_PREFIXES,
-            "known_stores": [{"value": label, "color": color} for label, color in itemtext.KNOWN_STORES.values()],
+            # bekannte Ketten + im Haushalt angepasste Märkte, jeweils mit eigener Farbe/Schreibweise
+            "known_stores": [{"value": label, "color": color} for label, color in
+                             (itemtext.store_display(k) for k in dict.fromkeys([*itemtext.KNOWN_STORES, *itemtext.STORE_OVERRIDES]))],
             "store_zones": self.store_zones,
+            "appearance": self.appearance,
         }
+
+    # ------------------------------------------------------------------
+    # Badges & Farben (Haushalt)
+    # ------------------------------------------------------------------
+    def _apply_appearance(self) -> None:
+        itemtext.STORE_OVERRIDES.clear()
+        for key, v in self.appearance.get("values", {}).items():
+            kind, _, value = key.partition(":")
+            if kind == "store":
+                itemtext.STORE_OVERRIDES[value] = (v.get("label"), v.get("color"))
+
+    def set_appearance(self, appearance: dict[str, Any]) -> dict[str, Any]:
+        self.appearance = validate_appearance(appearance)
+        self._apply_appearance()
+        self._changed(categories=True)  # Listen neu zeichnen (Farben/Namen der Märkte)
+        return self.appearance
+
+    def tag_overview(self) -> list[dict[str, Any]]:
+        """Alle bekannten Badges (benutzt, bekannte Märkte, angepasste) für die Einstellungen."""
+        out: dict[str, dict[str, Any]] = {}
+
+        def add(kind: str, value: str, count: int = 0) -> None:
+            key = f"{kind}:{value.lower()}"
+            label, color = itemtext.store_display(value) if kind == "store" else (value, None)
+            e = out.setdefault(key, {"key": key, "kind": kind, "value": value, "label": label, "color": color, "count": 0})
+            e["count"] += count
+
+        for t in self.tag_history.values():
+            if t.get("kind") and t.get("value"):
+                add(t["kind"], str(t["value"]), int(t.get("count", 0)))
+        for label, _ in itemtext.KNOWN_STORES.values():
+            add("store", label)
+        for key in self.appearance.get("values", {}):
+            kind, _, value = key.partition(":")
+            add(kind, value)
+        custom = self.appearance.get("values", {})
+        rows = [{**e, "custom": custom.get(e["key"], {})} for e in out.values()]
+        order = {"store": 0, "person": 1, "tag": 2}
+        return sorted(rows, key=lambda r: (order.get(r["kind"], 9), not r["custom"], -r["count"], r["label"].casefold()))
+
+
+_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
+BADGE_STYLES = ("filled", "soft", "outline", "text")
+
+
+def validate_appearance(raw: Any) -> dict[str, Any]:
+    """Badges & Farben prüfen. Unbekanntes wird verworfen (statt Fehler), damit ältere/neuere Dateien
+    weiter funktionieren:
+        {"kinds": {"store"|"person"|"tag": {"style", "color", "icon"}},
+         "values": {"store:rewe": {"color", "label"}, "person:anna": {"color"}, "tag:bio": {"color"}}}"""
+    out: dict[str, Any] = {"kinds": {}, "values": {}}
+    if not isinstance(raw, dict):
+        return out
+    for kind, v in (raw.get("kinds") or {}).items():
+        if kind not in itemtext.TAG_KINDS or not isinstance(v, dict):
+            continue
+        clean = {}
+        if v.get("style") in BADGE_STYLES:
+            clean["style"] = v["style"]
+        if isinstance(v.get("color"), str) and _COLOR.match(v["color"]):
+            clean["color"] = v["color"].lower()
+        if isinstance(v.get("icon"), str) and len(v["icon"]) <= 4:
+            clean["icon"] = v["icon"]
+        if clean:
+            out["kinds"][kind] = clean
+    for key, v in list((raw.get("values") or {}).items())[:500]:
+        kind, _, value = str(key).partition(":")
+        if kind not in itemtext.TAG_KINDS or not value.strip() or not isinstance(v, dict):
+            continue
+        clean = {}
+        if isinstance(v.get("color"), str) and _COLOR.match(v["color"]):
+            clean["color"] = v["color"].lower()
+        if kind == "store" and isinstance(v.get("label"), str) and v["label"].strip():
+            clean["label"] = v["label"].strip()[:30]
+        if clean:
+            out["values"][f"{kind}:{value.strip().lower()}"] = clean
+    return out
 
 
 def validate_ui(settings: dict[str, Any]) -> dict[str, Any]:

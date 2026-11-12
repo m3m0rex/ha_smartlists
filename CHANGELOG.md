@@ -3,6 +3,34 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.8.0] – 2026-11-12
+
+### Added
+
+- **Several lists in one card** (`entities`) as tabs, side by side or stacked.
+- **Filters per card**: only a store, person or tag (`@REWE`, `*Anna`, `#bio`), only certain
+  categories or only offers; new items added in a filtered card get the tag automatically.
+  Optional **filter bar** with the stores, persons and tags currently on the list.
+- **Views**: list, **tiles** (big tap targets, e.g. kitchen tablet) and **mini** (summary tile with
+  open count, stores and the next ending offer; tap to open).
+- **Appearance per card**: row height, font size, corner radius, accent colour; CSS variables
+  `--smartlists-accent`, `--smartlists-radius`, `--smartlists-row-height`, `--smartlists-tile-size`
+  for themes and card-mod.
+- **Drag & drop** (mouse): drag an item into another SmartLists card or list to move it (Ctrl/Alt =
+  copy), or within a list to reorder it (sort "added", lists that support reordering).
+- **Card editor**: presets (family shopping, kitchen tablet, in the store, view only, dashboard tile)
+  and a simple mode with *Show advanced options* for everything else.
+- **Sidebar page**: one list or up to three side by side (with drag & drop between them) and a
+  wide layout; the choice is remembered per browser.
+
+- **Wiki** with installation, setup, all card options, naming convention, app pairing and
+  troubleshooting – generated from `docs/wiki` and published automatically on every change.
+- `SECURITY.md` with how to report vulnerabilities privately.
+
+### Changed
+
+- The clickable mockup was removed from the repository; `docs/app-api.md` is now in English.
+
 ## [1.7.3] – 2026-11-12
 
 ### Added

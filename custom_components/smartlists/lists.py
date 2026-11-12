@@ -63,6 +63,7 @@ def list_permissions(hass: HomeAssistant, entity_id: str) -> dict[str, bool]:
         "rename": bool(f & TodoListEntityFeature.UPDATE_TODO_ITEM),
         "delete": bool(f & TodoListEntityFeature.DELETE_TODO_ITEM),
         "note": bool(f & TodoListEntityFeature.SET_DESCRIPTION_ON_ITEM),
+        "reorder": bool(f & TodoListEntityFeature.MOVE_TODO_ITEM),
     }
 
 

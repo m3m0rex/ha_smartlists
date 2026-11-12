@@ -2,7 +2,7 @@
 
 # SmartLists – combined to-do lists for Home Assistant
 
-🇩🇪 [Deutsche Version](README.de.md)
+🇩🇪 [Deutsche Version](README.de.md) · 📖 [Wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki) · 🔒 [Security](SECURITY.md)
 
 A standalone Home Assistant integration (HACS), independent of the HA SmartLists Android app.
 It brings the app's key feature straight into Home Assistant: **merge several to-do lists into one
@@ -50,10 +50,11 @@ while typing, too.
 ## Sidebar page "SmartLists"
 
 After setup there is a **SmartLists** entry in the HA sidebar: all to-do lists (combined lists first)
-as tabs at the top, below them the list with badges, categories, quantity stepper, search and
-shopping mode – no dashboard needed. Home Assistant's built-in to-do page shows items as plain text
-only ("Milch 2 l @REWE"); badges are only available on this page and in the card. Hide the entry like
-any other via *Edit sidebar*.
+as tabs, each shown like the card (badges, categories, stepper, search, shopping mode) – no dashboard
+needed. The toolbar switches between **one list** and **up to three lists side by side** and between
+normal and **wide** layout; with several lists you can **drag items** from one list to another with the
+mouse (Ctrl = copy). Home Assistant's built-in to-do page shows items as plain text only
+("Milch 2 l @REWE"). Hide the entry like any other via *Edit sidebar*.
 
 ## Lovelace card `custom:smartlists-card`
 
@@ -62,23 +63,32 @@ Loaded automatically by the integration (no dashboard resource needed).
 ```yaml
 type: custom:smartlists-card
 entity: todo.weekly_shop
-sort: category        # category | alpha | added | list
 ```
 
+The visual editor starts simple – **preset**, list, title, view, sort – and shows everything else with
+*Show advanced options*. Presets: family shopping, kitchen tablet, in the store, view only, compact
+dashboard tile.
+
+| Option | Values |
+|---|---|
+| `entity` / `entities` | one list, or several lists in one card |
+| `layout` | `tabs` · `columns` · `stack` (several lists) |
+| `view` | `list` · `tiles` (big tiles, e.g. kitchen tablet) · `mini` (summary tile, tap to open) |
+| `sort` | `category` · `alpha` · `added` · `list` |
+| `filter_store`, `filter_person`, `filter_tag` | only items with `@REWE`, `*Anna`, `#bio` (comma-separated); new items get the tag automatically |
+| `filter_category`, `filter_offers` | only these categories / only offers from the app |
+| `show_filter_chips` | filter bar with the stores, persons and tags currently on the list |
+| `density`, `font_scale`, `radius`, `accent_color` | row height, text size, corner radius, accent colour |
+| `drag_drop` | drag items into another list (move, Ctrl = copy) or reorder (sort "added") |
+| `show_*` | every element of header, input and list can be hidden |
+
+Themes and card-mod can use the CSS variables `--smartlists-accent`, `--smartlists-radius`,
+`--smartlists-row-height` and `--smartlists-tile-size`.
+
 Search (also by store, person, note and category; "apfel" finds "Äpfel"), quantity stepper − +,
-a single input with live preview (quantity, category, badges) and suggestions (↑/↓, Tab, Enter),
-"frequently bought", change the category with one click (remembered), fixed columns
-name | quantity | unit, sorting (category, A–Z, added, by list), long press → menu (edit, move, copy,
-category, delete), shopping mode (screen stays on, hide checked, large rows, tap the row), ↶ to undo
-the last change, import from an HA to-do list or as text.
-
-All display options are available in the visual card editor, grouped into *Header*, *Input*, *List*,
-*Completed* and *Shopping mode* (e.g. hide search or stepper, compact rows, no category headings,
-maximum height, start in shopping mode). Personal controls (gesture, menu, shopping-mode behaviour)
-stay per user in the card's gear menu.
-
-A clickable mockup with simulated data is in `mockup/card-mockup.html`
-(rebuild: `python mockup/build_mockup.py`).
+a single input with live preview and suggestions, "frequently bought", category picker, offers from the
+app (store, price, valid until), long press → menu (edit, move, copy, category, delete), shopping mode,
+↶ undo, import from an HA to-do list or as text.
 
 ### Status
 
@@ -93,7 +103,7 @@ with specific permissions).
 
 The HA SmartLists app can pair with the integration (`smartlists/info`) and then shows the same badges,
 categories and suggestions. All commands, responses and the text format:
-[docs/app-api.md](docs/app-api.md) (German).
+[docs/app-api.md](docs/app-api.md).
 
 The category pack is generated from the app's pack: `python scripts/build_categories.py` (looks for the
 app in the sibling folder `shopping_manager_app`).
@@ -161,5 +171,4 @@ custom_components/smartlists/
   www/smartlists-card.js   Lovelace card and sidebar page
   strings.json, translations/   texts (German/English)
 scripts/build_categories.py     generate categories.json from the app's pack
-mockup/                         clickable mockup of the card
 ```

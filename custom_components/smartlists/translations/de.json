@@ -126,7 +126,8 @@
           "learned": "Gemerkte Kategorien & Verlauf",
           "devices": "Verbundene Geräte (App)",
           "automation": "Sprache & Automationen (Assist, fällige Artikel)",
-          "app_lists": "Listen aus der App (kombinierte Listen übernehmen)"
+          "app_lists": "Listen aus der App (kombinierte Listen übernehmen)",
+          "packs": "Kategorie-Erkennung (Keyword-Packs)"
         }
       },
       "naming": {
@@ -188,10 +189,52 @@
         "data": {
           "connect": "Verbinden"
         }
+      },
+      "packs": {
+        "title": "Kategorie-Erkennung – Keyword-Packs",
+        "description": "Aktive Packs, in Reihenfolge des Vorrangs: {order}\n\n⭐ = eingebaut (Änderungen landen im Ergänzungs-Pack „+“), ✏️ = eigenes. Dasselbe gibt es in der SmartLists-Karte bzw. Seite → ⚙ → Haushalt.",
+        "data": {
+          "active": "Aktive Packs",
+          "action": "Weiter"
+        }
+      },
+      "pack_pick": {
+        "title": "Pack bearbeiten",
+        "data": {
+          "pack": "Pack"
+        }
+      },
+      "pack_new": {
+        "title": "Neues Pack",
+        "data": {
+          "name": "Name",
+          "language": "Sprachcode (optional, z. B. nl)"
+        }
+      },
+      "pack_import": {
+        "title": "Pack als JSON einfügen",
+        "data": {
+          "name": "Name (optional)",
+          "json": "Pack (JSON)"
+        },
+        "description": "Format: {\"terms\": {\"hafermilch\": \"kuehlung\"}} – oder die category_pack_v2.json der App. Gleicher Name ersetzt ein vorhandenes eigenes Pack."
+      },
+      "pack_edit": {
+        "title": "{name} bearbeiten",
+        "description": "{hint} {count} Stichwörter. Beispiele: {sample}\n\nHinzufügen: ein oder mehrere Stichwörter (mit Komma oder Zeilenumbruch getrennt), alle bekommen die gewählte Kategorie. Entfernen: nur eigene Stichwörter (bei eingebauten Packs: deine Ergänzungen).",
+        "data": {
+          "add": "Stichwörter hinzufügen",
+          "category": "Kategorie für neue Stichwörter",
+          "remove": "Entfernen",
+          "again": "Nach dem Speichern weiter bearbeiten"
+        }
       }
     },
     "error": {
-      "duplicate_prefix": "Jedes Zeichen darf nur für eine Art verwendet werden."
+      "duplicate_prefix": "Jedes Zeichen darf nur für eine Art verwendet werden.",
+      "pack_none_active": "Mindestens ein Pack muss aktiv sein.",
+      "pack_exists": "Ein eigenes Pack mit diesem Namen gibt es schon.",
+      "pack_invalid": "Kein gültiges Pack (JSON mit \"terms\" oder App-Format)."
     }
   },
   "selector": {
@@ -244,6 +287,14 @@
         "copy": "Kopieren",
         "category": "Kategorie ändern",
         "delete": "Löschen"
+      }
+    },
+    "pack_action": {
+      "options": {
+        "done": "Speichern",
+        "edit": "Stichwörter eines Packs bearbeiten",
+        "new": "Neues Pack (z. B. weitere Sprache)",
+        "import": "Pack als JSON einfügen"
       }
     }
   },

@@ -126,7 +126,8 @@
           "learned": "Catégories mémorisées et historique",
           "devices": "Appareils connectés (application)",
           "automation": "Voix et automatisations (Assist, éléments à racheter)",
-          "app_lists": "Listes de l'app (reprendre les listes combinées)"
+          "app_lists": "Listes de l'app (reprendre les listes combinées)",
+          "packs": "Détection des catégories (packs de mots-clés)"
         }
       },
       "naming": {
@@ -188,10 +189,52 @@
         "data": {
           "connect": "Associer"
         }
+      },
+      "packs": {
+        "title": "Détection des catégories – packs de mots-clés",
+        "description": "Packs actifs, par ordre de priorité : {order}\n\n⭐ = intégré (les modifications vont dans un pack complémentaire « + »), ✏️ = personnel. La même chose existe dans la carte SmartLists ou la page → ⚙ → Foyer.",
+        "data": {
+          "active": "Packs actifs",
+          "action": "Suite"
+        }
+      },
+      "pack_pick": {
+        "title": "Modifier un pack",
+        "data": {
+          "pack": "Pack"
+        }
+      },
+      "pack_new": {
+        "title": "Nouveau pack",
+        "data": {
+          "name": "Nom",
+          "language": "Code de langue (facultatif, p. ex. nl)"
+        }
+      },
+      "pack_import": {
+        "title": "Coller un pack en JSON",
+        "data": {
+          "name": "Nom (facultatif)",
+          "json": "Pack (JSON)"
+        },
+        "description": "Format : {\"terms\": {\"lait d'avoine\": \"kuehlung\"}} – ou le category_pack_v2.json de l'app. Le même nom remplace un pack personnel existant."
+      },
+      "pack_edit": {
+        "title": "Modifier {name}",
+        "description": "{hint} {count} mots-clés. Exemples : {sample}\n\nAjouter : un ou plusieurs mots-clés (séparés par des virgules ou des retours à la ligne), tous reçoivent la catégorie choisie. Supprimer : uniquement tes propres mots-clés (pour les packs intégrés : tes ajouts).",
+        "data": {
+          "add": "Ajouter des mots-clés",
+          "category": "Catégorie des nouveaux mots-clés",
+          "remove": "Supprimer",
+          "again": "Continuer à modifier après l'enregistrement"
+        }
       }
     },
     "error": {
-      "duplicate_prefix": "Chaque caractère ne peut être utilisé que pour un seul type."
+      "duplicate_prefix": "Chaque caractère ne peut être utilisé que pour un seul type.",
+      "pack_none_active": "Au moins un pack doit être actif.",
+      "pack_exists": "Un pack personnel portant ce nom existe déjà.",
+      "pack_invalid": "Pack non valide (JSON avec \"terms\" ou format de l'app)."
     }
   },
   "selector": {
@@ -244,6 +287,14 @@
         "copy": "Copier",
         "category": "Changer de catégorie",
         "delete": "Supprimer"
+      }
+    },
+    "pack_action": {
+      "options": {
+        "done": "Enregistrer",
+        "edit": "Modifier les mots-clés d'un pack",
+        "new": "Nouveau pack (p. ex. autre langue)",
+        "import": "Coller un pack en JSON"
       }
     }
   },

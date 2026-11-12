@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 import voluptuous as vol
@@ -296,7 +297,121 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned", "automation", "devices", "app_lists"])
+        return self.async_show_menu(step_id="init", menu_options=["naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
+
+    # ---- Kategorie-Erkennung: Keyword-Packs (dasselbe wie in der Karte → Haushalt) ----------------
+    def _packs(self):
+        return self.hass.data[DOMAIN]["packs"]
+
+    async def async_step_packs(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Aktive Packs wählen und eins bearbeiten, neu anlegen oder als JSON einfügen."""
+        packs = self._packs()
+        rows = packs.describe()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            chosen = list(user_input.get("active") or [])
+            # Reihenfolge (Vorrang) bleibt; neu Eingeschaltete kommen ans Ende
+            order = [p for p in packs.active if p in chosen] + [p for p in chosen if p not in packs.active]
+            try:
+                if order != packs.active:
+                    packs.set_active(order)
+            except ValueError:
+                errors["active"] = "pack_none_active"
+            if not errors:
+                action = user_input.get("action", "done")
+                if action == "edit":
+                    return await self.async_step_pack_pick()
+                if action == "new":
+                    return await self.async_step_pack_new()
+                if action == "import":
+                    return await self.async_step_pack_import()
+                return self._done()
+        options = [selector.SelectOptionDict(
+            value=r["id"], label=f"{r['name']} · {r['terms']} · {'⭐' if r['builtin'] else '✏️'}") for r in rows]
+        schema = vol.Schema({
+            vol.Optional("active", default=[r["id"] for r in rows if r["active"]]): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=options, multiple=True, mode=selector.SelectSelectorMode.LIST)),
+            vol.Required("action", default="done"): _select(["done", "edit", "new", "import"], "pack_action"),
+        })
+        order = " → ".join(r["name"] for r in rows if r["active"])
+        return self.async_show_form(step_id="packs", data_schema=schema, errors=errors,
+                                    description_placeholders={"order": order or "—"})
+
+    async def async_step_pack_pick(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        rows = self._packs().describe()
+        if user_input is not None:
+            self._pack_id = user_input["pack"]
+            return await self.async_step_pack_edit()
+        options = [selector.SelectOptionDict(value=r["id"], label=f"{r['name']} ({r['terms']})") for r in rows]
+        return self.async_show_form(step_id="pack_pick", data_schema=vol.Schema({vol.Required("pack"): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.LIST))}))
+
+    async def async_step_pack_new(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            try:
+                self._pack_id = self._packs().create(user_input["name"], user_input.get("language", ""))
+                return await self.async_step_pack_edit()
+            except ValueError:
+                errors["name"] = "pack_exists"
+        return self.async_show_form(step_id="pack_new", errors=errors, data_schema=vol.Schema({
+            vol.Required("name"): selector.TextSelector(),
+            vol.Optional("language", default=""): selector.TextSelector(),
+        }))
+
+    async def async_step_pack_import(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Pack als JSON einfügen (Integrations- oder App-Format)."""
+        import json
+
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            try:
+                raw = json.loads(user_input["json"])
+                self._packs().add_custom(raw, user_input.get("name") or None)
+                return self._done()
+            except (ValueError, TypeError):
+                errors["json"] = "pack_invalid"
+        return self.async_show_form(step_id="pack_import", errors=errors, data_schema=vol.Schema({
+            vol.Optional("name", default=""): selector.TextSelector(),
+            vol.Required("json"): selector.TextSelector(selector.TextSelectorConfig(multiline=True)),
+        }))
+
+    async def async_step_pack_edit(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Stichwörter hinzufügen (mehrere, eine Kategorie) und entfernen. Eingebaute Packs: über „+“-Ergänzung."""
+        packs = self._packs()
+        pid = self._pack_id
+        info = next((r for r in packs.describe() if r["id"] == pid), None)
+        if info is None:
+            return self._done()
+        if user_input is not None:
+            changes: dict[str, str | None] = {}
+            for word in re.split(r"[,;\n]", user_input.get("add") or ""):
+                if word.strip():
+                    changes[word.strip()] = user_input["category"]
+            for word in user_input.get("remove") or []:
+                changes[word] = None
+            if changes:
+                packs.update_terms(pid, changes)
+            if user_input.get("again"):
+                return await self.async_step_pack_edit()
+            return self._done()
+        # entfernbar: eigene Stichwörter (bei eingebauten Packs nur die eigenen Ergänzungen)
+        own = packs.terms(pid, limit=500)["terms"]
+        removable = [t["term"] for t in own if not info["builtin"] or t["changed"]]
+        cats = [selector.SelectOptionDict(value=c["id"], label=c["label"]) for c in _learning(self.hass).categories.as_list(self.hass.config.language)]
+        fields: dict[Any, Any] = {
+            vol.Optional("add", default=""): selector.TextSelector(selector.TextSelectorConfig(multiline=True)),
+            vol.Required("category", default=cats[0]["value"]): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=cats, mode=selector.SelectSelectorMode.DROPDOWN)),
+        }
+        if removable:
+            fields[vol.Optional("remove", default=[])] = selector.SelectSelector(selector.SelectSelectorConfig(
+                options=removable[:300], multiple=True, mode=selector.SelectSelectorMode.DROPDOWN))
+        fields[vol.Optional("again", default=False)] = selector.BooleanSelector()
+        sample = ", ".join(f"{t['term']} → {_learning(self.hass).categories.label(t['category'])}" for t in own[:12])
+        return self.async_show_form(step_id="pack_edit", data_schema=vol.Schema(fields), description_placeholders={
+            "name": info["name"], "count": str(info["terms"]), "sample": sample or "—",
+            "hint": "⭐" if info["builtin"] else "✏️"})
 
     async def async_step_app_lists(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Kombinierte Listen aus der App übernehmen – sie gehören dann zum jeweiligen Handy-Gerät."""

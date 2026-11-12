@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.6.1] – 2026-11-12
+
+### Fixed
+
+- Keyword pack editor: the add row no longer squeezes the keyword field and the button – keyword on its own
+  line, category and *Add* below.
+
 ## [2.6.0] – 2026-11-12
 
 ### Added

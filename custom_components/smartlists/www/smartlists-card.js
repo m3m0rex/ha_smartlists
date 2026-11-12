@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.6.0";
+const CARD_VERSION = "2.6.1";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -1441,7 +1441,11 @@ const STYLE = `
   .btn2.primary { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
   .srow2 .icon-btn.up svg { transform:rotate(180deg); }
   .btn2.danger { color:var(--error-color,#db4437); }
-  .search2 { width:100%; height:40px; }
+  .search2 { width:100%; height:40px; box-sizing:border-box; }
+  .packadd { display:flex; flex-direction:column; gap:8px; margin:4px 0 10px; }
+  .packadd2 { display:flex; gap:8px; align-items:center; }
+  .packadd2 select { flex:1 1 auto; min-width:0; height:40px; }
+  .packadd2 .btn2, .btn2 { white-space:nowrap; flex:none; }
   .learned2 { max-height:236px; overflow:auto; margin-top:8px; border:1px solid var(--divider-color,#e0e0e0); border-radius:10px; }
   .lrow2 { display:grid; grid-template-columns:minmax(0,1fr) auto 30px; align-items:center; gap:8px; padding:4px 4px 4px 12px; border-bottom:1px solid var(--divider-color,#e0e0e0); }
   .lrow2:last-child { border-bottom:none; }
@@ -3019,7 +3023,7 @@ class SmartListsCard extends HTMLElement {
       fill(more, rows.length < total ? h("button", { class: "btn2", type: "button", onclick: () => load(true) }, `${t.pack_more} (${rows.length}/${total})`)
         : h("span", { class: "shelp" }, `${total} ${t.pack_terms}`));
     };
-    const term = h("input", { class: "search2", placeholder: t.pack_term_placeholder, "aria-label": t.pack_term_placeholder, style: "flex:1;min-width:120px" });
+    const term = h("input", { class: "search2", placeholder: t.pack_term_placeholder, "aria-label": t.pack_term_placeholder });
     let newCat = cats[0] ? cats[0].id : "sonstiges";
     const add = async () => {
       const v = term.value.trim();
@@ -3035,8 +3039,10 @@ class SmartListsCard extends HTMLElement {
       h("div", { class: "srow2", style: "border-top:none" },
         iconBtn(ICON.back, t.p_back, () => { fill(body, ...saved); onClose && onClose(); }),
         h("div", { class: "sl" }, h("b", {}, pack.name), h("small", {}, pack.builtin ? t.pack_builtin_edit_help : t.pack_edit_help))),
-      h("div", { class: "rule2", style: "flex-wrap:wrap" }, term, catSelect(newCat, (v) => { newCat = v; }),
-        h("button", { class: "btn2 primary", type: "button", onclick: add }, "＋ " + t.pack_add)),
+      // Zeile 1: Stichwort(e) über die ganze Breite; Zeile 2: Kategorie + Hinzufügen
+      h("div", { class: "packadd" }, term,
+        h("div", { class: "packadd2" }, catSelect(newCat, (v) => { newCat = v; }),
+          h("button", { class: "btn2 primary", type: "button", onclick: add }, "＋ " + t.pack_add))),
       search, listEl, more, h("div", { class: "acts" }, status));
     load(false);
   }

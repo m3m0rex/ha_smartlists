@@ -44,6 +44,7 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
   `#bio` zum Schlagwort. Welches Zeichen was bedeutet, stellen Admins in der Karte ein (Zahnrad).
   Die Tags bleiben im Artikelnamen stehen – andere Oberflächen sehen sie also weiter als Text.
 - **Automationen & Sprache:** „Bin im Laden“-Benachrichtigung, Markt-Erinnerung, wiederkehrende Artikel, Assist-Sätze – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Automations-and-voice).
+- **Eigene Listen mit Freigaben:** Listen mit Besitzer, pro Person freigegeben zum Sehen, Abhaken oder Bearbeiten – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Own-lists-and-sharing).
 - **Verbundene Geräte:** jedes Handy mit der App erscheint unter *Konfigurieren → Verbundene Geräte* und als HA-Gerät mit den Sensoren *Zuletzt gesehen* und *App-Version*.
 - **Bedienung:** Standard für alle (Admin) → je Benutzer abweichend → optional je Gerät abweichend.
 
@@ -93,8 +94,6 @@ Die Karte funktioniert in HA mit kombinierten SmartLists-Listen **und jeder norm
 kombinierten Listen sind Artikel aus fremden Quellen nur abhakbar. Änderungen von anderen Geräten
 erscheinen live.
 
-Noch offen: eigene Listen direkt in SmartLists und Freigaben pro Benutzer (A gibt B eine Liste mit
-bestimmten Rechten frei).
 
 ### Schnittstelle für die App
 
@@ -157,13 +156,17 @@ custom_components/smartlists/
   manifest.json      Metadaten (Typ: Dienst, einmal einrichtbar)
   __init__.py        Einrichten/Entladen, Karte laden, Umzug von 1.1
   config_flow.py     Einrichtung, kombinierte Listen (Unter-Einträge), Konfigurieren-Menü
-  todo.py            die kombinierte To-do-Entität
+  todo.py            To-do-Entitäten: kombinierte und eigene Listen
   categories.py/json Kategorie-Paket (aus der App erzeugt, mit Produkten + Einheiten)
   itemtext.py        Artikeltext zerlegen: Menge, Einheit, Tags (@REWE …)
   learning.py        Gedächtnis: Kategorien, Verlauf, Vorschläge, Tag-Regeln, Bedienung
+  own.py             eigene Listen: Rollen und Rechte
+  automation.py      Einkaufs-Ereignis, get_items, Assist, fällige Artikel
   lists.py           Listen lesen/ändern (kombinierte und normale To-do-Listen)
   websocket.py       Befehle für Karte und App (siehe docs/app-api.md)
-  www/smartlists-card.js   Lovelace-Karte
+  www/smartlists-card.js   Lovelace-Karte und Seite in der Seitenleiste
   strings.json, translations/   Texte (Deutsch/Englisch)
+blueprints/automation/smartlists/   fertige Automationen
+tests/                          Tests (pytest, ohne HA)
 scripts/build_categories.py     categories.json aus dem App-Paket erzeugen
 ```

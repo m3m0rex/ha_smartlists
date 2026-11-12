@@ -42,6 +42,7 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
   a person, `#organic` a tag. Admins choose which character means what. Tags stay in the item name,
   so other interfaces still show them as text.
 - **Automations & voice:** "I'm at the store" notification, store reminder, recurring items, Assist sentences – see the [wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Automations-and-voice).
+- **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit – see the [wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Own-lists-and-sharing).
 - **Connected devices:** every phone with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 
@@ -96,9 +97,6 @@ app (store, price, valid until), long press → menu (edit, move, copy, category
 The card works with combined SmartLists lists **and every regular to-do list** (Shopping List, Local
 To-do, Google Tasks, Bring!, …). Allowed is whatever the list itself supports; in combined lists,
 items from foreign sources can only be checked off. Changes from other devices appear live.
-
-Not yet available: lists stored directly in SmartLists and sharing per user (A shares a list with B
-with specific permissions).
 
 ### Interface for the app
 
@@ -163,13 +161,17 @@ custom_components/smartlists/
   manifest.json      metadata (type: service, single instance)
   __init__.py        setup/unload, card and sidebar page, migration from 1.1
   config_flow.py     setup, combined lists (sub-entries), configure menu
-  todo.py            the combined to-do entity
+  todo.py            to-do entities: combined lists and own lists
   categories.py/json category pack (generated from the app, with products + units)
   itemtext.py        parse item text: quantity, unit, tags (@REWE …)
   learning.py        memory: categories, history, suggestions, tag rules, controls
+  own.py             own lists: roles and permissions
+  automation.py      shopping event, get_items, Assist intents, due items
   lists.py           read/change lists (combined and regular to-do lists)
   websocket.py       commands for card and app (see docs/app-api.md)
   www/smartlists-card.js   Lovelace card and sidebar page
   strings.json, translations/   texts (German/English)
+blueprints/automation/smartlists/   ready-made automations
+tests/                          tests (pytest, no HA needed)
 scripts/build_categories.py     generate categories.json from the app's pack
 ```

@@ -46,6 +46,7 @@ from .const import (
     SORT_SOURCE,
     SORT_STATUS,
     SUBENTRY_COMBINED,
+    SUBENTRY_OWN,
 )
 from .learning import MENU_ACTIONS, Learning
 
@@ -132,7 +133,7 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
     @classmethod
     @callback
     def async_get_supported_subentry_types(cls, config_entry: ConfigEntry) -> dict[str, type[ConfigSubentryFlow]]:
-        return {SUBENTRY_COMBINED: CombinedListSubentryFlow}
+        return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN: OwnListSubentryFlow}
 
     @staticmethod
     @callback
@@ -216,6 +217,58 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
             user_input if user_input is not None else current,
         )
         return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)
+
+
+# ----------------------------------------------------------------------
+# Eigene Liste (Unter-Eintrag) mit Besitzer und Freigaben
+# ----------------------------------------------------------------------
+class OwnListSubentryFlow(ConfigSubentryFlow):
+    """Eigene Liste anlegen/bearbeiten: Name, Besitzer, wer sehen / abhaken / bearbeiten darf."""
+
+    async def _schema(self, current: dict[str, Any]) -> vol.Schema:
+        from .own import async_household_users
+
+        users = await async_household_users(self.hass)
+        opts = [selector.SelectOptionDict(value=u["id"], label=u["name"]) for u in users]
+
+        def users_sel(multiple: bool) -> selector.SelectSelector:
+            return selector.SelectSelector(selector.SelectSelectorConfig(options=opts, multiple=multiple, mode=selector.SelectSelectorMode.DROPDOWN))
+
+        shares = current.get("shares") or {}
+        by_role = {r: [u for u, role in shares.items() if role == r] for r in ("viewer", "checker", "editor")}
+        return vol.Schema(
+            {
+                vol.Required(CONF_NAME, default=current.get(CONF_NAME, "")): selector.TextSelector(),
+                vol.Required("owner", default=current.get("owner") or (self.context.get("user_id") or (users[0]["id"] if users else ""))): users_sel(False),
+                vol.Optional("editors", default=by_role["editor"]): users_sel(True),
+                vol.Optional("checkers", default=by_role["checker"]): users_sel(True),
+                vol.Optional("viewers", default=by_role["viewer"]): users_sel(True),
+            }
+        )
+
+    @staticmethod
+    def _data(user_input: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+        owner = user_input["owner"]
+        shares: dict[str, str] = {}
+        # höhere Rolle gewinnt, falls jemand mehrfach gewählt wurde
+        for key, role in (("viewers", "viewer"), ("checkers", "checker"), ("editors", "editor")):
+            for uid in user_input.get(key) or []:
+                if uid != owner:
+                    shares[uid] = role
+        return user_input[CONF_NAME].strip(), {"owner": owner, "shares": shares}
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        if user_input is not None and user_input.get(CONF_NAME, "").strip():
+            title, data = self._data(user_input)
+            return self.async_create_entry(title=title, data=data)
+        return self.async_show_form(step_id="user", data_schema=await self._schema({}))
+
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        subentry = self._get_reconfigure_subentry()
+        if user_input is not None and user_input.get(CONF_NAME, "").strip():
+            title, data = self._data(user_input)
+            return self.async_update_and_abort(self._get_entry(), subentry, title=title, data=data)
+        return self.async_show_form(step_id="reconfigure", data_schema=await self._schema({**subentry.data, CONF_NAME: subentry.title}))
 
 
 # ----------------------------------------------------------------------

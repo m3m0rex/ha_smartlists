@@ -3,6 +3,25 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] – 2026-11-12
+
+### Added
+
+- **Own lists with owner and sharing**: lists stored by SmartLists itself. Create them on the sidebar
+  page (**+**) or with *Add own list* at the integration. Share per person as **viewer**, **checker**
+  (check off only) or **editor**; the owner and admins can do everything and manage sharing (card gear
+  menu → *Sharing*). Rights are enforced for every change – card, app, HA's to-do view, voice, REST.
+  Lists not shared with a user are hidden in the card, the sidebar page, the app list and Assist
+  answers (HA's own to-do view still lists every entity – see the wiki).
+- WebSocket commands `smartlists/users`, `create_list`, `share`, `delete_list`; `get_list` reports the
+  caller's role.
+- **Automated tests** (`tests/`, GitHub workflow *Tests*) for item text, offers, roles, categories,
+  buying rhythm and export/import.
+
+### Changed
+
+- `smartlists/get_list` and `smartlists/lists` take the calling user into account (own lists).
+
 ## [1.9.0] – 2026-11-12
 
 ### Added

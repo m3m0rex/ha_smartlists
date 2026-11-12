@@ -5,6 +5,8 @@ combined lists first, each rendered like the card.
 
 Toolbar buttons:
 
+- **+** – create an own list (you are the owner, see [[Own lists and sharing]]). Lists that are not
+  shared with you are not shown.
 - **Side by side** – tap up to three lists; they appear in columns. Drag items between them with the
   mouse (Ctrl = copy).
 - **Wide** – use the full screen width.

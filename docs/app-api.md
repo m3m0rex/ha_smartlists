@@ -161,7 +161,22 @@ sensors "Last seen" and "App version".
 
 `smartlists/suggest` with an empty query returns due items first (`source: "due"`, `every_days`).
 
-## 6. Categories and suggestions
+## 6. Own lists and sharing
+
+| Command | Fields | Purpose |
+|---|---|---|
+| `smartlists/users` | – | `{users: [{id, name, is_admin}], me}` for the sharing picker |
+| `smartlists/create_list` | `name` | new own list, the caller is the owner |
+| `smartlists/share` | `entity_id, user_id, role` | `viewer` / `checker` / `editor`, `null` removes (owner/admin) |
+| `smartlists/delete_list` | `entity_id` | delete an own list (owner/admin) |
+
+`get_list` returns `type: "own"` and `own: {role, owner, owner_id, shares, can_share}`; `permissions`
+reflect the caller's role. `lists` omits own lists that are not shared with the caller and adds `role`.
+Every change is enforced by the list entity for the requesting user – also through the regular
+`todo.*` services the app uses. Own lists carry the attributes `smartlists_own: true`, `owner` and
+`shared_with`.
+
+## 7. Categories and suggestions
 
 | Command | Fields | Purpose |
 |---|---|---|
@@ -178,7 +193,7 @@ Deletions are synced too: words forgotten in the app are sent via `smartlists/fo
 in `smartlists/learned` at the last sync and are missing now were forgotten in HA and are removed in
 the app.
 
-## 7. Controls per user
+## 8. Controls per user
 
 | Command | Fields | Purpose |
 |---|---|---|

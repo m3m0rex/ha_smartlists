@@ -6,6 +6,8 @@ DOMAIN = "smartlists"
 
 # Unter-Eintrag-Typ für kombinierte Listen
 SUBENTRY_COMBINED = "combined_list"
+# Unter-Eintrag-Typ für eigene Listen (mit Besitzer und Freigaben, siehe own.py)
+SUBENTRY_OWN = "own_list"
 # Aus der Migration: unique_id der Entität vor 1.2 (damit entity_id gleich bleibt)
 LEGACY_UNIQUE_ID = "legacy_unique_id"
 

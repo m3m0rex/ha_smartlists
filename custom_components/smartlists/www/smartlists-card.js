@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "1.9.0";
+const CARD_VERSION = "2.0.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -93,6 +93,11 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
+    owner: "Besitzer", shared: "geteilt", private: "privat", admin: "Admin", sharing: "Freigaben",
+    sharing_help: "Wer diese Liste sehen und ändern darf. Admins dürfen immer alles. Die To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie nur in SmartLists (Karte, Seite, App).",
+    role_none: "kein Zugriff", role_viewer: "sehen", role_checker: "abhaken", role_editor: "bearbeiten", role_owner: "Besitzer",
+    no_users: "Keine weiteren Benutzer in Home Assistant.", delete_list: "Liste löschen", confirm_delete_list: "Diese Liste mit allen Artikeln löschen?",
+    new_list: "Neue Liste", new_list_prompt: "Name der neuen Liste:",
     due_every: "fällig – kauft ihr etwa alle", days: "Tage", backup: "Sichern & übertragen",
     backup_help: "Gemerkte Kategorien, Verlauf, Namenskonvention und Bedienung als Datei – z. B. für eine zweite HA-Instanz. Import ergänzt, ohne Vorhandenes zu löschen.",
     export: "Exportieren", import: "Importieren …",
@@ -134,6 +139,11 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
+    owner: "owner", shared: "shared", private: "private", admin: "admin", sharing: "Sharing",
+    sharing_help: "Who may see and change this list. Admins can always do everything. HA's to-do view shows every list to everyone – it is hidden only in SmartLists (card, page, app).",
+    role_none: "no access", role_viewer: "view", role_checker: "check off", role_editor: "edit", role_owner: "owner",
+    no_users: "No other users in Home Assistant.", delete_list: "Delete list", confirm_delete_list: "Delete this list with all items?",
+    new_list: "New list", new_list_prompt: "Name of the new list:",
     due_every: "due – you buy it about every", days: "days", backup: "Backup & transfer",
     backup_help: "Remembered categories, history, naming convention and controls as a file – e.g. for a second HA instance. Import adds without deleting anything.",
     export: "Export", import: "Import …",
@@ -335,6 +345,7 @@ const STYLE = `
   .title { font-size:1.25rem; font-weight:500; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .badge { font-size:.7rem; padding:2px 8px; border-radius:10px; background:var(--sl-accent); color:var(--text-primary-color,#fff); white-space:nowrap; }
   .badge.foreign { background:var(--warning-color,#f5a623); }
+  .badge.own { background:var(--secondary-background-color,#eee); color:var(--primary-text-color); }
   .badge.combined { background:var(--info-color,#2196f3); }
   .count { color:var(--secondary-text-color); font-size:.85rem; white-space:nowrap; }
   .sort { display:flex; align-items:center; gap:2px; color:var(--secondary-text-color); }
@@ -750,6 +761,8 @@ class SmartListsCard extends HTMLElement {
     fill(this._headEl, 
       h("div", { class: "title" }, this._config.title || d.name),
       d.type === "combined" ? h("span", { class: "badge combined" }, t.combined) : null,
+      d.own ? h("span", { class: "badge own", title: `${t.owner}: ${d.own.owner || "?"}` },
+        d.own.role === "owner" ? (Object.keys(d.own.shares || {}).length ? `👥 ${t.shared}` : `🔒 ${t.private}`) : `👤 ${d.own.owner || "?"} · ${t["role_" + d.own.role]}`) : null,
       d.foreign ? h("span", { class: "badge foreign" }, t.foreign) : null,
       !this._config.show_count ? null : h("span", { class: "count" }, this._searchQuery
         ? `${this._hitCount ?? 0} ${t.hits}`
@@ -1741,6 +1754,35 @@ class SmartListsCard extends HTMLElement {
   }
 
   /* ---------------- Einstellungen ---------------- */
+  // Freigaben einer eigenen Liste (nur Besitzer/Admins): pro Person keine / sehen / abhaken / bearbeiten
+  _sharing() {
+    const t = this._t;
+    const own = this._data.own;
+    const box = h("div", { class: "help" }, t.loading);
+    const status = h("span", { class: "help" });
+    (async () => {
+      let users = [];
+      try { users = (await this._call("users", {}, false)).users; } catch (e) { fill(box, t.error); return; }
+      const others = users.filter((u) => u.id !== own.owner_id);
+      if (!others.length) { fill(box, t.no_users); return; }
+      fill(box, ...others.map((u) => h("div", { class: "lrow" },
+        h("span", { class: "w" }, u.name, u.is_admin ? h("span", { class: "help" }, ` (${t.admin})`) : null),
+        h("select", { "aria-label": u.name, onchange: async (e) => {
+          try {
+            await this._call("share", { user_id: u.id, role: e.target.value || null });
+            status.textContent = "✓ " + t.saved;
+            await this._load();
+          } catch (err) { status.textContent = (err && err.message) || t.error; }
+        } }, [["", t.role_none], ["viewer", t.role_viewer], ["checker", t.role_checker], ["editor", t.role_editor]].map(([v, l]) =>
+          h("option", { value: v, selected: (own.shares[u.id] || "") === v }, l))))));
+    })();
+    const del = h("button", { class: "btn small", type: "button", style: "color:var(--error-color,#db4437)", onclick: async () => {
+      if (!confirm(t.confirm_delete_list)) return;
+      try { await this._call("delete_list", {}); status.textContent = "✓"; } catch (err) { status.textContent = (err && err.message) || t.error; }
+    } }, t.delete_list);
+    return h("div", {}, h("h3", {}, t.sharing), h("p", { class: "help" }, t.sharing_help), box, h("div", { class: "srow" }, status, del));
+  }
+
   // Haushalts-Einstellungen sichern/übertragen: gemerkte Kategorien, Verlauf, Namenskonvention, Bedienung
   _exportImport() {
     const t = this._t;
@@ -1851,6 +1893,7 @@ class SmartListsCard extends HTMLElement {
     const learnedEl = h("div", { class: "learned" }, t.loading);
     fill(el, h("div", { class: "settings" },
       h("p", { class: "help", style: "margin-top:10px" }, `SmartLists ${this._version || "?"} · ${t.card_version} ${CARD_VERSION}`),
+      this._data && this._data.own && this._data.own.can_share ? this._sharing() : null,
       h("h3", {}, t.naming), h("p", { class: "help" }, t.naming_help, admin ? "" : " " + t.admin_only),
       rulesEl, exampleEl,
       admin ? h("div", { class: "srow" }, status,
@@ -2030,9 +2073,25 @@ class SmartListsPanel extends HTMLElement {
   set panel(p) { this._panelInfo = p; }
   _save() { try { localStorage.setItem(PANEL_PREFS, JSON.stringify(this._prefs)); } catch (e) { /* */ } }
 
+  // Sichtbare Listen kommen von der Integration (eigene Listen nur mit Freigabe); neu laden, wenn sich die
+  // Menge der To-do-Entitäten ändert
+  _refreshVisible() {
+    const st = (this._hass && this._hass.states) || {};
+    const key = Object.keys(st).filter((e) => e.startsWith("todo.")).sort().join(",");
+    if (key === this._visibleKey) return;
+    this._visibleKey = key;
+    this._hass.callWS({ type: "smartlists/lists" }).then((r) => { this._visible = new Set(r.lists.map((l) => l.entity_id)); this._render(); })
+      .catch(() => { this._visible = null; });
+  }
+  async _newList() {
+    const name = (prompt(TEXTS.de.new_list_prompt) || "").trim();
+    if (!name) return;
+    try { await this._hass.callWS({ type: "smartlists/create_list", name }); this._visibleKey = null; } catch (e) { alert((e && e.message) || "Fehler"); }
+  }
   _lists() {
     const st = (this._hass && this._hass.states) || {};
-    return Object.keys(st).filter((e) => e.startsWith("todo.") && st[e].state !== "unavailable")
+    this._refreshVisible();
+    return Object.keys(st).filter((e) => e.startsWith("todo.") && st[e].state !== "unavailable" && (!this._visible || this._visible.has(e)))
       .map((e) => ({ e, name: st[e].attributes.friendly_name || e, open: Number(st[e].state) || 0,
         combined: !!st[e].attributes.smartlists_combined || Array.isArray(st[e].attributes.source_lists) }))
       .sort((a, b) => (b.combined - a.combined) || a.name.localeCompare(b.name));
@@ -2055,7 +2114,8 @@ class SmartListsPanel extends HTMLElement {
         onclick: () => { this._prefs.columns = !this._prefs.columns; this._save(); this._render(); } }, svg(ICON_COLUMNS, 22));
       this._wideBtn = h("button", { type: "button", title: "Breite Ansicht", "aria-label": "Breite Ansicht",
         onclick: () => { this._prefs.wide = !this._prefs.wide; this._save(); this._render(); } }, svg(ICON_WIDE, 22));
-      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._colBtn, this._wideBtn),
+      this._newBtn = h("button", { type: "button", title: "Neue Liste", "aria-label": "Neue Liste", onclick: () => this._newList() }, svg(ICON.plus, 22));
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._colBtn, this._wideBtn),
         this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }

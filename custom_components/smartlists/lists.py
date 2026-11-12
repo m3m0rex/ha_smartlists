@@ -21,6 +21,7 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 
 from .const import DOMAIN
 from .itemtext import join_offer, split_offer
+from .own import permissions_for, role_for
 from .learning import Learning
 
 STATUS_DONE = "completed"
@@ -33,6 +34,19 @@ class ListError(HomeAssistantError):
 
 def _learning(hass: HomeAssistant) -> Learning:
     return hass.data[DOMAIN]["learning"]
+
+
+def own_entity(hass: HomeAssistant, entity_id: str) -> Any | None:
+    """Die Entität einer eigenen SmartLists-Liste (oder None)."""
+    return hass.data.get(DOMAIN, {}).get("own", {}).get(entity_id)
+
+
+def own_role(hass: HomeAssistant, entity_id: str, user: Any | None) -> str | None:
+    """Rolle des Benutzers bei einer eigenen Liste; bei anderen Listen "owner" (keine Einschränkung)."""
+    entity = own_entity(hass, entity_id)
+    if entity is None:
+        return "owner"
+    return role_for(entity.data, getattr(user, "id", None), bool(getattr(user, "is_admin", False))) if user else "owner"
 
 
 def combined_entity(hass: HomeAssistant, entity_id: str) -> Any | None:
@@ -96,11 +110,21 @@ async def raw_items(hass: HomeAssistant, entity_id: str) -> list[dict[str, Any]]
     ]
 
 
-async def get_list(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
-    """Alles, was die Karte zum Anzeigen braucht."""
+async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None) -> dict[str, Any]:
+    """Alles, was die Karte zum Anzeigen braucht. Mit `user` gelten bei eigenen Listen dessen Freigaben."""
     state = _state(hass, entity_id)
     learning = _learning(hass)
     perms = list_permissions(hass, entity_id)
+    own = own_entity(hass, entity_id)
+    own_info = None
+    if own is not None:
+        role = own_role(hass, entity_id, user)
+        if role is None:
+            raise ListError("Diese Liste ist nicht für dich freigegeben.")
+        rp = permissions_for(role)
+        perms = {k: perms.get(k, False) and rp[k] for k in perms}
+        own_info = {"role": role, "owner": own._owner_name, "owner_id": own.data.get("owner"),
+                    "shares": dict(own.data.get("shares") or {}), "can_share": rp["share"]}
     entity = combined_entity(hass, entity_id)
     items = []
     person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
@@ -133,29 +157,35 @@ async def get_list(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
     return {
         "entity_id": entity_id,
         "name": state.attributes.get(ATTR_FRIENDLY_NAME, entity_id),
-        "type": "combined" if entity is not None else "list",
+        "type": "combined" if entity is not None else "own" if own is not None else "list",
         # fremd = Liste besteht nur aus fremden Quellen
         "foreign": bool(entity is not None and entity.all_foreign),
         "source_lists": entity.source_names if entity is not None else [],
         "permissions": perms,
+        "own": own_info,
         "categories": learning.categories.as_list(),
         "items": items,
     }
 
 
-async def all_lists(hass: HomeAssistant) -> list[dict[str, Any]]:
-    """Alle To-do-Listen als mögliche Ziele (Verschieben/Kopieren)."""
+async def all_lists(hass: HomeAssistant, user: Any | None = None) -> list[dict[str, Any]]:
+    """Alle To-do-Listen, die der Benutzer sehen darf (eigene Listen nur mit Freigabe)."""
     out = []
     for state in hass.states.async_all(TODO_DOMAIN):
         if state.state == "unavailable":
             continue
         f = int(state.attributes.get(ATTR_SUPPORTED_FEATURES, 0) or 0)
+        role = own_role(hass, state.entity_id, user)
+        if role is None:
+            continue
+        own = own_entity(hass, state.entity_id) is not None
         out.append(
             {
                 "entity_id": state.entity_id,
                 "name": state.attributes.get(ATTR_FRIENDLY_NAME, state.entity_id),
-                "type": "combined" if combined_entity(hass, state.entity_id) else "list",
-                "can_add": bool(f & TodoListEntityFeature.CREATE_TODO_ITEM),
+                "type": "combined" if combined_entity(hass, state.entity_id) else "own" if own else "list",
+                "can_add": bool(f & TodoListEntityFeature.CREATE_TODO_ITEM) and permissions_for(role)["add"],
+                "role": role if own else None,
             }
         )
     return sorted(out, key=lambda x: str(x["name"]).casefold())

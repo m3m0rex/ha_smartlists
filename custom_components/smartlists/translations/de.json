@@ -80,6 +80,39 @@
       "abort": {
         "reconfigure_successful": "Gespeichert."
       }
+    },
+    "own_list": {
+      "initiate_flow": {
+        "user": "Eigene Liste hinzufügen"
+      },
+      "entry_type": "Eigene Liste",
+      "step": {
+        "user": {
+          "title": "Eigene Liste",
+          "description": "Eine Liste, die SmartLists selbst speichert. Der Besitzer und Admins dürfen alles; Bearbeiten = Artikel hinzufügen/ändern/löschen, Abhaken = nur abhaken, Sehen = nur ansehen. Hinweis: Die eingebaute To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie in der SmartLists-Karte, -Seite und -App.",
+          "data": {
+            "name": "Name",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen"
+          }
+        },
+        "reconfigure": {
+          "title": "Eigene Liste bearbeiten",
+          "description": "Eine Liste, die SmartLists selbst speichert. Der Besitzer und Admins dürfen alles; Bearbeiten = Artikel hinzufügen/ändern/löschen, Abhaken = nur abhaken, Sehen = nur ansehen. Hinweis: Die eingebaute To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie in der SmartLists-Karte, -Seite und -App.",
+          "data": {
+            "name": "Name",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen"
+          }
+        }
+      },
+      "abort": {
+        "reconfigure_successful": "Gespeichert."
+      }
     }
   },
   "options": {
@@ -215,6 +248,9 @@
     },
     "foreign_list": {
       "message": "Artikel aus fremden Listen können nur abgehakt, aber nicht umbenannt oder gelöscht werden."
+    },
+    "not_permitted": {
+      "message": "Für „{list}“ fehlt dir die Berechtigung."
     }
   },
   "entity": {

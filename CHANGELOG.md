@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.7.3] – 2026-11-12
+
+### Added
+
+- Releases are created automatically when a version tag is pushed: Hassfest and HACS validation
+  run first, then the GitHub release is published with the matching CHANGELOG section.
+
 ## [1.7.2] – 2026-11-12
 
 ### Fixed

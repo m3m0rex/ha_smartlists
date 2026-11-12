@@ -23,13 +23,13 @@ permissions:
 jobs:
   version:
     name: Version bestimmen
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       tag: ${{ steps.v.outputs.tag }}
       ref: ${{ steps.v.outputs.ref }}
       skip: ${{ steps.v.outputs.skip }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - id: v
@@ -60,9 +60,9 @@ jobs:
     name: Hassfest
     needs: version
     if: needs.version.outputs.skip != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ needs.version.outputs.ref }}
       - uses: home-assistant/actions/hassfest@master
@@ -71,7 +71,7 @@ jobs:
     name: HACS
     needs: version
     if: needs.version.outputs.skip != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: hacs/action@main
         with:
@@ -81,12 +81,12 @@ jobs:
     name: GitHub-Release
     needs: [version, hassfest, hacs]
     if: needs.version.outputs.skip != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       TAG: ${{ needs.version.outputs.tag }}
       REF: ${{ needs.version.outputs.ref }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ needs.version.outputs.ref }}
           fetch-depth: 0

@@ -35,6 +35,8 @@ const ICON = {
   brain: "M21.33,12.91C21.42,14.46 20.71,15.95 19.44,16.86L20.21,18.35C20.44,18.8 20.47,19.33 20.27,19.8C20.08,20.27 19.69,20.64 19.21,20.8L18.42,21.05C18.25,21.11 18.06,21.14 17.88,21.14C17.37,21.14 16.89,20.91 16.56,20.5L14.44,18C13.55,17.85 12.71,17.47 12,16.9C11.5,17.05 11,17.13 10.5,17.13C9.62,17.13 8.74,16.86 8,16.34C7.47,16.5 6.93,16.57 6.38,16.56C5.59,16.57 4.81,16.41 4.08,16.11C2.65,15.47 1.7,14.07 1.65,12.5C1.57,11.78 1.69,11.05 2,10.39C1.71,9.64 1.68,8.82 1.93,8.06C2.3,7.11 3,6.32 3.87,5.82C4.45,4.13 6.08,3 7.87,3.12C9.47,1.62 11.92,1.46 13.7,2.75C14.12,2.64 14.56,2.58 15,2.58C16.36,2.55 17.65,3.15 18.5,4.22C20.54,4.75 22,6.57 22.08,8.69C22.13,9.8 21.83,10.89 21.22,11.82C21.29,12.18 21.33,12.54 21.33,12.91",
 };
 
+// Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
+const CARD_VERSION = "1.6.1";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -70,7 +72,7 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
-    offer: "Angebot", offer_until: "bis", offer_expired: "abgelaufen seit",
+    card_version: "Karte", stale_card: "Die Karte ist veraltet – Seite neu laden (Strg+F5) bzw. in der App den Frontend-Cache leeren.", offer: "Angebot", offer_until: "bis", offer_expired: "abgelaufen seit",
     qty_less: "Menge verringern", qty_more: "Menge erhöhen", qty_changed: "Menge geändert",
     search: "Suchen", search_placeholder: "In der Liste suchen …", hits: "Treffer", no_hits: "Nichts gefunden für", add_this: "hinzufügen",
     imp: "Importieren", imp_ha: "Aus Home Assistant", imp_text: "Als Text", imp_source: "Liste",
@@ -108,7 +110,7 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
-    offer: "Offer", offer_until: "until", offer_expired: "expired",
+    card_version: "card", stale_card: "This card is outdated – reload the page (Ctrl+F5) or clear the frontend cache in the app.", offer: "Offer", offer_until: "until", offer_expired: "expired",
     qty_less: "Decrease quantity", qty_more: "Increase quantity", qty_changed: "quantity changed",
     search: "Search", search_placeholder: "Search this list …", hits: "matches", no_hits: "Nothing found for", add_this: "add",
     imp: "Import", imp_ha: "From Home Assistant", imp_text: "As text", imp_source: "List",
@@ -228,6 +230,20 @@ function parseImportText(text) {
 // Für die Suche: klein, ohne Akzente/Umlaut-Punkte ("Äpfel" → "apfel"), ß → ss
 function searchKey(s) {
   return String(s || "").toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+// Gegenstück zu itemtext.split_offer (Angebots-Zeile der App in der Notiz)
+function parseOfferNote(note, stores) {
+  const m = /[⚙\u2699]\ufe0f?\s*OFFER\s*:/i.exec(note || "");
+  if (!m) return { note, offer: null };
+  const clean = note.slice(0, m.index).trim();
+  try {
+    const j = JSON.parse(note.slice(m.index + m[0].length).trim());
+    if (!j || !j.s) return { note: clean, offer: null };
+    const k = (stores || []).find((x) => x.value.toLowerCase() === String(j.s).toLowerCase());
+    const num = (v) => (v == null || v === "" ? null : Number(String(v).replace(",", ".").replace("€", "").trim()));
+    return { note: clean, offer: { store: j.s, store_label: k ? k.value : j.s, color: k ? k.color : null, price: num(j.p), old_price: num(j.o),
+      discount: j.d || null, valid_from: j.v || null, valid_until: j.e || null, expired: !!j.e && String(j.e).slice(0, 10) < new Date().toISOString().slice(0, 10) } };
+  } catch (e) { return { note: clean, offer: null }; }
 }
 window.SmartListsText = { parseText, encodeText, openTagQuery, splitTags, parseImportText };
 
@@ -538,6 +554,12 @@ class SmartListsCard extends HTMLElement {
   async _loadConfig() {
     try {
       this._cfg = await this._call("config", {}, false);
+      // Version der Integration für die Anzeige im Zahnrad (hilft bei „neue Funktion fehlt“)
+      this._call("info", {}, false).then((i) => {
+        this._version = i.version;
+        // Integration neuer als diese Karte → Browser hat eine alte Karten-Datei zwischengespeichert
+        if (i.version && i.version !== CARD_VERSION && !this._error) { this._error = this._t.stale_card; this._render(); }
+      }).catch(() => {});
       this._render();
     } catch (e) {
       this._cfg = null;
@@ -547,6 +569,10 @@ class SmartListsCard extends HTMLElement {
     try {
       const data = await this._call("get_list");
       if (!data || !Array.isArray(data.items)) throw new Error("Unerwartete Antwort der SmartLists-Integration – bitte Integration aktualisieren.");
+      // Rückfall: steht die ⚙OFFER-Zeile der App noch in der Notiz, hier selbst zerlegen
+      for (const it of data.items) {
+        if (!it.offer && it.note) { const r = parseOfferNote(it.note, this._cfg && this._cfg.known_stores); if (r.offer) { it.offer = r.offer; it.note = r.note; } }
+      }
       this._data = data;
       // noch nicht gespeicherte Stepper-Werte beibehalten (sonst springt die Anzeige zurück)
       for (const it of this._data.items) {
@@ -1486,6 +1512,7 @@ class SmartListsCard extends HTMLElement {
     };
     const learnedEl = h("div", { class: "learned" }, t.loading);
     fill(el, h("div", { class: "settings" },
+      h("p", { class: "help", style: "margin-top:10px" }, `SmartLists ${this._version || "?"} · ${t.card_version} ${CARD_VERSION}`),
       h("h3", {}, t.naming), h("p", { class: "help" }, t.naming_help, admin ? "" : " " + t.admin_only),
       rulesEl, exampleEl,
       admin ? h("div", { class: "srow" }, status,

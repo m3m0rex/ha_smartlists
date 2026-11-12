@@ -3,6 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.6.1] – 2026-11-12
+
+### Added
+
+- Own integration icon and logo (`brand/`, light and dark: checklist with shopping cart, no
+  Home Assistant branding), shown on the Integrations page (Home Assistant 2026.3+) and in the README.
+- The card's gear menu shows the installed integration and card version, and the card warns when
+  the browser still has an outdated card cached.
+
+### Fixed
+
+- Offer prices and "until" dates from the app were not shown in some setups: the offer line is
+  now also recognised with emoji variants (⚙️), spaces or lower case, and the card parses it itself
+  as a fallback.
+
 ## [1.6.0] – 2026-11-12
 
 ### Added

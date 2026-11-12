@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists_hacs/main/custom_components/smartlists/brand/logo@2x.png" alt="SmartLists" height="96"></p>
+
 # SmartLists – kombinierte To-do-Listen für Home Assistant
 
 🇬🇧 [English version](README.md)

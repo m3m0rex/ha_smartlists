@@ -28,10 +28,11 @@ from homeassistant.loader import async_get_integration
 
 from . import websocket
 from .const import DOMAIN, LEGACY_UNIQUE_ID, STORAGE_VERSION, SUBENTRY_COMBINED
+from .devices import async_get_devices
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.TODO]
+PLATFORMS: list[Platform] = [Platform.TODO, Platform.SENSOR]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 # eigener Pfad, damit er sich nicht mit der Seitenleisten-Seite /smartlists überschneidet
 CARD_URL = "/smartlists-files/smartlists-card.js"
@@ -41,6 +42,7 @@ PANEL_URL_PATH = DOMAIN
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Einmal pro HA-Start: Gedächtnis laden, WebSocket-Befehle und Karte bereitstellen."""
     await async_get_learning(hass)
+    await async_get_devices(hass)
     websocket.async_register(hass)
     await _async_register_card(hass)
     return True
@@ -118,6 +120,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Liste hinzugefügt/geändert/entfernt → neu laden."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_remove_config_entry_device(hass: HomeAssistant, entry: ConfigEntry, device_entry) -> bool:
+    """Gerät über die HA-Oberfläche löschen (⋮ → Löschen) – nur verbundene Handys, nicht die Listen."""
+    for domain, ident in device_entry.identifiers:
+        if domain == DOMAIN and ident.startswith("app_"):
+            hass.data[DOMAIN]["devices"].remove(ident.removeprefix("app_"))
+            return True
+    return False
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

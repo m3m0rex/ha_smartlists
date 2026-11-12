@@ -125,6 +125,19 @@ als normale Liste. `mode: bidirectional` → abhaken direkt in der Quelle; `mode
 kombinierte Liste selbst (`todo.update_item` auf deren Entität mit Item-uid `quelle::uid`), damit der
 Haken in HA gespeichert und überall gleich ist.
 
+## Gerät anmelden
+
+Beim Koppeln (zusammen mit `smartlists/info`) und bei jedem Abgleich:
+
+```json
+{"type": "smartlists/register_device", "device_id": "<UUID der Installation>", "name": "Pixel 8",
+ "model": "Google Pixel 8", "manufacturer": "Google", "app_version": "1.2.68", "os_version": "16"}
+```
+
+Der Benutzer kommt aus dem Token. `smartlists/devices` liefert die Geräte (Admins alle, sonst die eigenen),
+`smartlists/remove_device` (Admin) nimmt eines aus der Liste. Jedes Gerät ist in HA ein Gerät mit den
+Sensoren „Zuletzt gesehen“ und „App-Version“.
+
 ## 4. Kategorien, Vorschläge
 
 | Befehl | Felder | Zweck |

@@ -1,0 +1,135 @@
+"""Je verbundenem Handy (siehe devices.py) ein HA-Gerät mit Sensoren „Zuletzt gesehen“ und „App-Version“.
+
+Damit lassen sich z.B. Automationen bauen: „Melde mir, wenn ein Handy seit 7 Tagen nicht abgeglichen hat.“
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Any
+
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+from .const import DOMAIN
+from .devices import SIGNAL_DEVICES_CHANGED, Devices
+
+MANUFACTURER_FALLBACK = "HA SmartLists App"
+
+
+def device_identifier(device_id: str) -> tuple[str, str]:
+    return (DOMAIN, f"app_{device_id}")
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    devices: Devices = hass.data[DOMAIN]["devices"]
+    known: set[str] = set()
+
+    @callback
+    def _add(device_id: str) -> None:
+        if device_id in known or device_id not in devices.devices:
+            return
+        known.add(device_id)
+        async_add_entities([LastSeenSensor(devices, device_id), AppVersionSensor(devices, device_id)])
+
+    for device_id in list(devices.devices):
+        _add(device_id)
+
+    @callback
+    def _changed(device_id: str, is_new: bool) -> None:
+        if device_id in devices.devices:
+            _add(device_id)  # neu → anlegen; bekannt → Sensoren aktualisieren sich selbst
+            _update_device_info(hass, devices, device_id)
+            return
+        # aus der Liste genommen → HA-Gerät (samt Sensoren) entfernen
+        known.discard(device_id)
+        registry = dr.async_get(hass)
+        if (device := registry.async_get_device(identifiers={device_identifier(device_id)})) is not None:
+            registry.async_remove_device(device.id)
+
+    entry.async_on_unload(async_dispatcher_connect(hass, SIGNAL_DEVICES_CHANGED, _changed))
+
+
+@callback
+def _update_device_info(hass: HomeAssistant, devices: Devices, device_id: str) -> None:
+    """Name/Modell/Version am HA-Gerät nachziehen (z.B. nach App-Update)."""
+    registry = dr.async_get(hass)
+    device = registry.async_get_device(identifiers={device_identifier(device_id)})
+    if device is None:
+        return
+    d = devices.devices[device_id]
+    registry.async_update_device(device.id, sw_version=d.get("app_version"), model=d.get("model"))
+
+
+class _DeviceSensor(SensorEntity):
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    _key = ""
+
+    def __init__(self, devices: Devices, device_id: str) -> None:
+        self._devices = devices
+        self._device_id = device_id
+        d = devices.devices[device_id]
+        self._attr_unique_id = f"app_{device_id}_{self._key}"
+        self._attr_translation_key = self._key
+        self._attr_device_info = DeviceInfo(
+            identifiers={device_identifier(device_id)},
+            name=d.get("name") or "Handy",
+            manufacturer=d.get("manufacturer") or MANUFACTURER_FALLBACK,
+            model=d.get("model"),
+            sw_version=d.get("app_version"),
+        )
+
+    @property
+    def _data(self) -> dict[str, Any]:
+        return self._devices.devices.get(self._device_id, {})
+
+    @property
+    def available(self) -> bool:
+        return self._device_id in self._devices.devices
+
+    async def async_added_to_hass(self) -> None:
+        @callback
+        def _changed(device_id: str, _is_new: bool) -> None:
+            if device_id == self._device_id and self.available:
+                self.async_write_ha_state()
+
+        self.async_on_remove(async_dispatcher_connect(self.hass, SIGNAL_DEVICES_CHANGED, _changed))
+
+
+class LastSeenSensor(_DeviceSensor):
+    _key = "last_seen"
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_icon = "mdi:cellphone-check"
+
+    @property
+    def native_value(self) -> datetime | None:
+        ts = self._data.get("last_seen")
+        return datetime.fromtimestamp(ts, tz=timezone.utc) if ts else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        info = self._devices.describe(self._device_id) if self.available else {}
+        first = info.get("first_seen")
+        return {
+            "user": info.get("user_name"),
+            "android_version": info.get("os_version"),
+            "first_seen": datetime.fromtimestamp(first, tz=timezone.utc).isoformat() if first else None,
+            "stale": info.get("stale"),
+        }
+
+
+class AppVersionSensor(_DeviceSensor):
+    _key = "app_version"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_icon = "mdi:information-outline"
+
+    @property
+    def native_value(self) -> str | None:
+        return self._data.get("app_version")

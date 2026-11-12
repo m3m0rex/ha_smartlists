@@ -41,6 +41,7 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 - **Naming convention:** `@REWE` becomes a store badge (known stores in their brand colour), `*Anna`
   a person, `#organic` a tag. Admins choose which character means what. Tags stay in the item name,
   so other interfaces still show them as text.
+- **Connected devices:** every phone with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 
 Quantities are stored in the name, as in the app ("Milch 2 l @REWE"). "2 kg apples" is recognised

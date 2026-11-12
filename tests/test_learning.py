@@ -57,3 +57,36 @@ def test_export_import_roundtrip():
         pass
     else:
         raise AssertionError("invalid export accepted")
+
+
+def test_appearance_and_store_overrides():
+    from smartlists import itemtext
+    from smartlists.learning import validate_appearance
+
+    look = validate_appearance({
+        "kinds": {"person": {"style": "outline", "color": "#AA00FF", "icon": "🙂"}, "bogus": {"style": "x"}, "tag": {"style": "nope"}},
+        "values": {"store:REWE": {"color": "#112233", "label": "Rewe City"}, "tag:bio": {"color": "red"}, "x:y": {"color": "#000000"}},
+    })
+    assert look == {"kinds": {"person": {"style": "outline", "color": "#aa00ff", "icon": "🙂"}},
+                    "values": {"store:rewe": {"color": "#112233", "label": "Rewe City"}}}
+    learning = _learning()
+    learning.set_appearance(look)
+    assert itemtext.store_display("rewe") == ("Rewe City", "#112233")
+    assert itemtext.store_display("lidl") == ("LIDL", "#FF6F00")  # unverändert
+    assert any(s["value"] == "Rewe City" and s["color"] == "#112233" for s in learning.config()["known_stores"])
+    learning.set_appearance({})
+    assert itemtext.store_display("rewe")[0] == "REWE"
+
+
+def test_store_zones_multiple_and_legacy():
+    learning = _learning()
+    learning.automation["store_zones"] = {"rewe": "zone.rewe_alt"}  # Format von 2.4.0
+    assert learning.store_zones == {"rewe": ["zone.rewe_alt"]}
+    learning.set_store_zone("@REWE", "zone.rewe_nord", add=True)
+    assert learning.store_zones["rewe"] == ["zone.rewe_alt", "zone.rewe_nord"]
+    learning.set_store_zone("rewe", zones=["zone.rewe_nord"])
+    assert learning.store_zones["rewe"] == ["zone.rewe_nord"]
+    learning.set_automation({"voice_default_list": "todo.x"})  # darf Zonen nicht löschen
+    assert learning.store_zones["rewe"] == ["zone.rewe_nord"]
+    learning.set_store_zone("rewe", None)
+    assert "rewe" not in learning.store_zones

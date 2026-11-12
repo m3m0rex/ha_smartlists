@@ -125,7 +125,8 @@
           "controls": "Sterowanie (domyślne dla wszystkich)",
           "learned": "Zapamiętane kategorie i historia",
           "devices": "Połączone urządzenia (aplikacja)",
-          "automation": "Głos i automatyzacje (Assist, produkty do kupienia)"
+          "automation": "Głos i automatyzacje (Assist, produkty do kupienia)",
+          "app_lists": "Listy z aplikacji (przejmij listy połączone)"
         }
       },
       "naming": {
@@ -179,6 +180,13 @@
           "voice_default_list": "Używana, gdy zdanie nie wymienia żadnej listy („Dodaj mleko do listy”).",
           "auto_due_list": "Co godzinę: produkty kupowane regularnie, których zwykły odstęp czasu minął. Puste = wyłączone.",
           "install_sentences": "Kopiuje zdania do config/custom_sentences (niemiecki, angielski, francuski, hiszpański, włoski, polski) i przeładowuje Assist."
+        }
+      },
+      "app_lists": {
+        "title": "Listy z aplikacji",
+        "description": "{count} list połączonych z telefonów z aplikacją HA SmartLists:\n\n{lists}\n\n➕ = jeszcze niepołączona, ✅ = połączona. Połączone listy są tworzone tutaj jako listy połączone i należą do danego telefonu (urządzenia). Aplikacja pokazuje wtedy listę z Home Assistant zamiast własnej. Brakuje listy? Dotknij raz „Synchronizuj SmartLists” w aplikacji.",
+        "data": {
+          "connect": "Połącz"
         }
       }
     },

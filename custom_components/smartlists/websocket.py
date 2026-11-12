@@ -33,7 +33,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -184,7 +184,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "api_version": API_VERSION,
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
-                         "notes", "store_zones"],
+                         "notes", "store_zones", "appearance", "app_lists"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -302,6 +302,8 @@ async def ws_move_item(hass, msg, context):
         vol.Optional("app_version"): str,
         vol.Optional("os_version"): str,
         vol.Optional("notes_lists"): [str],
+        # kombinierte Listen der App (nur aus HA-Listen) – lassen sich in der Integration verbinden
+        vol.Optional("app_lists"): [dict],
     }
 )
 @callback
@@ -724,14 +726,60 @@ def ws_stores(hass: HomeAssistant, connection: websocket_api.ActiveConnection, m
 
 @websocket_api.require_admin
 @websocket_api.websocket_command(
-    {vol.Required("type"): "smartlists/set_store_zone", vol.Required("store"): str, vol.Optional("zone"): vol.Any(str, None)}
+    {vol.Required("type"): "smartlists/set_store_zone", vol.Required("store"): str, vol.Optional("zone"): vol.Any(str, None),
+     vol.Optional("zones"): [str], vol.Optional("add", default=False): bool}
 )
 @callback
 def ws_set_store_zone(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Markt mit einer Zone verknüpfen (zone=None löst die Verknüpfung)."""
+    """Markt mit Zonen verknüpfen: zones = alle (z.B. mehrere Filialen), zone + add = eine hinzufügen,
+    zone allein = ersetzen, zone=None = alle lösen."""
     try:
-        zones = _learning(hass).set_store_zone(msg["store"], msg.get("zone"))
+        zones = _learning(hass).set_store_zone(msg["store"], msg.get("zone"), msg.get("zones"), msg["add"])
     except ValueError as err:
         connection.send_error(msg["id"], "invalid_store", str(err))
         return
     connection.send_result(msg["id"], {"store_zones": zones, "stores": _learning(hass).stores()})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/appearance"})
+@callback
+def ws_appearance(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Badges & Farben: Einstellung + alle bekannten Badges (Märkte, Personen, Schlagwörter)."""
+    learning = _learning(hass)
+    connection.send_result(msg["id"], {"appearance": learning.appearance, "tags": learning.tag_overview()})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_appearance", vol.Required("appearance"): dict})
+@callback
+def ws_set_appearance(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Badges & Farben für den Haushalt speichern (unbekannte/ungültige Angaben werden verworfen)."""
+    learning = _learning(hass)
+    connection.send_result(msg["id"], {"appearance": learning.set_appearance(msg["appearance"]), "tags": learning.tag_overview()})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/app_lists"})
+@callback
+def ws_app_lists(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Von der App gemeldete kombinierte Listen je Gerät (Admin: alle Geräte, sonst die eigenen)."""
+    from . import app_lists
+
+    user = connection.user
+    connection.send_result(msg["id"], {"lists": app_lists.describe(hass, None if user.is_admin else user.id)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "smartlists/connect_app_list", vol.Required("device_id"): str, vol.Required("list_id"): str}
+)
+@callback
+def ws_connect_app_list(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """App-Liste als kombinierte Liste der Integration anlegen (gehört dann zum Handy-Gerät)."""
+    from . import app_lists
+
+    try:
+        sub_id = app_lists.connect(hass, msg["device_id"], msg["list_id"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "smartlists_error", str(err))
+        return
+    connection.send_result(msg["id"], {"subentry_id": sub_id, "lists": app_lists.describe(hass)})

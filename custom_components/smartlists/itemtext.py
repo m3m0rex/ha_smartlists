@@ -100,10 +100,21 @@ def _tag_regex(rules: list[dict[str, str]]) -> re.Pattern[str] | None:
     return re.compile(rf"(?:^|\s)([{chars}])([\wÄÖÜäöüß][\wÄÖÜäöüß.\-]*)")
 
 
+# Vom Haushalt angepasste Märkte: "rewe" → (Anzeigename oder None, Farbe oder None). Setzt learning.py
+# (Einstellung „Badges & Farben“); hat Vorrang vor KNOWN_STORES, fehlende Angaben fallen darauf zurück.
+STORE_OVERRIDES: dict[str, tuple[str | None, str | None]] = {}
+
+
 def store_display(value: str) -> tuple[str, str | None]:
-    """Markt-Schreibweise + Farbe, falls bekannt (REWE, Lidl, …)."""
-    known = KNOWN_STORES.get(value.lower())
-    return (known[0], known[1]) if known else (value, None)
+    """Markt-Schreibweise + Farbe: eigene Anpassung, sonst bekannt (REWE, Lidl, …), sonst wie geschrieben."""
+    key = value.lower()
+    known = KNOWN_STORES.get(key)
+    label, color = (known[0], known[1]) if known else (value, None)
+    custom = STORE_OVERRIDES.get(key)
+    if custom:
+        label = custom[0] or label
+        color = custom[1] or color
+    return label, color
 
 
 def split_tags(text: str, rules: list[dict[str, str]]) -> tuple[str, list[dict[str, str]]]:

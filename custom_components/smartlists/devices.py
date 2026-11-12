@@ -31,6 +31,21 @@ MAX_DEVICES = 50
 _FIELDS = {"name": 60, "model": 60, "manufacturer": 40, "app_version": 30, "os_version": 30}
 
 
+def _clean_app_lists(raw: list[Any]) -> list[dict[str, Any]]:
+    """Kombinierte Listen der App (nur solche aus HA-Listen): id, name, sources, default_add, mode."""
+    out = []
+    for item in raw[:30]:
+        if not isinstance(item, dict) or not item.get("id") or not item.get("name"):
+            continue
+        sources = [s for s in item.get("sources") or [] if isinstance(s, str) and s.startswith("todo.")][:20]
+        if len(sources) < 1:
+            continue
+        default = item.get("default_add") if item.get("default_add") in sources else None
+        out.append({"id": str(item["id"])[:64], "name": str(item["name"]).strip()[:60], "sources": sources,
+                    "default_add": default, "mode": "local" if item.get("mode") == "local" else "bidirectional"})
+    return out
+
+
 class Devices:
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
@@ -60,6 +75,8 @@ class Devices:
             if info.get(key):
                 entry[key] = str(info[key]).strip()[:limit]
         entry.setdefault("name", entry.get("model") or "Handy")
+        if isinstance(info.get("app_lists"), list):
+            entry["app_lists"] = _clean_app_lists(info["app_lists"])
         entry.update(last_seen=now, user_id=user_id, user_name=user_name)
         self.devices[device_id] = entry
         self._save()

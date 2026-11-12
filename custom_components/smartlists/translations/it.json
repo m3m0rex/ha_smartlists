@@ -125,7 +125,8 @@
           "controls": "Comandi (predefiniti per tutti)",
           "learned": "Categorie memorizzate e cronologia",
           "devices": "Dispositivi connessi (app)",
-          "automation": "Voce e automazioni (Assist, articoli in scadenza)"
+          "automation": "Voce e automazioni (Assist, articoli in scadenza)",
+          "app_lists": "Liste dall'app (adotta liste combinate)"
         }
       },
       "naming": {
@@ -179,6 +180,13 @@
           "voice_default_list": "Usata quando una frase non nomina alcuna lista (“Metti il latte nella lista”).",
           "auto_due_list": "Ogni ora: articoli che compri regolarmente il cui intervallo abituale è trascorso. Vuoto = disattivato.",
           "install_sentences": "Copia le frasi in config/custom_sentences (tedesco, inglese, francese, spagnolo, italiano, polacco) e ricarica Assist."
+        }
+      },
+      "app_lists": {
+        "title": "Liste dall'app",
+        "description": "{count} liste combinate da telefoni con l'app HA SmartLists:\n\n{lists}\n\n➕ = non ancora collegata, ✅ = collegata. Le liste collegate vengono create qui come liste combinate e appartengono al rispettivo telefono (dispositivi). L'app mostra poi la lista di Home Assistant invece della propria. Manca una lista? Tocca una volta «Sincronizza SmartLists» nell'app.",
+        "data": {
+          "connect": "Collega"
         }
       }
     },

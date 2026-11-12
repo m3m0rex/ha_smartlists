@@ -3,6 +3,26 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.5.0] – 2026-11-12
+
+### Added
+
+- **Badges & colours** (⚙ → Household): style per kind (filled, subtle, outline, text only), colour and
+  symbol for stores, people and tags; colour per individual badge (`@REWE`, `*Anna`, `#bio`) and a display
+  name for stores. Store colours/names also reach the app (known stores). Nothing is written into items –
+  reset any time with ↺.
+- **Several zones per store** (branches): link REWE Nord and REWE Süd to `@REWE`; shopping mode picks the
+  store if you are in any of its zones.
+- **Combined lists from the app**: lists created in the app (from HA lists) are reported on sync and can be
+  **connected** – in the card (Household → Connected devices) or under *Configure → Lists from the app*.
+  The new combined list belongs to the phone's device; the app then shows it instead of its own.
+- WebSocket: `smartlists/appearance`, `set_appearance`, `app_lists`, `connect_app_list`;
+  `set_store_zone` accepts `zones` / `add`; `register_device` accepts `app_lists`.
+
+### Changed
+
+- `store_zones` values are now lists of zones (a single zone from 2.4.0 is read as a list).
+
 ## [2.4.0] – 2026-11-12
 
 ### Added

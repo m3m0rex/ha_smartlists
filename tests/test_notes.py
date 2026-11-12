@@ -66,3 +66,15 @@ def test_hidden_by_default_and_account_bound():
     assert n.can_see("todo.ha_smartlists_note", max_)
     n.update(owners={"todo.ha_smartlists_note": None})
     assert n.owners == {}
+
+
+def test_app_lists_cleaned():
+    from smartlists.devices import _clean_app_lists
+
+    out = _clean_app_lists([
+        {"id": "m1", "name": " Wocheneinkauf ", "sources": ["todo.anna", "local_1", "todo.max"], "default_add": "local_1", "mode": "local"},
+        {"id": "m2", "name": "Nur lokal", "sources": ["local_1"]},
+        {"name": "ohne id", "sources": ["todo.a"]},
+        "kaputt",
+    ])
+    assert out == [{"id": "m1", "name": "Wocheneinkauf", "sources": ["todo.anna", "todo.max"], "default_add": None, "mode": "local"}]

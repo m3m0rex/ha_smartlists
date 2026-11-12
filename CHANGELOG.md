@@ -3,6 +3,29 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.9.0] – 2026-11-12
+
+### Added
+
+- **"I'm at the store"**: starting the shopping mode in the card or the app fires the event
+  `smartlists_shopping` (who, list, store, open items). Blueprint `shopping_notify.yaml` notifies the
+  others with a reply field that adds the answer to the list.
+- **Store reminder** blueprint `store_reminder.yaml`: entering a store zone sends the open items for
+  that store.
+- Action **`smartlists.get_items`** (with response): open items of one or all lists, filtered by
+  store, person, tag or category, including a spoken summary.
+- **Recurring items**: SmartLists learns how often items are bought. Due items are suggested first
+  (⏰) and can be added automatically every hour (*Configure → Voice & automations*); action
+  `smartlists.add_due_items`.
+- **Assist**: intents `SmartListsAddItem` and `SmartListsListItems` with German and English sentences
+  ("Setz 2 kg Äpfel bei REWE auf die Einkaufsliste", "Was muss ich bei REWE kaufen?"); install them via
+  *Configure → Voice & automations*, with a default list for sentences without a list name.
+- **Backup & transfer**: export/import of remembered categories, history, naming convention and
+  controls as a file (card gear menu, admins).
+- **Setup assistant**: the first setup suggests the existing to-do lists and can create the first
+  combined list right away.
+- The app reports its shopping mode as well (HA SmartLists app, when paired).
+
 ## [1.8.0] – 2026-11-12
 
 ### Added

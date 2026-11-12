@@ -1,0 +1,23 @@
+# SmartLists – sentences for Assist (copied to config/custom_sentences/en/smartlists.yaml)
+language: "en"
+intents:
+  SmartListsAddItem:
+    data:
+      - sentences:
+          - "(add|put) {item} [from {store}] (to|on) [the|my|our] {list}"
+          - "we need {item} [from {store}]"
+          - "I need {item} [from {store}]"
+  SmartListsListItems:
+    data:
+      - sentences:
+          - "what's on [the|my|our] {list}"
+          - "what is on [the|my|our] {list}"
+          - "what do (I|we) need [to buy] (at|from) {store}"
+          - "what do we need"
+lists:
+  item:
+    wildcard: true
+  list:
+    wildcard: true
+  store:
+    wildcard: true

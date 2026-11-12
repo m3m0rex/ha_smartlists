@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "1.8.0";
+const CARD_VERSION = "1.9.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -93,6 +93,9 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
+    due_every: "fällig – kauft ihr etwa alle", days: "Tage", backup: "Sichern & übertragen",
+    backup_help: "Gemerkte Kategorien, Verlauf, Namenskonvention und Bedienung als Datei – z. B. für eine zweite HA-Instanz. Import ergänzt, ohne Vorhandenes zu löschen.",
+    export: "Exportieren", import: "Importieren …",
     mini_open: "Liste öffnen", mini_close: "Zuklappen", card_version: "Karte", stale_card: "Die Karte ist veraltet – Seite neu laden (Strg+F5) bzw. in der App den Frontend-Cache leeren.", offer: "Angebot", offer_until: "bis", offer_expired: "abgelaufen seit",
     qty_less: "Menge verringern", qty_more: "Menge erhöhen", qty_changed: "Menge geändert",
     search: "Suchen", search_placeholder: "In der Liste suchen …", hits: "Treffer", no_hits: "Nichts gefunden für", add_this: "hinzufügen",
@@ -131,6 +134,9 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
+    due_every: "due – you buy it about every", days: "days", backup: "Backup & transfer",
+    backup_help: "Remembered categories, history, naming convention and controls as a file – e.g. for a second HA instance. Import adds without deleting anything.",
+    export: "Export", import: "Import …",
     mini_open: "Open list", mini_close: "Collapse", card_version: "card", stale_card: "This card is outdated – reload the page (Ctrl+F5) or clear the frontend cache in the app.", offer: "Offer", offer_until: "until", offer_expired: "expired",
     qty_less: "Decrease quantity", qty_more: "Increase quantity", qty_changed: "quantity changed",
     search: "Search", search_placeholder: "Search this list …", hits: "matches", no_hits: "Nothing found for", add_this: "add",
@@ -1046,6 +1052,10 @@ class SmartListsCard extends HTMLElement {
     if (this._shopping && this._ui.shop_keep_awake) await this._wake(true);
     if (!this._shopping) await this._wake(false);
     this._render();
+    // „Bin im Laden“: Ereignis smartlists_shopping für Automationen/Blueprint (Markt = fester Filter, falls einer)
+    const f = this._fixedFilters();
+    const open = this._data ? this._data.items.filter((i) => !i.checked).length : null;
+    this._call("shopping", { active: this._shopping, store: f.store.length === 1 ? f.store[0] : null, open_items: open }).catch(() => {});
   }
   async _wake(on) {
     try {
@@ -1492,7 +1502,10 @@ class SmartListsCard extends HTMLElement {
     fill(el, h("div", { class: "frequent" },
       h("span", { class: "lbl" }, this._t.frequent),
       items.map((s) => h("button", { class: "fchip", type: "button", title: s.category_label,
-        onmousedown: (e) => e.preventDefault(), onclick: () => this._submit(s.name) }, `${emojiOf(s.category_label)} ${s.name}`))));
+        onmousedown: (e) => e.preventDefault(), onclick: () => this._submit(s.name) },
+        // fällig nach eurem Rhythmus → ⏰ vorne, Tooltip mit Abstand
+        s.source === "due" ? h("span", { title: `${this._t.due_every} ${s.every_days} ${this._t.days}` }, "⏰ ") : null,
+        `${emojiOf(s.category_label)} ${s.name}`))));
   }
 
   /* ---------------- Liste ---------------- */
@@ -1728,6 +1741,39 @@ class SmartListsCard extends HTMLElement {
   }
 
   /* ---------------- Einstellungen ---------------- */
+  // Haushalts-Einstellungen sichern/übertragen: gemerkte Kategorien, Verlauf, Namenskonvention, Bedienung
+  _exportImport() {
+    const t = this._t;
+    const status = h("span", { class: "help" });
+    const file = h("input", { type: "file", accept: "application/json,.json", hidden: true, onchange: async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      try {
+        const data = JSON.parse(await f.text());
+        const r = await this._call("import", { data, replace: false }, false);
+        status.textContent = `✓ ${t.imported}: ${Object.entries(r.imported).map(([k, v]) => `${v} ${k}`).join(", ")}`;
+        await this._load();
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+      e.target.value = "";
+    } });
+    const exp = async () => {
+      try {
+        const data = await this._call("export", { include_history: true }, false);
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `smartlists-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        status.textContent = "✓";
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    return h("div", {}, h("h3", {}, t.backup), h("p", { class: "help" }, t.backup_help),
+      h("div", { class: "srow" }, status,
+        h("button", { class: "btn small", type: "button", onclick: exp }, t.export),
+        h("button", { class: "btn small", type: "button", onclick: () => file.click() }, t.import), file));
+  }
+
   _uiSettings() {
     const t = this._t;
     const scopeNow = this._uiScope;
@@ -1813,6 +1859,7 @@ class SmartListsCard extends HTMLElement {
           rules.push({ prefix: free || "", kind: "tag" }); drawRules(); drawExample(); } }, "+ " + t.add_rule),
         h("button", { class: "btn small primary", type: "button", onclick: save }, t.save)) : null,
       h("h3", {}, t.learned), h("p", { class: "help" }, t.learned_help), learnedEl,
+      admin ? this._exportImport() : null,
       this._uiSettings()));
     const drawLearned = (list) => {
       if (!list.length) return fill(learnedEl, h("div", { class: "help" }, t.none_learned));

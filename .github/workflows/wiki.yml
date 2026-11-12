@@ -28,7 +28,10 @@ jobs:
         env:
           TOKEN: ${{ github.token }}
         run: |
-          git clone "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
+          if ! git clone "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki; then
+            echo "::error::Wiki noch nicht angelegt. Einmalig: Settings → Features → Wikis aktivieren, dann im Reiter Wiki 'Create the first page' → 'Save page'. Danach diese Action erneut starten (Re-run)."
+            exit 1
+          fi
           # Wiki-Inhalt vollständig durch docs/wiki ersetzen (Seiten, die dort gelöscht wurden, verschwinden)
           find wiki -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -r docs/wiki/. wiki/

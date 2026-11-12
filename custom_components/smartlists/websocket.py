@@ -31,6 +31,7 @@ def async_register(hass: HomeAssistant) -> None:
     for handler in (ws_info, ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
                     ws_user_settings, ws_set_user_settings,
                     ws_register_device, ws_devices, ws_remove_device,
+                    ws_shopping, ws_due, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
 
@@ -178,7 +179,8 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "integration": DOMAIN,
             "version": str(integration.version),
             "api_version": API_VERSION,
-            "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices"],
+            "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
+                         "shopping_event", "due_items", "export"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -319,3 +321,75 @@ def ws_devices(hass: HomeAssistant, connection: websocket_api.ActiveConnection, 
 def ws_remove_device(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     hass.data[DOMAIN]["devices"].remove(msg["device_id"])
     connection.send_result(msg["id"], {"devices": hass.data[DOMAIN]["devices"].entries()})
+
+
+# ----------------------------------------------------------------------
+# „Bin im Laden“, fällige Artikel, Export/Import, Automations-Einstellungen
+# ----------------------------------------------------------------------
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/shopping",
+        vol.Required("entity_id"): str,
+        vol.Required("active"): bool,
+        vol.Optional("store"): vol.Any(str, None),
+        vol.Optional("open_items"): vol.Any(int, None),
+    }
+)
+@callback
+def ws_shopping(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Karte/App: Einkaufsmodus gestartet/beendet → Ereignis smartlists_shopping."""
+    from .automation import fire_shopping
+
+    user = connection.user
+    fire_shopping(hass, msg["entity_id"], msg["active"], msg.get("store"), user.id, user.name,
+                  msg.get("open_items"), connection.context(msg))
+    connection.send_result(msg["id"], {})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/due", vol.Optional("entity_id"): str})
+@websocket_api.async_response
+async def ws_due(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Fällige Artikel (Rhythmus aus dem Verlauf), ohne die, die schon offen auf der Liste stehen."""
+    present: list[str] = []
+    if entity_id := msg.get("entity_id"):
+        try:
+            present = [i["text"] for i in await lists.raw_items(hass, entity_id) if not i["checked"]]
+        except lists.ListError:
+            present = []
+    connection.send_result(msg["id"], {"due": _learning(hass).due_items(present)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/export", vol.Optional("include_history", default=True): bool})
+@callback
+def ws_export(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], _learning(hass).export(msg["include_history"]))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "smartlists/import", vol.Required("data"): dict, vol.Optional("replace", default=False): bool}
+)
+@callback
+def ws_import(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    try:
+        counts = _learning(hass).import_data(msg["data"], msg["replace"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_import", str(err))
+        return
+    connection.send_result(msg["id"], {"imported": counts})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/automation"})
+@callback
+def ws_automation(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], {"settings": _learning(hass).automation})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_automation", vol.Required("settings"): dict})
+@callback
+def ws_set_automation(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    allowed = {"voice_default_list", "auto_due_list"}
+    _learning(hass).set_automation({k: v for k, v in msg["settings"].items() if k in allowed})
+    connection.send_result(msg["id"], {"settings": _learning(hass).automation})

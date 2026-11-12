@@ -41,6 +41,7 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 - **Naming convention:** `@REWE` becomes a store badge (known stores in their brand colour), `*Anna`
   a person, `#organic` a tag. Admins choose which character means what. Tags stay in the item name,
   so other interfaces still show them as text.
+- **Automations & voice:** "I'm at the store" notification, store reminder, recurring items, Assist sentences – see the [wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Automations-and-voice).
 - **Connected devices:** every phone with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 

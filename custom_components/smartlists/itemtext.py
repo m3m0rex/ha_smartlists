@@ -278,6 +278,15 @@ def person_from_list_name(name: str, entity_id: str = "") -> str | None:
     return person[:1].upper() + person[1:]
 
 
+_LIST_ARTICLES = {"die", "der", "das", "den", "meine", "meiner", "unsere", "unserer", "the", "my", "our"}
+
+
+def normalize_list_name(name: str) -> str:
+    """Für Assist: „die Einkaufsliste“ ≈ „Einkaufsliste“ ≈ todo.einkaufsliste."""
+    words = re.split(r"[\s_\-.]+", (name or "").replace("todo.", "").lower())
+    return " ".join(w for w in words if w and w not in _LIST_ARTICLES)
+
+
 def open_tag_query(text: str, rules: list[dict[str, str]]) -> tuple[str, str] | None:
     """Tippt der Nutzer gerade einen Tag ("Milch @Re")? → (kind, angefangener Wert)."""
     if not text or text[-1].isspace():

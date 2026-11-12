@@ -26,7 +26,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 
-from . import websocket
+from . import automation, websocket
 from .const import DOMAIN, LEGACY_UNIQUE_ID, STORAGE_VERSION, SUBENTRY_COMBINED
 from .devices import async_get_devices
 from .learning import async_get_learning
@@ -44,6 +44,8 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     await async_get_learning(hass)
     await async_get_devices(hass)
     websocket.async_register(hass)
+    automation.async_setup_services(hass)
+    automation.async_setup_intents(hass)
     await _async_register_card(hass)
     return True
 
@@ -112,6 +114,8 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Integration einrichten: je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     await _async_register_panel(hass)
+    # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
+    entry.async_on_unload(automation.async_setup_due_timer(hass))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True

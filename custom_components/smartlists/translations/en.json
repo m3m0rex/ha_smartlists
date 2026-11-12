@@ -80,7 +80,8 @@
         "menu_options": {
           "naming": "Naming convention (@store, *person, #tag)",
           "controls": "Controls (default for everyone)",
-          "learned": "Remembered categories & history"
+          "learned": "Remembered categories & history",
+          "devices": "Connected devices (app)"
         }
       },
       "naming": {
@@ -113,6 +114,13 @@
         "data": {
           "forget": "Forget",
           "clear_history": "Clear history (suggestions, frequently bought)"
+        }
+      },
+      "devices": {
+        "title": "Connected devices",
+        "description": "{count} phones with the HA SmartLists app:\n\n{devices}\n\n⚠️ = not synced for more than 7 days. Selected devices are removed from the list; a phone that connects again reappears. To revoke access, delete its token under Profile → Long-lived access tokens.",
+        "data": {
+          "remove": "Remove from list"
         }
       }
     },
@@ -182,6 +190,16 @@
     },
     "foreign_list": {
       "message": "Items from foreign lists can only be checked off."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_seen": {
+        "name": "Last seen"
+      },
+      "app_version": {
+        "name": "App version"
+      }
     }
   }
 }

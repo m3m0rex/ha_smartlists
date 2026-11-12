@@ -80,7 +80,8 @@
         "menu_options": {
           "naming": "Namenskonvention (@Markt, *Person, #Schlagwort)",
           "controls": "Bedienung (Standard für alle)",
-          "learned": "Gemerkte Kategorien & Verlauf"
+          "learned": "Gemerkte Kategorien & Verlauf",
+          "devices": "Verbundene Geräte (App)"
         }
       },
       "naming": {
@@ -113,6 +114,13 @@
         "data": {
           "forget": "Vergessen",
           "clear_history": "Verlauf löschen (Vorschläge, häufig gekauft)"
+        }
+      },
+      "devices": {
+        "title": "Verbundene Geräte",
+        "description": "{count} Handys mit der HA-SmartLists-App:\n\n{devices}\n\n⚠️ = länger als 7 Tage nicht abgeglichen. Ausgewählte Geräte werden aus der Liste genommen; meldet sich ein Handy wieder, erscheint es erneut. Den Zugang sperrst du im Profil unter „Langlebige Zugangstoken“.",
+        "data": {
+          "remove": "Aus der Liste nehmen"
         }
       }
     },
@@ -182,6 +190,16 @@
     },
     "foreign_list": {
       "message": "Artikel aus fremden Listen können nur abgehakt, aber nicht umbenannt oder gelöscht werden."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_seen": {
+        "name": "Zuletzt gesehen"
+      },
+      "app_version": {
+        "name": "App-Version"
+      }
     }
   }
 }

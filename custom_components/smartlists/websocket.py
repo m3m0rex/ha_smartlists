@@ -30,6 +30,7 @@ def _learning(hass: HomeAssistant) -> Learning:
 def async_register(hass: HomeAssistant) -> None:
     for handler in (ws_info, ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
                     ws_user_settings, ws_set_user_settings,
+                    ws_register_device, ws_devices, ws_remove_device,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
 
@@ -177,7 +178,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "integration": DOMAIN,
             "version": str(integration.version),
             "api_version": API_VERSION,
-            "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings"],
+            "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -274,3 +275,47 @@ async def ws_clear_completed(hass, msg, context):
 )
 async def ws_move_item(hass, msg, context):
     return await lists.move_item(hass, msg["entity_id"], msg["uid"], msg["target"], msg["copy"], context)
+
+
+# ----------------------------------------------------------------------
+# Verbundene Geräte (App-Installationen) – siehe devices.py
+# ----------------------------------------------------------------------
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/register_device",
+        vol.Required("device_id"): str,
+        vol.Optional("name"): str,
+        vol.Optional("model"): str,
+        vol.Optional("manufacturer"): str,
+        vol.Optional("app_version"): str,
+        vol.Optional("os_version"): str,
+    }
+)
+@callback
+def ws_register_device(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """App meldet sich an (beim Koppeln und bei jedem Abgleich → „zuletzt gesehen“)."""
+    try:
+        device = hass.data[DOMAIN]["devices"].register(
+            msg["device_id"], msg, connection.user.id, connection.user.name or ""
+        )
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_device", str(err))
+        return
+    connection.send_result(msg["id"], {"device": device})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/devices"})
+@callback
+def ws_devices(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Admins sehen alle Geräte, andere Benutzer nur ihre eigenen."""
+    devices = hass.data[DOMAIN]["devices"]
+    user = connection.user
+    connection.send_result(msg["id"], {"devices": devices.entries(None if user.is_admin else user.id)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/remove_device", vol.Required("device_id"): str})
+@callback
+def ws_remove_device(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    hass.data[DOMAIN]["devices"].remove(msg["device_id"])
+    connection.send_result(msg["id"], {"devices": hass.data[DOMAIN]["devices"].entries()})

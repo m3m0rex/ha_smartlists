@@ -3,6 +3,24 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.7.0] – 2026-11-12
+
+### Added
+
+- **Connected devices**: every phone with the HA SmartLists app registers when pairing and on each
+  sync. *Configure → Connected devices* lists name, model, user, app and Android version and last
+  seen (⚠️ after 7 days without sync) and lets you remove devices from the list.
+- Each phone also appears as a **Home Assistant device** under SmartLists with the sensors
+  *Last seen* (timestamp, usable in automations) and *App version*; deleting the device in HA removes
+  it from the list.
+- WebSocket commands `smartlists/register_device`, `smartlists/devices`, `smartlists/remove_device`.
+
+### Fixed
+
+- Dashboard cards showed an old version (e.g. no offer prices) while the sidebar page was up to
+  date, when an older copy of the card was still loaded as a dashboard resource. A newer card file
+  now replaces an already loaded older one; the browser console shows the loaded version.
+
 ## [1.6.1] – 2026-11-12
 
 ### Added

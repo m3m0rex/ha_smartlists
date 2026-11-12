@@ -43,6 +43,7 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
 - **Namenskonvention:** `@REWE` wird zum Markt-Badge (bekannte Märkte in Markenfarbe), `*Anna` zur Person,
   `#bio` zum Schlagwort. Welches Zeichen was bedeutet, stellen Admins in der Karte ein (Zahnrad).
   Die Tags bleiben im Artikelnamen stehen – andere Oberflächen sehen sie also weiter als Text.
+- **Verbundene Geräte:** jedes Handy mit der App erscheint unter *Konfigurieren → Verbundene Geräte* und als HA-Gerät mit den Sensoren *Zuletzt gesehen* und *App-Version*.
 - **Bedienung:** Standard für alle (Admin) → je Benutzer abweichend → optional je Gerät abweichend.
 
 Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird auch „2 kg Äpfel“ erkannt.

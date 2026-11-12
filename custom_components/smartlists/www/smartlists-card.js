@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "1.6.1";
+const CARD_VERSION = "1.7.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -498,6 +498,8 @@ const STYLE = `
 class SmartListsCard extends HTMLElement {
   setConfig(config) {
     if (!config || !config.entity) throw new Error("Bitte 'entity' angeben (eine SmartLists-Liste).");
+    this._rawConfig = config;
+    this._initVersion = CARD_VERSION;
     if (this._config && this._config.entity !== config.entity) this._unsubscribe();
     this._config = { ...CARD_DEFAULTS, ...config };
     // alte Option group_by_category: false → A–Z
@@ -522,6 +524,11 @@ class SmartListsCard extends HTMLElement {
   }
 
   set hass(hass) {
+    // Karte stammt noch aus einer älteren, inzwischen ersetzten Datei → einmal sauber neu aufbauen
+    if (this._initVersion !== CARD_VERSION && (this._rawConfig || this._config)) {
+      this._card = null; this._hass = null;
+      this.setConfig(this._rawConfig || this._config);
+    }
     const first = !this._hass;
     this._hass = hass;
     if (first || !this._cfg) this._loadConfig();
@@ -630,7 +637,8 @@ class SmartListsCard extends HTMLElement {
   /* ---------------- Rendering ---------------- */
   // Grundgerüst einmal bauen; Eingabefeld bleibt beim Neuladen der Liste erhalten (Fokus, Text).
   _ensureSkeleton() {
-    if (this._card) return;
+    if (this._card && this._skeletonVersion === CARD_VERSION) return;
+    this._skeletonVersion = CARD_VERSION;
     const root = this.shadowRoot;
     this._headEl = h("div", { class: "head" });
     this._searchEl = h("div");
@@ -1674,16 +1682,48 @@ class SmartListsPanel extends HTMLElement {
 }
 const ICON_MENU = "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z";
 
-if (!customElements.get("smartlists-panel")) customElements.define("smartlists-panel", SmartListsPanel);
 
-if (!customElements.get("smartlists-card")) {
-  customElements.define("smartlists-card", SmartListsCard);
-  customElements.define("smartlists-card-editor", SmartListsCardEditor);
-  window.customCards = window.customCards || [];
-  window.customCards.push({
-    type: "smartlists-card",
-    name: "SmartLists",
-    description: "Einkaufsliste mit Kategorien, Vorschlägen, Mengen, Markt-Badges (@REWE) und Berechtigungen.",
-    preview: false,
-  });
+
+/* Registrieren. Ist schon eine ÄLTERE Fassung geladen (z.B. eine alte Kopie als Dashboard-Ressource
+ * oder über HACS als „Dashboard“), lässt sich das Element nicht neu definieren – dann werden die
+ * Methoden der vorhandenen Klasse durch die neuen ersetzt, damit überall die aktuelle Karte läuft. */
+function semverNewer(a, b) {
+  const pa = String(a || "0").split("."), pb = String(b || "0").split(".");
+  for (let i = 0; i < 3; i++) { const d = (Number(pa[i]) || 0) - (Number(pb[i]) || 0); if (d) return d > 0; }
+  return false;
 }
+function defineOrUpgrade(tag, cls) {
+  const existing = customElements.get(tag);
+  if (!existing) { customElements.define(tag, cls); return "neu"; }
+  if (existing === cls || !semverNewer(CARD_VERSION, existing.__smartlistsVersion)) return "vorhanden";
+  for (const target of [existing.prototype, existing]) {
+    const source = target === existing ? cls : cls.prototype;
+    for (const name of Object.getOwnPropertyNames(source)) {
+      if (["prototype", "length", "name", "constructor"].includes(name)) continue;
+      Object.defineProperty(target, name, Object.getOwnPropertyDescriptor(source, name));
+    }
+  }
+  existing.__smartlistsVersion = CARD_VERSION;
+  return "ersetzt";
+}
+for (const c of [SmartListsCard, SmartListsCardEditor, SmartListsPanel]) c.__smartlistsVersion = CARD_VERSION;
+const _slResult = defineOrUpgrade("smartlists-card", SmartListsCard);
+defineOrUpgrade("smartlists-card-editor", SmartListsCardEditor);
+defineOrUpgrade("smartlists-panel", SmartListsPanel);
+if (_slResult !== "vorhanden" || !(window.customCards || []).some((c) => c.type === "smartlists-card")) {
+  window.customCards = window.customCards || [];
+  if (!window.customCards.some((c) => c.type === "smartlists-card")) {
+    window.customCards.push({
+      type: "smartlists-card",
+      name: "SmartLists",
+      description: "Einkaufsliste mit Kategorien, Vorschlägen, Mengen, Markt-Badges (@REWE) und Berechtigungen.",
+      preview: false,
+    });
+  }
+}
+if (_slResult.startsWith("ersetzt")) {
+  console.warn(`SmartLists: eine ältere Karten-Datei war schon geladen und wurde durch ${CARD_VERSION} ersetzt. `
+    + "Bitte die alte Dashboard-Ressource bzw. den HACS-Eintrag vom Typ „Dashboard“ entfernen.");
+}
+console.info(`%c SmartLists %c ${CARD_VERSION} `, "background:#1747B5;color:#fff;border-radius:3px 0 0 3px", "background:#3E7BFA;color:#fff;border-radius:0 3px 3px 0");
+

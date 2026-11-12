@@ -203,7 +203,7 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned"])
+        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned", "devices"])
 
     def _done(self) -> ConfigFlowResult:
         # Optionen unverändert lassen → kein unnötiges Neuladen der Integration
@@ -297,4 +297,40 @@ class SmartListsOptionsFlow(OptionsFlow):
             step_id="learned",
             data_schema=vol.Schema(fields),
             description_placeholders={"count": str(len(learned)), "history": str(len(learning.history))},
+        )
+
+    async def async_step_devices(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Verbundene Geräte (App-Installationen) ansehen und aus der Liste nehmen."""
+        from datetime import datetime
+
+        devices = self.hass.data[DOMAIN]["devices"]
+        if user_input is not None:
+            for device_id in user_input.get("remove", []):
+                devices.remove(device_id)
+            return self._done()
+        entries = devices.entries()
+
+        def ago(ts: int | None) -> str:
+            if not ts:
+                return "?"
+            return datetime.fromtimestamp(ts).strftime("%d.%m.%Y %H:%M")
+
+        lines = [
+            f"• **{d['name']}** ({d.get('model') or '?'}) – {d.get('user_name') or '?'}, App {d.get('app_version') or '?'}, "
+            f"Android {d.get('os_version') or '?'}, zuletzt {ago(d['last_seen'])}" + (" ⚠️" if d["stale"] else "")
+            for d in entries
+        ]
+        fields: dict[Any, Any] = {}
+        if entries:
+            fields[vol.Optional("remove", default=[])] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[selector.SelectOptionDict(value=d["device_id"], label=f"{d['name']} ({d.get('user_name') or '?'})") for d in entries],
+                    multiple=True,
+                    mode=selector.SelectSelectorMode.LIST,
+                )
+            )
+        return self.async_show_form(
+            step_id="devices",
+            data_schema=vol.Schema(fields),
+            description_placeholders={"count": str(len(entries)), "devices": "\n".join(lines) or "–"},
         )

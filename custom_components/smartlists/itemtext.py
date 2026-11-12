@@ -182,6 +182,8 @@ def encode(item: ParsedItem, rules: list[dict[str, str]]) -> str:
 # s = Markt, p = Preis, o = alter Preis, d = Rabatt, v/e = gültig ab/bis (JJJJ-MM-TT),
 # a = hinzugefügt (Epoch-Millis). Siehe HomeAssistantStore.encodeOfferMetaIntoDescription.
 OFFER_TAG = "⚙OFFER:"
+# auch "⚙️OFFER:" (mit Emoji-Variante), Leerzeichen oder Kleinschreibung erkennen
+_OFFER_RE = re.compile(r"[⚙\u2699]\ufe0f?\s*OFFER\s*:", re.IGNORECASE)
 
 
 def split_offer(note: str | None) -> tuple[str, dict[str, Any] | None, str]:
@@ -191,13 +193,13 @@ def split_offer(note: str | None) -> tuple[str, dict[str, Any] | None, str]:
     from datetime import date
 
     text = note or ""
-    idx = text.find(OFFER_TAG)
-    if idx < 0:
+    m = _OFFER_RE.search(text)
+    if m is None:
         return text, None, ""
-    clean = text[:idx].strip("\n ")
-    raw_line = text[idx:].strip()
+    clean = text[: m.start()].strip("\n ")
+    raw_line = text[m.start():].strip()
     try:
-        data = json.loads(raw_line[len(OFFER_TAG):])
+        data = json.loads(text[m.end():].strip())
     except ValueError:
         return clean, None, raw_line
     if not isinstance(data, dict) or not data.get("s"):

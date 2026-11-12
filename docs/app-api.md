@@ -136,6 +136,10 @@ Haken in HA gespeichert und überall gleich ist.
 | `smartlists/forget` | `word` | vergessen (Admin) |
 | `smartlists/set_tag_rules` | `rules[]` | Namenskonvention ändern (Admin) |
 
+Löschen wird ebenfalls abgeglichen: in der App vergessene Wörter gehen per `smartlists/forget` an die
+Integration; Wörter, die beim letzten Abgleich in `smartlists/learned` standen und jetzt fehlen, wurden
+in HA vergessen und werden in der App entfernt.
+
 Gemerkte Kategorien gelten für den ganzen Haushalt. Die App sollte ihre lokal gelernten Kategorien
 beim Koppeln einmalig per `set_category` übertragen und danach die der Integration verwenden, damit
 App, Karte und HA dasselbe zeigen.

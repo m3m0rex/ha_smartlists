@@ -20,6 +20,12 @@ and restarts the app. Not included on purpose: the Home Assistant token and the 
 current ones are kept) and device-specific data (backup folder permission). Encrypted notes stay
 encrypted with your own password.
 
+**Backup password** (*App → Settings → Backup → Backup password*): encrypts every backup – Home
+Assistant, WebDAV and file – with AES-256-GCM before it leaves the phone. Home Assistant only stores
+unreadable data; nobody can read it without the password, not even an admin. The password is kept only
+on the phone and is never part of a backup. After a reinstall the app asks for it when restoring.
+**If you forget it, the backup cannot be restored.**
+
 ## Connected devices
 
 *Configure → Connected devices* lists every phone with user, model, app and Android version and last

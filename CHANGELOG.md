@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.2.1] – 2026-11-12
+
+### Added
+
+- App backups report whether they are **encrypted** (`encrypted` in `smartlists/app_backups`). With a
+  backup password set in the HA SmartLists app, backups arrive encrypted (AES-256-GCM, key derived from
+  the password with PBKDF2) and cannot be read in Home Assistant – not even by admins.
+
 ## [2.2.0] – 2026-11-12
 
 ### Added

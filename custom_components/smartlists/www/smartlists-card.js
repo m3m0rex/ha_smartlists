@@ -20,6 +20,7 @@ const ICON = {
   sweep: "M15,16H19V18H15V16M15,8H22V10H15V8M15,12H21V14H15V12M3,18A2,2 0 0,0 5,20H11A2,2 0 0,0 13,18V8H3V18M14,5H11L10,4H6L5,5H2V7H14V5Z",
   history: "M13.5,8H12V13L16.28,15.54L17,14.33L13.5,12.25V8M13,3A9,9 0 0,0 4,12H1L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3",
   list: "M3,4H7V8H3V4M9,5V7H21V5H9M3,10H7V14H3V10M9,11V13H21V11H9M3,16H7V20H3V16M9,17V19H21V17H9",
+  tune: "M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z",
   gear: "M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z",
   sort: "M18 21L14 17H17V7H14L18 3L22 7H19V17H22M2 19V17H12V19M2 13V11H9V13M2 7V5H6V7H2Z",
   cart: "M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18Z",
@@ -36,7 +37,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.6.2";
+const CARD_VERSION = "2.7.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -224,6 +225,9 @@ const TEXTS = {
     app_list: "kombinierte Liste der App", app_list_connected: "verbunden", app_list_connect: "Verbinden",
     zone_name: "Name der Zone, z. B. REWE Standort Test", zone_radius: "Radius", zone_coords: "Koordinaten oder Karten-Link", zone_coords_placeholder: "52.5200, 13.4050 oder Link aus Google/Apple/OSM-Karten", zone_coords_bad: "Keine Koordinaten erkannt.", zone_locating: "Standort wird ermittelt …", zone_no_location: "Standort nicht verfügbar – andere Option wählen.", zone_where: "Wo?", zone_here_opt: "Aktueller Standort (dieses Gerät)", zone_home_opt: "Zuhause", zone_map_opt: "Auf der Karte wählen", zone_after: "Feinjustieren jederzeit unter Einstellungen → Bereiche & Zonen.",
     note_new: "Neue Notiz", note_edit: "Notiz bearbeiten", note_view: "Liste / Raster", note_empty: "Noch keine Notizen.", note_locked: "Verschlüsselte Notiz", note_locked_help: "Mit dem Notiz-Passwort der App verschlüsselt – nur in der App lesbar.", note_title: "Titel", note_body: "Text",
+    p_settings_hint: "Liste antippen, für die „Diese Liste“ gilt. Für mich und Haushalt gelten für alle Listen.",
+    list_settings_hint: "Bedienung, Haushalt und Kategorien: ⚙ oben rechts auf der Seite.",
+    settings_list: "Einstellungen dieser Liste", settings_global: "Allgemeine Einstellungen", list_settings_hint_card: "Bedienung, Haushalt und Kategorien: Regler-Symbol daneben.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -346,6 +350,9 @@ const TEXTS = {
     app_list: "combined list of the app", app_list_connected: "connected", app_list_connect: "Connect",
     zone_name: "Zone name, e.g. REWE Standort Test", zone_radius: "Radius", zone_coords: "Coordinates or map link", zone_coords_placeholder: "52.5200, 13.4050 or a Google/Apple/OSM maps link", zone_coords_bad: "No coordinates recognised.", zone_locating: "Getting location …", zone_no_location: "Location not available – choose another option.", zone_where: "Where?", zone_here_opt: "Current location (this device)", zone_home_opt: "Home", zone_map_opt: "Pick on the map", zone_after: "Fine-tune any time under Settings → Areas & zones.",
     note_new: "New note", note_edit: "Edit note", note_view: "List / grid", note_empty: "No notes yet.", note_locked: "Encrypted note", note_locked_help: "Encrypted with the app's notes password – readable only in the app.", note_title: "Title", note_body: "Text",
+    p_settings_hint: "Tap the list that “This list” refers to. For me and Household apply to all lists.",
+    list_settings_hint: "Controls, household and categories: ⚙ at the top right of the page.",
+    settings_list: "Settings of this list", settings_global: "General settings", list_settings_hint_card: "Controls, household and categories: the slider icon next to it.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -468,6 +475,9 @@ const TEXTS = {
     app_list: "liste combinée de l'app", app_list_connected: "associée", app_list_connect: "Associer",
     zone_name: "Nom de la zone, p. ex. Carrefour Centre", zone_radius: "Rayon", zone_coords: "Coordonnées ou lien de carte", zone_coords_placeholder: "48.8566, 2.3522 ou un lien Google/Apple/OSM", zone_coords_bad: "Aucune coordonnée reconnue.", zone_locating: "Localisation en cours …", zone_no_location: "Position indisponible – choisis une autre option.", zone_where: "Où ?", zone_here_opt: "Position actuelle (cet appareil)", zone_home_opt: "Domicile", zone_map_opt: "Choisir sur la carte", zone_after: "À ajuster à tout moment dans Paramètres → Pièces et zones.",
     note_new: "Nouvelle note", note_edit: "Modifier la note", note_view: "Liste / grille", note_empty: "Pas encore de notes.", note_locked: "Note chiffrée", note_locked_help: "Chiffrée avec le mot de passe des notes de l'app – lisible uniquement dans l'app.", note_title: "Titre", note_body: "Texte",
+    p_settings_hint: "Touche la liste à laquelle « Cette liste » se rapporte. Pour moi et Foyer valent pour toutes les listes.",
+    list_settings_hint: "Commandes, foyer et catégories : ⚙ en haut à droite de la page.",
+    settings_list: "Paramètres de cette liste", settings_global: "Paramètres généraux", list_settings_hint_card: "Commandes, foyer et catégories : l'icône de réglage à côté.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -590,6 +600,9 @@ const TEXTS = {
     app_list: "lista combinada de la app", app_list_connected: "vinculada", app_list_connect: "Vincular",
     zone_name: "Nombre de la zona, p. ej. Mercadona Centro", zone_radius: "Radio", zone_coords: "Coordenadas o enlace de mapa", zone_coords_placeholder: "40.4168, -3.7038 o un enlace de Google/Apple/OSM", zone_coords_bad: "No se reconocen coordenadas.", zone_locating: "Obteniendo ubicación …", zone_no_location: "Ubicación no disponible – elige otra opción.", zone_where: "¿Dónde?", zone_here_opt: "Ubicación actual (este dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Elegir en el mapa", zone_after: "Ajústala cuando quieras en Ajustes → Áreas y zonas.",
     note_new: "Nueva nota", note_edit: "Editar nota", note_view: "Lista / cuadrícula", note_empty: "Aún no hay notas.", note_locked: "Nota cifrada", note_locked_help: "Cifrada con la contraseña de notas de la app – solo legible en la app.", note_title: "Título", note_body: "Texto",
+    p_settings_hint: "Toca la lista a la que se refiere «Esta lista». Para mí y Hogar valen para todas las listas.",
+    list_settings_hint: "Controles, hogar y categorías: ⚙ arriba a la derecha de la página.",
+    settings_list: "Ajustes de esta lista", settings_global: "Ajustes generales", list_settings_hint_card: "Controles, hogar y categorías: el icono de controles al lado.",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -712,6 +725,9 @@ const TEXTS = {
     app_list: "lista combinata dell'app", app_list_connected: "collegata", app_list_connect: "Collega",
     zone_name: "Nome della zona, es. Esselunga Centro", zone_radius: "Raggio", zone_coords: "Coordinate o link della mappa", zone_coords_placeholder: "45.4642, 9.1900 o un link Google/Apple/OSM", zone_coords_bad: "Nessuna coordinata riconosciuta.", zone_locating: "Rilevamento posizione …", zone_no_location: "Posizione non disponibile – scegli un'altra opzione.", zone_where: "Dove?", zone_here_opt: "Posizione attuale (questo dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Scegli sulla mappa", zone_after: "Regolala quando vuoi in Impostazioni → Aree e zone.",
     note_new: "Nuova nota", note_edit: "Modifica nota", note_view: "Lista / griglia", note_empty: "Ancora nessuna nota.", note_locked: "Nota cifrata", note_locked_help: "Cifrata con la password delle note dell'app – leggibile solo nell'app.", note_title: "Titolo", note_body: "Testo",
+    p_settings_hint: "Tocca la lista a cui si riferisce «Questa lista». Per me e Casa valgono per tutte le liste.",
+    list_settings_hint: "Comandi, casa e categorie: ⚙ in alto a destra nella pagina.",
+    settings_list: "Impostazioni di questa lista", settings_global: "Impostazioni generali", list_settings_hint_card: "Comandi, casa e categorie: l'icona dei cursori accanto.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -834,6 +850,9 @@ const TEXTS = {
     app_list: "lista połączona aplikacji", app_list_connected: "połączona", app_list_connect: "Połącz",
     zone_name: "Nazwa strefy, np. Biedronka Centrum", zone_radius: "Promień", zone_coords: "Współrzędne lub link do mapy", zone_coords_placeholder: "52.2297, 21.0122 lub link z Google/Apple/OSM", zone_coords_bad: "Nie rozpoznano współrzędnych.", zone_locating: "Ustalanie lokalizacji …", zone_no_location: "Lokalizacja niedostępna – wybierz inną opcję.", zone_where: "Gdzie?", zone_here_opt: "Obecna lokalizacja (to urządzenie)", zone_home_opt: "Dom", zone_map_opt: "Wybierz na mapie", zone_after: "Dostosuj w dowolnej chwili w Ustawienia → Obszary i strefy.",
     note_new: "Nowa notatka", note_edit: "Edytuj notatkę", note_view: "Lista / siatka", note_empty: "Brak notatek.", note_locked: "Zaszyfrowana notatka", note_locked_help: "Zaszyfrowana hasłem notatek aplikacji – do odczytu tylko w aplikacji.", note_title: "Tytuł", note_body: "Treść",
+    p_settings_hint: "Dotknij listy, której dotyczy „Ta lista”. Dla mnie i Dom dotyczą wszystkich list.",
+    list_settings_hint: "Sterowanie, dom i kategorie: ⚙ w prawym górnym rogu strony.",
+    settings_list: "Ustawienia tej listy", settings_global: "Ustawienia ogólne", list_settings_hint_card: "Sterowanie, dom i kategorie: ikona suwaków obok.",
   },
 };
 
@@ -1682,9 +1701,12 @@ class SmartListsCard extends HTMLElement {
       !this._config.show_shopping ? null : h("button", { class: `icon-btn shopbtn ${this._shopping ? "on" : ""}`, type: "button", "aria-pressed": String(this._shopping),
         title: this._shopping ? t.shop_off : t.shop_on, "aria-label": this._shopping ? t.shop_off : t.shop_on,
         onclick: () => this._toggleShopping() }, svg(ICON.cart, 18)),
-      this._config.show_settings !== false
-        ? iconBtn(this._showSettings ? ICON.close : ICON.gear, t.settings, () => { this._showSettings = !this._showSettings; this._showImport = false; this._renderImport(); this._renderSettings(); this._render(); })
-        : null
+      // zwei Menüs: ⚙ = Einstellungen dieser Liste, ☰-Regler = allgemein (Für mich + Haushalt). Auf der
+      // Seitenleisten-Seite liegt das allgemeine Menü oben rechts → dort nur ⚙ (settings_scope: "list").
+      ...(this._config.show_settings === false ? [] : [
+        this._config.settings_scope === "list" ? null
+          : this._settingsBtn("global", ICON.tune, t.settings_global),
+        this._settingsBtn("list", ICON.gear, t.settings_list)])
     );
     const pct = d.items.length ? Math.round((100 * (d.items.length - open.length)) / d.items.length) : 0;
     fill(this._progressEl, this._shopping ? h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct),
@@ -3369,18 +3391,35 @@ class SmartListsCard extends HTMLElement {
       h("button", { class: "btn2", type: "button", onclick: () => file.click() }, "⬆ " + t.import), file)]);
   }
 
+  _settingsBtn(scope, icon, label) {
+    const open = this._showSettings && this._settingsScope === scope;
+    return iconBtn(open ? ICON.close : icon, label, () => {
+      this._showSettings = !open;
+      this._settingsScope = scope;
+      this._showImport = false;
+      this._renderImport(); this._renderSettings(); this._render();
+    });
+  }
+
   async _renderSettings() {
     const el = this._settingsEl;
     if (!this._showSettings || !this._cfg) return fill(el);
     const t = this._t;
-    const tab = this._setTab || "me";
+    // settings_scope: "list" (Karten auf der Seite) = nur „Diese Liste“; "global" (⚙ der Seite) = Für mich + Haushalt
+    const scope = this._config.settings_scope === "global" || this._config.settings_scope === "list"
+      ? this._config.settings_scope : this._settingsScope || "global";
+    const allowed = scope === "list" ? ["list"] : scope === "global" ? ["me", "house"] : ["me", "house", "list"];
+    const tab = allowed.includes(this._setTab) ? this._setTab : allowed[0];
     const tabBtn = (id, label, extra) => h("button", { type: "button", role: "tab", class: tab === id ? "on" : "", "aria-selected": String(tab === id),
       onclick: () => { this._setTab = id; this._renderSettings(); } }, label, extra);
     const pane = tab === "house" ? this._paneHouse() : tab === "list" ? this._paneList() : this._paneMe();
     fill(el, h("div", { class: "sl-settings" },
-      h("div", { class: "tabs2", role: "tablist" }, tabBtn("me", t.tab_me),
-        tabBtn("house", t.tab_house, h("span", { class: "tag" }, t.admin)), tabBtn("list", t.tab_list)),
+      allowed.length > 1 ? h("div", { class: "tabs2", role: "tablist" },
+        allowed.includes("me") ? tabBtn("me", t.tab_me) : null,
+        allowed.includes("house") ? tabBtn("house", t.tab_house, h("span", { class: "tag" }, t.admin)) : null,
+        allowed.includes("list") ? tabBtn("list", t.tab_list) : null) : null,
       pane,
+      scope === "list" ? h("p", { class: "shelp", style: "padding:0 4px" }, this._config.settings_scope === "list" ? t.list_settings_hint : t.list_settings_hint_card) : null,
       h("div", { class: "foot2" }, h("span", {}, `SmartLists ${this._version || "?"} · ${t.card_version} ${CARD_VERSION}`),
         h("a", { href: "https://github.com/m3m0rex/ha_smartlists/wiki", target: "_blank", rel: "noopener" }, "Wiki ↗"))));
   }
@@ -3622,12 +3661,15 @@ class SmartListsPanel extends HTMLElement {
     this._orderBtn.classList.toggle("on", !!this._ordering);
     this._orderBtn.setAttribute("aria-pressed", String(!!this._ordering));
     if (this._settingsOpen) {
-      // Karte im Nur-Einstellungen-Modus (Reiter Für mich / Haushalt / Diese Liste)
-      if (!this._settingsCard || this._settingsCard._config.entity !== (sel[0] || lists[0]?.e)) {
-        const entity = sel[0] || (lists[0] && lists[0].e);
-        if (!entity) { fill(this._contentEl, h("div", { class: "empty" }, this._t.p_empty)); return; }
+      // Globale Einstellungen (Für mich / Haushalt). Was nur eine Liste betrifft, steht im Zahnrad der Karte.
+      if (!lists.some((l) => l.e === this._settingsEntity)) this._settingsEntity = sel[0] || (lists[0] && lists[0].e);
+      const entity = this._settingsEntity;
+      if (!entity) { fill(this._contentEl, h("div", { class: "empty" }, this._t.p_empty)); return; }
+      if (!this._settingsCard || this._settingsCard._config.entity !== entity) {
+        const tab = this._settingsCard && this._settingsCard._setTab;
         this._settingsCard = document.createElement("smartlists-card");
-        this._settingsCard.setConfig({ entity, settings_only: true });
+        this._settingsCard.setConfig({ entity, settings_only: true, settings_scope: "global" });
+        if (tab) this._settingsCard._setTab = tab;
       }
       this._settingsCard.hass = this._hass;
       fill(this._chipsEl); fill(this._hintEl);
@@ -3674,7 +3716,8 @@ class SmartListsPanel extends HTMLElement {
     const cards = sel.map((e) => {
       if (!this._cards.has(e)) {
         const c = document.createElement("smartlists-card");
-        c.setConfig({ entity: e });
+        // Zahnrad je Karte = nur Einstellungen dieser Liste; Globales über ⚙ oben in der Werkzeugleiste
+        c.setConfig({ entity: e, settings_scope: "list" });
         c.hass = this._hass;
         this._cards.set(e, c);
       }

@@ -85,6 +85,14 @@ layout: columns
   to see only its items. If stores are linked to zones (*⚙ → Household → Stores & zones*), the store
   whose zone you are in is selected automatically. *For me* → "Also show items without a store" adds
   items without `@store`.
+- **Two settings menus** in the header: the **slider icon** opens the general settings with the tabs
+  *For me* (your controls, optionally only on this device) and *Household* (admins: naming convention,
+  badges & colours, stores & zones, app notes, keyword packs, remembered categories, voice &
+  automations, connected devices, backup, controls for everyone); the **gear** opens the settings of
+  **this list** (sharing for own lists, details). On the sidebar page the general settings are the ⚙
+  at the top right and each list only has its gear.
+- **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
+- Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
 
 ## Stores & zones
 

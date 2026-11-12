@@ -126,7 +126,8 @@
           "learned": "Remembered categories & history",
           "devices": "Connected devices (app)",
           "automation": "Voice & automations (Assist, due items)",
-          "app_lists": "Lists from the app (take over combined lists)"
+          "app_lists": "Lists from the app (take over combined lists)",
+          "packs": "Category detection (keyword packs)"
         }
       },
       "naming": {
@@ -188,10 +189,52 @@
         "data": {
           "connect": "Connect"
         }
+      },
+      "packs": {
+        "title": "Category detection – keyword packs",
+        "description": "Active packs, in order of precedence: {order}\n\n⭐ = built-in (changes go into an add-on pack “+”), ✏️ = custom. The same is available in the SmartLists card or sidebar page → ⚙ → Household.",
+        "data": {
+          "active": "Active packs",
+          "action": "Next"
+        }
+      },
+      "pack_pick": {
+        "title": "Edit pack",
+        "data": {
+          "pack": "Pack"
+        }
+      },
+      "pack_new": {
+        "title": "New pack",
+        "data": {
+          "name": "Name",
+          "language": "Language code (optional, e.g. nl)"
+        }
+      },
+      "pack_import": {
+        "title": "Paste pack as JSON",
+        "data": {
+          "name": "Name (optional)",
+          "json": "Pack (JSON)"
+        },
+        "description": "Format: {\"terms\": {\"oat milk\": \"kuehlung\"}} – or the app's category_pack_v2.json. The same name replaces an existing custom pack."
+      },
+      "pack_edit": {
+        "title": "Edit {name}",
+        "description": "{hint} {count} keywords. Examples: {sample}\n\nAdd: one or more keywords (separated by commas or new lines), all get the chosen category. Remove: only your own keywords (for built-in packs: your additions).",
+        "data": {
+          "add": "Add keywords",
+          "category": "Category for new keywords",
+          "remove": "Remove",
+          "again": "Continue editing after saving"
+        }
       }
     },
     "error": {
-      "duplicate_prefix": "Each character can only be used for one kind."
+      "duplicate_prefix": "Each character can only be used for one kind.",
+      "pack_none_active": "At least one pack must be active.",
+      "pack_exists": "A custom pack with this name already exists.",
+      "pack_invalid": "Not a valid pack (JSON with \"terms\" or the app format)."
     }
   },
   "selector": {
@@ -244,6 +287,14 @@
         "copy": "Copy",
         "category": "Change category",
         "delete": "Delete"
+      }
+    },
+    "pack_action": {
+      "options": {
+        "done": "Save",
+        "edit": "Edit keywords of a pack",
+        "new": "New pack (e.g. another language)",
+        "import": "Paste pack as JSON"
       }
     }
   },

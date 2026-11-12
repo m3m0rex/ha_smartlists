@@ -19,7 +19,10 @@ Toolbar buttons:
 **App notes** (`todo.ha_smartlists_note…` of the HA SmartLists app) are not shopping lists and are
 hidden by default. Admins can show them as a separate 📝 section: *⚙ → Household → App notes*. Notes are
 bound to an account – by default only their owner sees them (the app reports the owner when it syncs;
-admins can change it there). Optionally the whole household can see them. Notes never appear in Assist,
+admins can change it there). Optionally the whole household can see them. They are shown **like in the app**: note cards with
+title and text (grid or list, ▦/☰), *＋ New note* and tap to edit – no categories, quantities or
+checkboxes. Notes encrypted with the app's notes password stay locked (🔒, readable only in the app).
+Notes never appear in Assist,
 actions (`get_items`) or the list pickers for combined lists.
 
 The choice is remembered per browser. Hide the page via *Edit sidebar* if you only use the card.

@@ -126,7 +126,8 @@
           "learned": "Zapamiętane kategorie i historia",
           "devices": "Połączone urządzenia (aplikacja)",
           "automation": "Głos i automatyzacje (Assist, produkty do kupienia)",
-          "app_lists": "Listy z aplikacji (przejmij listy połączone)"
+          "app_lists": "Listy z aplikacji (przejmij listy połączone)",
+          "packs": "Rozpoznawanie kategorii (pakiety słów kluczowych)"
         }
       },
       "naming": {
@@ -188,10 +189,52 @@
         "data": {
           "connect": "Połącz"
         }
+      },
+      "packs": {
+        "title": "Rozpoznawanie kategorii – pakiety słów kluczowych",
+        "description": "Aktywne pakiety, w kolejności pierwszeństwa: {order}\n\n⭐ = wbudowany (zmiany trafiają do pakietu uzupełniającego „+”), ✏️ = własny. To samo jest dostępne w karcie SmartLists lub na stronie → ⚙ → Dom.",
+        "data": {
+          "active": "Aktywne pakiety",
+          "action": "Dalej"
+        }
+      },
+      "pack_pick": {
+        "title": "Edytuj pakiet",
+        "data": {
+          "pack": "Pakiet"
+        }
+      },
+      "pack_new": {
+        "title": "Nowy pakiet",
+        "data": {
+          "name": "Nazwa",
+          "language": "Kod języka (opcjonalnie, np. nl)"
+        }
+      },
+      "pack_import": {
+        "title": "Wklej pakiet jako JSON",
+        "data": {
+          "name": "Nazwa (opcjonalnie)",
+          "json": "Pakiet (JSON)"
+        },
+        "description": "Format: {\"terms\": {\"mleko owsiane\": \"kuehlung\"}} – albo category_pack_v2.json z aplikacji. Ta sama nazwa zastępuje istniejący własny pakiet."
+      },
+      "pack_edit": {
+        "title": "Edytuj {name}",
+        "description": "{hint} {count} słów kluczowych. Przykłady: {sample}\n\nDodaj: jedno lub więcej słów (oddzielonych przecinkami lub nowymi wierszami), wszystkie dostaną wybraną kategorię. Usuń: tylko własne słowa (w pakietach wbudowanych: twoje uzupełnienia).",
+        "data": {
+          "add": "Dodaj słowa kluczowe",
+          "category": "Kategoria dla nowych",
+          "remove": "Usuń",
+          "again": "Edytuj dalej po zapisaniu"
+        }
       }
     },
     "error": {
-      "duplicate_prefix": "Każdy znak może być użyty tylko dla jednego rodzaju."
+      "duplicate_prefix": "Każdy znak może być użyty tylko dla jednego rodzaju.",
+      "pack_none_active": "Co najmniej jeden pakiet musi być aktywny.",
+      "pack_exists": "Własny pakiet o tej nazwie już istnieje.",
+      "pack_invalid": "Nieprawidłowy pakiet (JSON z \"terms\" lub format aplikacji)."
     }
   },
   "selector": {
@@ -244,6 +287,14 @@
         "copy": "Kopiuj",
         "category": "Zmień kategorię",
         "delete": "Usuń"
+      }
+    },
+    "pack_action": {
+      "options": {
+        "done": "Zapisz",
+        "edit": "Edytuj słowa kluczowe pakietu",
+        "new": "Nowy pakiet (np. inny język)",
+        "import": "Wklej pakiet jako JSON"
       }
     }
   },

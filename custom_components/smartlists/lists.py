@@ -145,7 +145,16 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
     entity = combined_entity(hass, entity_id)
     items = []
     person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
+    notes = is_notes(hass, entity_id)
     for raw in await raw_items(hass, entity_id):
+        if notes:
+            # Notizliste der App: Titel + Text, keine Kategorie/Menge/Tags (wie in der App)
+            items.append({"uid": raw["uid"], "text": raw["text"], "name": raw["text"], "note": raw.get("note") or "",
+                          "checked": raw["checked"], "encrypted": str(raw["text"]).startswith("🔒ENC1:")
+                          or str(raw.get("note") or "").startswith("🔒ENC1:"),
+                          "tags": [], "category": None, "quantity": None, "unit": None, "offer": None,
+                          "permissions": {"toggle": perms["toggle"], "rename": perms["rename"], "delete": perms["delete"]}})
+            continue
         info = learning.describe(raw["text"])
         # Angebot aus der App (⚙OFFER-Zeile in der Notiz) zerlegen statt als Text zeigen
         note, offer, _ = split_offer(raw.get("note"))
@@ -180,7 +189,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         "source_lists": entity.source_names if entity is not None else [],
         "permissions": perms,
         "own": own_info,
-        "categories": learning.categories.as_list(language),
+        "categories": [] if notes else learning.categories.as_list(language),
         "items": items,
     }
 

@@ -26,7 +26,9 @@ A pack maps keywords to the 12 fixed categories. Built in:
 | English / French / Spanish / Italian / Polish – starter packs | ~360–410 each | ~200 each |
 
 By default the pack in Home Assistant's language is active (German if there is none). Admins manage
-packs in the card's gear menu (or the sidebar page's ⚙) → **Household → Category detection**:
+packs in the card's gear menu (or the sidebar page's ⚙) → **Household → Category detection** – or
+under *Settings → Devices & services → SmartLists → Configure → Category detection* (activate packs, add
+or remove keywords, create a pack, paste a pack as JSON):
 
 - **switch** a pack on or off – several can be active, e.g. German + English in a bilingual household,
 - **▲** moves a pack up: on equal keywords the pack higher up wins. Otherwise the **longest matching

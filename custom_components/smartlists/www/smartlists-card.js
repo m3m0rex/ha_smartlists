@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.5.1";
+const CARD_VERSION = "2.6.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -97,7 +97,7 @@ const UI_DEFAULTS = {
   shop_auto_store: true, shop_untagged: false,
 };
 // Notizlisten der App: keine Kategorien/Einkaufsfunktionen (nur wenn in der Karte nicht anders eingestellt)
-const NOTES_DEFAULTS = { sort: "added", show_category_titles: false, show_frequent: false, show_shopping: false, show_stepper: false, show_import: false, show_filter_chips: false };
+const NOTES_DEFAULTS = { sort: "added", show_category_titles: false, show_frequent: false, show_shopping: false, show_stepper: false, show_import: false, show_filter_chips: false, show_sort: false };
 // Erkennung wie notes.py (für Auswahlfelder, ohne Rückfrage bei der Integration)
 const isNotesEntity = (id, name) => /^todo\.(ha_smartlists_note|notiz_)/i.test(id) || /^ha smartlists notes/i.test(String(name || "").trim());
 const UI_KEY = "smartlists-ui";
@@ -223,6 +223,7 @@ const TEXTS = {
     zone_count: "Zonen", zone_unlink: "Zone lösen", zone_add: "Zone",
     app_list: "kombinierte Liste der App", app_list_connected: "verbunden", app_list_connect: "Verbinden",
     zone_name: "Name der Zone, z. B. REWE Standort Test", zone_radius: "Radius", zone_coords: "Koordinaten oder Karten-Link", zone_coords_placeholder: "52.5200, 13.4050 oder Link aus Google/Apple/OSM-Karten", zone_coords_bad: "Keine Koordinaten erkannt.", zone_locating: "Standort wird ermittelt …", zone_no_location: "Standort nicht verfügbar – andere Option wählen.", zone_where: "Wo?", zone_here_opt: "Aktueller Standort (dieses Gerät)", zone_home_opt: "Zuhause", zone_map_opt: "Auf der Karte wählen", zone_after: "Feinjustieren jederzeit unter Einstellungen → Bereiche & Zonen.",
+    note_new: "Neue Notiz", note_edit: "Notiz bearbeiten", note_view: "Liste / Raster", note_empty: "Noch keine Notizen.", note_locked: "Verschlüsselte Notiz", note_locked_help: "Mit dem Notiz-Passwort der App verschlüsselt – nur in der App lesbar.", note_title: "Titel", note_body: "Text",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -344,6 +345,7 @@ const TEXTS = {
     zone_count: "zones", zone_unlink: "Unlink zone", zone_add: "Zone",
     app_list: "combined list of the app", app_list_connected: "connected", app_list_connect: "Connect",
     zone_name: "Zone name, e.g. REWE Standort Test", zone_radius: "Radius", zone_coords: "Coordinates or map link", zone_coords_placeholder: "52.5200, 13.4050 or a Google/Apple/OSM maps link", zone_coords_bad: "No coordinates recognised.", zone_locating: "Getting location …", zone_no_location: "Location not available – choose another option.", zone_where: "Where?", zone_here_opt: "Current location (this device)", zone_home_opt: "Home", zone_map_opt: "Pick on the map", zone_after: "Fine-tune any time under Settings → Areas & zones.",
+    note_new: "New note", note_edit: "Edit note", note_view: "List / grid", note_empty: "No notes yet.", note_locked: "Encrypted note", note_locked_help: "Encrypted with the app's notes password – readable only in the app.", note_title: "Title", note_body: "Text",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -465,6 +467,7 @@ const TEXTS = {
     zone_count: "zones", zone_unlink: "Dissocier la zone", zone_add: "Zone",
     app_list: "liste combinée de l'app", app_list_connected: "associée", app_list_connect: "Associer",
     zone_name: "Nom de la zone, p. ex. Carrefour Centre", zone_radius: "Rayon", zone_coords: "Coordonnées ou lien de carte", zone_coords_placeholder: "48.8566, 2.3522 ou un lien Google/Apple/OSM", zone_coords_bad: "Aucune coordonnée reconnue.", zone_locating: "Localisation en cours …", zone_no_location: "Position indisponible – choisis une autre option.", zone_where: "Où ?", zone_here_opt: "Position actuelle (cet appareil)", zone_home_opt: "Domicile", zone_map_opt: "Choisir sur la carte", zone_after: "À ajuster à tout moment dans Paramètres → Pièces et zones.",
+    note_new: "Nouvelle note", note_edit: "Modifier la note", note_view: "Liste / grille", note_empty: "Pas encore de notes.", note_locked: "Note chiffrée", note_locked_help: "Chiffrée avec le mot de passe des notes de l'app – lisible uniquement dans l'app.", note_title: "Titre", note_body: "Texte",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -586,6 +589,7 @@ const TEXTS = {
     zone_count: "zonas", zone_unlink: "Desvincular zona", zone_add: "Zona",
     app_list: "lista combinada de la app", app_list_connected: "vinculada", app_list_connect: "Vincular",
     zone_name: "Nombre de la zona, p. ej. Mercadona Centro", zone_radius: "Radio", zone_coords: "Coordenadas o enlace de mapa", zone_coords_placeholder: "40.4168, -3.7038 o un enlace de Google/Apple/OSM", zone_coords_bad: "No se reconocen coordenadas.", zone_locating: "Obteniendo ubicación …", zone_no_location: "Ubicación no disponible – elige otra opción.", zone_where: "¿Dónde?", zone_here_opt: "Ubicación actual (este dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Elegir en el mapa", zone_after: "Ajústala cuando quieras en Ajustes → Áreas y zonas.",
+    note_new: "Nueva nota", note_edit: "Editar nota", note_view: "Lista / cuadrícula", note_empty: "Aún no hay notas.", note_locked: "Nota cifrada", note_locked_help: "Cifrada con la contraseña de notas de la app – solo legible en la app.", note_title: "Título", note_body: "Texto",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -707,6 +711,7 @@ const TEXTS = {
     zone_count: "zone", zone_unlink: "Scollega zona", zone_add: "Zona",
     app_list: "lista combinata dell'app", app_list_connected: "collegata", app_list_connect: "Collega",
     zone_name: "Nome della zona, es. Esselunga Centro", zone_radius: "Raggio", zone_coords: "Coordinate o link della mappa", zone_coords_placeholder: "45.4642, 9.1900 o un link Google/Apple/OSM", zone_coords_bad: "Nessuna coordinata riconosciuta.", zone_locating: "Rilevamento posizione …", zone_no_location: "Posizione non disponibile – scegli un'altra opzione.", zone_where: "Dove?", zone_here_opt: "Posizione attuale (questo dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Scegli sulla mappa", zone_after: "Regolala quando vuoi in Impostazioni → Aree e zone.",
+    note_new: "Nuova nota", note_edit: "Modifica nota", note_view: "Lista / griglia", note_empty: "Ancora nessuna nota.", note_locked: "Nota cifrata", note_locked_help: "Cifrata con la password delle note dell'app – leggibile solo nell'app.", note_title: "Titolo", note_body: "Testo",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -828,6 +833,7 @@ const TEXTS = {
     zone_count: "stref", zone_unlink: "Odłącz strefę", zone_add: "Strefa",
     app_list: "lista połączona aplikacji", app_list_connected: "połączona", app_list_connect: "Połącz",
     zone_name: "Nazwa strefy, np. Biedronka Centrum", zone_radius: "Promień", zone_coords: "Współrzędne lub link do mapy", zone_coords_placeholder: "52.2297, 21.0122 lub link z Google/Apple/OSM", zone_coords_bad: "Nie rozpoznano współrzędnych.", zone_locating: "Ustalanie lokalizacji …", zone_no_location: "Lokalizacja niedostępna – wybierz inną opcję.", zone_where: "Gdzie?", zone_here_opt: "Obecna lokalizacja (to urządzenie)", zone_home_opt: "Dom", zone_map_opt: "Wybierz na mapie", zone_after: "Dostosuj w dowolnej chwili w Ustawienia → Obszary i strefy.",
+    note_new: "Nowa notatka", note_edit: "Edytuj notatkę", note_view: "Lista / siatka", note_empty: "Brak notatek.", note_locked: "Zaszyfrowana notatka", note_locked_help: "Zaszyfrowana hasłem notatek aplikacji – do odczytu tylko w aplikacji.", note_title: "Tytuł", note_body: "Treść",
   },
 };
 
@@ -1237,6 +1243,17 @@ const STYLE = `
   .tag.person { background:color-mix(in srgb, var(--info-color,#7b61ff) 15%, transparent); color:var(--info-color,#7b61ff); font-weight:600; border-radius:9px; }
   .tag.hash { background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); font-weight:600; border-radius:9px; }
   .tag.s-filled.person, .tag.s-filled.hash { border-radius:4px; }
+  .notes { padding:4px 12px 12px; display:grid; gap:10px; }
+  .notes.grid { grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); }
+  .notes.list { grid-template-columns:minmax(0,1fr); }
+  .notecard { text-align:left; font:inherit; color:inherit; cursor:pointer; border:1px solid var(--divider-color,#e0e0e0); border-radius:12px;
+    background:var(--secondary-background-color,#f6f6f6); padding:10px 12px; min-height:64px; display:flex; flex-direction:column; gap:4px; }
+  .notecard:hover { border-color:var(--sl-accent); }
+  .notecard .nt { font-weight:600; overflow-wrap:anywhere; }
+  .notecard .nb { font-size:.86rem; color:var(--secondary-text-color); white-space:pre-wrap; overflow-wrap:anywhere;
+    display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden; }
+  .notes.list .notecard .nb { -webkit-line-clamp:2; }
+  .notecard.done { opacity:.6; }
   .tag.s-outline { background:none !important; border:1px solid currentColor; padding:0 6px; }
   .tag.s-text { background:none !important; padding:0 2px; }
   .look-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -2268,6 +2285,19 @@ class SmartListsCard extends HTMLElement {
   _renderAdd() {
     if (!this._config.show_add) return fill(this._addEl);
     const d = this._data;
+    if (d.type === "notes") {
+      // Notizliste: kein Schnell-Eingabefeld (Mengen/Tags/Kategorie), sondern „Neue Notiz“ mit Titel + Text
+      this._addAllowed = null;
+      return fill(this._addEl, d.permissions.add
+        ? h("div", { class: "acts", style: "margin:4px 12px 8px;justify-content:flex-start" },
+          h("button", { class: "btn2 primary", type: "button", onclick: () => this._noteDialog(null) }, "＋ " + this._t.note_new),
+          h("button", { class: "btn2", type: "button", title: this._t.note_view, "aria-label": this._t.note_view, onclick: () => {
+            this._notesGrid = !this._notesView();
+            try { localStorage.setItem("smartlists-notes-grid", this._notesGrid ? "1" : "0"); } catch (e) { /* */ }
+            this._renderList();
+          } }, this._notesView() ? "☰" : "▦"))
+        : h("div", { class: "locked" }, svg(ICON.lock, 16), this._t.no_add));
+    }
     const allowed = d.permissions.add;
     if (this._addAllowed === allowed && this._addEl.firstChild) return;
     this._addAllowed = allowed;
@@ -2472,9 +2502,67 @@ class SmartListsCard extends HTMLElement {
   }
 
   /* ---------------- Liste ---------------- */
+  _notesView() {
+    if (this._notesGrid == null) { try { this._notesGrid = localStorage.getItem("smartlists-notes-grid") !== "0"; } catch (e) { this._notesGrid = true; } }
+    return this._notesGrid;
+  }
+  // Notizliste wie in der App: Karten mit Titel und Textvorschau, antippen = bearbeiten
+  _renderNotes(d) {
+    const t = this._t;
+    const q = searchKey(this._searchQuery || "");
+    const notes = d.items.filter((n) => !q || searchKey(`${n.text} ${n.note}`).includes(q));
+    this._hitCount = notes.length;
+    if (!notes.length) return fill(this._listEl, h("div", { class: "msg" }, q ? t.no_hits_short : t.note_empty));
+    fill(this._listEl, h("div", { class: `notes ${this._notesView() ? "grid" : "list"}` }, notes.map((n) => {
+      const locked = n.encrypted;
+      return h("button", { type: "button", class: `notecard ${n.checked ? "done" : ""}`, disabled: locked && !n.permissions.delete,
+        onclick: () => (locked ? this._noteLocked(n) : this._noteDialog(n)) },
+        h("div", { class: "nt" }, locked ? "🔒 " + t.note_locked : n.text || "—"),
+        locked ? h("div", { class: "nb" }, t.note_locked_help) : n.note ? h("div", { class: "nb" }, n.note) : null);
+    })));
+  }
+  async _noteLocked(n) {
+    const t = this._t;
+    if (!n.permissions.delete) return;
+    if (await slDialog(this.shadowRoot, { title: "🔒 " + t.note_locked, text: t.note_locked_help, ok: t.delete, cancel: t.cancel, danger: true })) this._deleteItems([n]);
+  }
+  // Notiz anlegen (n = null) oder bearbeiten: Titel + mehrzeiliger Text, Löschen
+  _noteDialog(n) {
+    const t = this._t;
+    const title = h("input", { value: n ? n.text : "", placeholder: t.note_title, "aria-label": t.note_title, maxlength: "255" });
+    const body = h("textarea", { placeholder: t.note_body, "aria-label": t.note_body, rows: "8",
+      style: "width:100%;box-sizing:border-box;border-radius:10px;border:1px solid var(--divider-color,#ccc);background:var(--secondary-background-color,#f2f2f2);color:inherit;font:inherit;padding:10px 12px;margin:0 0 14px;resize:vertical" });
+    body.value = n ? n.note || "" : "";
+    const close = () => back.remove();
+    const save = async () => {
+      const text = title.value.trim() || body.value.trim().split("\n")[0].slice(0, 60);
+      if (!text) return;
+      close();
+      try {
+        if (n) await this._call("update_item", { uid: n.uid, text, note: body.value });
+        else await this._call("add_item", { text, note: body.value });
+        await this._load();
+      } catch (err) { this._error = (err && err.message) || t.error; this._render(); }
+    };
+    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) close(); } },
+      h("style", {}, DIALOG_STYLE),
+      h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": n ? t.note_edit : t.note_new, style: "max-width:560px" },
+        h("h2", {}, n ? t.note_edit : t.note_new), title, body,
+        h("div", { class: "row" },
+          n && n.permissions.delete ? h("button", { type: "button", style: "margin-right:auto;color:var(--error-color,#db4437)", onclick: async () => {
+            close(); this._deleteItems([n]);
+          } }, t.delete) : null,
+          h("button", { type: "button", onclick: close }, t.cancel),
+          h("button", { type: "button", class: "ok", onclick: save }, t.save))));
+    title.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); body.focus(); } else if (e.key === "Escape") close(); });
+    this.shadowRoot.append(back);
+    setTimeout(() => (n ? body : title).focus(), 30);
+  }
+
   _renderList() {
     const t = this._t;
     const d = this._data;
+    if (d.type === "notes") return this._renderNotes(d);
     const searching = !!this._searchQuery;
     const filtered = d.items.filter((i) => this._passesFilters(i));
     const visible = searching ? filtered.filter((i) => this._matches(i, d)) : filtered;

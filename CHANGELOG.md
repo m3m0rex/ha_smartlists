@@ -3,6 +3,18 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.6.0] – 2026-11-12
+
+### Added
+
+- **App notes as notes**: note lists of the app are shown like in the app – note cards with title and
+  text (grid or list), *New note* with title + text, tap to edit or delete. No categories, quantities,
+  tags or checkboxes; `get_list` returns no categories for them. Notes encrypted in the app are shown
+  locked (🔒).
+- **Keyword packs under Configure**: *Settings → Devices & services → SmartLists → Configure → Category
+  detection* – choose active packs, add/remove keywords (several at once with one category), create a
+  pack, paste a pack as JSON. Same data as in the card.
+
 ## [2.5.1] – 2026-11-12
 
 ### Changed

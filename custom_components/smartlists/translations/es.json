@@ -126,7 +126,8 @@
           "learned": "Categorías recordadas e historial",
           "devices": "Dispositivos conectados (app)",
           "automation": "Voz y automatizaciones (Assist, elementos pendientes)",
-          "app_lists": "Listas de la app (adoptar listas combinadas)"
+          "app_lists": "Listas de la app (adoptar listas combinadas)",
+          "packs": "Detección de categorías (paquetes de palabras clave)"
         }
       },
       "naming": {
@@ -188,10 +189,52 @@
         "data": {
           "connect": "Vincular"
         }
+      },
+      "packs": {
+        "title": "Detección de categorías – paquetes de palabras clave",
+        "description": "Paquetes activos, por orden de prioridad: {order}\n\n⭐ = integrado (los cambios van a un paquete complementario «+»), ✏️ = propio. Lo mismo está en la tarjeta SmartLists o la página → ⚙ → Hogar.",
+        "data": {
+          "active": "Paquetes activos",
+          "action": "Siguiente"
+        }
+      },
+      "pack_pick": {
+        "title": "Editar paquete",
+        "data": {
+          "pack": "Paquete"
+        }
+      },
+      "pack_new": {
+        "title": "Nuevo paquete",
+        "data": {
+          "name": "Nombre",
+          "language": "Código de idioma (opcional, p. ej. nl)"
+        }
+      },
+      "pack_import": {
+        "title": "Pegar paquete como JSON",
+        "data": {
+          "name": "Nombre (opcional)",
+          "json": "Paquete (JSON)"
+        },
+        "description": "Formato: {\"terms\": {\"leche de avena\": \"kuehlung\"}} – o el category_pack_v2.json de la app. El mismo nombre reemplaza un paquete propio existente."
+      },
+      "pack_edit": {
+        "title": "Editar {name}",
+        "description": "{hint} {count} palabras clave. Ejemplos: {sample}\n\nAñadir: una o varias palabras clave (separadas por comas o saltos de línea), todas reciben la categoría elegida. Quitar: solo tus propias palabras clave (en paquetes integrados: tus añadidos).",
+        "data": {
+          "add": "Añadir palabras clave",
+          "category": "Categoría para las nuevas",
+          "remove": "Quitar",
+          "again": "Seguir editando después de guardar"
+        }
       }
     },
     "error": {
-      "duplicate_prefix": "Cada carácter solo se puede usar para un tipo."
+      "duplicate_prefix": "Cada carácter solo se puede usar para un tipo.",
+      "pack_none_active": "Debe haber al menos un paquete activo.",
+      "pack_exists": "Ya existe un paquete propio con este nombre.",
+      "pack_invalid": "No es un paquete válido (JSON con \"terms\" o formato de la app)."
     }
   },
   "selector": {
@@ -244,6 +287,14 @@
         "copy": "Copiar",
         "category": "Cambiar categoría",
         "delete": "Eliminar"
+      }
+    },
+    "pack_action": {
+      "options": {
+        "done": "Guardar",
+        "edit": "Editar palabras clave de un paquete",
+        "new": "Nuevo paquete (p. ej. otro idioma)",
+        "import": "Pegar paquete como JSON"
       }
     }
   },

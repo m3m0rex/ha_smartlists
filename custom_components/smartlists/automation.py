@@ -71,14 +71,14 @@ def fire_shopping(hass: HomeAssistant, entity_id: str, active: bool, store: str 
 # ----------------------------------------------------------------------
 async def query_items(hass: HomeAssistant, entity_ids: list[str] | None, *, store: str | None = None,
                       person: str | None = None, tag: str | None = None, category: str | None = None,
-                      include_completed: bool = False) -> list[dict[str, Any]]:
+                      include_completed: bool = False, user: Any | None = None) -> list[dict[str, Any]]:
     learning = _learning(hass)
     if not entity_ids:
         entity_ids = [s.entity_id for s in hass.states.async_all(TODO_DOMAIN) if s.state != "unavailable"]
     out: list[dict[str, Any]] = []
     for entity_id in entity_ids:
         try:
-            data = await lists.get_list(hass, entity_id)
+            data = await lists.get_list(hass, entity_id, user)
         except lists.ListError:
             continue
         for it in data["items"]:
@@ -198,7 +198,9 @@ class ListItemsIntent(intent.IntentHandler):
         spoken_name = slots.get("list", {}).get("value")
         store = slots.get("store", {}).get("value")
         entity_id = _find_list(hass, spoken_name)
-        items = await query_items(hass, [entity_id] if entity_id else None, store=store)
+        # nur Listen, die der Sprecher sehen darf (eigene Listen mit Freigaben)
+        user = await hass.auth.async_get_user(intent_obj.context.user_id) if intent_obj.context and intent_obj.context.user_id else None
+        items = await query_items(hass, [entity_id] if entity_id else None, store=store, user=user)
         where = f" bei {store}" if store else ""
         if not items:
             response.async_set_speech(f"Nichts zu besorgen{where}.")

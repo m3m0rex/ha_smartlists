@@ -1,4 +1,4 @@
-"""To-do-Plattform: die kombinierte Liste."""
+"""To-do-Plattform: kombinierte Listen und eigene Listen (mit Besitzer/Freigaben)."""
 
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ from homeassistant.util import dt as dt_util
 from .categories import CategoryIndex
 from .itemtext import join_offer, offer_summary, person_from_list_name, split_offer
 from .learning import Learning
+from .own import async_user_info, permissions_for, role_for
 from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
@@ -50,6 +51,7 @@ from .const import (
     LEGACY_UNIQUE_ID,
     SIGNAL_LEARNING_CHANGED,
     SUBENTRY_COMBINED,
+    SUBENTRY_OWN,
     STORAGE_VERSION,
     UID_SEPARATOR,
 )
@@ -81,6 +83,12 @@ async def async_setup_entry(
     """Je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     learning: Learning = hass.data[DOMAIN]["learning"]
     for subentry in entry.subentries.values():
+        if subentry.subentry_type == SUBENTRY_OWN:
+            own_store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{subentry.subentry_id}")
+            own_stored = await own_store.async_load() or {}
+            async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning)],
+                               config_subentry_id=subentry.subentry_id)
+            continue
         if subentry.subentry_type != SUBENTRY_COMBINED:
             continue
         key = list_key(subentry)
@@ -460,3 +468,147 @@ class CombinedTodoListEntity(TodoListEntity):
         self._save()
         await self._async_refresh()
 
+
+
+# ----------------------------------------------------------------------
+# Eigene Listen
+# ----------------------------------------------------------------------
+class OwnTodoListEntity(TodoListEntity):
+    """Liste, die SmartLists selbst speichert – mit Besitzer und Freigaben (own.py)."""
+
+    _attr_should_poll = False
+    _attr_icon = "mdi:clipboard-account-outline"
+    _attr_supported_features = (
+        TodoListEntityFeature.CREATE_TODO_ITEM
+        | TodoListEntityFeature.UPDATE_TODO_ITEM
+        | TodoListEntityFeature.DELETE_TODO_ITEM
+        | TodoListEntityFeature.MOVE_TODO_ITEM
+        | TodoListEntityFeature.SET_DESCRIPTION_ON_ITEM
+    )
+
+    def __init__(self, hass: HomeAssistant, subentry: ConfigSubentry, store: Store[dict[str, Any]],
+                 stored: dict[str, Any], learning: Learning) -> None:
+        self.hass = hass
+        self.subentry = subentry
+        self.data: dict[str, Any] = dict(subentry.data)
+        self._store = store
+        self._learning = learning
+        self._items: list[dict[str, Any]] = [i for i in stored.get("items", []) if i.get("uid")]
+        self._attr_unique_id = f"own_{subentry.subentry_id}"
+        self._attr_name = subentry.title
+        self._owner_name = ""
+        self._share_names: dict[str, str] = {}
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        registry: dict[str, OwnTodoListEntity] = self.hass.data[DOMAIN].setdefault("own", {})
+        registry[self.entity_id] = self
+        self.async_on_remove(lambda: registry.pop(self.entity_id, None))
+        _, self._owner_name = await async_user_info(self.hass, self.data.get("owner"))
+        for uid, role in (self.data.get("shares") or {}).items():
+            _, name = await async_user_info(self.hass, uid)
+            self._share_names[name or uid] = role
+        self.async_write_ha_state()
+
+    # -------- Rechte --------
+    async def role_of(self, user_id: str | None) -> str | None:
+        is_admin, _ = await async_user_info(self.hass, user_id)
+        return role_for(self.data, user_id, is_admin)
+
+    def _request_user(self) -> tuple[bool, str | None]:
+        """(bekannt, Benutzer-ID) der laufenden Anfrage.
+        HA setzt den Context bei jedem Dienstaufruf neu. Er bleibt danach aber am Objekt stehen – deshalb
+        nur verwenden, wenn er gerade erst gesetzt wurde, sonst würde eine spätere Anfrage ohne eigenen
+        Context die Rechte der vorherigen erben."""
+        ctx = self._context
+        set_at = getattr(self, "_context_set", None)
+        if ctx is None or set_at is None or (dt_util.utcnow() - set_at).total_seconds() > 2:
+            return False, None
+        return True, ctx.user_id
+
+    async def _require(self, perm: str) -> None:
+        known, user_id = self._request_user()
+        if not known:
+            # Kein frischer Context: nur bei harmlosem Umsortieren (HA-eigener WebSocket-Befehl ohne
+            # Context) zulassen, alles andere verweigern.
+            if perm == "reorder":
+                return
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
+                                         translation_placeholders={"list": self.name or ""})
+        if not permissions_for(await self.role_of(user_id))[perm]:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
+                                         translation_placeholders={"list": self.name or ""})
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        open_items = sum(1 for i in self._items if i.get("status") != TodoItemStatus.COMPLETED)
+        return {
+            "smartlists_own": True,
+            "owner": self._owner_name,
+            "shared_with": self._share_names,
+            "open_items": open_items,
+            "completed_items": len(self._items) - open_items,
+        }
+
+    # -------- Daten --------
+    @property
+    def todo_items(self) -> list[TodoItem]:
+        return [
+            TodoItem(uid=i["uid"], summary=i.get("summary", ""), status=TodoItemStatus(i.get("status") or TodoItemStatus.NEEDS_ACTION),
+                     description=i.get("description") or None)
+            for i in self._items
+        ]
+
+    def _save(self) -> None:
+        self._store.async_delay_save(lambda: {"items": self._items}, 1.0)
+        self.async_write_ha_state()
+
+    def _find(self, uid: str | None) -> dict[str, Any]:
+        for item in self._items:
+            if item["uid"] == uid:
+                return item
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="item_not_found",
+                                     translation_placeholders={"uid": str(uid)})
+
+    async def async_create_todo_item(self, item: TodoItem) -> None:
+        await self._require("add")
+        import uuid
+
+        self._items.append({"uid": uuid.uuid4().hex, "summary": item.summary or "",
+                            "status": _status_text(item.status) or "needs_action", "description": item.description or ""})
+        self._learning.record(item.summary or "")
+        self._save()
+
+    async def async_update_todo_item(self, item: TodoItem) -> None:
+        current = self._find(item.uid)
+        new_status = _status_text(item.status)
+        content_changed = (item.summary is not None and item.summary != current.get("summary")) or (
+            item.description is not None and (item.description or "") != (current.get("description") or "")
+        )
+        if content_changed:
+            await self._require("rename")
+        elif new_status is not None and new_status != current.get("status"):
+            await self._require("toggle")
+        if item.summary is not None:
+            current["summary"] = item.summary
+        if item.description is not None:
+            current["description"] = item.description or ""
+        if new_status is not None:
+            current["status"] = new_status
+        self._save()
+
+    async def async_delete_todo_items(self, uids: list[str]) -> None:
+        await self._require("delete")
+        drop = set(uids)
+        self._items = [i for i in self._items if i["uid"] not in drop]
+        self._save()
+
+    async def async_move_todo_item(self, uid: str, previous_uid: str | None = None) -> None:
+        await self._require("reorder")
+        item = self._find(uid)
+        self._items.remove(item)
+        index = 0
+        if previous_uid:
+            index = self._items.index(self._find(previous_uid)) + 1
+        self._items.insert(index, item)
+        self._save()

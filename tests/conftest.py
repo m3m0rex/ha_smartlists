@@ -1,0 +1,37 @@
+"""Tests ohne Home-Assistant-Installation: die wenigen HA-Module, die die getesteten Dateien importieren,
+werden durch kleine Platzhalter ersetzt. Getestet werden die reinen Logik-Teile (Text, Rechte, Rhythmus)."""
+
+import sys
+import types
+from pathlib import Path
+
+
+def _mod(name, **attrs):
+    module = sys.modules.get(name) or types.ModuleType(name)
+    module.__dict__.update(attrs)
+    module.__path__ = []
+    sys.modules[name] = module
+    return module
+
+
+class _Store:
+    def __init__(self, *args):
+        self.saved = None
+
+    async def async_load(self):
+        return None
+
+    def async_delay_save(self, func, delay):
+        self.saved = func()
+
+
+if "homeassistant" not in sys.modules:
+    _mod("homeassistant")
+    _mod("homeassistant.core", HomeAssistant=object, callback=lambda f: f)
+    _mod("homeassistant.helpers")
+    _mod("homeassistant.helpers.storage", Store=_Store)
+    _mod("homeassistant.helpers.dispatcher", async_dispatcher_send=lambda *a: None)
+
+# Paket „smartlists“ direkt aus custom_components laden, ohne dessen __init__ (braucht echtes HA)
+_pkg = _mod("smartlists")
+_pkg.__path__ = [str(Path(__file__).resolve().parent.parent / "custom_components" / "smartlists")]

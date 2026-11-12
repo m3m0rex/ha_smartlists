@@ -8,6 +8,7 @@ and use a shopping mode – in a Lovelace card, on its own sidebar page and in t
 
 - [[Installation]]
 - [[Setup]] – combined lists and household settings
+- [[Own lists and sharing]] – lists with owner and per-person rights
 - [[Card]] – `custom:smartlists-card`, all options and presets
 - [[Sidebar page]]
 - [[Item text and naming convention]] – quantities, `@store`, `*person`, `#tag`, offers

@@ -3,6 +3,7 @@
 - [[Home]]
 - [[Installation]]
 - [[Setup]]
+- [[Own lists and sharing]]
 - [[Card]]
 - [[Sidebar page]]
 - [[Item text and naming convention]]

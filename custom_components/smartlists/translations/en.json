@@ -80,6 +80,39 @@
       "abort": {
         "reconfigure_successful": "Saved."
       }
+    },
+    "own_list": {
+      "initiate_flow": {
+        "user": "Add own list"
+      },
+      "entry_type": "Own list",
+      "step": {
+        "user": {
+          "title": "Own list",
+          "description": "A list stored by SmartLists itself. The owner and admins may do everything; edit = add/change/delete items, check = check off only, view = view only. Note: Home Assistant's built-in to-do view shows every list to everyone – it is hidden in the SmartLists card, page and app.",
+          "data": {
+            "name": "Name",
+            "owner": "Owner",
+            "editors": "May edit",
+            "checkers": "May check off",
+            "viewers": "May only view"
+          }
+        },
+        "reconfigure": {
+          "title": "Edit own list",
+          "description": "A list stored by SmartLists itself. The owner and admins may do everything; edit = add/change/delete items, check = check off only, view = view only. Note: Home Assistant's built-in to-do view shows every list to everyone – it is hidden in the SmartLists card, page and app.",
+          "data": {
+            "name": "Name",
+            "owner": "Owner",
+            "editors": "May edit",
+            "checkers": "May check off",
+            "viewers": "May only view"
+          }
+        }
+      },
+      "abort": {
+        "reconfigure_successful": "Saved."
+      }
     }
   },
   "options": {
@@ -215,6 +248,9 @@
     },
     "foreign_list": {
       "message": "Items from foreign lists can only be checked off."
+    },
+    "not_permitted": {
+      "message": "You are not allowed to do this on “{list}”."
     }
   },
   "entity": {

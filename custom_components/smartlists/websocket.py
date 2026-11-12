@@ -31,6 +31,7 @@ def async_register(hass: HomeAssistant) -> None:
     for handler in (ws_info, ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
                     ws_user_settings, ws_set_user_settings,
                     ws_register_device, ws_devices, ws_remove_device,
+                    ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_shopping, ws_due, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -180,7 +181,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "version": str(integration.version),
             "api_version": API_VERSION,
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
-                         "shopping_event", "due_items", "export"],
+                         "shopping_event", "due_items", "export", "own_lists"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -198,6 +199,8 @@ def _list_command(schema: dict[Any, Any]):
         @websocket_api.async_response
         async def handler(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
             try:
+                # Benutzer für Freigaben eigener Listen (get_list/lists); Änderungen prüft die Entität selbst
+                msg = {**msg, "_user": connection.user}
                 result = await func(hass, msg, connection.context(msg))
             except lists.ListError as err:
                 connection.send_error(msg["id"], "smartlists_error", str(err))
@@ -216,12 +219,12 @@ def _list_command(schema: dict[Any, Any]):
 @_list_command({vol.Required("type"): "smartlists/get_list", vol.Required("entity_id"): str})
 async def ws_get_list(hass, msg, context):
     """Liste mit zerlegten Artikeln (Name, Menge, Einheit, Tags, Kategorie) und Rechten."""
-    return await lists.get_list(hass, msg["entity_id"])
+    return await lists.get_list(hass, msg["entity_id"], msg["_user"])
 
 
 @_list_command({vol.Required("type"): "smartlists/lists"})
 async def ws_lists(hass, msg, context):
-    return {"lists": await lists.all_lists(hass)}
+    return {"lists": await lists.all_lists(hass, msg["_user"])}
 
 
 @_list_command(
@@ -393,3 +396,95 @@ def ws_set_automation(hass: HomeAssistant, connection: websocket_api.ActiveConne
     allowed = {"voice_default_list", "auto_due_list"}
     _learning(hass).set_automation({k: v for k, v in msg["settings"].items() if k in allowed})
     connection.send_result(msg["id"], {"settings": _learning(hass).automation})
+
+
+# ----------------------------------------------------------------------
+# Eigene Listen mit Besitzer und Freigaben (own.py)
+# ----------------------------------------------------------------------
+def _main_entry(hass: HomeAssistant):
+    entries = hass.config_entries.async_entries(DOMAIN)
+    return entries[0] if entries else None
+
+
+def _own_subentry(hass: HomeAssistant, entity_id: str):
+    entity = lists.own_entity(hass, entity_id)
+    entry = _main_entry(hass)
+    if entity is None or entry is None:
+        return None, None, None
+    return entity, entry, entry.subentries.get(entity.subentry.subentry_id)
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/users"})
+@websocket_api.async_response
+async def ws_users(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Personen des Haushalts für die Freigabe-Auswahl (keine System-Benutzer)."""
+    from .own import async_household_users
+
+    connection.send_result(msg["id"], {"users": await async_household_users(hass), "me": connection.user.id})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/create_list", vol.Required("name"): vol.All(str, vol.Length(min=1, max=60))})
+@callback
+def ws_create_list(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Neue eigene Liste; Besitzer ist, wer sie anlegt."""
+    from types import MappingProxyType
+
+    from homeassistant.config_entries import ConfigSubentry
+
+    from .const import SUBENTRY_OWN
+
+    entry = _main_entry(hass)
+    if entry is None:
+        connection.send_error(msg["id"], "not_setup", "SmartLists ist nicht eingerichtet.")
+        return
+    sub = ConfigSubentry(data=MappingProxyType({"owner": connection.user.id, "shares": {}}),
+                         subentry_type=SUBENTRY_OWN, title=msg["name"].strip(), unique_id=None)
+    hass.config_entries.async_add_subentry(entry, sub)
+    connection.send_result(msg["id"], {"subentry_id": sub.subentry_id})
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/share",
+        vol.Required("entity_id"): str,
+        vol.Required("user_id"): str,
+        vol.Required("role"): vol.Any(None, vol.In(["viewer", "checker", "editor"])),
+    }
+)
+@websocket_api.async_response
+async def ws_share(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Freigabe setzen (role) oder entfernen (role = null). Nur Besitzer und Admins."""
+    entity, entry, sub = _own_subentry(hass, msg["entity_id"])
+    if sub is None:
+        connection.send_error(msg["id"], "not_found", "Keine eigene SmartLists-Liste.")
+        return
+    if lists.own_role(hass, msg["entity_id"], connection.user) != "owner":
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur der Besitzer kann Freigaben ändern.")
+        return
+    if msg["user_id"] == sub.data.get("owner"):
+        connection.send_error(msg["id"], "invalid", "Der Besitzer hat schon alle Rechte.")
+        return
+    if await hass.auth.async_get_user(msg["user_id"]) is None:
+        connection.send_error(msg["id"], "invalid", "Unbekannter Benutzer.")
+        return
+    shares = dict(sub.data.get("shares") or {})
+    if msg["role"] is None:
+        shares.pop(msg["user_id"], None)
+    else:
+        shares[msg["user_id"]] = msg["role"]
+    hass.config_entries.async_update_subentry(entry, sub, data={**sub.data, "shares": shares})
+    connection.send_result(msg["id"], {"shares": shares})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_list", vol.Required("entity_id"): str})
+@callback
+def ws_delete_list(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    entity, entry, sub = _own_subentry(hass, msg["entity_id"])
+    if sub is None:
+        connection.send_error(msg["id"], "not_found", "Keine eigene SmartLists-Liste.")
+        return
+    if lists.own_role(hass, msg["entity_id"], connection.user) != "owner":
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur der Besitzer kann die Liste löschen.")
+        return
+    hass.config_entries.async_remove_subentry(entry, sub.subentry_id)
+    connection.send_result(msg["id"], {})

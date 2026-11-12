@@ -90,15 +90,11 @@ layout: columns
 
 *⚙ → Household → Stores & zones* (admins) lists the stores you use (`@REWE`, `@Lidl`, …) and the known
 chains. Each store can have **several zones** (one per branch – REWE Nord, REWE Süd, …): pick existing
-Home Assistant zones via *＋ Zone* (× unlinks one) or choose *＋ New zone …*: SmartLists creates a
-zone at this device's current location (or at home if location is not available) with a radius of
-100 m – fine-tune it under *Settings → Areas & zones*. *＋ Store with zone* adds a new store right away.
-Your person must be tracked (companion app) for the automatic selection.
-- **Gear menu** with three tabs: *For me* (your controls, optionally only on this device),
-  *Household* (admins: naming convention, remembered categories, voice & automations, connected
-  devices, backup, controls for everyone) and *This list* (sharing for own lists, details).
-- **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
-- Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
+Home Assistant zones via *＋ Zone* (× unlinks one) or choose *＋ New zone …*: a dialog asks for the name, **where** (current location of this device,
+home, pick on the map – if Home Assistant's map editor is available – or coordinates / a link from
+Google Maps, Apple Maps or OpenStreetMap) and the radius. Fine-tune zones under *Settings → Areas & zones*.
+*＋ Store with zone* adds a new store right away. Your person must be tracked (companion app) for the
+automatic selection.
 
 ## Styling
 

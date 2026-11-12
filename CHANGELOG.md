@@ -3,6 +3,19 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.5.1] – 2026-11-12
+
+### Changed
+
+- **New zone** now asks where to create it: current location, home, pick on the map (Home Assistant's map
+  editor, if loaded) or coordinates / a Google Maps, Apple Maps or OpenStreetMap link – plus the radius.
+  Previously it always used the current location.
+
+### Fixed
+
+- Stores & zones: the store column no longer gets squeezed ("2 Zonen" one letter per line) when a store
+  has several zones; zones wrap below.
+
 ## [2.5.0] – 2026-11-12
 
 ### Added

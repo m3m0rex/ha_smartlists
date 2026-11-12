@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.0.0";
+const CARD_VERSION = "2.1.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -93,6 +93,21 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
+    tab_me: "Für mich", tab_house: "Haushalt", tab_list: "Diese Liste", ui_me_help: "Gilt für dich. Abweichungen vom Haushalts-Standard sind mit • markiert.",
+    ui_house: "Bedienung – Standard für alle", reset_default: "Auf Standard zurücksetzen", about_list: "Über diese Liste", type: "Typ", entity: "Entität", sources: "Quellen",
+    type_combined: "Kombinierte Liste", type_own: "Eigene SmartLists-Liste", type_list: "To-do-Liste aus Home Assistant", char: "Zeichen", kind: "Art",
+    no_hits_short: "Nichts gefunden.", by_hand: "von Hand", search_learned: "Suchen … (z. B. milch)",
+    automation: "Sprache & Automationen", automation_help: "Assist und fällige Artikel. Blueprints für „Bin im Laden“ und Markt-Erinnerung: siehe Wiki.",
+    auto_voice_default_list: "Standard-Liste für Assist", auto_voice_help: "Wenn man im Satz keine Liste nennt.",
+    auto_auto_due_list: "Fällige Artikel automatisch auf", auto_due_help: "Stündlich, nach eurem Kaufrhythmus. „—“ = aus.",
+    install_sentences: "Assist-Sätze installieren", sentences_installed: "installiert",
+    devices: "Verbundene Geräte", devices_help: "Handys mit der HA-SmartLists-App. ⚠️ = über 7 Tage nicht abgeglichen. Zugang sperren: Token im Profil löschen.",
+    no_devices: "Noch kein Handy verbunden.", remove_device: "Aus der Liste nehmen", last_seen: "zuletzt",
+    role_all: "alle Rechte", admin_always: "Admin – darf immer alles", shop_large_help: "Leichter mit dem Daumen zu treffen",
+    new_list_help: "Du bist Besitzer und kannst sie danach für andere freigeben.", new_list_placeholder: "z. B. Drogerie", create: "Anlegen",
+    p_columns: "Mehrere Listen nebeneinander", p_wide: "Breite Ansicht", p_settings: "Einstellungen", p_back: "Zurück zu den Listen",
+    p_hint: "Bis zu 3 Listen antippen. Artikel mit der Maus in eine andere Liste ziehen = verschieben (Strg = kopieren).",
+    p_empty: "Keine To-do-Listen gefunden. Lege unter Einstellungen → Geräte & Dienste → SmartLists eine Liste an – oder oben mit +.",
     owner: "Besitzer", shared: "geteilt", private: "privat", admin: "Admin", sharing: "Freigaben",
     sharing_help: "Wer diese Liste sehen und ändern darf. Admins dürfen immer alles. Die To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie nur in SmartLists (Karte, Seite, App).",
     role_none: "kein Zugriff", role_viewer: "sehen", role_checker: "abhaken", role_editor: "bearbeiten", role_owner: "Besitzer",
@@ -118,9 +133,9 @@ const TEXTS = {
     scope_help_household: "Gilt für jeden, der nichts Eigenes eingestellt hat.",
     scope_help_user: "Nur deine Abweichungen vom Standard werden gespeichert (markiert mit •). „Zurücksetzen“ = wieder Standard.",
     scope_help_device: "Gilt nur in diesem Browser bzw. auf diesem Handy. „Zurücksetzen“ = wieder deine Einstellung.",
-    press_gesture: "Geste", g_long: "Lange drücken", g_double: "Doppelklick", g_right: "Rechtsklick", g_off: "Aus",
-    press_target: "Wo", t_row: "Ganze Zeile", t_name: "Nur auf den Namen",
-    press_result: "Was passiert", r_menu: "Menü öffnen", r_edit: "Direkt bearbeiten", r_delete: "Löschen (mit Nachfrage)",
+    press_gesture: "Geste für das Artikel-Menü", g_long: "Lange drücken", g_double: "Doppelklick", g_right: "Rechtsklick", g_off: "Aus",
+    press_target: "Wo die Geste greift", t_row: "Ganze Zeile", t_name: "Nur auf den Namen",
+    press_result: "Was die Geste macht", r_menu: "Menü öffnen", r_edit: "Direkt bearbeiten", r_delete: "Löschen (mit Nachfrage)",
     menu_actions: "Einträge im Menü", row_buttons: "Stift und Papierkorb in der Zeile zeigen",
     shop: "Einkaufsmodus", shop_hide_checked: "Abgehakte ausblenden", shop_keep_awake: "Bildschirm anlassen",
     shop_large: "Große Zeilen", shop_tap_row: "Ganze Zeile antippen zum Abhaken", reset: "Zurücksetzen",
@@ -139,6 +154,21 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
+    tab_me: "For me", tab_house: "Household", tab_list: "This list", ui_me_help: "Applies to you. Differences from the household default are marked •.",
+    ui_house: "Controls – default for everyone", reset_default: "Reset to default", about_list: "About this list", type: "Type", entity: "Entity", sources: "Sources",
+    type_combined: "Combined list", type_own: "Own SmartLists list", type_list: "Home Assistant to-do list", char: "Character", kind: "Kind",
+    no_hits_short: "Nothing found.", by_hand: "by hand", search_learned: "Search … (e.g. milk)",
+    automation: "Voice & automations", automation_help: "Assist and due items. Blueprints for “I'm at the store” and store reminders: see the wiki.",
+    auto_voice_default_list: "Default list for Assist", auto_voice_help: "Used when a sentence names no list.",
+    auto_auto_due_list: "Automatically add due items to", auto_due_help: "Hourly, by your buying rhythm. “—” = off.",
+    install_sentences: "Install Assist sentences", sentences_installed: "installed",
+    devices: "Connected devices", devices_help: "Phones with the HA SmartLists app. ⚠️ = not synced for 7+ days. To revoke access, delete the token in the profile.",
+    no_devices: "No phone connected yet.", remove_device: "Remove from list", last_seen: "last seen",
+    role_all: "all rights", admin_always: "Admin – can always do everything", shop_large_help: "Easier to hit with your thumb",
+    new_list_help: "You are the owner and can share it with others afterwards.", new_list_placeholder: "e.g. Drugstore", create: "Create",
+    p_columns: "Several lists side by side", p_wide: "Wide layout", p_settings: "Settings", p_back: "Back to the lists",
+    p_hint: "Tap up to 3 lists. Drag items with the mouse into another list to move them (Ctrl = copy).",
+    p_empty: "No to-do lists found. Add one under Settings → Devices & services → SmartLists – or with + above.",
     owner: "owner", shared: "shared", private: "private", admin: "admin", sharing: "Sharing",
     sharing_help: "Who may see and change this list. Admins can always do everything. HA's to-do view shows every list to everyone – it is hidden only in SmartLists (card, page, app).",
     role_none: "no access", role_viewer: "view", role_checker: "check off", role_editor: "edit", role_owner: "owner",
@@ -164,9 +194,9 @@ const TEXTS = {
     scope_help_household: "Applies to everyone who hasn't set their own.",
     scope_help_user: "Only your differences from the default are saved (marked •). “Reset” = back to default.",
     scope_help_device: "Applies to this browser or phone only. “Reset” = back to your setting.",
-    press_gesture: "Gesture", g_long: "Long press", g_double: "Double click", g_right: "Right click", g_off: "Off",
-    press_target: "Where", t_row: "Whole row", t_name: "Name only",
-    press_result: "Action", r_menu: "Open menu", r_edit: "Edit directly", r_delete: "Delete (with confirmation)",
+    press_gesture: "Gesture for the item menu", g_long: "Long press", g_double: "Double click", g_right: "Right click", g_off: "Off",
+    press_target: "Where the gesture works", t_row: "Whole row", t_name: "Name only",
+    press_result: "What the gesture does", r_menu: "Open menu", r_edit: "Edit directly", r_delete: "Delete (with confirmation)",
     menu_actions: "Menu entries", row_buttons: "Show pencil and bin in the row",
     shop: "Shopping mode", shop_hide_checked: "Hide checked items", shop_keep_awake: "Keep screen on",
     shop_large: "Large rows", shop_tap_row: "Tap whole row to check", reset: "Reset",
@@ -264,6 +294,46 @@ function parseImportText(text) {
   }
   return out;
 }
+/* Eigener Dialog statt Browser-confirm/prompt – im Stil von HA, Hell/Dunkel über Theme-Variablen.
+ * slDialog(root, {title, text, input, value, placeholder, ok, cancel, danger}) → Promise<string|true|null> */
+const DIALOG_STYLE = `
+  .dlg-back { position:fixed; inset:0; z-index:999; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; padding:16px;
+    animation:dlgfade .12s ease-out; }
+  .dlg { width:100%; max-width:380px; background:var(--card-background-color,#fff); color:var(--primary-text-color,#212121);
+    border-radius:16px; box-shadow:0 12px 40px rgba(0,0,0,.4); padding:20px 20px 14px; font-family:inherit; }
+  .dlg h2 { margin:0 0 6px; font-size:1.1rem; font-weight:600; }
+  .dlg p { margin:0 0 14px; color:var(--secondary-text-color,#727272); font-size:.9rem; line-height:1.4; }
+  .dlg input { width:100%; box-sizing:border-box; height:42px; border-radius:10px; border:1px solid var(--divider-color,#ccc);
+    background:var(--secondary-background-color,#f2f2f2); color:inherit; font:inherit; padding:0 12px; margin:0 0 14px; }
+  .dlg input:focus { outline:2px solid var(--primary-color,#03a9f4); outline-offset:-1px; border-color:transparent; }
+  .dlg .row { display:flex; justify-content:flex-end; gap:8px; }
+  .dlg button { height:38px; padding:0 16px; border-radius:19px; font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--divider-color,#ccc);
+    background:none; color:var(--primary-color,#03a9f4); }
+  .dlg button.ok { background:var(--primary-color,#03a9f4); border-color:var(--primary-color,#03a9f4); color:var(--text-primary-color,#fff); }
+  .dlg button.ok.danger { background:var(--error-color,#db4437); border-color:var(--error-color,#db4437); }
+  .dlg button:disabled { opacity:.5; cursor:default; }
+  @keyframes dlgfade { from { opacity:0; } to { opacity:1; } }
+`;
+function slDialog(root, opts) {
+  return new Promise((resolve) => {
+    const input = opts.input ? h("input", { value: opts.value || "", placeholder: opts.placeholder || "", "aria-label": opts.title, maxlength: "60" }) : null;
+    const ok = h("button", { type: "button", class: `ok ${opts.danger ? "danger" : ""}` }, opts.ok);
+    const close = (v) => { back.remove(); document.removeEventListener("keydown", onKey, true); resolve(v); };
+    const submit = () => { if (input) { const v = input.value.trim(); if (v) close(v); } else close(true); };
+    const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); close(null); } else if (e.key === "Enter") { e.preventDefault(); submit(); } };
+    ok.addEventListener("click", submit);
+    if (input) { const upd = () => { ok.disabled = !input.value.trim(); }; input.addEventListener("input", upd); upd(); }
+    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) close(null); } },
+      h("style", {}, DIALOG_STYLE),
+      h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": opts.title },
+        h("h2", {}, opts.title), opts.text ? h("p", {}, opts.text) : null, input,
+        h("div", { class: "row" }, h("button", { type: "button", onclick: () => close(null) }, opts.cancel), ok)));
+    document.addEventListener("keydown", onKey, true);
+    root.append(back);
+    setTimeout(() => (input || ok).focus(), 30);
+  });
+}
+
 // Gerade gezogener Artikel (Ziehen & Ablegen zwischen Karten im selben Fenster)
 let SL_DRAG = null;
 
@@ -562,6 +632,60 @@ const STYLE = `
   .mini .mt { font-weight:600; flex:1; min-width:0; }
   .mini .ms { font-size:.82rem; color:var(--secondary-text-color); display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
   .mini .mcount { font-size:1.6rem; font-weight:700; color:var(--sl-accent); }
+
+  /* Zahnrad-Menü */
+  .sl-settings { padding:12px 14px 14px; display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--divider-color,#e0e0e0);
+    background:color-mix(in srgb, var(--secondary-background-color,#f2f2f2) 40%, var(--card-background-color,#fff)); }
+  .tabs2 { display:flex; background:var(--secondary-background-color,#eee); border-radius:10px; padding:3px; gap:3px; }
+  .tabs2 button { flex:1; border:none; background:none; color:var(--secondary-text-color); font:inherit; font-weight:500; padding:7px 6px; border-radius:8px; cursor:pointer; }
+  .tabs2 button.on { background:var(--card-background-color,#fff); color:var(--primary-text-color); box-shadow:0 1px 2px rgba(0,0,0,.25); }
+  .tabs2 .tag { font-size:.66rem; margin-left:4px; padding:1px 5px; border-radius:6px; background:var(--divider-color,#ddd); color:var(--secondary-text-color); }
+  .sec { background:var(--card-background-color,#fff); border:1px solid var(--divider-color,#e0e0e0); border-radius:12px; overflow:hidden; }
+  .sh { display:flex; align-items:center; gap:10px; padding:12px 14px 4px; }
+  .sh .ic { width:28px; height:28px; border-radius:8px; display:grid; place-items:center; flex:none; font-size:.95rem;
+    background:color-mix(in srgb, var(--sl-accent) 16%, transparent); color:var(--sl-accent); font-weight:700; }
+  .sh h3 { margin:0; font-size:.95rem; font-weight:600; flex:1; min-width:0; }
+  .sh .cnt { font-size:.75rem; color:var(--secondary-text-color); white-space:nowrap; }
+  .shelp { margin:0; padding:0 14px 10px 52px; color:var(--secondary-text-color); font-size:.8rem; }
+  .sbody { padding:0 14px 14px; }
+  .srow2 { display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid var(--divider-color,#e0e0e0); }
+  .sbody > .srow2:first-child, .chips + .srow2, .grp + .srow2 { border-top:none; }
+  .srow2 .sl { flex:1; min-width:0; }
+  .srow2 .sl small { display:block; color:var(--secondary-text-color); font-size:.76rem; overflow-wrap:anywhere; }
+  .srow2 select { width:180px; flex:none; height:36px; padding:0 10px; }
+  .srow2 .val { color:var(--secondary-text-color); font-size:.85rem; text-align:right; overflow-wrap:anywhere; }
+  .grp { font-size:.72rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--secondary-text-color); margin:12px 0 4px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip2 { border:1px solid var(--divider-color,#ddd); background:none; color:var(--primary-text-color); border-radius:16px; padding:6px 12px; font:inherit; font-size:.85rem; cursor:pointer; }
+  .chip2.on { background:color-mix(in srgb, var(--sl-accent) 18%, transparent); border-color:var(--sl-accent); color:var(--sl-accent); font-weight:600; }
+  .switch { position:relative; width:38px; height:22px; flex:none; display:inline-block; }
+  .switch input { opacity:0; width:0; height:0; position:absolute; }
+  .switch span { position:absolute; inset:0; border-radius:11px; background:var(--divider-color,#ccc); transition:.15s; cursor:pointer; }
+  .switch span::after { content:""; position:absolute; width:16px; height:16px; left:3px; top:3px; border-radius:50%; background:#bdbdbd; transition:.15s; }
+  .switch input:checked + span { background:color-mix(in srgb, var(--sl-accent) 55%, transparent); }
+  .switch input:checked + span::after { left:19px; background:var(--sl-accent); }
+  .switch input:focus-visible + span { outline:2px solid var(--sl-accent); outline-offset:2px; }
+  .rule2 { display:grid; grid-template-columns:44px 1fr 32px; gap:8px; align-items:center; margin-bottom:8px; }
+  .rule2 .char { height:40px; text-align:center; font:700 1.1rem/1 ui-monospace, monospace; padding:0; }
+  .rule2 select { height:40px; width:100%; }
+  .preview2 { padding:10px 12px; border-radius:10px; background:var(--secondary-background-color,#f2f2f2); display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:.85rem; }
+  .preview2 code { color:var(--secondary-text-color); font-size:.8rem; }
+  .preview2 .arrow { color:var(--secondary-text-color); }
+  .acts { display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .ok2 { margin-right:auto; color:var(--success-color,#43a047); font-size:.8rem; }
+  .btn2 { height:36px; padding:0 14px; border-radius:18px; font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--divider-color,#ddd); background:none; color:var(--sl-accent); }
+  .btn2.primary { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
+  .btn2.danger { color:var(--error-color,#db4437); }
+  .search2 { width:100%; height:40px; }
+  .learned2 { max-height:236px; overflow:auto; margin-top:8px; border:1px solid var(--divider-color,#e0e0e0); border-radius:10px; }
+  .lrow2 { display:grid; grid-template-columns:minmax(0,1fr) auto 30px; align-items:center; gap:8px; padding:4px 4px 4px 12px; border-bottom:1px solid var(--divider-color,#e0e0e0); }
+  .lrow2:last-child { border-bottom:none; }
+  .lrow2:nth-child(odd) { background:color-mix(in srgb, var(--secondary-background-color,#f2f2f2) 45%, transparent); }
+  .lrow2 .w { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lrow2 .cat { font-size:.78rem; padding:3px 9px; border-radius:12px; background:var(--secondary-background-color,#eee); border:1px solid var(--divider-color,#ddd); white-space:nowrap; }
+  .manual { font-size:.68rem; color:var(--sl-accent); margin-left:6px; }
+  .foot2 { display:flex; justify-content:space-between; padding:0 4px; font-size:.75rem; color:var(--secondary-text-color); }
+  .foot2 a { color:var(--sl-accent); text-decoration:none; }
 `;
 
 class SmartListsCard extends HTMLElement {
@@ -694,8 +818,13 @@ class SmartListsCard extends HTMLElement {
     try { await u.run(); this._error = null; } catch (e) { this._error = (e && e.message) || this._t.error; }
     await this._load();
   }
-  _deleteItems(items, label) {
-    if (!items.length || !confirm(items.length > 1 ? this._t.confirm_clear : this._t.confirm_delete)) return;
+  async _deleteItems(items, label) {
+    if (!items.length) return;
+    const t = this._t;
+    const many = items.length > 1;
+    const yes = await slDialog(this.shadowRoot, { title: many ? t.clear : t.delete, danger: true, ok: t.delete, cancel: t.cancel,
+      text: many ? `${t.confirm_clear} (${items.length})` : `„${items[0].name}“ – ${t.confirm_delete}` });
+    if (!yes) return;
     return this._change(label || `${items[0].name} ${this._t.deleted}`, "remove_items", { uids: items.map((i) => i.uid) },
       () => async () => { for (const i of items) await this._call("add_item", { text: i.text, note: i.note || "", checked: i.checked }); });
   }
@@ -784,6 +913,14 @@ class SmartListsCard extends HTMLElement {
     fill(this._progressEl, this._shopping ? h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct),
       "aria-valuemin": "0", "aria-valuemax": "100" }, h("div", { style: `width:${pct}%` })) : "");
     this._headEl.hidden = !this._config.show_header;
+    if (this._config.settings_only) {
+      // Seitenleiste → Einstellungen: nur das Menü, ohne Liste und Kopfzeile
+      this._showSettings = true;
+      [this._headEl, this._searchEl, this._filterEl, this._progressEl, this._addEl, this._freqEl, this._listEl].forEach((e) => { e.hidden = true; });
+      if (!this._settingsRendered && this._cfg) { this._settingsRendered = true; this._renderSettings(); }
+      fill(this._msgEl, this._error ? h("div", { class: "msg err" }, this._error) : "");
+      return;
+    }
     // Mini-Ansicht: nur eine Zusammenfassung, Antippen klappt die Liste auf
     const mini = this._config.view === "mini" && !this._miniOpen;
     [this._searchEl, this._filterEl, this._progressEl, this._addEl, this._freqEl].forEach((e) => { e.hidden = mini; });
@@ -1014,8 +1151,8 @@ class SmartListsCard extends HTMLElement {
     if (this._data) this._renderList();
     if (this._showSettings) this._renderSettings();
   }
-  async _saveUi(patch) {
-    const scope = this._uiScope;
+  async _saveUi(patch, scopeOverride) {
+    const scope = scopeOverride || this._uiScope;
     if (scope === "device") {
       try { localStorage.setItem(UI_KEY, JSON.stringify({ ...this._deviceUi(), ...patch })); } catch (e) { /* */ }
     } else {
@@ -1046,8 +1183,8 @@ class SmartListsCard extends HTMLElement {
     this._renderSettings();
     this._renderList();
   }
-  async _resetUi() {
-    const scope = this._uiScope;
+  async _resetUi(scopeOverride) {
+    const scope = scopeOverride || this._uiScope;
     if (scope === "device") { this._setScope("user"); return; }
     try {
       const r = await this._call("set_user_settings", { settings: {}, scope }, false);
@@ -1753,40 +1890,215 @@ class SmartListsCard extends HTMLElement {
     this._showSnack(this._undo.label, () => this._runUndo());
   }
 
-  /* ---------------- Einstellungen ---------------- */
+  /* ---------------- Einstellungen (Zahnrad) ----------------
+   * Reiter: „Für mich“ (persönliche Bedienung), „Haushalt“ (Admins: Namenskonvention, Kategorien,
+   * Sprache & Automationen, Geräte, Sichern, Bedienung für alle), „Diese Liste“ (Freigaben, Infos).
+   * Alle Texte in TEXTS (de/en). */
+  _sec(icon, title, help, body, count) {
+    return h("div", { class: "sec" },
+      h("div", { class: "sh" }, h("span", { class: "ic" }, icon), h("h3", {}, title), count != null ? h("span", { class: "cnt" }, String(count)) : null),
+      help ? h("p", { class: "shelp" }, help) : null,
+      h("div", { class: "sbody" }, body));
+  }
+  _switch(checked, onchange, label) {
+    return h("label", { class: "switch", title: label }, h("input", { type: "checkbox", checked: !!checked, "aria-label": label, onchange: (e) => onchange(e.target.checked) }), h("span"));
+  }
+  _setRow(label, control, sub, mark) {
+    return h("div", { class: "srow2" }, h("div", { class: "sl" }, label, mark ? h("span", { class: "own" }, " •") : null, sub ? h("small", {}, sub) : null), control);
+  }
+
+  // Bedienung für eine Ebene: user/device (Für mich) oder household (Standard für alle)
+  _controls(scope) {
+    const t = this._t;
+    const ui = this._scopeValues(scope);
+    const house = this._scopeValues("household");
+    const differs = (key) => scope !== "household" && JSON.stringify(ui[key]) !== JSON.stringify(house[key]);
+    const save = (patch) => this._saveUi(patch, scope);
+    const sel = (key, opts) => h("select", { "aria-label": t[key], onchange: (e) => save({ [key]: e.target.value }) },
+      opts.map(([v, l]) => h("option", { value: v, selected: ui[key] === v }, t[l])));
+    const sw = (key, sub) => this._setRow(t[key], this._switch(ui[key], (v) => save({ [key]: v }), t[key]), sub, differs(key));
+    const actions = ui.menu_actions || MENU_ACTIONS;
+    return [
+      this._setRow(t.press_gesture, sel("press_gesture", [["long", "g_long"], ["double", "g_double"], ["right", "g_right"], ["off", "g_off"]]), null, differs("press_gesture")),
+      this._setRow(t.press_result, sel("press_result", [["menu", "r_menu"], ["edit", "r_edit"], ["delete", "r_delete"]]), null, differs("press_result")),
+      this._setRow(t.press_target, sel("press_target", [["row", "t_row"], ["name", "t_name"]]), null, differs("press_target")),
+      h("div", { class: "grp" }, t.menu_actions),
+      h("div", { class: "chips" }, MENU_ACTIONS.map((a) => h("button", { type: "button", class: `chip2 ${actions.includes(a) ? "on" : ""}`, "aria-pressed": String(actions.includes(a)),
+        onclick: () => save({ menu_actions: MENU_ACTIONS.filter((x) => (x === a ? !actions.includes(a) : actions.includes(x))) }) }, t["m_" + a]))),
+      sw("row_buttons"),
+      h("div", { class: "grp" }, t.shop),
+      sw("shop_hide_checked"), sw("shop_keep_awake"), sw("shop_large", t.shop_large_help), sw("shop_tap_row"),
+    ];
+  }
+
+  _paneMe() {
+    const t = this._t;
+    const device = this._uiScope === "device";
+    const chip = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, onclick: fn }, label);
+    return this._sec("✋", t.ui, t.ui_me_help, [
+      h("div", { class: "chips", style: "margin-bottom:6px" },
+        chip(!device, t.scope_user, () => this._setScope("user")), chip(device, t.scope_device, () => this._setScope("device"))),
+      ...this._controls(device ? "device" : "user"),
+      h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi(device ? "device" : "user") }, t.reset_default)),
+    ]);
+  }
+
+  _paneHouse() {
+    const t = this._t;
+    if (!this._isAdmin) return h("p", { class: "shelp", style: "padding:8px 4px" }, t.admin_only);
+    return [this._namingSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
+      this._sec("✋", t.ui_house, t.scope_help_household, [...this._controls("household"),
+        h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi("household") }, t.reset))])];
+  }
+
+  _paneList() {
+    const t = this._t;
+    const d = this._data;
+    const out = [];
+    if (d && d.own && d.own.can_share) out.push(this._sharing());
+    const type = !d ? "?" : d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : t.type_list;
+    out.push(this._sec("ℹ️", t.about_list, null, [
+      this._setRow(t.type, h("span", { class: "val" }, type)),
+      this._setRow(t.entity, h("code", { class: "val" }, this._config.entity)),
+      d && d.own ? this._setRow(t.owner, h("span", { class: "val" }, d.own.owner || "?")) : null,
+      d && d.source_lists && d.source_lists.length ? this._setRow(t.sources, h("span", { class: "val" }, d.source_lists.join(", "))) : null,
+    ]));
+    return out;
+  }
+
+  _namingSection() {
+    const t = this._t;
+    const cfg = this._cfg;
+    let rules = cfg.tag_rules.map((r) => ({ ...r }));
+    const rulesEl = h("div");
+    const exampleEl = h("div", { class: "preview2" });
+    const status = h("span", { class: "ok2" });
+    const drawExample = () => {
+      const p = Object.fromEntries(rules.map((r) => [r.kind, r.prefix]));
+      const txt = ["Milch 2 l", p.store && `${p.store}REWE`, p.person && `${p.person}Anna`, p.tag && `${p.tag}bio`].filter(Boolean).join(" ");
+      const parsed = parseText(txt, rules.filter((r) => r.prefix), cfg.known_stores);
+      fill(exampleEl, h("code", {}, txt), h("span", { class: "arrow" }, "→"), h("b", {}, parsed.name),
+        h("span", { class: "qtycol" }, `${fmtQty(parsed.quantity)} ${parsed.unit}`), parsed.tags.map(badge));
+    };
+    const drawRules = () => fill(rulesEl, ...rules.map((r, i) => h("div", { class: "rule2" },
+      h("input", { class: "char", value: r.prefix, maxlength: "1", "aria-label": t.char, oninput: (e) => { r.prefix = e.target.value.trim(); drawExample(); } }),
+      h("select", { "aria-label": t.kind, onchange: (e) => { r.kind = e.target.value; drawExample(); } },
+        cfg.tag_kinds.map((k) => h("option", { value: k, selected: k === r.kind }, t["kind_" + k]))),
+      iconBtn(ICON.close, t.delete, () => { rules.splice(i, 1); drawRules(); drawExample(); }, "danger"))));
+    drawRules(); drawExample();
+    const save = async () => {
+      status.textContent = "";
+      try {
+        this._cfg = await this._call("set_tag_rules", { rules: rules.filter((r) => r.prefix) }, false);
+        status.textContent = "✓ " + t.saved;
+        await this._load();
+      } catch (e) { status.textContent = (e && e.message) || t.error; }
+    };
+    return this._sec("#", t.naming, t.naming_help, [rulesEl, exampleEl,
+      h("div", { class: "acts" }, status,
+        h("button", { class: "btn2", type: "button", onclick: () => {
+          const free = [...cfg.allowed_prefixes].find((c) => !rules.some((r) => r.prefix === c));
+          rules.push({ prefix: free || "", kind: "tag" }); drawRules(); drawExample(); } }, "+ " + t.add_rule),
+        h("button", { class: "btn2 primary", type: "button", onclick: save }, t.save))]);
+  }
+
+  _learnedSection() {
+    const t = this._t;
+    const listEl = h("div", { class: "learned2" }, h("div", { class: "shelp", style: "padding:10px" }, t.loading));
+    const count = h("span", { class: "cnt" });
+    let all = [];
+    let query = "";
+    const draw = () => {
+      const q = searchKey(query);
+      const rows = all.filter((l) => !q || searchKey(l.word + " " + l.label).includes(q));
+      count.textContent = String(all.length);
+      if (!rows.length) return fill(listEl, h("div", { class: "shelp", style: "padding:10px" }, all.length ? t.no_hits_short : t.none_learned));
+      fill(listEl, ...rows.map((l) => h("div", { class: "lrow2" },
+        h("span", { class: "w" }, l.word, l.manual ? h("span", { class: "manual" }, t.by_hand) : null),
+        h("span", { class: "cat" }, l.label),
+        iconBtn(ICON.close, t.forget, async () => { all = (await this._call("forget", { word: l.word }, false)).learned; draw(); }, "danger"))));
+    };
+    this._call("learned", {}, false).then((r) => { all = r.learned; draw(); }).catch(() => fill(listEl, t.error));
+    const sec = this._sec("🏷️", t.learned, t.learned_help, [
+      h("input", { type: "search", class: "search2", placeholder: t.search_learned, "aria-label": t.search_learned, oninput: (e) => { query = e.target.value; draw(); } }),
+      listEl]);
+    sec.querySelector && sec.querySelector(".sh") ? sec.querySelector(".sh").append(count) : sec.firstChild.append(count);
+    return sec;
+  }
+
+  _automationSection() {
+    const t = this._t;
+    const status = h("span", { class: "ok2" });
+    const lists = Object.keys(this._hass.states).filter((e) => e.startsWith("todo.")).sort()
+      .map((e) => [e, (this._hass.states[e].attributes || {}).friendly_name || e]);
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    this._call("automation", {}, false).then((r) => {
+      const cur = r.settings || {};
+      const pick = (key) => h("select", { "aria-label": t["auto_" + key], onchange: async (e) => {
+        try { await this._call("set_automation", { settings: { ...cur, [key]: e.target.value || null } }, false); cur[key] = e.target.value; status.textContent = "✓ " + t.saved; }
+        catch (err) { status.textContent = (err && err.message) || t.error; }
+      } }, h("option", { value: "" }, "—"), lists.map(([e, n]) => h("option", { value: e, selected: cur[key] === e }, n)));
+      fill(body,
+        this._setRow(t.auto_voice_default_list, pick("voice_default_list"), t.auto_voice_help),
+        this._setRow(t.auto_auto_due_list, pick("auto_due_list"), t.auto_due_help),
+        h("div", { class: "acts" }, status, h("button", { class: "btn2", type: "button", onclick: async () => {
+          try { const res = await this._call("install_sentences", {}, false); status.textContent = `✓ ${t.sentences_installed}: ${res.languages.join(", ")}`; }
+          catch (err) { status.textContent = (err && err.message) || t.error; }
+        } }, t.install_sentences)));
+    }).catch(() => fill(body, t.error));
+    return this._sec("🎙️", t.automation, t.automation_help, [body]);
+  }
+
+  _devicesSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const count = h("span", { class: "cnt" });
+    const fmt = (ts) => (ts ? new Date(ts * 1000).toLocaleString(this._hass.language || "de", { dateStyle: "short", timeStyle: "short" }) : "?");
+    const draw = (devices) => {
+      count.textContent = String(devices.length);
+      if (!devices.length) return fill(body, h("div", { class: "shelp", style: "padding:6px 0" }, t.no_devices));
+      fill(body, ...devices.map((dv) => this._setRow(`${dv.stale ? "⚠️ " : ""}${dv.name}`,
+        iconBtn(ICON.close, t.remove_device, async () => draw((await this._call("remove_device", { device_id: dv.device_id }, false)).devices), "danger"),
+        `${dv.user_name || "?"} · ${dv.model || ""} · App ${dv.app_version || "?"} · Android ${dv.os_version || "?"} · ${t.last_seen} ${fmt(dv.last_seen)}`)));
+    };
+    this._call("devices", {}, false).then((r) => draw(r.devices)).catch(() => fill(body, t.error));
+    const sec = this._sec("📱", t.devices, t.devices_help, [body]);
+    sec.firstChild.append(count);
+    return sec;
+  }
+
   // Freigaben einer eigenen Liste (nur Besitzer/Admins): pro Person keine / sehen / abhaken / bearbeiten
   _sharing() {
     const t = this._t;
     const own = this._data.own;
-    const box = h("div", { class: "help" }, t.loading);
-    const status = h("span", { class: "help" });
+    const box = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
     (async () => {
       let users = [];
       try { users = (await this._call("users", {}, false)).users; } catch (e) { fill(box, t.error); return; }
       const others = users.filter((u) => u.id !== own.owner_id);
-      if (!others.length) { fill(box, t.no_users); return; }
-      fill(box, ...others.map((u) => h("div", { class: "lrow" },
-        h("span", { class: "w" }, u.name, u.is_admin ? h("span", { class: "help" }, ` (${t.admin})`) : null),
-        h("select", { "aria-label": u.name, onchange: async (e) => {
-          try {
-            await this._call("share", { user_id: u.id, role: e.target.value || null });
-            status.textContent = "✓ " + t.saved;
-            await this._load();
-          } catch (err) { status.textContent = (err && err.message) || t.error; }
+      if (!others.length) { fill(box, h("div", { class: "shelp" }, t.no_users)); return; }
+      fill(box, ...others.map((u) => this._setRow(u.name, u.is_admin
+        ? h("span", { class: "val" }, t.role_all)
+        : h("select", { "aria-label": u.name, onchange: async (e) => {
+          try { await this._call("share", { user_id: u.id, role: e.target.value || null }); status.textContent = "✓ " + t.saved; await this._load(); }
+          catch (err) { status.textContent = (err && err.message) || t.error; }
         } }, [["", t.role_none], ["viewer", t.role_viewer], ["checker", t.role_checker], ["editor", t.role_editor]].map(([v, l]) =>
-          h("option", { value: v, selected: (own.shares[u.id] || "") === v }, l))))));
+          h("option", { value: v, selected: (own.shares[u.id] || "") === v }, l))), u.is_admin ? t.admin_always : null)));
     })();
-    const del = h("button", { class: "btn small", type: "button", style: "color:var(--error-color,#db4437)", onclick: async () => {
-      if (!confirm(t.confirm_delete_list)) return;
+    const del = h("button", { class: "btn2 danger", type: "button", onclick: async () => {
+      if (!(await slDialog(this.shadowRoot, { title: t.delete_list, text: t.confirm_delete_list, ok: t.delete, cancel: t.cancel, danger: true }))) return;
       try { await this._call("delete_list", {}); status.textContent = "✓"; } catch (err) { status.textContent = (err && err.message) || t.error; }
     } }, t.delete_list);
-    return h("div", {}, h("h3", {}, t.sharing), h("p", { class: "help" }, t.sharing_help), box, h("div", { class: "srow" }, status, del));
+    const sec = this._sec("👥", t.sharing, t.sharing_help, [box, h("div", { class: "acts" }, status, del)]);
+    sec.firstChild.append(h("span", { class: "cnt" }, `${t.owner}: ${own.owner || "?"}`));
+    return sec;
   }
 
   // Haushalts-Einstellungen sichern/übertragen: gemerkte Kategorien, Verlauf, Namenskonvention, Bedienung
   _exportImport() {
     const t = this._t;
-    const status = h("span", { class: "help" });
+    const status = h("span", { class: "ok2" });
     const file = h("input", { type: "file", accept: "application/json,.json", hidden: true, onchange: async (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
@@ -1801,116 +2113,33 @@ class SmartListsCard extends HTMLElement {
     const exp = async () => {
       try {
         const data = await this._call("export", { include_history: true }, false);
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
         a.download = `smartlists-${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         setTimeout(() => URL.revokeObjectURL(a.href), 2000);
         status.textContent = "✓";
       } catch (err) { status.textContent = (err && err.message) || t.error; }
     };
-    return h("div", {}, h("h3", {}, t.backup), h("p", { class: "help" }, t.backup_help),
-      h("div", { class: "srow" }, status,
-        h("button", { class: "btn small", type: "button", onclick: exp }, t.export),
-        h("button", { class: "btn small", type: "button", onclick: () => file.click() }, t.import), file));
-  }
-
-  _uiSettings() {
-    const t = this._t;
-    const scopeNow = this._uiScope;
-    const ui = this._scopeValues(scopeNow);
-    const house = this._scopeValues("household");
-    // Markierung, wo der Benutzer bzw. das Gerät vom Haushalts-Standard abweicht
-    const differs = (key) => scopeNow !== "household" && JSON.stringify(ui[key]) !== JSON.stringify(house[key]);
-    const sel = (key, opts) => h("select", { "aria-label": t[key], onchange: (e) => this._saveUi({ [key]: e.target.value }) },
-      opts.map(([v, l]) => h("option", { value: v, selected: ui[key] === v }, t[l])));
-    const check = (key) => h("label", {}, h("input", { type: "checkbox", checked: !!ui[key],
-      onchange: (e) => this._saveUi({ [key]: e.target.checked }) }), t[key], differs(key) ? h("span", { class: "own" }, "•") : null);
-    const actions = ui.menu_actions || MENU_ACTIONS;
-    const who = (this._hass.user && this._hass.user.name) || "";
-    const scope = (val, label) => h("label", {}, h("input", { type: "radio", name: `scope-${this._config.entity}`, checked: scopeNow === val,
-      onchange: () => this._setScope(val) }), label);
-    return h("div", {},
-      h("h3", {}, t.ui), h("p", { class: "help" }, t.ui_help),
-      h("div", { class: "inline-checks", style: "margin-bottom:8px" },
-        this._isAdmin ? scope("household", t.scope_household) : null,
-        scope("user", `${t.scope_user}${who ? " (" + who + ")" : ""}`), scope("device", t.scope_device)),
-      h("p", { class: "help" }, t["scope_help_" + scopeNow]),
-      h("div", { class: "uigrid" },
-        h("span", {}, t.press_gesture, differs("press_gesture") ? h("span", { class: "own" }, " •") : null), sel("press_gesture", [["long", "g_long"], ["double", "g_double"], ["right", "g_right"], ["off", "g_off"]]),
-        h("span", {}, t.press_target, differs("press_target") ? h("span", { class: "own" }, " •") : null), sel("press_target", [["row", "t_row"], ["name", "t_name"]]),
-        h("span", {}, t.press_result, differs("press_result") ? h("span", { class: "own" }, " •") : null), sel("press_result", [["menu", "r_menu"], ["edit", "r_edit"], ["delete", "r_delete"]])),
-      h("p", { class: "help", style: "margin:10px 0 4px" }, t.menu_actions),
-      h("div", { class: "inline-checks" }, MENU_ACTIONS.map((a) => h("label", {}, h("input", { type: "checkbox", checked: actions.includes(a),
-        onchange: (e) => this._saveUi({ menu_actions: MENU_ACTIONS.filter((x) => (x === a ? e.target.checked : actions.includes(x))) }) }), t["m_" + a]))),
-      h("div", { class: "checks" }, check("row_buttons")),
-      h("h3", {}, t.shop),
-      h("div", { class: "checks" }, check("shop_hide_checked"), check("shop_keep_awake"), check("shop_large"), check("shop_tap_row")),
-      h("div", { class: "srow" }, h("button", { class: "btn small", type: "button", onclick: () => this._resetUi() }, t.reset)));
+    return this._sec("💾", t.backup, t.backup_help, [h("div", { class: "acts", style: "margin-top:0" }, status,
+      h("button", { class: "btn2", type: "button", onclick: exp }, "⬇ " + t.export),
+      h("button", { class: "btn2", type: "button", onclick: () => file.click() }, "⬆ " + t.import), file)]);
   }
 
   async _renderSettings() {
     const el = this._settingsEl;
-    if (!this._showSettings || !this._cfg) return fill(el, );
+    if (!this._showSettings || !this._cfg) return fill(el);
     const t = this._t;
-    const cfg = this._cfg;
-    const admin = this._isAdmin;
-    const kinds = cfg.tag_kinds;
-    let rules = cfg.tag_rules.map((r) => ({ ...r }));
-    const rulesEl = h("div");
-    const exampleEl = h("div", { class: "example" });
-    const status = h("span");
-    const exampleText = () => {
-      const p = Object.fromEntries(rules.map((r) => [r.kind, r.prefix]));
-      return ["Milch 2 l", p.store && `${p.store}REWE`, p.person && `${p.person}Anna`, p.tag && `${p.tag}bio`].filter(Boolean).join(" ");
-    };
-    const drawExample = () => {
-      const txt = exampleText();
-      const parsed = parseText(txt, rules.filter((r) => r.prefix), cfg.known_stores);
-      fill(exampleEl, h("code", {}, txt), " → ", h("span", { class: "chip qty" }, `${fmtQty(parsed.quantity)} ${parsed.unit}`), parsed.name, parsed.tags.map(badge));
-    };
-    const drawRules = () => {
-      fill(rulesEl, ...rules.map((r, i) => h("div", { class: "rule" },
-        h("input", { value: r.prefix, maxlength: "1", disabled: !admin, "aria-label": "Zeichen",
-          oninput: (e) => { r.prefix = e.target.value.trim(); drawExample(); } }),
-        h("select", { disabled: !admin, onchange: (e) => { r.kind = e.target.value; drawExample(); } },
-          kinds.map((k) => h("option", { value: k, selected: k === r.kind }, t["kind_" + k]))),
-        admin ? iconBtn(ICON.close, t.delete, () => { rules.splice(i, 1); drawRules(); drawExample(); }, "danger") : null)));
-    };
-    drawRules();
-    drawExample();
-    const save = async () => {
-      fill(status, );
-      try {
-        this._cfg = await this._call("set_tag_rules", { rules: rules.filter((r) => r.prefix) }, false);
-        fill(status, h("span", { class: "ok" }, "✓ " + t.saved));
-        await this._load();
-      } catch (e) {
-        fill(status, h("span", { class: "msg err" }, (e && e.message) || t.error));
-      }
-    };
-    const learnedEl = h("div", { class: "learned" }, t.loading);
-    fill(el, h("div", { class: "settings" },
-      h("p", { class: "help", style: "margin-top:10px" }, `SmartLists ${this._version || "?"} · ${t.card_version} ${CARD_VERSION}`),
-      this._data && this._data.own && this._data.own.can_share ? this._sharing() : null,
-      h("h3", {}, t.naming), h("p", { class: "help" }, t.naming_help, admin ? "" : " " + t.admin_only),
-      rulesEl, exampleEl,
-      admin ? h("div", { class: "srow" }, status,
-        h("button", { class: "btn small", type: "button", onclick: () => {
-          const free = [...cfg.allowed_prefixes].find((c) => !rules.some((r) => r.prefix === c));
-          rules.push({ prefix: free || "", kind: "tag" }); drawRules(); drawExample(); } }, "+ " + t.add_rule),
-        h("button", { class: "btn small primary", type: "button", onclick: save }, t.save)) : null,
-      h("h3", {}, t.learned), h("p", { class: "help" }, t.learned_help), learnedEl,
-      admin ? this._exportImport() : null,
-      this._uiSettings()));
-    const drawLearned = (list) => {
-      if (!list.length) return fill(learnedEl, h("div", { class: "help" }, t.none_learned));
-      fill(learnedEl, ...list.map((l) => h("div", { class: "lrow" },
-        h("span", { class: "w" }, l.word), h("span", {}, l.label),
-        admin ? iconBtn(ICON.close, t.forget, async () => drawLearned((await this._call("forget", { word: l.word }, false)).learned)) : null)));
-    };
-    try { drawLearned((await this._call("learned", {}, false)).learned); } catch (e) { fill(learnedEl, t.error); }
+    const tab = this._setTab || "me";
+    const tabBtn = (id, label, extra) => h("button", { type: "button", role: "tab", class: tab === id ? "on" : "", "aria-selected": String(tab === id),
+      onclick: () => { this._setTab = id; this._renderSettings(); } }, label, extra);
+    const pane = tab === "house" ? this._paneHouse() : tab === "list" ? this._paneList() : this._paneMe();
+    fill(el, h("div", { class: "sl-settings" },
+      h("div", { class: "tabs2", role: "tablist" }, tabBtn("me", t.tab_me),
+        tabBtn("house", t.tab_house, h("span", { class: "tag" }, t.admin)), tabBtn("list", t.tab_list)),
+      pane,
+      h("div", { class: "foot2" }, h("span", {}, `SmartLists ${this._version || "?"} · ${t.card_version} ${CARD_VERSION}`),
+        h("a", { href: "https://github.com/m3m0rex/ha_smartlists_hacs/wiki", target: "_blank", rel: "noopener" }, "Wiki ↗"))));
   }
 }
 
@@ -2083,10 +2312,18 @@ class SmartListsPanel extends HTMLElement {
     this._hass.callWS({ type: "smartlists/lists" }).then((r) => { this._visible = new Set(r.lists.map((l) => l.entity_id)); this._render(); })
       .catch(() => { this._visible = null; });
   }
+  get _t() { return TEXTS[((this._hass && this._hass.language) || "de").slice(0, 2)] || TEXTS.en; }
   async _newList() {
-    const name = (prompt(TEXTS.de.new_list_prompt) || "").trim();
+    const t = this._t;
+    const name = await slDialog(this.shadowRoot, { title: t.new_list, text: t.new_list_help, input: true, placeholder: t.new_list_placeholder, ok: t.create, cancel: t.cancel });
     if (!name) return;
-    try { await this._hass.callWS({ type: "smartlists/create_list", name }); this._visibleKey = null; } catch (e) { alert((e && e.message) || "Fehler"); }
+    try {
+      await this._hass.callWS({ type: "smartlists/create_list", name });
+      this._visibleKey = null;
+      this._pendingSelect = name; // neue Liste gleich auswählen, sobald sie da ist
+    } catch (e) {
+      await slDialog(this.shadowRoot, { title: t.error, text: (e && e.message) || t.error, ok: "OK", cancel: t.cancel });
+    }
   }
   _lists() {
     const st = (this._hass && this._hass.states) || {};
@@ -2100,6 +2337,10 @@ class SmartListsPanel extends HTMLElement {
   _render() {
     if (!this._hass) return;
     const lists = this._lists();
+    if (this._pendingSelect) {
+      const hit = lists.find((l) => l.name === this._pendingSelect);
+      if (hit) { this._pendingSelect = null; this._prefs.selected = this._prefs.columns ? [...this._prefs.selected, hit.e].slice(-3) : [hit.e]; this._save(); }
+    }
     const max = this._prefs.columns ? 3 : 1;
     let sel = this._prefs.selected.filter((e) => lists.some((l) => l.e === e)).slice(0, max);
     if (!sel.length && lists.length) sel = [lists[0].e];
@@ -2108,18 +2349,39 @@ class SmartListsPanel extends HTMLElement {
       this._chipsEl = h("div", { class: "chips", role: "tablist" });
       this._hintEl = h("div", { class: "hint" });
       this._contentEl = h("div", { class: "content" });
-      this._menuBtn = h("button", { type: "button", "aria-label": "Menü", title: "Menü",
+      const t = this._t;
+      this._menuBtn = h("button", { type: "button", "aria-label": "Menu", title: "Menu",
         onclick: () => this.dispatchEvent(new Event("hass-toggle-menu", { bubbles: true, composed: true })) }, svg(ICON_MENU, 24));
-      this._colBtn = h("button", { type: "button", title: "Mehrere Listen nebeneinander", "aria-label": "Mehrere Listen nebeneinander",
+      this._colBtn = h("button", { type: "button", title: t.p_columns, "aria-label": t.p_columns,
         onclick: () => { this._prefs.columns = !this._prefs.columns; this._save(); this._render(); } }, svg(ICON_COLUMNS, 22));
-      this._wideBtn = h("button", { type: "button", title: "Breite Ansicht", "aria-label": "Breite Ansicht",
+      this._wideBtn = h("button", { type: "button", title: t.p_wide, "aria-label": t.p_wide,
         onclick: () => { this._prefs.wide = !this._prefs.wide; this._save(); this._render(); } }, svg(ICON_WIDE, 22));
-      this._newBtn = h("button", { type: "button", title: "Neue Liste", "aria-label": "Neue Liste", onclick: () => this._newList() }, svg(ICON.plus, 22));
-      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._colBtn, this._wideBtn),
+      this._newBtn = h("button", { type: "button", title: this._t.new_list, "aria-label": this._t.new_list, onclick: () => this._newList() }, svg(ICON.plus, 22));
+      // Einstellungen: dieselbe Ansicht wie im Zahnrad der Karte, aber auf der ganzen Seite
+      this._gearBtn = h("button", { type: "button", title: t.p_settings, "aria-label": t.p_settings,
+        onclick: () => { this._settingsOpen = !this._settingsOpen; this._render(); } }, svg(ICON.gear, 22));
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._colBtn, this._wideBtn, this._gearBtn),
         this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }
     this._menuBtn.hidden = !this._narrow;
+    this._gearBtn.classList.toggle("on", !!this._settingsOpen);
+    this._gearBtn.setAttribute("aria-pressed", String(!!this._settingsOpen));
+    [this._newBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen; });
+    if (this._settingsOpen) {
+      // Karte im Nur-Einstellungen-Modus (Reiter Für mich / Haushalt / Diese Liste)
+      if (!this._settingsCard || this._settingsCard._config.entity !== (sel[0] || lists[0]?.e)) {
+        const entity = sel[0] || (lists[0] && lists[0].e);
+        if (!entity) { fill(this._contentEl, h("div", { class: "empty" }, this._t.p_empty)); return; }
+        this._settingsCard = document.createElement("smartlists-card");
+        this._settingsCard.setConfig({ entity, settings_only: true });
+      }
+      this._settingsCard.hass = this._hass;
+      fill(this._chipsEl); fill(this._hintEl);
+      this._contentEl.className = "content w-normal cols-1";
+      if (this._contentEl.firstChild !== this._settingsCard) fill(this._contentEl, this._settingsCard);
+      return;
+    }
     this._colBtn.classList.toggle("on", this._prefs.columns);
     this._wideBtn.classList.toggle("on", this._prefs.wide);
     this._colBtn.setAttribute("aria-pressed", String(this._prefs.columns));
@@ -2129,11 +2391,11 @@ class SmartListsPanel extends HTMLElement {
     fill(this._chipsEl, lists.map((l) => h("button", { type: "button", role: "tab", class: `chip ${sel.includes(l.e) ? "on" : ""}`,
       "aria-selected": String(sel.includes(l.e)), onclick: () => this._select(l.e) },
       l.name, h("span", { class: "n" }, String(l.open)))));
-    fill(this._hintEl, this._prefs.columns ? "Bis zu 3 Listen antippen. Artikel mit der Maus in eine andere Liste ziehen = verschieben (Strg = kopieren)." : "");
+    fill(this._hintEl, this._prefs.columns ? this._t.p_hint : "");
     if (!sel.length) {
       this._cards.clear();
       this._contentEl.className = `content ${width}`;
-      fill(this._contentEl, h("div", { class: "empty" }, "Keine To-do-Listen gefunden. Lege unter Einstellungen → Geräte & Dienste → SmartLists eine kombinierte Liste an."));
+      fill(this._contentEl, h("div", { class: "empty" }, this._t.p_empty));
       return;
     }
     // Karten wiederverwenden (Eingaben/Zustand bleiben), nur neue anlegen bzw. abgewählte entfernen
@@ -2149,7 +2411,7 @@ class SmartListsPanel extends HTMLElement {
     });
     this._contentEl.className = `content ${width} cols-${cards.length}`;
     const current = [...this._contentEl.childNodes];
-    if (current.length !== cards.length || current.some((n, i) => n !== cards[i])) fill(this._contentEl, cards);
+    if (current.length !== cards.length || current.some((n, i) => n !== cards[i])) fill(this._contentEl, ...cards);
   }
   _select(entity) {
     const sel = this._prefs.selected;

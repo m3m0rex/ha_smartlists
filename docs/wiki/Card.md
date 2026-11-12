@@ -82,8 +82,9 @@ layout: columns
   the same list to reorder (sort "added").
 - **Shopping mode** (cart icon): screen stays on, checked items are hidden, large rows, tap the whole
   row; ↶ in the header undoes the last change.
-- **Gear menu**: versions, naming convention (admins), remembered categories, **backup & transfer**
-  (export/import as a file, admins), personal controls.
+- **Gear menu** with three tabs: *For me* (your controls, optionally only on this device),
+  *Household* (admins: naming convention, remembered categories, voice & automations, connected
+  devices, backup, controls for everyone) and *This list* (sharing for own lists, details).
 - **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
 - Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
 

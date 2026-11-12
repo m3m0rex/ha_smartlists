@@ -10,5 +10,8 @@ Toolbar buttons:
 - **Side by side** – tap up to three lists; they appear in columns. Drag items between them with the
   mouse (Ctrl = copy).
 - **Wide** – use the full screen width.
+- **⚙ Settings** – all settings in one place: *For me* (your controls), *Household* (naming
+  convention, remembered categories, voice & automations, connected devices, backup, controls for
+  everyone – admins) and *This list* (sharing, details).
 
 The choice is remembered per browser. Hide the page via *Edit sidebar* if you only use the card.

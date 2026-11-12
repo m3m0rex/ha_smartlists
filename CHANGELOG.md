@@ -3,6 +3,23 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] – 2026-11-12
+
+### Added
+
+- **Settings on the sidebar page**: the ⚙ button opens all settings in one place – the same as in the
+  card's gear menu, including voice & automations and connected devices. *Configure* at the
+  integration stays available.
+- Voice & automations, connected devices and "install Assist sentences" in the card's settings
+  (household tab, admins).
+
+### Changed
+
+- **Redesigned settings menu**: tabs *For me* / *Household* / *This list*, separated sections with
+  icons, switches instead of checkboxes, aligned controls, searchable remembered categories and
+  buttons that no longer overflow the card. German and English throughout.
+- **Own dialogs** instead of the browser's pop-ups for "new list" and all delete confirmations.
+
 ## [2.0.0] – 2026-11-12
 
 ### Added

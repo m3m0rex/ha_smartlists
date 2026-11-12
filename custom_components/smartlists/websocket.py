@@ -32,7 +32,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_user_settings, ws_set_user_settings,
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
-                    ws_shopping, ws_due, ws_export, ws_import, ws_automation, ws_set_automation,
+                    ws_install_sentences, ws_shopping, ws_due, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
 
@@ -488,3 +488,12 @@ def ws_delete_list(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         return
     hass.config_entries.async_remove_subentry(entry, sub.subentry_id)
     connection.send_result(msg["id"], {})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/install_sentences"})
+@websocket_api.async_response
+async def ws_install_sentences(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    from .automation import async_install_sentences
+
+    connection.send_result(msg["id"], {"languages": await async_install_sentences(hass)})

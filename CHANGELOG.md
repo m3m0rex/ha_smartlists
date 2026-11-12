@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.7.2] – 2026-11-12
+
+### Fixed
+
+- Added integration categories to `manifest.json` (Productivity & information → shopping & groceries,
+  calendars & to-dos), required by the HACS validation.
+
 ## [1.7.1] – 2026-11-12
 
 ### Changed

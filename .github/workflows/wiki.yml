@@ -26,10 +26,12 @@ jobs:
 
       - name: Ins Wiki übertragen
         env:
-          TOKEN: ${{ github.token }}
+          # optional eigener Token (Secret WIKI_TOKEN, Rechte: Contents read/write), falls der
+          # eingebaute Token nicht ins Wiki schreiben darf
+          TOKEN: ${{ secrets.WIKI_TOKEN || github.token }}
         run: |
           if ! git clone "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki; then
-            echo "::error::Wiki noch nicht angelegt. Einmalig: Settings → Features → Wikis aktivieren, dann im Reiter Wiki 'Create the first page' → 'Save page'. Danach diese Action erneut starten (Re-run)."
+            echo "::error::Wiki nicht erreichbar. 1) Settings → Features → Wikis aktivieren und im Reiter Wiki 'Create the first page' → 'Save page'. 2) Repo muss öffentlich sein. 3) Klappt es dann noch nicht: Secret WIKI_TOKEN anlegen (Token mit Contents: Read and write). Danach Re-run."
             exit 1
           fi
           # Wiki-Inhalt vollständig durch docs/wiki ersetzen (Seiten, die dort gelöscht wurden, verschwinden)

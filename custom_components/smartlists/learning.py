@@ -44,6 +44,8 @@ USER_SETTINGS: dict[str, Any] = {
     "shop_keep_awake": bool,
     "shop_large": bool,
     "shop_tap_row": bool,
+    "shop_untagged": bool,
+    "shop_auto_store": bool,
 }
 
 
@@ -240,8 +242,47 @@ class Learning:
 
     @callback
     def set_automation(self, settings: dict[str, Any]) -> None:
-        self.automation = {k: v for k, v in settings.items() if v not in (None, "", [])}
+        zones = self.automation.get("store_zones")
+        self.automation = {k: v for k, v in settings.items() if v not in (None, "", [], {})}
+        if zones and "store_zones" not in settings:  # Markt-Zonen nicht versehentlich mitlöschen
+            self.automation["store_zones"] = zones
         self._changed()
+
+    # Märkte ↔ Zonen: "rewe" → "zone.rewe_innenstadt". Im Einkaufsmodus wird automatisch der Markt
+    # gewählt, in dessen Zone die eigene Person gerade ist.
+    @property
+    def store_zones(self) -> dict[str, str]:
+        return dict(self.automation.get("store_zones") or {})
+
+    def set_store_zone(self, store: str, zone: str | None) -> dict[str, str]:
+        key = store.strip().lstrip("@").lower()
+        if not key:
+            raise ValueError("Markt fehlt")
+        zones = self.store_zones
+        if zone:
+            if not zone.startswith("zone."):
+                raise ValueError("Keine Zone (zone.…)")
+            zones[key] = zone
+        else:
+            zones.pop(key, None)
+        self.automation["store_zones"] = zones
+        self._changed()
+        return zones
+
+    def stores(self) -> list[dict[str, Any]]:
+        """Bekannte Märkte: schon benutzte (@REWE in Artikeln) + bekannte Ketten + verknüpfte."""
+        out: dict[str, dict[str, Any]] = {}
+        for t in self.tag_history.values():
+            if t.get("kind") == "store" and t.get("value"):
+                label, color = itemtext.store_display(str(t["value"]))
+                out.setdefault(str(t["value"]).lower(), {"value": t["value"], "label": label, "color": color, "count": int(t.get("count", 0))})
+        for key, (label, color) in itemtext.KNOWN_STORES.items():
+            out.setdefault(key.lower(), {"value": label, "label": label, "color": color, "count": 0})
+        for key in self.store_zones:
+            out.setdefault(key, {"value": key, "label": key, "color": None, "count": 0})
+        zones = self.store_zones
+        rows = [{**v, "key": k, "zone": zones.get(k)} for k, v in out.items()]
+        return sorted(rows, key=lambda r: (r["zone"] is None, -r["count"], r["label"].casefold()))
 
     # ------------------------------------------------------------------
     # Export / Import der Haushalts-Einstellungen
@@ -420,6 +461,7 @@ class Learning:
             "tag_kinds": list(itemtext.TAG_KINDS),
             "allowed_prefixes": itemtext.ALLOWED_PREFIXES,
             "known_stores": [{"value": label, "color": color} for label, color in itemtext.KNOWN_STORES.values()],
+            "store_zones": self.store_zones,
         }
 
 

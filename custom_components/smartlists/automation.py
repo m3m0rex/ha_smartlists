@@ -74,7 +74,9 @@ async def query_items(hass: HomeAssistant, entity_ids: list[str] | None, *, stor
                       include_completed: bool = False, user: Any | None = None) -> list[dict[str, Any]]:
     learning = _learning(hass)
     if not entity_ids:
-        entity_ids = [s.entity_id for s in hass.states.async_all(TODO_DOMAIN) if s.state != "unavailable"]
+        # ohne Angabe: alle Einkaufslisten – Notizlisten der App gehören nicht dazu
+        entity_ids = [s.entity_id for s in hass.states.async_all(TODO_DOMAIN)
+                      if s.state != "unavailable" and not lists.is_notes(hass, s.entity_id)]
     out: list[dict[str, Any]] = []
     for entity_id in entity_ids:
         try:
@@ -166,7 +168,7 @@ def spoken_list(items: list[dict[str, Any]], language: str | None = "de") -> str
 def _find_list(hass: HomeAssistant, spoken: str | None) -> str | None:
     """Liste per Name: exakt, dann Teilwort ("Einkauf" → "Einkaufsliste"), sonst Standard-Liste."""
     learning = _learning(hass)
-    states = [s for s in hass.states.async_all(TODO_DOMAIN) if s.state != "unavailable"]
+    states = [s for s in hass.states.async_all(TODO_DOMAIN) if s.state != "unavailable" and not lists.is_notes(hass, s.entity_id)]
     if spoken:
         want = normalize_list_name(spoken)
         names = [(s.entity_id, normalize_list_name(s.attributes.get(ATTR_FRIENDLY_NAME, s.entity_id))) for s in states]

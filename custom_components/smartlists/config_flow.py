@@ -68,13 +68,26 @@ UI_BUILTIN: dict[str, Any] = {
     "shop_keep_awake": True,
     "shop_large": True,
     "shop_tap_row": True,
+    "shop_untagged": False,
+    "shop_auto_store": True,
 }
 OFF = "off"
 TAG_FIELDS = {"store": "prefix_store", "person": "prefix_person", "tag": "prefix_tag"}
 
 
-def _todo_selector(multiple: bool) -> selector.EntitySelector:
-    return selector.EntitySelector(selector.EntitySelectorConfig(domain="todo", multiple=multiple))
+def _notes_ids(hass: HomeAssistant) -> list[str]:
+    """Notizlisten der App – in Auswahlfeldern für Einkaufslisten nicht anbieten."""
+    from .notes import looks_like_notes
+
+    return sorted(s.entity_id for s in hass.states.async_all("todo")
+                  if looks_like_notes(s.entity_id, s.attributes.get("friendly_name")))
+
+
+def _todo_selector(multiple: bool, exclude: list[str] | None = None) -> selector.EntitySelector:
+    cfg: dict[str, Any] = {"domain": "todo", "multiple": multiple}
+    if exclude:
+        cfg["exclude_entities"] = exclude
+    return selector.EntitySelector(selector.EntitySelectorConfig(**cfg))
 
 
 def _select(options: list[str], key: str, multiple: bool = False, dropdown: bool = False) -> selector.SelectSelector:
@@ -105,7 +118,8 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
         Vorgeschlagen werden alle vorhandenen To-do-Listen; mit zwei oder mehr ausgewählten entsteht
         die erste kombinierte Liste direkt mit."""
         errors: dict[str, str] = {}
-        todo_ids = sorted(s.entity_id for s in self.hass.states.async_all("todo"))
+        notes = _notes_ids(self.hass)
+        todo_ids = sorted(s.entity_id for s in self.hass.states.async_all("todo") if s.entity_id not in notes)
         if user_input is not None:
             combine = list(user_input.get("combine") or [])
             subentries = []
@@ -122,9 +136,9 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(title="SmartLists", data={}, subentries=subentries)
         schema = vol.Schema(
             {
-                vol.Optional("combine", default=todo_ids if 2 <= len(todo_ids) <= 4 else []): _todo_selector(True),
+                vol.Optional("combine", default=todo_ids if 2 <= len(todo_ids) <= 4 else []): _todo_selector(True, notes),
                 vol.Optional(CONF_NAME, default="Einkauf"): selector.TextSelector(),
-                vol.Optional(CONF_DEFAULT_ADD): _todo_selector(False),
+                vol.Optional(CONF_DEFAULT_ADD): _todo_selector(False, notes),
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors,
@@ -144,10 +158,10 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
 # ----------------------------------------------------------------------
 # Kombinierte Liste (Unter-Eintrag)
 # ----------------------------------------------------------------------
-def combined_schema() -> dict[Any, Any]:
+def combined_schema(exclude: list[str] | None = None) -> dict[Any, Any]:
     return {
-        vol.Required(CONF_SOURCES): _todo_selector(True),
-        vol.Optional(CONF_DEFAULT_ADD): _todo_selector(False),
+        vol.Required(CONF_SOURCES): _todo_selector(True, exclude),
+        vol.Optional(CONF_DEFAULT_ADD): _todo_selector(False, exclude),
         vol.Required(CONF_MODE, default=MODE_BIDIRECTIONAL): _select([MODE_BIDIRECTIONAL, MODE_LOCAL], "mode"),
         vol.Required(CONF_SOURCE_LABEL, default=LABEL_SUFFIX): _select(
             [LABEL_SUFFIX, LABEL_PREFIX, LABEL_NONE], "source_label"
@@ -155,7 +169,7 @@ def combined_schema() -> dict[Any, Any]:
         vol.Required(CONF_SORT, default=SORT_SOURCE): _select(
             [SORT_SOURCE, SORT_CATEGORY, SORT_STATUS, SORT_ALPHABETICAL], "sort"
         ),
-        vol.Optional(CONF_FOREIGN, default=[]): _todo_selector(True),
+        vol.Optional(CONF_FOREIGN, default=[]): _todo_selector(True, exclude),
         vol.Optional(CONF_SOURCE_AS_PERSON, default=True): selector.BooleanSelector(),
     }
 
@@ -194,7 +208,7 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
             if not errors:
                 name = user_input.pop(CONF_NAME)
                 return self.async_create_entry(title=name, data=user_input)
-        schema = vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema()})
+        schema = vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass))})
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
@@ -213,7 +227,7 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
                 )
         current = {**DEFAULTS, **subentry.data, CONF_NAME: subentry.title}
         schema = self.add_suggested_values_to_schema(
-            vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema()}),
+            vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass))}),
             user_input if user_input is not None else current,
         )
         return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)
@@ -428,7 +442,7 @@ class SmartListsOptionsFlow(OptionsFlow):
         cur = learning.automation
         fields: dict[Any, Any] = {}
         for key in ("voice_default_list", "auto_due_list"):
-            fields[vol.Optional(key, description={"suggested_value": cur.get(key)})] = _todo_selector(False)
+            fields[vol.Optional(key, description={"suggested_value": cur.get(key)})] = _todo_selector(False, _notes_ids(self.hass))
         fields[vol.Optional("install_sentences", default=False)] = selector.BooleanSelector()
         due = learning.due_items()
         return self.async_show_form(

@@ -23,6 +23,7 @@ from .const import DOMAIN
 from .itemtext import join_offer, split_offer
 from .own import permissions_for, role_for
 from .learning import Learning
+from .notes import get_notes
 
 STATUS_DONE = "completed"
 STATUS_OPEN = "needs_action"
@@ -41,8 +42,22 @@ def own_entity(hass: HomeAssistant, entity_id: str) -> Any | None:
     return hass.data.get(DOMAIN, {}).get("own", {}).get(entity_id)
 
 
+def is_notes(hass: HomeAssistant, entity_id: str) -> bool:
+    """Notizliste der App (todo.ha_smartlists_note…) – keine Einkaufsliste, siehe notes.py."""
+    notes = get_notes(hass)
+    return bool(notes and notes.is_notes(entity_id))
+
+
+def notes_allowed(hass: HomeAssistant, entity_id: str, user: Any | None) -> bool:
+    notes = get_notes(hass)
+    return notes is None or notes.can_see(entity_id, user)
+
+
 def own_role(hass: HomeAssistant, entity_id: str, user: Any | None) -> str | None:
-    """Rolle des Benutzers bei einer eigenen Liste; bei anderen Listen "owner" (keine Einschränkung)."""
+    """Rolle des Benutzers bei einer eigenen Liste; bei anderen Listen "owner" (keine Einschränkung).
+    Notizlisten anderer Konten: None (kein Zugriff)."""
+    if user is not None and not notes_allowed(hass, entity_id, user):
+        return None
     entity = own_entity(hass, entity_id)
     if entity is None:
         return "owner"
@@ -113,6 +128,8 @@ async def raw_items(hass: HomeAssistant, entity_id: str) -> list[dict[str, Any]]
 async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None, language: str | None = None) -> dict[str, Any]:
     """Alles, was die Karte zum Anzeigen braucht. Mit `user` gelten bei eigenen Listen dessen Freigaben."""
     state = _state(hass, entity_id)
+    if not notes_allowed(hass, entity_id, user):
+        raise ListError("Diese Notizliste gehört zu einem anderen Konto.")
     learning = _learning(hass)
     perms = list_permissions(hass, entity_id)
     own = own_entity(hass, entity_id)
@@ -157,7 +174,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
     return {
         "entity_id": entity_id,
         "name": state.attributes.get(ATTR_FRIENDLY_NAME, entity_id),
-        "type": "combined" if entity is not None else "own" if own is not None else "list",
+        "type": "combined" if entity is not None else "own" if own is not None else "notes" if is_notes(hass, entity_id) else "list",
         # fremd = Liste besteht nur aus fremden Quellen
         "foreign": bool(entity is not None and entity.all_foreign),
         "source_lists": entity.source_names if entity is not None else [],
@@ -169,10 +186,14 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
 
 
 async def all_lists(hass: HomeAssistant, user: Any | None = None) -> list[dict[str, Any]]:
-    """Alle To-do-Listen, die der Benutzer sehen darf (eigene Listen nur mit Freigabe)."""
+    """Alle To-do-Listen, die der Benutzer sehen darf (eigene Listen nur mit Freigabe).
+    Notizlisten der App nur, wenn der Notizen-Bereich eingeschaltet ist – und nur die eigenen."""
     out = []
+    notes = get_notes(hass)
     for state in hass.states.async_all(TODO_DOMAIN):
         if state.state == "unavailable":
+            continue
+        if notes is not None and not notes.shown(state.entity_id, user):
             continue
         f = int(state.attributes.get(ATTR_SUPPORTED_FEATURES, 0) or 0)
         role = own_role(hass, state.entity_id, user)
@@ -183,7 +204,8 @@ async def all_lists(hass: HomeAssistant, user: Any | None = None) -> list[dict[s
             {
                 "entity_id": state.entity_id,
                 "name": state.attributes.get(ATTR_FRIENDLY_NAME, state.entity_id),
-                "type": "combined" if combined_entity(hass, state.entity_id) else "own" if own else "list",
+                "type": "combined" if combined_entity(hass, state.entity_id) else "own" if own
+                else "notes" if is_notes(hass, state.entity_id) else "list",
                 "can_add": bool(f & TodoListEntityFeature.CREATE_TODO_ITEM) and permissions_for(role)["add"],
                 "role": role if own else None,
             }
@@ -212,7 +234,7 @@ async def add_item(
     if note and perms["note"]:
         data["description"] = note
     await _call(hass, "add_item", data, context)
-    if combined_entity(hass, entity_id) is None:
+    if combined_entity(hass, entity_id) is None and not is_notes(hass, entity_id):
         # kombinierte Listen merken sich den Verlauf selbst beim Hinzufügen
         _learning(hass).record(text)
     new = [i for i in await raw_items(hass, entity_id) if i["uid"] not in before]

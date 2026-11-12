@@ -31,6 +31,7 @@ from .const import DOMAIN, LEGACY_UNIQUE_ID, STORAGE_VERSION, SUBENTRY_COMBINED
 from .app_backups import async_get_app_backups
 from .devices import async_get_devices
 from .packs import async_get_packs
+from .notes import async_get_notes
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     await async_get_learning(hass)
     await async_get_devices(hass)
     await async_get_app_backups(hass)
+    await async_get_notes(hass)
     websocket.async_register(hass)
     automation.async_setup_services(hass)
     automation.async_setup_intents(hass)

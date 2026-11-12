@@ -56,7 +56,8 @@ while typing, too.
 
 After setup there is a **SmartLists** entry in the HA sidebar: all to-do lists (combined lists first)
 as tabs, each shown like the card (badges, categories, stepper, search, shopping mode) – no dashboard
-needed. The toolbar switches between **one list** and **up to three lists side by side** and between
+needed. The toolbar switches between **one list** and **several lists side by side** (any number, wrapping
+into rows; order adjustable) and between
 normal and **wide** layout; with several lists you can **drag items** from one list to another with the
 mouse (Ctrl = copy). Home Assistant's built-in to-do page shows items as plain text only
 ("Milch 2 l @REWE"). Hide the entry like any other via *Edit sidebar*.

@@ -6,6 +6,8 @@ Tag-Regeln und Vergessen gelernter Stichwörter nur Administratoren.
 
 from __future__ import annotations
 
+import asyncio
+
 from typing import Any
 
 import voluptuous as vol
@@ -33,7 +35,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -188,7 +190,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -954,3 +956,122 @@ async def ws_barcode(hass: HomeAssistant, connection: websocket_api.ActiveConnec
     from .barcode import async_lookup
 
     connection.send_result(msg["id"], await async_lookup(hass, msg["code"]))
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/subscribe"})
+@callback
+def ws_subscribe(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Live-Meldung an offene Karten/Seiten, wenn sich Haushaltsdaten ändern (Kategorien, Packs, Badges,
+    Preise, Vorlagen, Reihenfolgen, geteilte Links, Notizen, Geräte/App-Listen). Die Karte lädt dann neu –
+    die Artikel selbst kommen weiter über todo/item/subscribe."""
+    from homeassistant.helpers.dispatcher import async_dispatcher_connect
+
+    from .const import SIGNAL_DATA_CHANGED, SIGNAL_LEARNING_CHANGED
+    from .devices import SIGNAL_DEVICES_CHANGED
+
+    @callback
+    def forward(*_args: Any) -> None:
+        connection.send_message(websocket_api.event_message(msg["id"], {"changed": True}))
+
+    unsubs = [async_dispatcher_connect(hass, sig, forward)
+              for sig in (SIGNAL_DATA_CHANGED, SIGNAL_LEARNING_CHANGED, SIGNAL_DEVICES_CHANGED)]
+
+    @callback
+    def unsubscribe() -> None:
+        for u in unsubs:
+            u()
+
+    connection.subscriptions[msg["id"]] = unsubscribe
+    connection.send_result(msg["id"])
+
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/expense_entries", vol.Optional("limit", default=100): vol.All(int, vol.Range(min=1, max=500))})
+@callback
+def ws_expense_entries(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Einzelne Buchungen (Admins: alle, sonst nur eigene) – zum Prüfen und Löschen."""
+    user = connection.user
+    connection.send_result(msg["id"], {"entries": _extras(hass).expense_entries(None if user.is_admin else user.id, msg["limit"])})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_expense", vol.Required("expense_id"): str})
+@callback
+def ws_delete_expense(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    user = connection.user
+    if not _extras(hass).delete_expense(msg["expense_id"], None if user.is_admin else user.id):
+        connection.send_error(msg["id"], "not_found", "Buchung nicht gefunden (oder nicht deine).")
+        return
+    connection.send_result(msg["id"], {})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/forget_history", vol.Required("name"): str})
+@callback
+def ws_forget_history(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Falschen Eintrag aus dem Verlauf (Statistik, Vorschläge, Rhythmus) entfernen."""
+    from .categories import normalize
+
+    learning = _learning(hass)
+    if learning.history.pop(normalize(msg["name"]), None) is None:
+        connection.send_error(msg["id"], "not_found", "Nicht im Verlauf.")
+        return
+    learning._changed()
+    connection.send_result(msg["id"], {})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/create_notes", vol.Optional("name", default=""): str})
+@websocket_api.async_response
+async def ws_create_notes(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Notizliste anlegen (Local To-do, Entitäts-ID todo.ha_smartlists_notes_<name>), Besitzer = wer sie anlegt.
+    So kann man Notizen in SmartLists nutzen, auch wenn die App noch keine angelegt hat."""
+    from homeassistant.util import slugify
+
+    user = connection.user
+    label = (msg["name"].strip() or user.name or "notes")[:40]
+    slug = slugify(label) or "notes"
+    before = {s.entity_id for s in hass.states.async_all("todo")}
+    try:
+        result = await hass.config_entries.flow.async_init(
+            "local_todo", context={"source": "user"}, data={"todo_list_name": f"ha_smartlists_notes_{slug}"})
+    except Exception as err:  # noqa: BLE001 – z. B. Local To-do nicht verfügbar
+        connection.send_error(msg["id"], "failed", f"Notizliste konnte nicht angelegt werden: {err}")
+        return
+    if result.get("type") != "create_entry":
+        connection.send_error(msg["id"], "failed", "Notizliste konnte nicht angelegt werden (gibt es den Namen schon?).")
+        return
+    entity_id = None
+    for _ in range(40):  # Entität erscheint kurz nach dem Einrichten
+        new = [s.entity_id for s in hass.states.async_all("todo") if s.entity_id not in before]
+        if new:
+            entity_id = new[0]
+            break
+        await asyncio.sleep(0.25)
+    if entity_id is None:
+        connection.send_error(msg["id"], "failed", "Notizliste angelegt, aber noch nicht gefunden – gleich noch einmal laden.")
+        return
+    from homeassistant.helpers import entity_registry as er
+
+    # schöner Name in HA, die ID bleibt technisch (wie bei der App)
+    er.async_get(hass).async_update_entity(entity_id, name=f"HA Smartlists Notes {label}")
+    notes = hass.data[DOMAIN]["notes"]
+    notes.claim([entity_id], user.id)
+    if notes.mode == "hidden" and user.is_admin:
+        notes.update(mode="section")
+    connection.send_result(msg["id"], {"entity_id": entity_id, "mode": notes.mode})
+
+
+
+@_list_command({vol.Required("type"): "smartlists/finish_shopping", vol.Required("entity_id"): str,
+                vol.Optional("reopen", default=False): bool})
+async def ws_finish_shopping(hass, msg, context):
+    """„Einkauf beendet“: Summe im Wagen auf 0. Mit reopen=True werden die abgehakten Artikel wieder offen
+    (für Listen, die man jede Woche neu benutzt)."""
+    extras = _extras(hass)
+    start = extras.finish_trip(msg["entity_id"])
+    reopened = 0
+    if msg["reopen"]:
+        for item in await lists.raw_items(hass, msg["entity_id"]):
+            if item["checked"]:
+                await lists._call(hass, "update_item", {"entity_id": msg["entity_id"], "item": item["uid"], "status": lists.STATUS_OPEN}, context)
+                reopened += 1
+    return {"trip_start": start, "reopened": reopened}

@@ -3,6 +3,34 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.9.0] – 2026-11-12
+
+### Added
+
+- **Live updates without reloading**: cards and the sidebar page refresh by themselves when household data
+  changes (categories, packs, badges, prices, templates, aisle orders, links, notes, devices) – new
+  WebSocket subscription `smartlists/subscribe`. Items were already live. Safety net for tablets/phones:
+  silent reload after waking up / returning to the tab and once a minute.
+- **Symbol picker** for templates and badge symbols (people, tags): grid by group, tap to preview, OK to
+  apply; own symbols can still be typed.
+- **Aisle order by drag & drop**: *Sort* button in the order editor, then drag the rows by ⠿ (mouse,
+  finger or pen); ▲▼ stay available.
+- **Remembered categories can be changed** afterwards directly in the list (Household → Remembered
+  categories).
+- **Shopping done** button next to the total: the "in cart" sum starts at 0 again (expenses stay booked);
+  optionally reopen all checked items for lists you reuse. WebSocket `smartlists/finish_shopping`.
+- **Fix wrong data afterwards**: delete single expense bookings (admins all, others their own) and remove
+  items from the history/statistics (admins).
+- **Create a note list** even if the app has none yet (Household → App notes, or ＋📝 on the sidebar page):
+  Local To-do list `todo.ha_smartlists_notes_<name>`, owned by you.
+
+### Fixed
+
+- Colour pickers in *Badges & colours* no longer close on the first click – the preview changes while you
+  pick, saved when the picker is closed.
+- CI: Node 24 actions (checkout v5, setup-python v6), runners pinned to ubuntu-24.04; releases are now
+  created automatically when the manifest version changes.
+
 ## [2.8.0] – 2026-11-12
 
 ### Added

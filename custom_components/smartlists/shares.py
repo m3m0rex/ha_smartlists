@@ -67,6 +67,12 @@ class Shares:
 
     def _save(self) -> None:
         self._store.async_delay_save(lambda: {"links": self.links}, 1.0)
+        from homeassistant.helpers.dispatcher import async_dispatcher_send
+
+        from .const import SIGNAL_DATA_CHANGED
+
+        if hasattr(self.hass, "loop"):
+            async_dispatcher_send(self.hass, SIGNAL_DATA_CHANGED)
 
     def _cleanup(self) -> None:
         now = time.time()

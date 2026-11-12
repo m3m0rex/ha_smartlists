@@ -53,6 +53,12 @@ class Notes:
 
     def _save(self) -> None:
         self._store.async_delay_save(lambda: {"mode": self.mode, "scope": self.scope, "owners": self.owners}, 1.0)
+        from homeassistant.helpers.dispatcher import async_dispatcher_send
+
+        from .const import SIGNAL_DATA_CHANGED
+
+        if hasattr(self.hass, "loop"):
+            async_dispatcher_send(self.hass, SIGNAL_DATA_CHANGED)
 
     def is_notes(self, entity_id: str) -> bool:
         state = self.hass.states.get(entity_id)

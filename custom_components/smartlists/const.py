@@ -43,3 +43,5 @@ STORAGE_VERSION = 1
 
 # Gemerkte Kategorien / Tag-Regeln haben sich geändert → Listen neu sortieren
 SIGNAL_LEARNING_CHANGED = f"{DOMAIN}_learning_changed"
+# Haushaltsdaten geändert (Preise, Vorlagen, Reihenfolgen, Links, Notizen …) → offene Karten laden neu
+SIGNAL_DATA_CHANGED = f"{DOMAIN}_data_changed"

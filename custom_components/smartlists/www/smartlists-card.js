@@ -1970,8 +1970,11 @@ const STYLE = `
   ha-card { border-radius: var(--smartlists-radius, var(--ha-card-border-radius, 12px)); }
   [hidden] { display:none !important; }
   ha-card { overflow:visible; position:relative; }
-  .head { display:flex; align-items:center; gap:8px; padding:16px 12px 8px 16px; }
-  .title { font-size:1.25rem; font-weight:500; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .head { display:flex; align-items:center; gap:4px 8px; padding:16px 12px 8px 16px; flex-wrap:wrap; }
+  .title { font-size:1.25rem; font-weight:500; flex:1 1 120px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* schmale Karten (Handy, mehrere Spalten): Knöpfe brechen in eine zweite Zeile um statt die Karte zu verbreitern */
+  .head .sort select { max-width:110px; }
+  ha-card { max-width:100%; }
   .badge { font-size:.7rem; padding:2px 8px; border-radius:10px; background:var(--sl-accent); color:var(--text-primary-color,#fff); white-space:nowrap; }
   .badge.foreign { background:var(--warning-color,#f5a623); }
   .badge.own { background:var(--secondary-background-color,#eee); color:var(--primary-text-color); }
@@ -1985,7 +1988,7 @@ const STYLE = `
   input, select { font:inherit; color:var(--primary-text-color); background:var(--secondary-background-color,#f2f2f2);
     border:1px solid transparent; border-radius:8px; padding:9px 11px; min-width:0; box-sizing:border-box; }
   input:focus, select:focus { outline:none; border-color:var(--sl-accent); }
-  .add .smart { flex:1; }
+  .add .smart { flex:1; min-width:0; }
   .go { border:none; border-radius:8px; background:var(--sl-accent); color:var(--text-primary-color,#fff);
     padding:0 14px; cursor:pointer; display:flex; align-items:center; }
   .go:disabled { opacity:.45; cursor:default; }
@@ -4302,6 +4305,8 @@ class SmartListsCard extends HTMLElement {
   async _scanDialog() {
     const t = this._t;
     const video = h("video", { autoplay: "", playsinline: "", muted: "" });
+    // Android-WebView (Companion-App) spielt nur stumm + inline und erst nach play() ab
+    video.muted = true; video.playsInline = true; video.setAttribute("webkit-playsinline", "");
     const box = h("div", { class: "scanbox" }, video);
     const info = h("p", {}, t.scan_help);
     const code = h("input", { inputmode: "numeric", placeholder: t.scan_code, "aria-label": t.scan_code, maxlength: "14" });
@@ -4331,6 +4336,8 @@ class SmartListsCard extends HTMLElement {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
       if (done) { stop(); return; }
       video.srcObject = stream;
+      try { await video.play(); } catch (e) { /* Autoplay blockiert → Nutzer kann ins Bild tippen */ }
+      video.addEventListener("click", () => video.play().catch(() => {}));
       timer = setInterval(async () => {
         if (done || video.readyState < 2) return;
         try { const hits = await detector.detect(video); if (hits.length) lookup(hits[0].rawValue); } catch (e) { /* */ }

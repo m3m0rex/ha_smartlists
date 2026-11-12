@@ -26,6 +26,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 ### Fixed
 
+- Narrow cards (phones, several columns): the header buttons wrap into a second line instead of making the
+  card wider than the screen.
+- Barcode scanner: the camera picture starts in the Android companion app (muted inline playback, tap the
+  picture if it stays black).
 - Colour pickers in *Badges & colours* no longer close on the first click – the preview changes while you
   pick, saved when the picker is closed.
 - CI: Node 24 actions (checkout v5, setup-python v6), runners pinned to ubuntu-24.04; releases are now

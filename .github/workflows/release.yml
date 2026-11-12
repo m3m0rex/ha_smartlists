@@ -1,0 +1,77 @@
+name: Release
+
+# Neuer Tag vX.Y.Z (git push --tags) → erst prüfen, dann GitHub-Release mit dem Text aus CHANGELOG.md.
+# HACS verlangt, dass das Release NACH erfolgreicher Prüfung entsteht – deshalb hängt "release" an beiden Prüfungen.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  hassfest:
+    name: Hassfest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    name: HACS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: integration
+
+  release:
+    name: GitHub-Release
+    needs: [hassfest, hacs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version prüfen (Tag = manifest.json)
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          MANIFEST=$(python3 -c "import json;print(json.load(open('custom_components/smartlists/manifest.json'))['version'])")
+          if [ "$TAG" != "$MANIFEST" ]; then
+            echo "::error::Tag v$TAG passt nicht zur Version $MANIFEST in manifest.json"
+            exit 1
+          fi
+
+      - name: Text aus CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          # Abschnitt "## [VERSION]" bis zum nächsten "## [" (ohne die Überschrift)
+          awk -v v="$VERSION" '
+            index($0, "## [" v "]") == 1 { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes_body.md
+          if [ ! -s notes_body.md ]; then
+            echo "::error::Kein Abschnitt '## [$VERSION]' in CHANGELOG.md"
+            exit 1
+          fi
+          {
+            echo "## What's new"
+            # "### Added" usw. übernehmen, führende Leerzeilen weg
+            sed '/./,$!d' notes_body.md
+            echo
+            echo "**Note:** restart Home Assistant after updating and reload the page (Ctrl+F5)."
+            echo
+            echo "Full history: [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/CHANGELOG.md)"
+          } > notes.md
+          cat notes.md
+
+      - name: Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --title "${GITHUB_REF_NAME#v}" --notes-file notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" --title "${GITHUB_REF_NAME#v}" --notes-file notes.md --verify-tag
+          fi

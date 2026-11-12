@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "1.7.3";
+const CARD_VERSION = "1.8.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -44,9 +44,30 @@ const CARD_DEFAULTS = {
   show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
   show_undo: true, show_import: true, show_settings: true,
   show_add: true, show_frequent: true,
-  show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
+  drag_drop: true, show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
   show_completed: true, collapse_completed: true,
   start_shopping: false,
+  // Ansicht & Aussehen
+  view: "list",            // list | tiles | mini
+  layout: "tabs",          // bei mehreren Listen: tabs | columns | stack
+  density: "normal",       // compact | normal | comfortable
+  font_scale: 1, radius: null, accent_color: null,
+  // feste Filter (leer = alles) und Filter-Leiste
+  filter_store: "", filter_person: "", filter_tag: "", filter_category: [], filter_offers: false,
+  filter_tags_new_items: true, show_filter_chips: false,
+};
+const CATEGORY_IDS = [
+  ["obst_gemuese", "🥬 Obst & Gemüse"], ["fleisch", "🥩 Fleisch & Fisch"], ["kuehlung", "🥛 Kühlung"], ["grundnahrung", "🥫 Konserven & Trockenes"],
+  ["backwaren", "🍞 Brot & Backwaren"], ["getraenke", "🥤 Getränke"], ["suessigkeiten", "🍫 Süßwaren & Snacks"], ["haushalt", "🧹 Haushalt"],
+  ["drogerie", "🧴 Drogerie"], ["tiefkuehl", "❄️ Tiefkühl"], ["tierbedarf", "🐕 Tierbedarf"], ["sonstiges", "📦 Sonstiges"],
+];
+// Vorlagen für den Editor: setzen viele Optionen auf einmal, danach ist alles einzeln änderbar
+const PRESETS = {
+  family:    { label: "Familien-Einkauf (alles an)", values: { view: "list", density: "normal", show_filter_chips: true, show_add: true, show_frequent: true, show_stepper: true, show_import: true } },
+  kitchen:   { label: "Küchen-Tablet (große Kacheln)", values: { view: "tiles", density: "comfortable", font_scale: 1.2, show_import: false, show_undo: true, show_settings: false } },
+  store:     { label: "Im Laden (Einkaufsmodus, ohne Eingabe)", values: { view: "list", start_shopping: true, show_add: false, show_frequent: false, show_import: false, density: "comfortable" } },
+  readonly:  { label: "Nur ansehen", values: { show_add: false, show_frequent: false, show_stepper: false, show_import: false, show_settings: false, show_undo: false, show_shopping: false } },
+  tile:      { label: "Kompakte Dashboard-Kachel", values: { view: "mini", density: "compact", show_frequent: false, show_import: false } },
 };
 const MENU_ACTIONS = ["rename", "move", "copy", "category", "delete"];
 // Bedienung: Standard < Einstellung des HA-Benutzers (in der Integration gespeichert, gilt auf allen
@@ -72,7 +93,7 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
-    card_version: "Karte", stale_card: "Die Karte ist veraltet – Seite neu laden (Strg+F5) bzw. in der App den Frontend-Cache leeren.", offer: "Angebot", offer_until: "bis", offer_expired: "abgelaufen seit",
+    mini_open: "Liste öffnen", mini_close: "Zuklappen", card_version: "Karte", stale_card: "Die Karte ist veraltet – Seite neu laden (Strg+F5) bzw. in der App den Frontend-Cache leeren.", offer: "Angebot", offer_until: "bis", offer_expired: "abgelaufen seit",
     qty_less: "Menge verringern", qty_more: "Menge erhöhen", qty_changed: "Menge geändert",
     search: "Suchen", search_placeholder: "In der Liste suchen …", hits: "Treffer", no_hits: "Nichts gefunden für", add_this: "hinzufügen",
     imp: "Importieren", imp_ha: "Aus Home Assistant", imp_text: "Als Text", imp_source: "Liste",
@@ -110,7 +131,7 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
-    card_version: "card", stale_card: "This card is outdated – reload the page (Ctrl+F5) or clear the frontend cache in the app.", offer: "Offer", offer_until: "until", offer_expired: "expired",
+    mini_open: "Open list", mini_close: "Collapse", card_version: "card", stale_card: "This card is outdated – reload the page (Ctrl+F5) or clear the frontend cache in the app.", offer: "Offer", offer_until: "until", offer_expired: "expired",
     qty_less: "Decrease quantity", qty_more: "Increase quantity", qty_changed: "quantity changed",
     search: "Search", search_placeholder: "Search this list …", hits: "matches", no_hits: "Nothing found for", add_this: "add",
     imp: "Import", imp_ha: "From Home Assistant", imp_text: "As text", imp_source: "List",
@@ -227,6 +248,9 @@ function parseImportText(text) {
   }
   return out;
 }
+// Gerade gezogener Artikel (Ziehen & Ablegen zwischen Karten im selben Fenster)
+let SL_DRAG = null;
+
 // Für die Suche: klein, ohne Akzente/Umlaut-Punkte ("Äpfel" → "apfel"), ß → ss
 function searchKey(s) {
   return String(s || "").toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -296,12 +320,14 @@ function badge(tag) {
 }
 
 const STYLE = `
-  :host { display:block; }
+  /* Anpassbar per Theme oder card-mod: --smartlists-accent, --smartlists-radius, --smartlists-row-height */
+  :host { display:block; --sl-accent: var(--smartlists-accent, var(--primary-color)); }
+  ha-card { border-radius: var(--smartlists-radius, var(--ha-card-border-radius, 12px)); }
   [hidden] { display:none !important; }
   ha-card { overflow:visible; position:relative; }
   .head { display:flex; align-items:center; gap:8px; padding:16px 12px 8px 16px; }
   .title { font-size:1.25rem; font-weight:500; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .badge { font-size:.7rem; padding:2px 8px; border-radius:10px; background:var(--primary-color); color:var(--text-primary-color,#fff); white-space:nowrap; }
+  .badge { font-size:.7rem; padding:2px 8px; border-radius:10px; background:var(--sl-accent); color:var(--text-primary-color,#fff); white-space:nowrap; }
   .badge.foreign { background:var(--warning-color,#f5a623); }
   .badge.combined { background:var(--info-color,#2196f3); }
   .count { color:var(--secondary-text-color); font-size:.85rem; white-space:nowrap; }
@@ -312,18 +338,18 @@ const STYLE = `
   .add-row { display:flex; gap:6px; }
   input, select { font:inherit; color:var(--primary-text-color); background:var(--secondary-background-color,#f2f2f2);
     border:1px solid transparent; border-radius:8px; padding:9px 11px; min-width:0; box-sizing:border-box; }
-  input:focus, select:focus { outline:none; border-color:var(--primary-color); }
+  input:focus, select:focus { outline:none; border-color:var(--sl-accent); }
   .add .smart { flex:1; }
-  .go { border:none; border-radius:8px; background:var(--primary-color); color:var(--text-primary-color,#fff);
+  .go { border:none; border-radius:8px; background:var(--sl-accent); color:var(--text-primary-color,#fff);
     padding:0 14px; cursor:pointer; display:flex; align-items:center; }
   .go:disabled { opacity:.45; cursor:default; }
   .preview { display:flex; flex-wrap:wrap; align-items:center; gap:6px; min-height:24px; margin-top:6px; font-size:.82rem; color:var(--secondary-text-color); }
   .preview:empty { display:none; }
   .catchip { display:inline-flex; align-items:center; gap:4px; border:1px dashed var(--divider-color,#ccc); background:none; border-radius:12px;
     padding:2px 9px; font:inherit; font-size:.8rem; color:var(--primary-text-color); cursor:pointer; }
-  .catchip:hover { border-color:var(--primary-color); }
+  .catchip:hover { border-color:var(--sl-accent); }
   .catchip .src { color:var(--secondary-text-color); font-size:.72rem; }
-  .catchip.manual { border-style:solid; border-color:var(--primary-color); }
+  .catchip.manual { border-style:solid; border-color:var(--sl-accent); }
   .hint { font-size:.75rem; color:var(--secondary-text-color); }
   .catpick { position:absolute; z-index:6; left:16px; right:16px; top:calc(100% - 6px); background:var(--card-background-color,#fff);
     border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,.2); padding:6px; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:2px; }
@@ -346,7 +372,7 @@ const STYLE = `
   .frequent .lbl { font-size:.75rem; color:var(--secondary-text-color); align-self:center; white-space:nowrap; }
   .fchip { border:1px solid var(--divider-color,#ddd); background:none; border-radius:16px; padding:4px 10px; font:inherit; font-size:.82rem;
     white-space:nowrap; cursor:pointer; color:var(--primary-text-color); }
-  .fchip:hover { border-color:var(--primary-color); color:var(--primary-color); }
+  .fchip:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
 
   .locked { display:flex; align-items:center; gap:8px; padding:4px 16px 12px; color:var(--secondary-text-color); font-size:.85rem; }
   .group { padding:2px 0; }
@@ -364,20 +390,20 @@ const STYLE = `
     .row { grid-template-columns:22px minmax(0,1fr) 48px 44px 64px; column-gap:var(--gap); }
     .items.emoji .row { grid-template-columns:22px 20px minmax(0,1fr) 48px 44px 64px; }
   }
-  .qtycol { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--primary-color); white-space:nowrap; font-size:.9rem; }
+  .qtycol { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--sl-accent); white-space:nowrap; font-size:.9rem; }
   .unitcol { text-align:left; color:var(--secondary-text-color); white-space:nowrap; font-size:.85rem; }
   .row.checked .qtycol { color:var(--secondary-text-color); font-weight:400; }
   /* Mengen-Stepper − 2 + (wie in der App) */
   .stepper { display:inline-flex; align-items:center; gap:2px; justify-content:flex-end; }
   .stepper .sbtn { width:24px; height:24px; border-radius:50%; border:1px solid var(--divider-color,#ddd); background:none; padding:0;
     display:inline-flex; align-items:center; justify-content:center; color:var(--secondary-text-color); cursor:pointer; flex:none; }
-  .stepper .sbtn:hover { border-color:var(--primary-color); color:var(--primary-color); }
+  .stepper .sbtn:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
   .stepper .sval { min-width:1.6em; text-align:center; }
   .shopping .row.large .stepper .sbtn { width:30px; height:30px; }
   .row:hover { background:var(--secondary-background-color,#f6f6f6); }
   .box { flex:none; width:22px; height:22px; border-radius:6px; border:2px solid var(--secondary-text-color); background:none;
     padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:transparent; }
-  .box.on { background:var(--primary-color); border-color:var(--primary-color); color:var(--text-primary-color,#fff); }
+  .box.on { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
   .box:disabled { opacity:.45; cursor:not-allowed; }
   .main { flex:1; min-width:0; }
   .name-line { display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0; }
@@ -386,7 +412,7 @@ const STYLE = `
   .row.checked .iname { text-decoration:line-through; color:var(--secondary-text-color); }
   .row.checked .tag { opacity:.55; }
   .chip { font-size:.72rem; padding:1px 7px; border-radius:9px; background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); white-space:nowrap; }
-  .chip.qty { background:color-mix(in srgb, var(--primary-color) 14%, transparent); color:var(--primary-color); font-weight:600; }
+  .chip.qty { background:color-mix(in srgb, var(--sl-accent) 14%, transparent); color:var(--sl-accent); font-weight:600; }
   .tag { font-size:.7rem; font-weight:700; padding:1px 7px; border-radius:4px; white-space:nowrap; letter-spacing:.02em; }
   .tag.store { color:#fff; }
   .tag.person { background:color-mix(in srgb, var(--info-color,#7b61ff) 15%, transparent); color:var(--info-color,#7b61ff); font-weight:600; border-radius:9px; }
@@ -412,8 +438,8 @@ const STYLE = `
   .edit input, .edit select { background:var(--card-background-color,#fff); }
   .edit .text { flex:1 1 100%; } .edit .cat { flex:1 1 160px; } .edit .note-in { flex:2 1 200px; }
   .edit .btns { display:flex; gap:8px; flex:1 1 100%; justify-content:flex-end; }
-  .btn { font:inherit; border:none; border-radius:8px; padding:6px 14px; cursor:pointer; background:none; color:var(--primary-color); }
-  .btn.primary { background:var(--primary-color); color:var(--text-primary-color,#fff); }
+  .btn { font:inherit; border:none; border-radius:8px; padding:6px 14px; cursor:pointer; background:none; color:var(--sl-accent); }
+  .btn.primary { background:var(--sl-accent); color:var(--text-primary-color,#fff); }
   .btn.small { padding:4px 10px; font-size:.85rem; }
   .done-head { display:flex; align-items:center; gap:6px; padding:8px 8px 8px 16px; cursor:pointer; color:var(--secondary-text-color);
     font-size:.85rem; border-top:1px solid var(--divider-color,#e0e0e0); user-select:none; }
@@ -441,7 +467,7 @@ const STYLE = `
   .backdrop { position:fixed; inset:0; z-index:7; }
 
   /* Einkaufsmodus */
-  .shopbtn.on { color:var(--text-primary-color,#fff); background:var(--primary-color); }
+  .shopbtn.on { color:var(--text-primary-color,#fff); background:var(--sl-accent); }
   .progress { height:4px; margin:0 16px 8px; border-radius:2px; background:var(--secondary-background-color,#eee); overflow:hidden; }
   .progress > div { height:100%; background:var(--success-color,#43a047); transition:width .3s; }
   .shopping .row.large { min-height:54px; font-size:1.08rem; }
@@ -455,16 +481,16 @@ const STYLE = `
   .uigrid select { padding:6px 8px; }
   .checks { display:flex; flex-direction:column; gap:4px; font-size:.88rem; margin:6px 0; }
   .checks label, .inline-checks label { display:flex; align-items:center; gap:8px; cursor:pointer; }
-  .own { color:var(--primary-color); font-weight:700; margin-left:2px; }
+  .own { color:var(--sl-accent); font-weight:700; margin-left:2px; }
   .inline-checks { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:.85rem; }
 
   .tabs { display:flex; gap:4px; margin:10px 0 8px; }
   .tabs button { flex:1; border:1px solid var(--divider-color,#ddd); background:none; border-radius:8px; padding:7px; font:inherit; font-size:.88rem;
     cursor:pointer; color:var(--primary-text-color); }
-  .tabs button.on { background:var(--primary-color); border-color:var(--primary-color); color:var(--text-primary-color,#fff); }
+  .tabs button.on { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
   textarea { font:inherit; width:100%; box-sizing:border-box; min-height:120px; resize:vertical; color:var(--primary-text-color);
     background:var(--secondary-background-color,#f2f2f2); border:1px solid transparent; border-radius:8px; padding:9px 11px; }
-  textarea:focus { outline:none; border-color:var(--primary-color); }
+  textarea:focus { outline:none; border-color:var(--sl-accent); }
   .imp-src { width:100%; }
   .imp-prev { max-height:220px; overflow:auto; border:1px solid var(--divider-color,#e0e0e0); border-radius:8px; margin-top:8px; }
   .imp-prev .ir { display:flex; align-items:center; gap:8px; padding:5px 10px; font-size:.88rem; border-bottom:1px solid var(--divider-color,#eee); }
@@ -493,11 +519,40 @@ const STYLE = `
   .learned { max-height:200px; overflow:auto; }
   .lrow { display:flex; align-items:center; gap:8px; padding:3px 0; font-size:.88rem; }
   .lrow .w { flex:1; }
+
+  .row[draggable="true"] { cursor:grab; }
+  .row.dragging { opacity:.4; }
+  .row.dropbefore { box-shadow: inset 0 3px 0 var(--sl-accent); }
+  ha-card.droptarget { outline:2px dashed var(--sl-accent); outline-offset:-4px; }
+  .density-compact .row { min-height:30px; padding-top:2px; padding-bottom:2px; }
+  .density-comfortable .row { min-height:var(--smartlists-row-height, 54px); }
+  .density-comfortable .box { width:26px; height:26px; }
+  .filterbar { display:flex; gap:6px; overflow-x:auto; padding:0 16px 8px; scrollbar-width:none; }
+  .fchip.on { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
+  .fixedfilter { padding:0 16px 6px; font-size:.78rem; color:var(--secondary-text-color); display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fill,minmax(var(--smartlists-tile-size,110px),1fr)); gap:8px; padding:4px 16px 12px; }
+  .tile { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:96px; padding:10px 6px;
+    border-radius:12px; border:1px solid var(--divider-color,#e0e0e0); background:var(--card-background-color,#fff); cursor:pointer; text-align:center;
+    font:inherit; color:var(--primary-text-color); }
+  .tile:hover { border-color:var(--sl-accent); }
+  .tile .te { font-size:1.8rem; line-height:1; }
+  .tile .tn { font-size:.9rem; overflow-wrap:anywhere; }
+  .tile .tq { font-size:.78rem; font-weight:700; color:var(--sl-accent); }
+  .tile .tb { display:flex; gap:3px; flex-wrap:wrap; justify-content:center; }
+  .tile.checked { opacity:.45; } .tile.checked .tn { text-decoration:line-through; }
+  .tile:disabled { cursor:default; }
+  .mini { display:flex; align-items:center; gap:10px; padding:14px 16px; cursor:pointer; }
+  .mini .mt { font-weight:600; flex:1; min-width:0; }
+  .mini .ms { font-size:.82rem; color:var(--secondary-text-color); display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .mini .mcount { font-size:1.6rem; font-weight:700; color:var(--sl-accent); }
 `;
 
 class SmartListsCard extends HTMLElement {
   setConfig(config) {
-    if (!config || !config.entity) throw new Error("Bitte 'entity' angeben (eine SmartLists-Liste).");
+    const many = Array.isArray(config && config.entities) ? config.entities.filter(Boolean) : [];
+    if (!config || (!config.entity && !many.length)) throw new Error("Bitte 'entity' (eine Liste) oder 'entities' (mehrere) angeben.");
+    if (many.length && !config.entity) return this._setupMulti(config, many);
+    this._multi = null;
     this._rawConfig = config;
     this._initVersion = CARD_VERSION;
     if (this._config && this._config.entity !== config.entity) this._unsubscribe();
@@ -524,6 +579,7 @@ class SmartListsCard extends HTMLElement {
   }
 
   set hass(hass) {
+    if (this._multi) { this._hass = hass; this._multi.children.forEach((c) => { c.hass = hass; }); this._renderMultiTabs(); return; }
     // Karte stammt noch aus einer älteren, inzwischen ersetzten Datei → einmal sauber neu aufbauen
     if (this._initVersion !== CARD_VERSION && (this._rawConfig || this._config)) {
       this._card = null; this._hass = null;
@@ -642,6 +698,7 @@ class SmartListsCard extends HTMLElement {
     const root = this.shadowRoot;
     this._headEl = h("div", { class: "head" });
     this._searchEl = h("div");
+    this._filterEl = h("div");
     this._settingsEl = h("div");
     this._importEl = h("div");
     this._addEl = h("div");
@@ -651,10 +708,21 @@ class SmartListsCard extends HTMLElement {
     this._progressEl = h("div");
     this._menuEl = h("div");
     this._snackEl = h("div");
-    this._card = h("ha-card", {}, this._headEl, this._searchEl, this._progressEl, this._settingsEl, this._importEl, this._addEl, this._freqEl, this._msgEl,
+    this._card = h("ha-card", {}, this._headEl, this._searchEl, this._filterEl, this._progressEl, this._settingsEl, this._importEl, this._addEl, this._freqEl, this._msgEl,
       this._listEl, this._snackEl, this._menuEl);
     fill(root, h("style", {}, STYLE), this._card);
-    this._card.classList.toggle("compact", !!this._config.compact);
+    this._bindDropZone();
+    const density = this._config.compact ? "compact" : this._config.density;
+    this._card.classList.toggle("compact", density === "compact");
+    ["compact", "normal", "comfortable"].forEach((x) => this._card.classList.toggle(`density-${x}`, density === x));
+    // Aussehen pro Karte: Akzentfarbe (Hex oder [r,g,b] vom Farbwähler), Eckenradius, Schriftgröße
+    const acc = this._config.accent_color;
+    const accent = Array.isArray(acc) ? `rgb(${acc.join(",")})` : acc;
+    if (accent) this.style.setProperty("--smartlists-accent", accent); else this.style.removeProperty("--smartlists-accent");
+    if (this._config.radius != null && this._config.radius !== "") this.style.setProperty("--smartlists-radius", `${Number(this._config.radius)}px`);
+    else this.style.removeProperty("--smartlists-radius");
+    const scale = Number(this._config.font_scale) || 1;
+    this._card.style.zoom = scale !== 1 ? String(scale) : "";
     this._card.classList.toggle("shopping", this._shopping);
     if (this._config.max_height) this._listEl.style.cssText = `max-height:${Number(this._config.max_height)}px;overflow:auto`;
     if (this._shopping && this._ui && this._ui.shop_keep_awake) this._wake(true);
@@ -672,7 +740,7 @@ class SmartListsCard extends HTMLElement {
     }
     const open = d.items.filter((i) => !i.checked);
     // Trefferzahl schon hier, der Kopf wird vor der Liste gezeichnet
-    this._hitCount = this._searchQuery ? d.items.filter((i) => this._matches(i, d)).length : 0;
+    this._hitCount = this._searchQuery ? d.items.filter((i) => this._passesFilters(i) && this._matches(i, d)).length : 0;
     fill(this._headEl, 
       h("div", { class: "title" }, this._config.title || d.name),
       d.type === "combined" ? h("span", { class: "badge combined" }, t.combined) : null,
@@ -697,9 +765,206 @@ class SmartListsCard extends HTMLElement {
     fill(this._progressEl, this._shopping ? h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct),
       "aria-valuemin": "0", "aria-valuemax": "100" }, h("div", { style: `width:${pct}%` })) : "");
     this._headEl.hidden = !this._config.show_header;
+    // Mini-Ansicht: nur eine Zusammenfassung, Antippen klappt die Liste auf
+    const mini = this._config.view === "mini" && !this._miniOpen;
+    [this._searchEl, this._filterEl, this._progressEl, this._addEl, this._freqEl].forEach((e) => { e.hidden = mini; });
+    if (mini) { this._headEl.hidden = true; fill(this._listEl, this._renderMini(d)); fill(this._msgEl, this._error ? h("div", { class: "msg err" }, this._error) : ""); return; }
+    if (this._config.view === "mini" && this._config.show_header) {
+      this._headEl.prepend(iconBtn(ICON.chevron, this._t.mini_close, () => { this._miniOpen = false; this._render(); }, "collapse"));
+    }
+    this._renderFilterBar(d);
     this._renderAdd();
     fill(this._msgEl, this._error ? h("div", { class: "msg err" }, this._error) : "");
     this._renderList();
+  }
+
+  /* ---------------- Mehrere Listen in einer Karte ----------------
+   * entities: [todo.a, {entity: todo.b, title: "…", filter_store: "REWE"}] – jede Liste ist eine eigene
+   * Karte mit denselben Optionen; layout: tabs (Reiter), columns (nebeneinander), stack (untereinander). */
+  _setupMulti(config, many) {
+    if (!this.shadowRoot) this.attachShadow({ mode: "open" });
+    this._config = { ...CARD_DEFAULTS, ...config };
+    const base = { ...config }; delete base.entities; delete base.type;
+    const layout = ["tabs", "columns", "stack"].includes(config.layout) ? config.layout : "tabs";
+    const children = many.map((e) => {
+      const own = typeof e === "string" ? { entity: e } : { ...e };
+      const card = document.createElement("smartlists-card");
+      card.setConfig({ ...base, ...own, title: own.title || (layout === "tabs" ? "" : undefined) });
+      if (this._hass) card.hass = this._hass;
+      return card;
+    });
+    let active = 0;
+    try { active = Math.min(children.length - 1, Number(localStorage.getItem(`smartlists-multi:${many.map((e) => e.entity || e).join(",")}`)) || 0); } catch (e) { /* */ }
+    this._multi = { layout, children, active, key: `smartlists-multi:${many.map((e) => e.entity || e).join(",")}`, titles: many.map((e) => (typeof e === "object" && e.title) || null) };
+    const style = h("style", {}, ":host{display:block} "
+      + ".multi-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none} .multi-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px} .multi-stack{display:flex;flex-direction:column;gap:12px}"
+      + ".tab{flex:none;border:1px solid var(--divider-color,#ddd);background:var(--card-background-color,#fff);border-radius:18px;padding:6px 12px;font:inherit;font-size:.9rem;cursor:pointer;color:var(--primary-text-color);white-space:nowrap}"
+      + ".tab.on{background:var(--smartlists-accent,var(--primary-color));border-color:var(--smartlists-accent,var(--primary-color));color:var(--text-primary-color,#fff)} .tab .n{font-size:.75rem;opacity:.75;margin-left:4px}");
+    this._multiTabsEl = h("div", { class: "multi-tabs", role: "tablist" });
+    const body = h("div", { class: layout === "tabs" ? "multi-tabs-body" : layout === "columns" ? "multi-cols" : "multi-stack" }, children);
+    this.shadowRoot.replaceChildren(style, layout === "tabs" ? this._multiTabsEl : "", body);
+    this._renderMultiTabs();
+  }
+  _renderMultiTabs() {
+    const m = this._multi;
+    if (!m || m.layout !== "tabs") return;
+    m.children.forEach((c, i) => { c.hidden = i !== m.active; });
+    const st = (this._hass && this._hass.states) || {};
+    fill(this._multiTabsEl, m.children.map((c, i) => {
+      const e = c._config.entity; const s = st[e];
+      const name = m.titles[i] || (s && s.attributes.friendly_name) || e;
+      return h("button", { type: "button", role: "tab", class: `tab ${i === m.active ? "on" : ""}`, "aria-selected": String(i === m.active),
+        onclick: () => { m.active = i; try { localStorage.setItem(m.key, String(i)); } catch (err) { /* */ } this._renderMultiTabs(); } },
+        name, s ? h("span", { class: "n" }, String(Number(s.state) || 0)) : null);
+    }));
+  }
+
+  /* ---------------- Filter ----------------
+   * Feste Filter aus der Karten-Konfiguration + Auswahl in der Filter-Leiste (nur für diese Sitzung). */
+  _fixedFilters() {
+    const c = this._config;
+    const list = (v) => (Array.isArray(v) ? v : String(v || "").split(",")).map((x) => String(x).trim()).filter(Boolean);
+    return { store: list(c.filter_store), person: list(c.filter_person), tag: list(c.filter_tag), category: list(c.filter_category), offers: !!c.filter_offers };
+  }
+  _passesFilters(it) {
+    const f = this._fixedFilters();
+    const has = (kind, values) => !values.length || (it.tags || []).some((t) => t.kind === kind && values.some((v) => v.toLowerCase() === String(t.value).toLowerCase()))
+      || (kind === "store" && it.offer && values.some((v) => v.toLowerCase() === String(it.offer.store).toLowerCase()));
+    if (!has("store", f.store) || !has("person", f.person) || !has("tag", f.tag)) return false;
+    if (f.category.length && !f.category.includes(it.category)) return false;
+    if (f.offers && !it.offer) return false;
+    const chip = this._chip;
+    if (chip) {
+      if (chip.kind === "category") return it.category === chip.value;
+      if (chip.kind === "offer") return !!it.offer;
+      return has(chip.kind, [chip.value]);
+    }
+    return true;
+  }
+  _renderFilterBar(d) {
+    const el = this._filterEl;
+    if (!el) return;
+    const f = this._fixedFilters();
+    const fixed = [...f.store.map((v) => ({ kind: "store", value: v, label: v })), ...f.person.map((v) => ({ kind: "person", value: v, label: v })),
+      ...f.tag.map((v) => ({ kind: "tag", value: v, label: v }))];
+    const parts = [];
+    if (fixed.length || f.category.length || f.offers) {
+      parts.push(h("div", { class: "fixedfilter" }, "Filter:", fixed.map((x) => badge(x)),
+        f.category.map((cid) => h("span", { class: "chip" }, (d.categories.find((c) => c.id === cid) || {}).label || cid)),
+        f.offers ? h("span", { class: "chip" }, "🏷️ " + this._t.offer) : null));
+    }
+    if (this._config.show_filter_chips) {
+      const open = d.items.filter((i) => !i.checked);
+      const counts = new Map();
+      const add = (key, chip) => { const e = counts.get(key) || { ...chip, n: 0 }; e.n++; counts.set(key, e); };
+      for (const it of open) {
+        (it.tags || []).forEach((t) => add(`${t.kind}:${String(t.value).toLowerCase()}`, { kind: t.kind, value: t.value, label: t.label }));
+        if (it.offer) add("offer:", { kind: "offer", value: "", label: "🏷️ " + this._t.offer });
+      }
+      const chips = [...counts.values()].sort((a, b) => b.n - a.n).slice(0, 12);
+      if (chips.length) {
+        parts.push(h("div", { class: "filterbar", role: "toolbar" }, chips.map((c) => {
+          const on = this._chip && this._chip.kind === c.kind && String(this._chip.value).toLowerCase() === String(c.value).toLowerCase();
+          return h("button", { type: "button", class: `fchip ${on ? "on" : ""}`, "aria-pressed": String(on),
+            onclick: () => { this._chip = on ? null : { kind: c.kind, value: c.value }; this._render(); } },
+            c.kind === "person" ? "👤 " : c.kind === "tag" ? "#" : "", c.label, ` · ${c.n}`);
+        })));
+      }
+    }
+    fill(el, ...parts);
+  }
+
+  /* ---------------- Ziehen & Ablegen (Maus/Stift) ----------------
+   * Auf eine andere SmartLists-Karte/Liste ziehen = verschieben (Strg/Alt = kopieren). Innerhalb der
+   * Liste auf einen Artikel ziehen = davor einsortieren (nur bei Sortierung „Hinzugefügt“ und Listen,
+   * die das können). Auf Touch-Geräten geht Verschieben über langes Drücken → Menü. */
+  _bindDrag(row, it, d) {
+    if (this._config.drag_drop === false) return;
+    row.setAttribute("draggable", "true");
+    row.addEventListener("dragstart", (e) => {
+      SL_DRAG = { entity: this._config.entity, uid: it.uid, name: it.name, canRemove: !!it.permissions.delete };
+      try { e.dataTransfer.effectAllowed = "copyMove"; e.dataTransfer.setData("text/plain", it.text || it.name); } catch (err) { /* */ }
+      row.classList.add("dragging");
+    });
+    row.addEventListener("dragend", () => { SL_DRAG = null; row.classList.remove("dragging"); this._clearDropMarks(); });
+    row.addEventListener("dragover", (e) => {
+      if (!SL_DRAG || SL_DRAG.entity !== this._config.entity || SL_DRAG.uid === it.uid || !this._canReorder(d)) return;
+      e.preventDefault(); e.stopPropagation();
+      this._clearDropMarks(); row.classList.add("dropbefore");
+    });
+    row.addEventListener("drop", async (e) => {
+      if (!SL_DRAG || SL_DRAG.entity !== this._config.entity || SL_DRAG.uid === it.uid || !this._canReorder(d)) return;
+      e.preventDefault(); e.stopPropagation();
+      const moving = SL_DRAG.uid; SL_DRAG = null; this._clearDropMarks();
+      // HA erwartet den Vorgänger: den Artikel direkt vor dem Ziel (keiner = an den Anfang)
+      const idx = d.items.findIndex((x) => x.uid === it.uid);
+      const prev = d.items.slice(0, idx).reverse().find((x) => x.uid !== moving);
+      const msg = { type: "todo/item/move", entity_id: this._config.entity, uid: moving };
+      if (prev) msg.previous_uid = prev.uid;
+      try { await this._hass.callWS(msg); this._error = null; } catch (err) { this._error = (err && err.message) || this._t.error; }
+      this._load();
+    });
+  }
+  _canReorder(d) { return this._sortMode === "added" && d.type !== "combined" && !!(d.permissions && d.permissions.reorder); }
+  _clearDropMarks() {
+    if (!this._card) return;
+    this._card.classList.remove("droptarget");
+    const walk = (n) => { if (n.classList) n.classList.remove("dropbefore"); (n.childNodes || []).forEach(walk); };
+    walk(this._listEl);
+  }
+  _bindDropZone() {
+    const card = this._card;
+    card.addEventListener("dragover", (e) => {
+      if (!SL_DRAG || SL_DRAG.entity === this._config.entity || !this._data || !this._data.permissions.add) return;
+      e.preventDefault(); card.classList.add("droptarget");
+    });
+    card.addEventListener("dragleave", (e) => { if (e.target === card) card.classList.remove("droptarget"); });
+    card.addEventListener("drop", async (e) => {
+      if (!SL_DRAG || SL_DRAG.entity === this._config.entity) return;
+      e.preventDefault(); card.classList.remove("droptarget");
+      const src = SL_DRAG; SL_DRAG = null;
+      const copy = !src.canRemove || e.ctrlKey || e.altKey;
+      try {
+        await this._hass.callWS({ type: "smartlists/move_item", entity_id: src.entity, uid: src.uid, target: this._config.entity, copy });
+        this._showSnack(`${src.name} ${copy ? this._t.copied : this._t.moved} ${this._data.name}`);
+        this._error = null;
+      } catch (err) { this._error = (err && err.message) || this._t.error; }
+      this._load();
+    });
+  }
+
+  /* ---------------- Mini-Ansicht ---------------- */
+  _renderMini(d) {
+    const t = this._t;
+    const open = d.items.filter((i) => !i.checked && this._passesFilters(i));
+    const stores = new Map();
+    open.forEach((i) => (i.tags || []).filter((x) => x.kind === "store").forEach((x) => stores.set(x.label, (stores.get(x.label) || { ...x, n: 0 })) && stores.get(x.label).n++));
+    const today = new Date().toISOString().slice(0, 10);
+    const ending = open.filter((i) => i.offer && i.offer.valid_until && i.offer.valid_until >= today).sort((a, b) => a.offer.valid_until.localeCompare(b.offer.valid_until))[0];
+    const day = (iso) => { const p = String(iso).slice(0, 10).split("-"); return `${p[2]}.${p[1]}.`; };
+    return h("div", { class: "mini", role: "button", tabindex: "0", title: t.mini_open,
+      onclick: () => { this._miniOpen = true; this._render(); }, onkeydown: (e) => { if (e.key === "Enter") { this._miniOpen = true; this._render(); } } },
+      h("span", { class: "mcount" }, String(open.length)),
+      h("div", { class: "mt" }, this._config.title || d.name,
+        h("div", { class: "ms" }, `${t.open}`, [...stores.values()].slice(0, 4).map((x) => [badge(x), ` ${x.n}`]),
+          ending ? h("span", {}, `· 🏷️ ${ending.name} ${t.offer_until} ${day(ending.offer.valid_until)}`) : null)),
+      svg(ICON.chevron, 20));
+  }
+
+  /* ---------------- Kachel-Ansicht ---------------- */
+  _tile(it, d) {
+    const cat = d.categories.find((c) => c.id === it.category);
+    const p = it.permissions;
+    const qty = it.quantity != null ? `${it.pack_count > 1 ? it.pack_count + "× " : ""}${fmtQty(it.quantity)}${it.unit ? " " + it.unit : ""}` : "";
+    const tags = !this._config.show_tags ? [] : (it.tags || []).filter((x) => this._config.show_source || !x.implicit);
+    const el = h("button", { type: "button", class: `tile ${it.checked ? "checked" : ""}`, disabled: !p.toggle, "aria-pressed": String(it.checked),
+      title: it.name, onclick: () => { if (this._suppressClick) { this._suppressClick = false; return; } this._toggleItem(it); } },
+      h("span", { class: "te" }, cat ? emojiOf(cat.label) : "📦"),
+      h("span", { class: "tn" }, it.name),
+      qty ? h("span", { class: "tq" }, qty) : null,
+      tags.length || it.offer ? h("span", { class: "tb" }, tags.map(badge), it.offer && it.offer.price != null ? h("span", { class: "chip" }, `${it.offer.price.toFixed(2).replace(".", ",")} €`) : null) : null);
+    this._bindPress(el, it, el);
+    return el;
   }
 
   /* ---------------- Bedienung & Einkaufsmodus ---------------- */
@@ -1198,6 +1463,16 @@ class SmartListsCard extends HTMLElement {
     // Nur Zahl getippt ("Äpfel 2")? → gemerkte bzw. übliche Einheit ergänzen
     if (p.quantity != null && !p.unit && info && info.unit_hint) p.unit = info.unit_hint;
     const picked = textOverride ? null : this._draft.pickedCat;
+    // Karte mit festem Filter „@REWE“ / „*Anna“: neue Artikel bekommen den Tag automatisch, sonst wären sie unsichtbar
+    if (this._config.filter_tags_new_items !== false) {
+      const f = this._fixedFilters();
+      for (const [kind, values] of [["store", f.store], ["person", f.person], ["tag", f.tag]]) {
+        if (values.length === 1 && !p.tags.some((x) => x.kind === kind)) {
+          const rule = cfg.tag_rules.find((r) => r.kind === kind);
+          if (rule) p.tags.push({ kind, value: values[0], prefix: rule.prefix, label: values[0] });
+        }
+      }
+    }
     const text = encodeText(p, cfg.tag_rules);
     this._resetDraft();
     if (this._input) { this._input.value = ""; this._renderPreview(); this._closeSugg(); if (this._pickEl) this._pickEl.hidden = true; }
@@ -1225,7 +1500,8 @@ class SmartListsCard extends HTMLElement {
     const t = this._t;
     const d = this._data;
     const searching = !!this._searchQuery;
-    const visible = searching ? d.items.filter((i) => this._matches(i, d)) : d.items;
+    const filtered = d.items.filter((i) => this._passesFilters(i));
+    const visible = searching ? filtered.filter((i) => this._matches(i, d)) : filtered;
     this._hitCount = visible.length;
     const open = visible.filter((i) => !i.checked);
     const done = visible.filter((i) => i.checked);
@@ -1272,7 +1548,14 @@ class SmartListsCard extends HTMLElement {
       emoji = true;
       rows.push(items.map((i) => this._row(i, d, true)));
     }
-    if (rows.length) out.push(h("div", { class: `items ${emoji ? "emoji" : ""}` }, rows));
+    if (this._config.view === "tiles" && open.length) {
+      // Kacheln: gleiche Reihenfolge wie die Liste, ohne Gruppen-Überschriften
+      const order = d.categories.map((c) => c.id);
+      const tiles = mode === "category" ? [...open].sort((a, b) => (order.indexOf(a.category) - order.indexOf(b.category)) || byName(a, b))
+        : mode === "alpha" ? [...open].sort(byName) : open;
+      out.splice(0, out.length, ...out.filter((x) => x.className === "nohits" || x.className === "empty"));
+      out.push(h("div", { class: "tiles" }, tiles.map((i) => this._tile(i, d))));
+    } else if (rows.length) out.push(h("div", { class: `items ${emoji ? "emoji" : ""}` }, rows));
 
     const hideDone = this._shopping && this._ui.shop_hide_checked;
     // bei der Suche erledigte Treffer immer zeigen (aufgeklappt), „Erledigte entfernen“ nur ohne Filter
@@ -1332,6 +1615,7 @@ class SmartListsCard extends HTMLElement {
         buttons && p.rename ? iconBtn(ICON.pencil, t.edit, () => { this._editing = it.uid; this._renderList(); }) : null,
         buttons && p.delete ? iconBtn(ICON.trash, t.delete, () => this._deleteItems([it]), "danger") : null));
     this._bindPress(ui.press_target === "name" ? nameEl : row, it, row);
+    this._bindDrag(row, it, d);
     return row;
   }
 
@@ -1544,64 +1828,114 @@ class SmartListsCard extends HTMLElement {
 class SmartListsCardEditor extends HTMLElement {
   setConfig(config) { this._config = config; this._build(); }
   set hass(hass) { this._hass = hass; if (this._form) this._form.hass = hass; }
+
+  // Einfach: nur das Wichtigste. Erweitert: alle Abschnitte. Merkt sich die Wahl im Browser.
+  get _advanced() { try { return localStorage.getItem("smartlists-editor-advanced") === "1"; } catch (e) { return false; } }
+  set _advanced(v) { try { localStorage.setItem("smartlists-editor-advanced", v ? "1" : "0"); } catch (e) { /* */ } }
+
+  _schema() {
+    const b = (name) => ({ name, selector: { boolean: {} } });
+    const section = (title, icon, schema) => ({ type: "expandable", name: "", flatten: true, title, icon, schema });
+    const sel = (name, options) => ({ name, selector: { select: { mode: "dropdown", options: options.map(([value, label]) => ({ value, label })) } } });
+    const basic = [
+      sel("preset", [["", "— Vorlage wählen (setzt mehrere Optionen) —"], ...Object.entries(PRESETS).map(([k, v]) => [k, v.label])]),
+      { name: "entity", selector: { entity: { domain: "todo" } } },
+      { name: "title", selector: { text: {} } },
+      sel("view", [["list", "Liste"], ["tiles", "Kacheln (z. B. Küchen-Tablet)"], ["mini", "Mini-Kachel (Zusammenfassung, aufklappbar)"]]),
+      sel("sort", [["category", "Nach Kategorie"], ["alpha", "A–Z"], ["added", "Reihenfolge des Hinzufügens"], ["list", "Nach Quell-Liste (kombiniert)"]]),
+      b("advanced"),
+    ];
+    if (!this._advanced) return basic;
+    return [
+      ...basic,
+      section("Mehrere Listen in einer Karte", "mdi:view-column-outline", [
+        { name: "entities", selector: { entity: { domain: "todo", multiple: true } } },
+        sel("layout", [["tabs", "Reiter"], ["columns", "Nebeneinander"], ["stack", "Untereinander"]]),
+      ]),
+      section("Filter", "mdi:filter-outline", [
+        { name: "filter_store", selector: { text: {} } },
+        { name: "filter_person", selector: { text: {} } },
+        { name: "filter_tag", selector: { text: {} } },
+        { name: "filter_category", selector: { select: { multiple: true, mode: "dropdown", options: CATEGORY_IDS.map(([value, label]) => ({ value, label })) } } },
+        b("filter_offers"), b("filter_tags_new_items"), b("show_filter_chips"),
+      ]),
+      section("Aussehen", "mdi:palette-outline", [
+        sel("density", [["compact", "Kompakt"], ["normal", "Normal"], ["comfortable", "Groß (Touch)"]]),
+        { name: "font_scale", selector: { number: { min: 0.8, max: 1.6, step: 0.05, mode: "slider" } } },
+        { name: "radius", selector: { number: { min: 0, max: 32, step: 1, mode: "box", unit_of_measurement: "px" } } },
+        { name: "accent_color", selector: { color_rgb: {} } },
+        { name: "max_height", selector: { number: { min: 150, max: 2000, step: 50, mode: "box", unit_of_measurement: "px" } } },
+      ]),
+      section("Kopfzeile", "mdi:page-layout-header",
+        [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
+      section("Eingabe", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
+      section("Liste", "mdi:format-list-bulleted",
+        [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
+      section("Erledigte", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
+      section("Einkaufsmodus", "mdi:cart-outline", [b("start_shopping")]),
+    ];
+  }
+
   _build() {
+    const LABELS = {
+      preset: "Vorlage", entity: "Liste", entities: "Listen (statt „Liste“ oben)", layout: "Anordnung", title: "Titel (leer = Name der Liste)",
+      view: "Ansicht", sort: "Standard-Sortierung", advanced: "Erweiterte Optionen anzeigen",
+      filter_store: "Nur Markt (z. B. REWE; mehrere mit Komma)", filter_person: "Nur Person (z. B. Anna)", filter_tag: "Nur Schlagwort (z. B. bio)",
+      filter_category: "Nur Kategorien", filter_offers: "Nur Angebote", filter_tags_new_items: "Neue Artikel bekommen den Filter-Tag (@REWE …)",
+      show_filter_chips: "Filter-Leiste (Märkte, Personen, Angebote antippen)",
+      density: "Zeilenhöhe", font_scale: "Schriftgröße", radius: "Eckenradius", accent_color: "Akzentfarbe (leer = Theme)",
+      show_header: "Kopfzeile anzeigen", show_count: "Anzahl offen / Treffer", show_search: "Suche (Lupe)",
+      show_sort: "Sortier-Auswahl", show_shopping: "Einkaufsmodus-Knopf", show_undo: "Rückgängig (↶)",
+      show_import: "Import-Knopf", show_settings: "Zahnrad (persönliche Einstellungen)",
+      show_add: "Eingabefeld zum Hinzufügen", show_frequent: "„Häufig gekauft“",
+      drag_drop: "Ziehen & Ablegen (Maus): in andere Liste verschieben, Reihenfolge ändern", show_stepper: "Mengen-Stepper (− +)", show_offer: "Angebote aus der App (Markt, Preis, gültig bis)",
+      show_tags: "Badges (@Markt, *Person, #Schlagwort)", show_source: "Herkunft (Quell-Liste / Person)", show_note: "Notizen",
+      show_category_titles: "Kategorie-Überschriften", max_height: "Maximale Höhe der Liste (leer = unbegrenzt)",
+      show_completed: "Erledigte anzeigen", collapse_completed: "Erledigte anfangs zugeklappt", start_shopping: "Im Einkaufsmodus starten",
+    };
+    const HELP = {
+      preset: "Setzt passende Optionen auf einmal – danach ist alles einzeln änderbar.",
+      entities: "Mehrere Listen: als Reiter, nebeneinander oder untereinander. Alle Optionen gelten für jede Liste.",
+      filter_tags_new_items: "Sonst wären neue Artikel in einer gefilterten Karte gleich wieder unsichtbar.",
+      show_settings: "Geste, Menü und Einkaufsmodus stellt jeder Benutzer für sich im Zahnrad ein.",
+      show_category_titles: "Aus: nach Kategorie sortiert, aber als eine Liste mit Kategorie-Symbol vorne.",
+      start_shopping: "Praktisch für ein Tablet im Flur oder ein Dashboard nur fürs Einkaufen.",
+    };
     if (!this._form) {
-      const b = (name) => ({ name, selector: { boolean: {} } });
-      const section = (title, icon, schema, expanded = false) => ({ type: "expandable", name: "", flatten: true, title, icon, expanded, schema });
-      const LABELS = {
-        entity: "Liste", title: "Titel (leer = Name der Liste)", sort: "Standard-Sortierung",
-        show_header: "Kopfzeile anzeigen", show_count: "Anzahl offen / Treffer", show_search: "Suche (Lupe)",
-        show_sort: "Sortier-Auswahl", show_shopping: "Einkaufsmodus-Knopf", show_undo: "Rückgängig (↶)",
-        show_import: "Import-Knopf", show_settings: "Zahnrad (persönliche Einstellungen)",
-        show_add: "Eingabefeld zum Hinzufügen", show_frequent: "„Häufig gekauft“",
-        show_stepper: "Mengen-Stepper (− +)", show_offer: "Angebote aus der App (Markt, Preis, gültig bis)", show_tags: "Badges (@Markt, *Person, #Schlagwort)",
-        show_source: "Herkunft (Quell-Liste / Person)", show_note: "Notizen", show_category_titles: "Kategorie-Überschriften",
-        compact: "Kompakte Zeilen", max_height: "Maximale Höhe der Liste (px, leer = unbegrenzt)",
-        show_completed: "Erledigte anzeigen", collapse_completed: "Erledigte anfangs zugeklappt",
-        start_shopping: "Im Einkaufsmodus starten",
-      };
-      const HELP = {
-        show_settings: "Geste, Menü und Einkaufsmodus-Verhalten stellt jeder Benutzer für sich im Zahnrad ein.",
-        show_category_titles: "Aus: nach Kategorie sortiert, aber als eine Liste mit Kategorie-Symbol vorne.",
-        start_shopping: "Praktisch für ein Tablet in der Küche oder ein Dashboard nur fürs Einkaufen.",
-      };
       this._form = document.createElement("ha-form");
-      this._form.computeLabel = (s) => LABELS[s.name] || s.name;
-      this._form.computeHelper = (s) => HELP[s.name];
-      this._form.schema = [
-        { name: "entity", required: true, selector: { entity: { domain: "todo" } } },
-        { name: "title", selector: { text: {} } },
-        { name: "sort", selector: { select: { mode: "dropdown", options: [
-          { value: "category", label: "Nach Kategorie" }, { value: "alpha", label: "A–Z" },
-          { value: "added", label: "Reihenfolge des Hinzufügens" }, { value: "list", label: "Nach Quell-Liste (kombiniert)" }] } } },
-        section("Kopfzeile", "mdi:page-layout-header",
-          [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-        section("Eingabe", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
-        section("Liste", "mdi:format-list-bulleted",
-          [b("show_stepper"), b("show_offer"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles"), b("compact"),
-            { name: "max_height", selector: { number: { min: 150, max: 2000, step: 50, mode: "box", unit_of_measurement: "px" } } }]),
-        section("Erledigte", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
-        section("Einkaufsmodus", "mdi:cart-outline", [b("start_shopping")]),
-      ];
+      this._form.computeLabel = (sch) => LABELS[sch.name] || sch.name;
+      this._form.computeHelper = (sch) => HELP[sch.name];
       this._form.addEventListener("value-changed", (e) => {
-        // nur Abweichungen vom Standard speichern → schlankes YAML
         const cfg = { ...e.detail.value };
-        for (const [k, v] of Object.entries(CARD_DEFAULTS)) if (cfg[k] === v) delete cfg[k];
-        if (cfg.max_height === "" || cfg.max_height == null) delete cfg.max_height;
-        if (!cfg.title) delete cfg.title;
+        if ("advanced" in cfg) {
+          const adv = !!cfg.advanced; delete cfg.advanced;
+          if (adv !== this._advanced) { this._advanced = adv; this._form.schema = this._schema(); }
+        }
+        if (cfg.preset) { Object.assign(cfg, PRESETS[cfg.preset] ? PRESETS[cfg.preset].values : {}); }
+        delete cfg.preset;
+        // nur Abweichungen vom Standard speichern → schlankes YAML
+        for (const [k, v] of Object.entries(CARD_DEFAULTS)) if (JSON.stringify(cfg[k]) === JSON.stringify(v)) delete cfg[k];
+        for (const k of ["max_height", "radius", "title", "accent_color", "filter_store", "filter_person", "filter_tag"]) if (cfg[k] === "" || cfg[k] == null) delete cfg[k];
+        if (Array.isArray(cfg.entities) && !cfg.entities.length) delete cfg.entities;
+        if (Array.isArray(cfg.entities) && cfg.entities.length) delete cfg.entity;
+        this._config = cfg;
+        this._form.data = this._data();
         this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: cfg }, bubbles: true, composed: true }));
       });
       this.append(this._form);
     }
     this._form.hass = this._hass;
-    this._form.data = { ...CARD_DEFAULTS, ...this._config };
+    this._form.schema = this._schema();
+    this._form.data = this._data();
   }
+  _data() { return { ...CARD_DEFAULTS, ...this._config, preset: "", advanced: this._advanced }; }
 }
 
 /* ------------------------------------------------------------------ */
 /* Seitenleisten-Seite „SmartLists“ (von der Integration registriert)  */
 /* ------------------------------------------------------------------ */
 const PANEL_KEY = "smartlists-panel-list";
+const PANEL_PREFS = "smartlists-panel-prefs";
 const PANEL_STYLE = `
   :host { display:block; min-height:100vh; background:var(--primary-background-color,#fafafa); color:var(--primary-text-color); }
   .toolbar { display:flex; align-items:center; gap:4px; height:56px; padding:0 12px; box-sizing:border-box;
@@ -1610,73 +1944,112 @@ const PANEL_STYLE = `
   .toolbar .title { flex:1; margin-left:8px; }
   .toolbar button { background:none; border:none; color:inherit; width:40px; height:40px; border-radius:50%; cursor:pointer;
     display:flex; align-items:center; justify-content:center; }
-  .toolbar button:hover { background:rgba(255,255,255,.15); }
-  .chips { display:flex; gap:8px; overflow-x:auto; padding:12px 16px 4px; scrollbar-width:none; max-width:760px; margin:0 auto; }
+  .toolbar button:hover, .toolbar button.on { background:rgba(255,255,255,.18); }
+  .chips { display:flex; gap:8px; overflow-x:auto; padding:12px 16px 4px; scrollbar-width:none; margin:0 auto; box-sizing:border-box; }
   .chip { flex:none; display:flex; align-items:center; gap:6px; border:1px solid var(--divider-color,#ddd); background:var(--card-background-color,#fff);
     border-radius:18px; padding:6px 12px; font:inherit; font-size:.9rem; cursor:pointer; color:var(--primary-text-color); white-space:nowrap; }
   .chip.on { background:var(--primary-color); border-color:var(--primary-color); color:var(--text-primary-color,#fff); }
   .chip .n { font-size:.75rem; opacity:.75; }
-  .content { max-width:760px; margin:0 auto; padding:8px 16px 32px; box-sizing:border-box; }
+  .hint { font-size:.8rem; color:var(--secondary-text-color); padding:2px 16px 0; margin:0 auto; box-sizing:border-box; }
+  .content { margin:0 auto; padding:8px 16px 32px; box-sizing:border-box; display:grid; gap:16px; align-items:start; }
+  .w-normal { max-width:760px; } .w-wide { max-width:none; }
+  .cols-1 { grid-template-columns:minmax(0,1fr); }
+  .cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  @media (max-width: 900px) { .cols-2, .cols-3 { grid-template-columns:minmax(0,1fr); } }
   .empty { text-align:center; padding:48px 16px; color:var(--secondary-text-color); }
 `;
+const ICON_COLUMNS = "M3,3H11V21H3V3M13,3H21V21H13V3M5,5V19H9V5H5M15,5V19H19V5H15Z";
+const ICON_WIDE = "M3,5H21V7H3V5M3,11H21V13H3V11M3,17H21V19H3V17M1,9L4,12L1,15V9M23,9V15L20,12L23,9Z";
 
+/* Seite „SmartLists“: eine Liste oder bis zu drei nebeneinander (zwischen ihnen Ziehen & Ablegen),
+ * normale oder breite Darstellung. Einstellungen werden im Browser gemerkt. */
 class SmartListsPanel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this._selected = null;
-    try { this._selected = localStorage.getItem(PANEL_KEY); } catch (e) { /* */ }
+    this._cards = new Map();
+    let prefs = {};
+    try { prefs = JSON.parse(localStorage.getItem(PANEL_PREFS) || "{}"); } catch (e) { prefs = {}; }
+    let legacy = null;
+    try { legacy = localStorage.getItem(PANEL_KEY); } catch (e) { /* */ }
+    this._prefs = { columns: false, wide: false, selected: legacy ? [legacy] : [], ...prefs };
   }
   set hass(hass) {
     this._hass = hass;
     this._render();
-    if (this._card) this._card.hass = hass;
+    this._cards.forEach((c) => { c.hass = hass; });
   }
   set narrow(v) { this._narrow = v; this._render(); }
   set panel(p) { this._panelInfo = p; }
+  _save() { try { localStorage.setItem(PANEL_PREFS, JSON.stringify(this._prefs)); } catch (e) { /* */ } }
 
   _lists() {
     const st = (this._hass && this._hass.states) || {};
     return Object.keys(st).filter((e) => e.startsWith("todo.") && st[e].state !== "unavailable")
       .map((e) => ({ e, name: st[e].attributes.friendly_name || e, open: Number(st[e].state) || 0,
-        combined: Array.isArray(st[e].attributes.source_lists) }))
-      // kombinierte zuerst, dann alphabetisch
+        combined: !!st[e].attributes.smartlists_combined || Array.isArray(st[e].attributes.source_lists) }))
       .sort((a, b) => (b.combined - a.combined) || a.name.localeCompare(b.name));
   }
 
   _render() {
     if (!this._hass) return;
     const lists = this._lists();
-    if (!this._selected || !lists.some((l) => l.e === this._selected)) this._selected = lists.length ? lists[0].e : null;
+    const max = this._prefs.columns ? 3 : 1;
+    let sel = this._prefs.selected.filter((e) => lists.some((l) => l.e === e)).slice(0, max);
+    if (!sel.length && lists.length) sel = [lists[0].e];
+    this._prefs.selected = sel;
     if (!this._root) {
       this._chipsEl = h("div", { class: "chips", role: "tablist" });
+      this._hintEl = h("div", { class: "hint" });
       this._contentEl = h("div", { class: "content" });
       this._menuBtn = h("button", { type: "button", "aria-label": "Menü", title: "Menü",
         onclick: () => this.dispatchEvent(new Event("hass-toggle-menu", { bubbles: true, composed: true })) }, svg(ICON_MENU, 24));
-      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists")), this._chipsEl, this._contentEl);
+      this._colBtn = h("button", { type: "button", title: "Mehrere Listen nebeneinander", "aria-label": "Mehrere Listen nebeneinander",
+        onclick: () => { this._prefs.columns = !this._prefs.columns; this._save(); this._render(); } }, svg(ICON_COLUMNS, 22));
+      this._wideBtn = h("button", { type: "button", title: "Breite Ansicht", "aria-label": "Breite Ansicht",
+        onclick: () => { this._prefs.wide = !this._prefs.wide; this._save(); this._render(); } }, svg(ICON_WIDE, 22));
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._colBtn, this._wideBtn),
+        this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }
     this._menuBtn.hidden = !this._narrow;
-    fill(this._chipsEl, lists.map((l) => h("button", { type: "button", role: "tab", class: `chip ${l.e === this._selected ? "on" : ""}`,
-      "aria-selected": String(l.e === this._selected), onclick: () => this._select(l.e) },
+    this._colBtn.classList.toggle("on", this._prefs.columns);
+    this._wideBtn.classList.toggle("on", this._prefs.wide);
+    this._colBtn.setAttribute("aria-pressed", String(this._prefs.columns));
+    this._wideBtn.setAttribute("aria-pressed", String(this._prefs.wide));
+    const width = this._prefs.wide || this._prefs.columns ? "w-wide" : "w-normal";
+    [this._chipsEl, this._hintEl].forEach((e) => { e.className = e.className.split(" ")[0] + " " + width; });
+    fill(this._chipsEl, lists.map((l) => h("button", { type: "button", role: "tab", class: `chip ${sel.includes(l.e) ? "on" : ""}`,
+      "aria-selected": String(sel.includes(l.e)), onclick: () => this._select(l.e) },
       l.name, h("span", { class: "n" }, String(l.open)))));
-    if (!this._selected) {
-      this._card = null;
+    fill(this._hintEl, this._prefs.columns ? "Bis zu 3 Listen antippen. Artikel mit der Maus in eine andere Liste ziehen = verschieben (Strg = kopieren)." : "");
+    if (!sel.length) {
+      this._cards.clear();
+      this._contentEl.className = `content ${width}`;
       fill(this._contentEl, h("div", { class: "empty" }, "Keine To-do-Listen gefunden. Lege unter Einstellungen → Geräte & Dienste → SmartLists eine kombinierte Liste an."));
       return;
     }
-    if (!this._card || this._cardEntity !== this._selected) {
-      // je Liste eine frische Karte (eigene Live-Verbindung, eigener Eingabezustand)
-      this._card = document.createElement("smartlists-card");
-      this._card.setConfig({ entity: this._selected });
-      this._cardEntity = this._selected;
-      fill(this._contentEl, this._card);
-      this._card.hass = this._hass;
-    }
+    // Karten wiederverwenden (Eingaben/Zustand bleiben), nur neue anlegen bzw. abgewählte entfernen
+    for (const e of [...this._cards.keys()]) if (!sel.includes(e)) this._cards.delete(e);
+    const cards = sel.map((e) => {
+      if (!this._cards.has(e)) {
+        const c = document.createElement("smartlists-card");
+        c.setConfig({ entity: e });
+        c.hass = this._hass;
+        this._cards.set(e, c);
+      }
+      return this._cards.get(e);
+    });
+    this._contentEl.className = `content ${width} cols-${cards.length}`;
+    const current = [...this._contentEl.childNodes];
+    if (current.length !== cards.length || current.some((n, i) => n !== cards[i])) fill(this._contentEl, cards);
   }
   _select(entity) {
-    this._selected = entity;
-    try { localStorage.setItem(PANEL_KEY, entity); } catch (e) { /* */ }
+    const sel = this._prefs.selected;
+    if (!this._prefs.columns) this._prefs.selected = [entity];
+    else if (sel.includes(entity)) { if (sel.length > 1) this._prefs.selected = sel.filter((e) => e !== entity); }
+    else this._prefs.selected = [...sel, entity].slice(-3);
+    this._save();
     this._render();
   }
 }

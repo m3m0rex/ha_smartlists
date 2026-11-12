@@ -1,25 +1,25 @@
-# SmartLists – Schnittstelle für die App (und andere Oberflächen)
+# SmartLists – interface for the app (and other front ends)
 
-Die Integration bietet ihre Funktionen über die WebSocket-API von Home Assistant an – dieselbe
-Verbindung, die die App schon für `todo.*` und `state_changed` nutzt (`/api/websocket`, Anmeldung mit
-dem Long-Lived Access Token). Alle Befehle beginnen mit `smartlists/`.
+The integration exposes its features through Home Assistant's WebSocket API – the same connection
+the app already uses for `todo.*` and `state_changed` (`/api/websocket`, authenticated with a
+long-lived access token). All commands start with `smartlists/`.
 
-## 1. Koppeln
+## 1. Pairing
 
-Nach dem Verbinden einmal:
+Once after connecting:
 
 ```json
 {"id": 1, "type": "smartlists/info"}
 ```
 
-- **Erfolg** → Integration ist installiert, die App ist „gekoppelt“. Antwort:
+- **Success** → the integration is installed and the app is "paired". Response:
 
 ```json
 {
   "integration": "smartlists",
-  "version": "1.3.0",
+  "version": "1.8.0",
   "api_version": 1,
-  "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings"],
+  "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices"],
   "user": {"id": "…", "name": "Hans", "is_admin": true},
   "categories": [{"id": "obst_gemuese", "label": "🥬 Obst & Gemüse"}, …],
   "tag_rules": [{"prefix": "@", "kind": "store"}, {"prefix": "*", "kind": "person"}, {"prefix": "#", "kind": "tag"}],
@@ -29,53 +29,64 @@ Nach dem Verbinden einmal:
 }
 ```
 
-- **Fehler `unknown_command`** → Integration nicht installiert. Die App arbeitet wie bisher ohne sie.
-- **`api_version` größer als die, die die App kennt** → Hinweis „App aktualisieren“, Listen trotzdem
-  über die normalen `todo.*`-Dienste weiter nutzbar.
+- **Error `unknown_command`** → the integration is not installed; the app keeps working without it.
+- **`api_version` higher than the app knows** → show "please update the app"; lists keep working
+  through the regular `todo.*` services.
 
-`tag_rules` können sich ändern (Admins stellen sie in HA oder im Zahnrad der Karte ein). Die App
-sollte sie beim Verbinden neu holen und nicht fest einbauen.
+`tag_rules` can change (admins set them in HA or in the card's gear menu). Fetch them on every
+connect instead of hard-coding them.
 
-## 2. Artikeltext
+## 2. Item text
 
-Home Assistant kennt pro Artikel nur einen Namen. Menge und Markierungen stehen deshalb im Namen
-selbst – genau so, wie die App Mengen schon heute speichert (`encodeQuantityIntoName`):
+Home Assistant stores only one name per item. Quantity and markers are therefore part of the name –
+exactly the format the app already uses for quantities (`encodeQuantityIntoName`):
 
 ```
-Name [N× ]Menge [Einheit] [Tags …]
+Name [N× ]quantity [unit] [tags …]
 Milch 2 l @REWE
 Joghurt 4× 150 g *Anna #bio
 ```
 
-- Tags: Zeichen aus `tag_rules` direkt vor einem Wort, mit Leerzeichen davor (`Milch@REWE` ist kein Tag).
-  Ein Markt mit Leerzeichen wird mit Bindestrich geschrieben (`@Bio-Markt`).
-- Bekannte Märkte (`known_stores`) werden unabhängig von Groß-/Kleinschreibung erkannt und in ihrer
-  Schreibweise/Farbe angezeigt; unbekannte so, wie getippt.
-- Beim Eintippen wird zusätzlich „2 kg Äpfel“ (Menge vorne) erkannt; gespeichert wird immer
-  „Äpfel 2 kg“.
+- Tags: a character from `tag_rules` directly in front of a word, preceded by a space
+  (`Milch@REWE` is not a tag). Stores with spaces use a hyphen (`@Bio-Markt`).
+- Known stores (`known_stores`) are matched case-insensitively and shown with their spelling and
+  colour; unknown ones as typed.
+- While typing, "2 kg Äpfel" (quantity first) is recognised too; it is always stored as "Äpfel 2 kg".
 
-Die App muss das nicht selbst nachbauen: `smartlists/get_list` und `smartlists/describe` liefern den
-Text bereits zerlegt. Für die Anzeige ohne Netz (Offline-Cache) ist ein eigener Parser mit denselben
-Regeln sinnvoll – Referenz: `custom_components/smartlists/itemtext.py`.
+The app does not need to re-implement this: `smartlists/get_list` and `smartlists/describe` return the
+text already parsed. For offline display a local parser with the same rules is useful – reference:
+`custom_components/smartlists/itemtext.py`.
 
-## 3. Listen
+### Offers
 
-| Befehl | Felder | Antwort |
+When an item is added from the app's offer overview, the app appends a line to the description:
+
+```
+⚙OFFER:{"s":"REWE","e":"2026-11-14","v":"2026-11-09","a":1794055898321,"p":0.39}
+```
+
+`s` store, `p` price, `o` old price, `d` discount, `v`/`e` valid from/until (YYYY-MM-DD),
+`a` added (epoch millis). The integration returns it parsed as `offer` (see below) and keeps the line
+when a note is edited.
+
+## 3. Lists
+
+| Command | Fields | Response |
 |---|---|---|
 | `smartlists/lists` | – | `{lists: [{entity_id, name, type, can_add}]}` |
-| `smartlists/get_list` | `entity_id` | siehe unten |
+| `smartlists/get_list` | `entity_id` | see below |
 | `smartlists/add_item` | `entity_id, text, note?, checked?` | `{uid}` |
 | `smartlists/update_item` | `entity_id, uid, checked?, text?, note?` | `{uid}` |
 | `smartlists/remove_items` | `entity_id, uids[]` | `{}` |
 | `smartlists/clear_completed` | `entity_id` | `{}` |
-| `smartlists/move_item` | `entity_id, uid, target, copy?` | `{uid}` (neue uid im Ziel) |
+| `smartlists/move_item` | `entity_id, uid, target, copy?` | `{uid}` (new uid in the target) |
 
 `get_list`:
 
 ```json
 {
-  "entity_id": "todo.grosseinkauf",
-  "name": "Großeinkauf",
+  "entity_id": "todo.weekly_shop",
+  "name": "Weekly shop",
   "type": "combined",
   "foreign": false,
   "source_lists": ["Anna", "Max"],
@@ -86,90 +97,88 @@ Regeln sinnvoll – Referenz: `custom_components/smartlists/itemtext.py`.
     "name": "Milch", "quantity": 2.0, "unit": "l", "pack_count": null,
     "tags": [{"kind": "store", "value": "REWE", "prefix": "@", "label": "REWE", "color": "#CC0000"}],
     "category": "kuehlung", "category_source": "pack",
+    "offer": null,
     "source": "Anna",
     "permissions": {"toggle": true, "rename": true, "delete": true}
   }]
 }
 ```
 
-- `offer`: Angebot aus der `⚙OFFER:{…}`-Zeile der Notiz (`store`, `store_label`, `color`, `price`,
-  `old_price`, `discount`, `valid_from`, `valid_until`, `added_at`, `expired`) oder `null`. `note` ist
-  dann ohne diese Zeile; beim Speichern einer Notiz über `update_item` hängt die Integration die Zeile
-  wieder an.
-- `type`: `combined` (kombinierte SmartLists-Liste) oder `list` (jede andere HA-To-do-Liste).
-- Tags mit `"implicit": true` stehen nicht im Text, sondern kommen aus der Herkunft: bei kombinierten
-  Listen wird die Quell-Liste als Person gewertet (`todo.peter` → 👤 Peter), sofern im Artikel keine
-  Person steht. Beim Bearbeiten nicht in den Text zurückschreiben.
-- Rechte: Bei normalen Listen das, was die Liste kann (`supported_features`). Bei kombinierten Listen
-  sind Artikel aus fremden Quellen nur abhakbar.
-- `category_source`: `manual` (vom Benutzer gewählt), `learned` (aus ähnlichem Artikel gelernt),
-  `pack` (eingebautes Paket), `fallback` (Sonstiges).
-- Änderungen laufen über die normalen `todo.*`-Dienste im Namen des angemeldeten Benutzers – andere
-  Oberflächen sehen sie sofort. Live-Updates: HA-eigenes `todo/item/subscribe` (die App kann ihr
-  bestehendes `state_changed`-Abo weiter nutzen, Umbenennungen kommen aber nur über `todo/item/subscribe`).
+- `type`: `combined` (combined SmartLists list) or `list` (any other HA to-do list).
+- `offer`: parsed `⚙OFFER` line (`store`, `store_label`, `color`, `price`, `old_price`, `discount`,
+  `valid_from`, `valid_until`, `added_at`, `expired`) or `null`. `note` then excludes that line; when a
+  note is saved via `update_item` the integration appends the line again.
+- Tags with `"implicit": true` are not part of the text but come from the source: in combined lists the
+  source list counts as a person (`todo.peter` → 👤 Peter) unless the item names a person itself. Do
+  not write them back into the text when editing.
+- Permissions: for regular lists whatever the list supports (`supported_features`); in combined lists
+  items from foreign sources can only be checked off.
+- `category_source`: `manual` (chosen by a user), `learned` (from a similar item), `pack` (built-in
+  pack), `fallback` (other).
+- Changes go through the regular `todo.*` services on behalf of the logged-in user, so all other
+  interfaces see them immediately. Live updates: HA's own `todo/item/subscribe` (renames are not
+  visible through `state_changed`).
 
-Fehler: `{"success": false, "error": {"code": "smartlists_error", "message": "…"}}` – die Meldung ist
-deutsch und für Benutzer gedacht.
+Errors: `{"success": false, "error": {"code": "smartlists_error", "message": "…"}}` – the message is
+user-facing (German).
 
-### Kombinierte Listen erkennen (ohne WebSocket)
+### Recognising combined lists (without WebSocket)
 
-Jede kombinierte SmartLists-Liste trägt in ihren Attributen (`/api/states`):
+Every combined SmartLists list carries these attributes (`/api/states`):
 
 ```json
 {"smartlists_combined": true, "source_lists": ["todo.anna", "todo.max"], "foreign_lists": ["todo.max"],
  "default_add_list": "todo.anna", "mode": "bidirectional"}
 ```
 
-Die App zeigt solche Listen als Kombinierte Liste (verwaltet in HA, nicht in der App bearbeitbar) statt
-als normale Liste. `mode: bidirectional` → abhaken direkt in der Quelle; `mode: local` → abhaken über die
-kombinierte Liste selbst (`todo.update_item` auf deren Entität mit Item-uid `quelle::uid`), damit der
-Haken in HA gespeichert und überall gleich ist.
+The app shows such lists as combined lists (managed in HA, not editable in the app) instead of regular
+lists. `mode: bidirectional` → check off directly in the source; `mode: local` → check off via the
+combined list itself (`todo.update_item` on its entity with item uid `source::uid`) so the checkmark is
+stored in HA and identical everywhere.
 
-## Gerät anmelden
+## 4. Devices
 
-Beim Koppeln (zusammen mit `smartlists/info`) und bei jedem Abgleich:
+When pairing (together with `smartlists/info`) and on every sync:
 
 ```json
-{"type": "smartlists/register_device", "device_id": "<UUID der Installation>", "name": "Pixel 8",
+{"type": "smartlists/register_device", "device_id": "<UUID of the installation>", "name": "Pixel 8",
  "model": "Google Pixel 8", "manufacturer": "Google", "app_version": "1.2.68", "os_version": "16"}
 ```
 
-Der Benutzer kommt aus dem Token. `smartlists/devices` liefert die Geräte (Admins alle, sonst die eigenen),
-`smartlists/remove_device` (Admin) nimmt eines aus der Liste. Jedes Gerät ist in HA ein Gerät mit den
-Sensoren „Zuletzt gesehen“ und „App-Version“.
+The user is taken from the token. `smartlists/devices` returns the devices (admins: all, others: their
+own); `smartlists/remove_device` (admin) removes one from the list. Each device is an HA device with the
+sensors "Last seen" and "App version".
 
-## 4. Kategorien, Vorschläge
+## 5. Categories and suggestions
 
-| Befehl | Felder | Zweck |
+| Command | Fields | Purpose |
 |---|---|---|
-| `smartlists/describe` | `texts[]` | Text zerlegen + Kategorie + `unit_hint` (übliche/zuletzt benutzte Einheit) |
-| `smartlists/suggest` | `query, entity_id?, limit?` | Vorschläge; `mode`: `name`, `tag` (bei „@Re“) oder `frequent` (leere Eingabe) |
-| `smartlists/set_category` | `name, category \| null` | Kategorie merken (gilt künftig für ähnliche Artikel) |
-| `smartlists/learned` | – | gemerkte Zuordnungen |
-| `smartlists/forget` | `word` | vergessen (Admin) |
-| `smartlists/set_tag_rules` | `rules[]` | Namenskonvention ändern (Admin) |
+| `smartlists/describe` | `texts[]` | parse text + category + `unit_hint` (usual/last used unit) |
+| `smartlists/suggest` | `query, entity_id?, limit?` | suggestions; `mode`: `name`, `tag` (for "@Re") or `frequent` (empty input) |
+| `smartlists/set_category` | `name, category \| null` | remember a category (applies to similar items from now on) |
+| `smartlists/learned` | – | remembered assignments |
+| `smartlists/forget` | `word` | forget (admin) |
+| `smartlists/set_tag_rules` | `rules[]` | change the naming convention (admin) |
 
-Löschen wird ebenfalls abgeglichen: in der App vergessene Wörter gehen per `smartlists/forget` an die
-Integration; Wörter, die beim letzten Abgleich in `smartlists/learned` standen und jetzt fehlen, wurden
-in HA vergessen und werden in der App entfernt.
+Remembered categories apply to the whole household. On first pairing the app uploads its manual
+assignments once via `set_category` and then uses the integration's, so app, card and HA agree.
+Deletions are synced too: words forgotten in the app are sent via `smartlists/forget`; words that were
+in `smartlists/learned` at the last sync and are missing now were forgotten in HA and are removed in
+the app.
 
-Gemerkte Kategorien gelten für den ganzen Haushalt. Die App sollte ihre lokal gelernten Kategorien
-beim Koppeln einmalig per `set_category` übertragen und danach die der Integration verwenden, damit
-App, Karte und HA dasselbe zeigen.
+## 6. Controls per user
 
-## 5. Bedienung pro Benutzer
-
-| Befehl | Felder | Zweck |
+| Command | Fields | Purpose |
 |---|---|---|
-| `smartlists/user_settings` | – | `{defaults, settings}`: Haushalts-Standard + eigene Abweichungen |
-| `smartlists/set_user_settings` | `settings, scope?` | `scope: user` (eigene) oder `household` (Admin) |
+| `smartlists/user_settings` | – | `{defaults, settings}`: household default + own differences |
+| `smartlists/set_user_settings` | `settings, scope?` | `scope: user` (own) or `household` (admin) |
 
-Schlüssel: `press_gesture` (long/double/right/off), `press_target` (row/name),
+Keys: `press_gesture` (long/double/right/off), `press_target` (row/name),
 `press_result` (menu/edit/delete), `menu_actions` (rename/move/copy/category/delete),
-`row_buttons`, `shop_hide_checked`, `shop_keep_awake`, `shop_large`, `shop_tap_row` (an/aus).
-Der Benutzer ergibt sich aus dem Token – ein Token pro Person, damit jeder seine Einstellungen hat.
+`row_buttons`, `shop_hide_checked`, `shop_keep_awake`, `shop_large`, `shop_tap_row` (on/off).
+The user is derived from the token – use one token per person so everyone has their own settings.
 
-## Versionierung
+## Versioning
 
-`api_version` steigt nur bei inkompatiblen Änderungen. Neue Felder in Antworten und neue Befehle
-sind keine inkompatible Änderung – die App soll unbekannte Felder ignorieren.
+`api_version` only increases for incompatible changes. New response fields and new commands are not
+incompatible – the app should ignore unknown fields.

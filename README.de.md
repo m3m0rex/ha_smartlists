@@ -2,7 +2,7 @@
 
 # SmartLists – kombinierte To-do-Listen für Home Assistant
 
-🇬🇧 [English version](README.md)
+🇬🇧 [English version](README.md) · 📖 [Wiki (englisch)](https://github.com/m3m0rex/ha_smartlists_hacs/wiki) · 🔒 [Sicherheit](SECURITY.md)
 
 Eigenständige Home-Assistant-Integration (HACS), unabhängig von der HA-SmartLists-App.
 Sie bringt die wichtigste Funktion der App direkt in Home Assistant: **mehrere To-do-Listen zu einer
@@ -51,35 +51,39 @@ Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird 
 ## Seite „SmartLists“ in der Seitenleiste
 
 Nach dem Einrichten gibt es links in HA den Eintrag **SmartLists**: alle To-do-Listen (kombinierte
-zuerst) als Umschalter oben, darunter die Liste mit Badges, Kategorien, Stepper, Suche und
-Einkaufsmodus – ohne dass man ein Dashboard bauen muss. Die eingebaute To-do-Seite von HA zeigt
-Artikel nur als Text („Milch 2 l @REWE“); Badges gibt es nur auf dieser Seite und in der Karte.
-Ausblenden lässt sich der Eintrag wie jeder andere über *Seitenleiste bearbeiten*.
+zuerst) als Reiter, jede wie in der Karte (Badges, Kategorien, Stepper, Suche, Einkaufsmodus) – ohne
+Dashboard. Oben rechts schaltest du zwischen **einer Liste** und **bis zu drei nebeneinander** sowie
+zwischen normaler und **breiter** Ansicht; bei mehreren Listen ziehst du Artikel mit der Maus in eine
+andere Liste (Strg = kopieren). Die eingebaute To-do-Seite von HA zeigt Artikel nur als Text.
 
 ## Lovelace-Karte `custom:smartlists-card`
 
-Wird von der Integration automatisch geladen (keine Dashboard-Ressource nötig).
+Wird von der Integration automatisch geladen.
 
 ```yaml
 type: custom:smartlists-card
 entity: todo.grosseinkauf
-sort: category        # category | alpha | added | list
 ```
 
-Suche (Lupe; findet auch über Markt, Person, Notiz, Kategorie, „apfel“ findet „Äpfel“), Mengen-Stepper
-− +, ein Eingabefeld mit Live-Vorschau (Menge, Kategorie, Badges) und Vorschlägen (↑/↓, Tab, Enter),
-„Häufig gekauft“, Kategorie per Klick ändern (wird gemerkt), feste Spalten Name | Menge | Einheit,
-Sortierung (Kategorie, A–Z, Hinzugefügt, nach Liste), langes Drücken → Menü (Bearbeiten, Verschieben,
-Kopieren, Kategorie, Löschen), Einkaufsmodus (Bildschirm an, Erledigte ausblenden, große Zeilen, Zeile
-antippen), ↶ für die letzte Änderung, Import aus einer HA-To-do-Liste oder als Text.
+Der visuelle Editor startet einfach – **Vorlage**, Liste, Titel, Ansicht, Sortierung – und zeigt alles
+Weitere mit *Erweiterte Optionen anzeigen*. Vorlagen: Familien-Einkauf, Küchen-Tablet, Im Laden, Nur
+ansehen, kompakte Dashboard-Kachel.
 
-Alle Darstellungs-Optionen gibt es im visuellen Karten-Editor, aufgeteilt in *Kopfzeile*, *Eingabe*,
-*Liste*, *Erledigte* und *Einkaufsmodus* (z.B. Suche oder Stepper ausblenden, kompakte Zeilen, ohne
-Kategorie-Überschriften, maximale Höhe, im Einkaufsmodus starten). Die persönliche Bedienung (Geste,
-Menü, Verhalten im Einkaufsmodus) bleibt pro Benutzer im Zahnrad der Karte.
+| Option | Werte |
+|---|---|
+| `entity` / `entities` | eine Liste oder mehrere in einer Karte |
+| `layout` | `tabs` · `columns` · `stack` (bei mehreren Listen) |
+| `view` | `list` · `tiles` (große Kacheln) · `mini` (Zusammenfassung, aufklappbar) |
+| `sort` | `category` · `alpha` · `added` · `list` |
+| `filter_store`, `filter_person`, `filter_tag` | nur Artikel mit `@REWE`, `*Anna`, `#bio` (mehrere mit Komma); neue Artikel bekommen den Tag automatisch |
+| `filter_category`, `filter_offers` | nur diese Kategorien / nur Angebote aus der App |
+| `show_filter_chips` | Filter-Leiste mit den Märkten, Personen und Schlagwörtern der Liste |
+| `density`, `font_scale`, `radius`, `accent_color` | Zeilenhöhe, Schriftgröße, Eckenradius, Akzentfarbe |
+| `drag_drop` | Artikel in andere Liste ziehen (verschieben, Strg = kopieren) oder umsortieren (Sortierung „Hinzugefügt“) |
+| `show_*` | jedes Element von Kopfzeile, Eingabe und Liste ausblendbar |
 
-Ein klickbares Mockup mit simulierten Daten liegt unter `mockup/card-mockup.html`
-(neu bauen: `python mockup/build_mockup.py`).
+Für Themes und card-mod: CSS-Variablen `--smartlists-accent`, `--smartlists-radius`,
+`--smartlists-row-height`, `--smartlists-tile-size`.
 
 ### Stand
 
@@ -161,5 +165,4 @@ custom_components/smartlists/
   www/smartlists-card.js   Lovelace-Karte
   strings.json, translations/   Texte (Deutsch/Englisch)
 scripts/build_categories.py     categories.json aus dem App-Paket erzeugen
-mockup/                         klickbares Mockup der Karte
 ```

@@ -1,25 +1,76 @@
 name: Release
 
-# Neuer Tag vX.Y.Z (git push --tags) → erst prüfen, dann GitHub-Release mit dem Text aus CHANGELOG.md.
-# HACS verlangt, dass das Release NACH erfolgreicher Prüfung entsteht – deshalb hängt "release" an beiden Prüfungen.
+# Releases entstehen automatisch:
+#   - Push auf main, bei dem sich die Version in manifest.json ändert → Tag vX.Y.Z + Release (kein Tag-Push nötig)
+#   - Push eines Tags vX.Y.Z (wie bisher)
+#   - von Hand: Actions → Release → Run workflow → Tag (z. B. um ein Release nachzuholen)
+# Immer erst Hassfest + HACS, dann das Release mit dem Text aus CHANGELOG.md (HACS verlangt diese Reihenfolge).
+# Ein vorhandenes Release wird aktualisiert und – falls GitHub es zum Entwurf gemacht hat – wieder veröffentlicht.
 on:
   push:
-    tags:
-      - "v*"
+    branches: [main]
+    paths: ["custom_components/smartlists/manifest.json"]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag, z. B. v2.8.0 (leer = Version aus manifest.json)"
+        required: false
 
 permissions:
   contents: write
 
 jobs:
+  version:
+    name: Version bestimmen
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.v.outputs.tag }}
+      ref: ${{ steps.v.outputs.ref }}
+      skip: ${{ steps.v.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: v
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          MANIFEST=$(python3 -c "import json;print(json.load(open('custom_components/smartlists/manifest.json'))['version'])")
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="$GITHUB_REF_NAME"; REF="$GITHUB_REF_NAME"
+          elif [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"; REF="$INPUT_TAG"
+          else
+            TAG="v$MANIFEST"; REF="$GITHUB_SHA"
+            # Push auf main: nur wenn es für diese Version noch kein veröffentlichtes Release gibt
+            if gh release view "$TAG" --json isDraft -q '.isDraft' 2>/dev/null | grep -q false; then
+              echo "Release $TAG gibt es schon – nichts zu tun."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            fi
+            # existiert der Tag schon (z. B. von Hand gepusht), dessen Stand verwenden
+            if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then REF="$TAG"; fi
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "Release für $TAG aus $REF"
+
   hassfest:
     name: Hassfest
+    needs: version
+    if: needs.version.outputs.skip != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.ref }}
       - uses: home-assistant/actions/hassfest@master
 
   hacs:
     name: HACS
+    needs: version
+    if: needs.version.outputs.skip != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: hacs/action@main
@@ -28,23 +79,29 @@ jobs:
 
   release:
     name: GitHub-Release
-    needs: [hassfest, hacs]
+    needs: [version, hassfest, hacs]
+    if: needs.version.outputs.skip != 'true'
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.version.outputs.tag }}
+      REF: ${{ needs.version.outputs.ref }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.ref }}
+          fetch-depth: 0
 
       - name: Version prüfen (Tag = manifest.json)
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
           MANIFEST=$(python3 -c "import json;print(json.load(open('custom_components/smartlists/manifest.json'))['version'])")
-          if [ "$TAG" != "$MANIFEST" ]; then
-            echo "::error::Tag v$TAG passt nicht zur Version $MANIFEST in manifest.json"
+          if [ "${TAG#v}" != "$MANIFEST" ]; then
+            echo "::error::Tag $TAG passt nicht zur Version $MANIFEST in manifest.json"
             exit 1
           fi
 
       - name: Text aus CHANGELOG.md
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${TAG#v}"
           # Abschnitt "## [VERSION]" bis zum nächsten "## [" (ohne die Überschrift)
           awk -v v="$VERSION" '
             index($0, "## [" v "]") == 1 { on = 1; next }
@@ -57,7 +114,6 @@ jobs:
           fi
           {
             echo "## What's new"
-            # "### Added" usw. übernehmen, führende Leerzeilen weg
             sed '/./,$!d' notes_body.md
             echo
             echo "**Note:** restart Home Assistant after updating and reload the page (Ctrl+F5)."
@@ -70,8 +126,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release edit "$GITHUB_REF_NAME" --title "${GITHUB_REF_NAME#v}" --notes-file notes.md
+          # „latest“ nur für die höchste Version (beim Nachholen älterer Releases nicht umstellen)
+          HIGHEST=$( (git tag -l 'v*'; echo "$TAG") | sort -uV | tail -1)
+          LATEST=$([ "$TAG" = "$HIGHEST" ] && echo true || echo false)
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # nach dem Neu-Pushen eines Tags macht GitHub das Release zum Entwurf → wieder veröffentlichen
+            gh release edit "$TAG" --title "${TAG#v}" --notes-file notes.md --draft=false --latest=$LATEST
+          elif git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --verify-tag --latest=$LATEST
           else
-            gh release create "$GITHUB_REF_NAME" --title "${GITHUB_REF_NAME#v}" --notes-file notes.md --verify-tag
+            # Push auf main ohne Tag: Tag auf genau diesen Commit setzen
+            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --target "$REF" --latest=$LATEST
           fi

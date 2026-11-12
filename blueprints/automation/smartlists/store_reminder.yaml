@@ -4,7 +4,7 @@ blueprint:
     When a person enters the zone of a store (e.g. zone.rewe) and there are open items for that store
     (@REWE), send them the list.
   domain: automation
-  source_url: https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/blueprints/automation/smartlists/store_reminder.yaml
+  source_url: https://github.com/m3m0rex/ha_smartlists/blob/main/blueprints/automation/smartlists/store_reminder.yaml
   input:
     person:
       name: Person

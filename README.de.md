@@ -1,8 +1,8 @@
-<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists_hacs/main/custom_components/smartlists/brand/logo@2x.png" alt="SmartLists" height="96"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/custom_components/smartlists/brand/logo@2x.png" alt="SmartLists" height="96"></p>
 
 # SmartLists – kombinierte To-do-Listen für Home Assistant
 
-🇬🇧 [English version](README.md) · 📖 [Wiki (englisch)](https://github.com/m3m0rex/ha_smartlists_hacs/wiki) · 🔒 [Sicherheit](SECURITY.md)
+🇬🇧 [English version](README.md) · 📖 [Wiki (englisch)](https://github.com/m3m0rex/ha_smartlists/wiki) · 🔒 [Sicherheit](SECURITY.md)
 
 Eigenständige Home-Assistant-Integration (HACS), unabhängig von der HA-SmartLists-App.
 Sie bringt die wichtigste Funktion der App direkt in Home Assistant: **mehrere To-do-Listen zu einer
@@ -46,8 +46,8 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
 - **Namenskonvention:** `@REWE` wird zum Markt-Badge (bekannte Märkte in Markenfarbe), `*Anna` zur Person,
   `#bio` zum Schlagwort. Welches Zeichen was bedeutet, stellen Admins in der Karte ein (Zahnrad).
   Die Tags bleiben im Artikelnamen stehen – andere Oberflächen sehen sie also weiter als Text.
-- **Automationen & Sprache:** „Bin im Laden“-Benachrichtigung, Markt-Erinnerung, wiederkehrende Artikel, Assist-Sätze – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Automations-and-voice).
-- **Eigene Listen mit Freigaben:** Listen mit Besitzer, pro Person freigegeben zum Sehen, Abhaken oder Bearbeiten – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Own-lists-and-sharing).
+- **Automationen & Sprache:** „Bin im Laden“-Benachrichtigung, Markt-Erinnerung, wiederkehrende Artikel, Assist-Sätze – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Automations-and-voice).
+- **Eigene Listen mit Freigaben:** Listen mit Besitzer, pro Person freigegeben zum Sehen, Abhaken oder Bearbeiten – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
 - **Verbundene Geräte:** jedes Handy mit der App erscheint unter *Konfigurieren → Verbundene Geräte* und als HA-Gerät mit den Sensoren *Zuletzt gesehen* und *App-Version*.
 - **Bedienung:** Standard für alle (Admin) → je Benutzer abweichend → optional je Gerät abweichend.
 
@@ -111,7 +111,7 @@ Das Kategorie-Paket wird aus dem der App erzeugt: `python scripts/build_categori
 ### Über HACS (benutzerdefiniertes Repository)
 
 1. HACS → ⋮ → *Benutzerdefinierte Repositories*
-2. URL `https://github.com/m3m0rex/ha_smartlists_hacs`, Typ **Integration** → Hinzufügen
+2. URL `https://github.com/m3m0rex/ha_smartlists`, Typ **Integration** → Hinzufügen
 3. „SmartLists" herunterladen und Home Assistant neu starten.
 
 ### Manuell

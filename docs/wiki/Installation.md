@@ -5,7 +5,7 @@ Requires **Home Assistant 2025.3** or newer (2026.3+ for the integration icon).
 ## HACS
 
 1. HACS → ⋮ → *Custom repositories*
-2. URL `https://github.com/m3m0rex/ha_smartlists_hacs`, type **Integration** → *Add*
+2. URL `https://github.com/m3m0rex/ha_smartlists`, type **Integration** → *Add*
 3. Download **SmartLists** and restart Home Assistant.
 4. *Settings → Devices & services → Add integration → SmartLists*
 

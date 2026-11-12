@@ -1,8 +1,8 @@
-<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists_hacs/main/custom_components/smartlists/brand/logo@2x.png" alt="SmartLists" height="96"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/custom_components/smartlists/brand/logo@2x.png" alt="SmartLists" height="96"></p>
 
 # SmartLists – combined to-do lists for Home Assistant
 
-🇩🇪 [Deutsche Version](README.de.md) · 📖 [Wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki) · 🔒 [Security](SECURITY.md)
+🇩🇪 [Deutsche Version](README.de.md) · 📖 [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki) · 🔒 [Security](SECURITY.md)
 
 A standalone Home Assistant integration (HACS), independent of the HA SmartLists Android app.
 It brings the app's key feature straight into Home Assistant: **merge several to-do lists into one
@@ -44,8 +44,8 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 - **Naming convention:** `@REWE` becomes a store badge (known stores in their brand colour), `*Anna`
   a person, `#organic` a tag. Admins choose which character means what. Tags stay in the item name,
   so other interfaces still show them as text.
-- **Automations & voice:** "I'm at the store" notification, store reminder, recurring items, Assist sentences – see the [wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Automations-and-voice).
-- **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit – see the [wiki](https://github.com/m3m0rex/ha_smartlists_hacs/wiki/Own-lists-and-sharing).
+- **Automations & voice:** "I'm at the store" notification, store reminder, recurring items, Assist sentences – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Automations-and-voice).
+- **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
 - **Connected devices:** every phone with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 
@@ -115,7 +115,7 @@ app in the sibling folder `shopping_manager_app`).
 ### Via HACS (custom repository)
 
 1. HACS → ⋮ → *Custom repositories*
-2. URL `https://github.com/m3m0rex/ha_smartlists_hacs`, type **Integration** → Add
+2. URL `https://github.com/m3m0rex/ha_smartlists`, type **Integration** → Add
 3. Download "SmartLists" and restart Home Assistant.
 
 ### Manual

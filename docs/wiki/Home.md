@@ -17,6 +17,6 @@ and use a shopping mode – in a Lovelace card, on its own sidebar page and in t
 - [[App pairing and devices]]
 - [[Troubleshooting]]
 
-> This wiki is generated from [`docs/wiki`](https://github.com/m3m0rex/ha_smartlists_hacs/tree/main/docs/wiki)
+> This wiki is generated from [`docs/wiki`](https://github.com/m3m0rex/ha_smartlists/tree/main/docs/wiki)
 > in the repository and updated automatically with every change. Edits made directly in the wiki are
 > overwritten – please open an issue or pull request instead.

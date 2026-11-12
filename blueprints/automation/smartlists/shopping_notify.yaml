@@ -5,7 +5,7 @@ blueprint:
     "Anna is shopping at REWE – anything else?". Reply directly in the notification to add an item
     to that list (Android/iOS Companion app).
   domain: automation
-  source_url: https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/blueprints/automation/smartlists/shopping_notify.yaml
+  source_url: https://github.com/m3m0rex/ha_smartlists/blob/main/blueprints/automation/smartlists/shopping_notify.yaml
   input:
     notify_targets:
       name: Notify services

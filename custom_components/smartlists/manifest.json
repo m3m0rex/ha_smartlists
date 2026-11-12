@@ -16,11 +16,11 @@
     "todo",
     "websocket_api"
   ],
-  "documentation": "https://github.com/m3m0rex/ha_smartlists_hacs",
+  "documentation": "https://github.com/m3m0rex/ha_smartlists",
   "integration_type": "service",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/m3m0rex/ha_smartlists_hacs/issues",
+  "issue_tracker": "https://github.com/m3m0rex/ha_smartlists/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "2.3.0"
+  "version": "2.3.1"
 }

@@ -128,7 +128,8 @@ const LISTS = {
   "todo.einkauf_familie": { name: "Einkauf Familie", type: "list", foreign: false, permissions: full, items: [
     mk("Äpfel 1,5 kg @REWE", { note: "Elstar wenn möglich" }), mk("Bananen 6 Stk"), mk("Vollmilch 2 l @LIDL"), mk("Joghurt Natur 4× 150 g"),
     mk("Bauernbrot @Bäcker"), mk("Hackfleisch gemischt 500 g @REWE *Max"), mk("Spülmittel #nachfüllen", { note: "das grüne" }),
-    mk("Bio-Vollkorn-Dinkelspaghetti aus regionalem Anbau extra lang 2 Pck @EDEKA"), mk("Süßkartoffel 1 kg"), mk("Toilettenpapier 1 Pck @dm"),
+    mk("Bio-Vollkorn-Dinkelspaghetti aus regionalem Anbau extra lang 2 Pck @EDEKA"), mk("Süßkartoffel 1 kg"), mk("Müller Joghurt mit der Ecke 4", { note: '⚙OFFER:{"s":"REWE","e":"2099-11-14","v":"2026-11-09","a":1794055898321,"p":0.39}' }),
+    mk("Butter", { note: 'Kerrygold\n⚙OFFER:{"s":"LIDL","e":"2026-11-01","p":1.99,"o":"2,49 €","d":"-20%"}' }), mk("Toilettenpapier 1 Pck @dm"),
     mk("Mineralwasser 6 Fl", { checked: true }), mk("Nudeln 2 Pck", { checked: true })] },
   "todo.grosseinkauf": { name: "Großeinkauf", type: "combined", foreign: true, source_lists: ["Anna", "Max"], permissions: full, items: [
     mk("Tomaten 1 kg @Lidl"), mk("Käse", { note: "Gouda, mittelalt" }), mk("Zahnpasta @dm"), mk("Cola 3 Fl"), mk("Pizza Salami 2 Stk"),
@@ -153,10 +154,16 @@ const HA_PLAIN = { "todo.shopping_list": { name: "Einkaufsliste (HA)", items: [
 const view = (e) => { const L = LISTS[e]; return { entity_id: e, name: L.name, type: L.type, foreign: L.foreign, source_lists: L.source_lists,
   permissions: L.permissions, categories: CATS,
   items: L.items.map(i => { const p = parse(i.text); const [c, o] = resolve(p.name);
+    // wie itemtext.split_offer: ⚙OFFER-Zeile der App zerlegen
+    let note = i.note || "", offer = null; const oi = note.indexOf("⚙OFFER:");
+    if (oi >= 0) { try { const j = JSON.parse(note.slice(oi + 7)); const k = KNOWN.find(x => x.value.toLowerCase() === String(j.s).toLowerCase());
+      offer = { store: j.s, store_label: k ? k.value : j.s, color: k ? k.color : null, price: j.p ?? null,
+        old_price: j.o ? parseFloat(String(j.o).replace(",", ".")) : null, discount: j.d || null, valid_until: j.e || null,
+        expired: !!j.e && j.e < new Date().toISOString().slice(0, 10) }; } catch (e) {} note = note.slice(0, oi).trim(); }
     // wie lists.py: Herkunft als Person (kombinierte Liste), wenn im Artikel keine Person steht
     const pp = S.rules.find(r => r.kind === "person");
     if (i.source && pp && !p.tags.some(t => t.kind === "person")) p.tags.push({ kind: "person", value: i.source, prefix: pp.prefix, label: i.source, implicit: true });
-    return { ...i, ...p, category: c, category_source: o, permissions: i.permissions || { toggle: L.permissions.toggle, rename: L.permissions.rename, delete: L.permissions.delete } }; }) }; };
+    return { ...i, ...p, note, offer, category: c, category_source: o, permissions: i.permissions || { toggle: L.permissions.toggle, rename: L.permissions.rename, delete: L.permissions.delete } }; }) }; };
 async function callWS(msg) {
   await new Promise(r => setTimeout(r, 40));
   if (msg.type === "todo/item/list") {  // eingebauter HA-Befehl
@@ -192,7 +199,10 @@ async function callWS(msg) {
       L.items.push(it); record(msg.text); result = { uid: it.uid }; break; }
     case "update_item": { const it = L.items.find(i => i.uid === msg.uid); const ip = it.permissions || L.permissions;
       if ("checked" in msg) { if (!ip.toggle) deny(); it.checked = msg.checked; }
-      if ("text" in msg) { if (!ip.rename) deny(); it.text = msg.text; it.note = msg.note || ""; } break; }
+      if ("text" in msg) { if (!ip.rename) deny(); it.text = msg.text;
+        // wie lists.update_item: ⚙OFFER-Zeile der App erhalten
+        const oi = (it.note || "").indexOf("⚙OFFER:"); const tag = oi >= 0 ? it.note.slice(oi) : "";
+        it.note = [msg.note || "", tag].filter(Boolean).join("\n"); } break; }
     case "lists": return { lists: Object.entries(LISTS).map(([e, x]) => ({ entity_id: e, name: x.name, type: x.type, can_add: x.permissions.add })) };
     case "move_item": { const it = L.items.find(i => i.uid === msg.uid); const target = LISTS[msg.target];
       if (!target || !target.permissions.add) deny();

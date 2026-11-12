@@ -27,7 +27,7 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from .categories import CategoryIndex
-from .itemtext import person_from_list_name
+from .itemtext import join_offer, offer_summary, person_from_list_name, split_offer
 from .learning import Learning
 from .const import (
     CONF_DEFAULT_ADD,
@@ -124,6 +124,8 @@ class CombinedTodoListEntity(TodoListEntity):
         # Zuordnung kombinierte UID -> (Quell-Entität, Quell-UID, Original-Name)
         self._index: dict[str, tuple[str, str, str]] = {}
         self._source_states: dict[str, dict[str, Any]] = {}
+        # kombinierte UID → Beschreibung, wie sie in der Quelle steht (inkl. ⚙OFFER-Zeile der App)
+        self._raw_desc: dict[str, str] = {}
 
         self._attr_unique_id = unique_id
         self._attr_name = title
@@ -204,7 +206,7 @@ class CombinedTodoListEntity(TodoListEntity):
                 {
                     "uid": item.uid,
                     "text": original,
-                    "note": item.description or "",
+                    "note": self._raw_desc.get(item.uid, item.description or ""),
                     "checked": item.status == TodoItemStatus.COMPLETED,
                     "source": self._source_name(source) if len(self._sources) > 1 else None,
                     "person": person_from_list_name(self._source_name(source), source) if self._source_as_person else None,
@@ -278,6 +280,15 @@ class CombinedTodoListEntity(TodoListEntity):
         items = data.get("items") if isinstance(data, dict) else None
         return list(items) if isinstance(items, list) else []
 
+    def _display_description(self, combined_uid: str, raw: str | None) -> str | None:
+        """Für die To-do-Ansicht von HA: ⚙OFFER-Zeile der App als lesbaren Text statt JSON."""
+        self._raw_desc[combined_uid] = raw or ""
+        clean, offer, raw_line = split_offer(raw)
+        if not raw_line:
+            return raw
+        pretty = offer_summary(offer) if offer else ""
+        return "\n".join(p for p in (clean, pretty) if p) or None
+
     def _display_summary(self, summary: str, source: str) -> str:
         if self._label == LABEL_NONE or len(self._sources) < 2:
             return summary
@@ -321,7 +332,7 @@ class CombinedTodoListEntity(TodoListEntity):
                         uid=combined_uid,
                         summary=self._display_summary(summary, source),
                         status=status,
-                        description=raw.get("description"),
+                        description=self._display_description(combined_uid, raw.get("description")),
                         due=self._parse_due(raw.get("due")),
                     )
                 )
@@ -414,7 +425,13 @@ class CombinedTodoListEntity(TodoListEntity):
             data["rename"] = new_summary
         if current is None or item.description != current.description:
             if item.description is not None:
-                data["description"] = item.description
+                # lesbare Angebots-Zeile wieder gegen die originale ⚙OFFER-Zeile tauschen,
+                # damit die App das Angebot weiter erkennt
+                _, offer, raw_line = split_offer(self._raw_desc.get(item.uid))
+                text = item.description
+                if offer:
+                    text = "\n".join(l for l in text.splitlines() if l.strip() != offer_summary(offer))
+                data["description"] = join_offer(text, raw_line)
 
         # HA übergibt den Status je nach Version als TodoItemStatus oder als reinen Text ("completed")
         new_status = _status_text(item.status)

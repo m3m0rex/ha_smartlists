@@ -92,6 +92,10 @@ Regeln sinnvoll – Referenz: `custom_components/smartlists/itemtext.py`.
 }
 ```
 
+- `offer`: Angebot aus der `⚙OFFER:{…}`-Zeile der Notiz (`store`, `store_label`, `color`, `price`,
+  `old_price`, `discount`, `valid_from`, `valid_until`, `added_at`, `expired`) oder `null`. `note` ist
+  dann ohne diese Zeile; beim Speichern einer Notiz über `update_item` hängt die Integration die Zeile
+  wieder an.
 - `type`: `combined` (kombinierte SmartLists-Liste) oder `list` (jede andere HA-To-do-Liste).
 - Tags mit `"implicit": true` stehen nicht im Text, sondern kommen aus der Herkunft: bei kombinierten
   Listen wird die Quell-Liste als Person gewertet (`todo.peter` → 👤 Peter), sofern im Artikel keine

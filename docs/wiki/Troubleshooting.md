@@ -25,4 +25,4 @@ HACS loads icons from its own catalogue; the integration's own icon shows on the
 
 **Push rejected: "refusing to allow an OAuth App to create or update workflow"** (developers)
 Use a token with the *workflow* permission, e.g.
-`git -c credential.helper= push https://github.com/m3m0rex/ha_smartlists_hacs.git main`.
+`git -c credential.helper= push https://github.com/m3m0rex/ha_smartlists.git main`.

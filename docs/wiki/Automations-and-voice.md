@@ -17,13 +17,13 @@ data:
   open_items: 7
 ```
 
-Ready-made blueprint: **[shopping_notify.yaml](https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/blueprints/automation/smartlists/shopping_notify.yaml)**
+Ready-made blueprint: **[shopping_notify.yaml](https://github.com/m3m0rex/ha_smartlists/blob/main/blueprints/automation/smartlists/shopping_notify.yaml)**
 – *Settings → Automations → Blueprints → Import blueprint* and paste the URL. It notifies the others
 ("Anna is shopping at REWE – anything else?") with a reply field; the reply is added to that list.
 
 ## Store reminder
 
-Blueprint **[store_reminder.yaml](https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/blueprints/automation/smartlists/store_reminder.yaml)**:
+Blueprint **[store_reminder.yaml](https://github.com/m3m0rex/ha_smartlists/blob/main/blueprints/automation/smartlists/store_reminder.yaml)**:
 when a person enters a store zone (create one under *Settings → Areas, labels & zones → Zones*, e.g.
 `zone.rewe`) and items with `@REWE` are open, they get the list.
 

@@ -36,4 +36,4 @@ Removing a device only removes it from the list; it reappears on the next sync. 
 the phone's token under *Profile → Security → Long-lived access tokens*. Use one token per person so
 everyone gets their own settings.
 
-Interface details for developers: [`docs/app-api.md`](https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/docs/app-api.md).
+Interface details for developers: [`docs/app-api.md`](https://github.com/m3m0rex/ha_smartlists/blob/main/docs/app-api.md).

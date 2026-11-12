@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.3.1] – 2026-11-12
+
+### Changed
+
+- The repository was renamed to **m3m0rex/ha_smartlists**. All links (documentation, issue tracker,
+  wiki, blueprints) point to the new address. GitHub redirects the old URL, so existing HACS
+  installations keep updating; you can optionally re-add the repository under the new URL.
+
 ## [2.3.0] – 2026-11-12
 
 ### Added

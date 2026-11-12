@@ -202,7 +202,10 @@ the app.
 | `smartlists/app_backup_get` | `device_id` | the backup including `data` |
 | `smartlists/app_backup_delete` | `device_id` | delete a backup |
 
-Backups are kept in `.storage/smartlists.app_backups` and survive Home Assistant restarts.
+Backups are kept in `.storage/smartlists.app_backups` and survive Home Assistant restarts. With a backup
+password set in the app, `data` is an encrypted envelope
+`{"smartlists_encrypted":1,"kdf":"pbkdf2-sha256","iter":210000,"salt","iv","ct"}` (AES-256-GCM, AAD
+`ha-smartlists-backup-v1`); the list reports `encrypted: true`.
 
 ## 9. Controls per user
 

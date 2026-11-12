@@ -26,6 +26,10 @@ from .const import DOMAIN, SIGNAL_LEARNING_CHANGED
 STORAGE_KEY = f"{DOMAIN}.learning"
 STORAGE_VERSION = 1
 HISTORY_LIMIT = 2000
+TIMES_KEPT = 12          # so viele Kaufzeitpunkte pro Artikel für den Rhythmus
+DUE_MIN_PURCHASES = 3    # erst ab so vielen Käufen gilt ein Rhythmus als erkannt
+DUE_FACTOR = 0.9         # fällig ab 90 % des üblichen Abstands
+EXPORT_VERSION = 1
 TAG_HISTORY_LIMIT = 200
 
 MENU_ACTIONS = ("rename", "move", "copy", "category", "delete")
@@ -61,6 +65,8 @@ class Learning:
         self.users: dict[str, dict[str, Any]] = {}
         # Haushalts-Standard für die Bedienung (setzen nur Admins)
         self.ui_defaults: dict[str, Any] = {}
+        # Haushalt: Sprachassistent / Automationen (Standard-Liste für Assist, fällige Artikel automatisch)
+        self.automation: dict[str, Any] = {}
         self._learned_sorted: list[tuple[str, str]] = []
 
     async def async_load(self) -> None:
@@ -71,6 +77,7 @@ class Learning:
         self.tag_history = dict(data.get("tag_history", {}))
         self.users = dict(data.get("users", {}))
         self.ui_defaults = dict(data.get("ui_defaults", {}))
+        self.automation = dict(data.get("automation", {}))
         try:
             self.tag_rules = itemtext.validate_rules(data.get("settings", {}).get("tag_rules", itemtext.DEFAULT_TAG_RULES))
         except ValueError:
@@ -86,6 +93,7 @@ class Learning:
             "settings": {"tag_rules": self.tag_rules},
             "users": self.users,
             "ui_defaults": self.ui_defaults,
+            "automation": self.automation,
         }
 
     @callback
@@ -176,7 +184,11 @@ class Learning:
             return
         now = int(time.time())
         entry = self.history.get(key, {"count": 0})
-        entry.update(name=item.name, count=int(entry.get("count", 0)) + 1, last=now)
+        # Zeitpunkte merken (für wiederkehrende Artikel); mehrfaches Hinzufügen am selben Tag zählt einmal
+        times = [int(t) for t in entry.get("times", []) if isinstance(t, (int, float))]
+        if not times or now - times[-1] > 12 * 3600:
+            times.append(now)
+        entry.update(name=item.name, count=int(entry.get("count", 0)) + 1, last=now, times=times[-TIMES_KEPT:])
         if item.unit:
             entry["unit"] = item.unit
         self.history[key] = entry
@@ -193,6 +205,84 @@ class Learning:
             if len(data) > limit:
                 for key, _ in sorted(data.items(), key=lambda kv: kv[1].get("last", 0))[: len(data) - limit]:
                     data.pop(key, None)
+
+    # ------------------------------------------------------------------
+    # Wiederkehrende Artikel
+    # ------------------------------------------------------------------
+    def rhythm(self, name: str) -> dict[str, Any] | None:
+        """Üblicher Abstand zwischen zwei Käufen (Median) und wann der nächste fällig ist."""
+        entry = self.history.get(normalize(name))
+        if not entry:
+            return None
+        times = sorted(int(t) for t in entry.get("times", []))
+        if len(times) < DUE_MIN_PURCHASES:
+            return None
+        gaps = sorted(b - a for a, b in zip(times, times[1:]) if b - a > 12 * 3600)
+        if len(gaps) < DUE_MIN_PURCHASES - 1:
+            return None
+        median = gaps[len(gaps) // 2] if len(gaps) % 2 else (gaps[len(gaps) // 2 - 1] + gaps[len(gaps) // 2]) / 2
+        next_due = times[-1] + DUE_FACTOR * median
+        return {"name": entry["name"], "every_days": round(median / 86400, 1), "last": times[-1],
+                "next_due": int(next_due), "due": time.time() >= next_due, "unit": entry.get("unit")}
+
+    def due_items(self, present_names: list[str] | None = None) -> list[dict[str, Any]]:
+        """Fällige Artikel (Rhythmus erreicht), die gerade nicht offen auf der Liste stehen."""
+        present = {normalize(self.parse(n).name) for n in present_names or []}
+        out = []
+        for key, entry in self.history.items():
+            if key in present:
+                continue
+            r = self.rhythm(entry["name"])
+            if r and r["due"]:
+                cid, _ = self.resolve(r["name"])
+                out.append({**r, "category": cid, "category_label": self.categories.label(cid)})
+        return sorted(out, key=lambda r: r["next_due"])
+
+    @callback
+    def set_automation(self, settings: dict[str, Any]) -> None:
+        self.automation = {k: v for k, v in settings.items() if v not in (None, "", [])}
+        self._changed()
+
+    # ------------------------------------------------------------------
+    # Export / Import der Haushalts-Einstellungen
+    # ------------------------------------------------------------------
+    def export(self, include_history: bool = True) -> dict[str, Any]:
+        data = self._data()
+        data.pop("users", None)  # persönliche Einstellungen gehören zu Benutzern dieser Instanz
+        if not include_history:
+            data.pop("history", None)
+            data.pop("tag_history", None)
+        return {"smartlists_export": EXPORT_VERSION, "exported_at": int(time.time()), **data}
+
+    @callback
+    def import_data(self, data: dict[str, Any], replace: bool = False) -> dict[str, int]:
+        """Merge (Standard): Vorhandenes bleibt, Importiertes ergänzt/überschreibt gleiche Wörter."""
+        if not isinstance(data, dict) or data.get("smartlists_export") != EXPORT_VERSION:
+            raise ValueError("Keine SmartLists-Exportdatei (oder neuere Version)")
+        counts = {}
+        for key in ("manual", "learned", "history", "tag_history"):
+            incoming = data.get(key) or {}
+            if not isinstance(incoming, dict):
+                continue
+            target: dict[str, Any] = getattr(self, key)
+            if replace:
+                target.clear()
+            target.update(incoming)
+            counts[key] = len(incoming)
+        if isinstance(data.get("settings"), dict) and data["settings"].get("tag_rules"):
+            self.tag_rules = itemtext.validate_rules(data["settings"]["tag_rules"])
+        if isinstance(data.get("ui_defaults"), dict):
+            self.ui_defaults = validate_ui(data["ui_defaults"])
+        if isinstance(data.get("automation"), dict):
+            self.automation = dict(data["automation"])
+        # nur bekannte Kategorien behalten
+        for key in ("manual", "learned"):
+            target = getattr(self, key)
+            for word in [w for w, c in target.items() if not self.categories.valid(c)]:
+                target.pop(word)
+        self._resort()
+        self._changed(categories=True)
+        return counts
 
     @callback
     def clear_history(self) -> None:
@@ -219,7 +309,10 @@ class Learning:
         typed = self.parse(query, typed=True)
         q = normalize(typed.name)
         if not q:
-            return {"mode": "frequent", "suggestions": self._frequent(list_names or [], limit)}
+            due = [{**self._entry(d["name"], "due"), "every_days": d["every_days"]} for d in self.due_items(list_names or [])][:limit]
+            seen = {normalize(d["name"]) for d in due}
+            rest = [e for e in self._frequent(list_names or [], limit) if normalize(e["name"]) not in seen]
+            return {"mode": "frequent", "suggestions": (due + rest)[:limit]}
         scores: dict[str, tuple[int, str, str]] = {}
 
         def consider(name: str, prefix_score: int, contains_score: int, source: str) -> None:

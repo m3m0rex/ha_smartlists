@@ -1,0 +1,97 @@
+blueprint:
+  name: SmartLists – "I'm at the store" notification
+  description: >
+    When someone starts the shopping mode in the SmartLists card or app, notify the others:
+    "Anna is shopping at REWE – anything else?". Reply directly in the notification to add an item
+    to that list (Android/iOS Companion app).
+  domain: automation
+  source_url: https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/blueprints/automation/smartlists/shopping_notify.yaml
+  input:
+    notify_targets:
+      name: Notify services
+      description: >
+        One or more notify actions, comma-separated, e.g.
+        notify.mobile_app_pixel_anna, notify.mobile_app_iphone_max
+      selector:
+        text:
+    skip_self_user:
+      name: Skip a target for its own user (optional)
+      description: >
+        Pairs "HA user name=notify action" per line, e.g. "Anna=notify.mobile_app_pixel_anna", so the person
+        who is shopping is not notified.
+      default: ""
+      selector:
+        text:
+          multiline: true
+    only_lists:
+      name: Only for these lists (optional)
+      default: []
+      selector:
+        entity:
+          domain: todo
+          multiple: true
+
+mode: queued
+
+trigger:
+  - trigger: event
+    event_type: smartlists_shopping
+    event_data:
+      active: true
+    id: started
+  - trigger: event
+    event_type: mobile_app_notification_action
+    id: reply
+
+variables:
+  targets_raw: !input notify_targets
+  skip_raw: !input skip_self_user
+  only_lists: !input only_lists
+
+condition:
+  - condition: template
+    value_template: >
+      {% if trigger.id == 'started' %}
+        {{ not only_lists or trigger.event.data.entity_id in only_lists }}
+      {% else %}
+        {{ (trigger.event.data.action | default('')).startswith('SMARTLISTS_ADD__') and (trigger.event.data.reply_text | default('')) | length > 0 }}
+      {% endif %}
+
+action:
+  - choose:
+      - conditions: "{{ trigger.id == 'started' }}"
+        sequence:
+          - variables:
+              who: "{{ trigger.event.data.user_name or 'Jemand' }}"
+              store: "{{ trigger.event.data.store }}"
+              skip: >
+                {% set ns = namespace(t='') %}
+                {% for line in skip_raw.split('\n') if '=' in line %}
+                  {% if line.split('=')[0] | trim == who %}{% set ns.t = line.split('=')[1] | trim %}{% endif %}
+                {% endfor %}
+                {{ ns.t }}
+              targets: >
+                {{ targets_raw.split(',') | map('trim') | reject('eq', '') | reject('eq', skip) | list }}
+          - repeat:
+              for_each: "{{ targets }}"
+              sequence:
+                - action: "{{ repeat.item }}"
+                  data:
+                    title: "🛒 {{ trigger.event.data.list_name }}"
+                    message: >
+                      {{ who }} kauft gerade{{ ' bei ' ~ store if store else '' }} ein
+                      ({{ trigger.event.data.open_items }} offen). Noch etwas?
+                    data:
+                      tag: "smartlists_{{ trigger.event.data.entity_id }}"
+                      actions:
+                        - action: "SMARTLISTS_ADD__{{ trigger.event.data.entity_id }}"
+                          title: "Hinzufügen"
+                          behavior: textInput
+                          textInputButtonTitle: "Hinzufügen"
+                          textInputPlaceholder: "z. B. 2 l Milch"
+    default:
+      - action: todo.add_item
+        target:
+          entity_id: "{{ trigger.event.data.action.split('__', 1)[1] }}"
+        data:
+          item: "{{ trigger.event.data.reply_text }}"

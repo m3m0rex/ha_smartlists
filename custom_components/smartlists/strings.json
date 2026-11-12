@@ -3,11 +3,22 @@
     "step": {
       "user": {
         "title": "Set up SmartLists",
-        "description": "Afterwards you can add combined lists to the integration and use “Configure” for naming convention, controls and remembered categories. The Lovelace card “SmartLists” is available in your dashboards from now on."
+        "description": "{count} to-do lists found. Pick two or more to create a combined list right away – or leave empty and use “Add combined list” at the integration later. The “SmartLists” card and sidebar page are available immediately.",
+        "data": {
+          "combine": "Combine these lists (optional)",
+          "name": "Name of the combined list",
+          "default_add_entity": "New items go to"
+        },
+        "data_description": {
+          "combine": "E.g. the shopping lists of several people."
+        }
       }
     },
     "abort": {
       "single_instance_allowed": "SmartLists is already set up. Add combined lists directly to the integration."
+    },
+    "error": {
+      "combine_two": "Please choose at least two lists – or none."
     }
   },
   "config_subentries": {
@@ -80,7 +91,8 @@
           "naming": "Naming convention (@store, *person, #tag)",
           "controls": "Controls (default for everyone)",
           "learned": "Remembered categories & history",
-          "devices": "Connected devices (app)"
+          "devices": "Connected devices (app)",
+          "automation": "Voice & automations (Assist, due items)"
         }
       },
       "naming": {
@@ -120,6 +132,20 @@
         "description": "{count} phones with the HA SmartLists app:\n\n{devices}\n\n⚠️ = not synced for more than 7 days. Selected devices are removed from the list; a phone that connects again reappears. To revoke access, delete its token under Profile → Long-lived access tokens.",
         "data": {
           "remove": "Remove from list"
+        }
+      },
+      "automation": {
+        "title": "Voice & automations",
+        "description": "Due by your rhythm: {due}\\n\\nReady-made blueprints for “I'm at the store” and location notifications are in the repository (wiki → Automations).",
+        "data": {
+          "voice_default_list": "Default list for Assist",
+          "auto_due_list": "Automatically add due items to this list",
+          "install_sentences": "Install/update Assist sentences"
+        },
+        "data_description": {
+          "voice_default_list": "Used when a sentence names no list (“Put milk on the list”).",
+          "auto_due_list": "Hourly: items you buy regularly whose usual interval has passed. Empty = off.",
+          "install_sentences": "Copies the sentences to config/custom_sentences (German, English) and reloads Assist."
         }
       }
     },
@@ -199,6 +225,42 @@
       "app_version": {
         "name": "App version"
       }
+    }
+  },
+  "services": {
+    "get_items": {
+      "name": "Get items",
+      "description": "Open items of one or all lists, filtered by store, person, tag or category (with response, e.g. for notifications).",
+      "fields": {
+        "entity_id": {
+          "name": "Lists",
+          "description": "Empty = all to-do lists."
+        },
+        "store": {
+          "name": "Store",
+          "description": "Only items with this store (@REWE)."
+        },
+        "person": {
+          "name": "Person",
+          "description": "Only items for this person (*Anna)."
+        },
+        "tag": {
+          "name": "Tag",
+          "description": "Only items with this tag (#bio)."
+        },
+        "category": {
+          "name": "Category",
+          "description": "Only this shopping category."
+        },
+        "include_completed": {
+          "name": "Include completed",
+          "description": "Also return checked items."
+        }
+      }
+    },
+    "add_due_items": {
+      "name": "Add due items",
+      "description": "Adds due items now to the list chosen under “Voice & automations”."
     }
   }
 }

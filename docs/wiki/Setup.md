@@ -2,6 +2,11 @@
 
 *Settings → Devices & services → SmartLists*
 
+## First setup
+
+The setup suggests your existing to-do lists: pick two or more to create the first combined list right
+away, or leave it empty.
+
 ## Combined lists
 
 **Add combined list** merges several to-do lists into one new to-do entity (e.g. `todo.weekly_shop`).
@@ -26,4 +31,6 @@ Change or delete a list via ⋮ → *Reconfigure*.
   click), what it does, menu entries, shopping-mode behaviour. Every user can override this in the
   card's gear menu, optionally per device.
 - **Remembered categories & history** – forget single assignments, clear history.
+- **Voice & automations** – default list for Assist, automatically add due items, install the Assist
+  sentences. See [[Automations and voice]].
 - **Connected devices** – phones with the HA SmartLists app. See [[App pairing and devices]].

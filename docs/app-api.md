@@ -149,7 +149,19 @@ The user is taken from the token. `smartlists/devices` returns the devices (admi
 own); `smartlists/remove_device` (admin) removes one from the list. Each device is an HA device with the
 sensors "Last seen" and "App version".
 
-## 5. Categories and suggestions
+## 5. Shopping mode, due items, backup
+
+| Command | Fields | Purpose |
+|---|---|---|
+| `smartlists/shopping` | `entity_id, active, store?, open_items?` | shopping mode started/ended → event `smartlists_shopping` |
+| `smartlists/due` | `entity_id?` | due items by buying rhythm (`every_days`, `next_due`), excluding open items of that list |
+| `smartlists/export` | `include_history?` | household data as JSON (admin) |
+| `smartlists/import` | `data, replace?` | import an export (admin; merge by default) |
+| `smartlists/automation`, `smartlists/set_automation` | `settings` | `voice_default_list`, `auto_due_list` (set: admin) |
+
+`smartlists/suggest` with an empty query returns due items first (`source: "due"`, `every_days`).
+
+## 6. Categories and suggestions
 
 | Command | Fields | Purpose |
 |---|---|---|
@@ -166,7 +178,7 @@ Deletions are synced too: words forgotten in the app are sent via `smartlists/fo
 in `smartlists/learned` at the last sync and are missing now were forgotten in HA and are removed in
 the app.
 
-## 6. Controls per user
+## 7. Controls per user
 
 | Command | Fields | Purpose |
 |---|---|---|

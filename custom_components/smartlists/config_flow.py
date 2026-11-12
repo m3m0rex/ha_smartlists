@@ -100,9 +100,34 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 2
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Einrichtungs-Assistent: optional gleich eine kombinierte Liste anlegen.
+        Vorgeschlagen werden alle vorhandenen To-do-Listen; mit zwei oder mehr ausgewählten entsteht
+        die erste kombinierte Liste direkt mit."""
+        errors: dict[str, str] = {}
+        todo_ids = sorted(s.entity_id for s in self.hass.states.async_all("todo"))
         if user_input is not None:
-            return self.async_create_entry(title="SmartLists", data={})
-        return self.async_show_form(step_id="user", data_schema=vol.Schema({}))
+            combine = list(user_input.get("combine") or [])
+            subentries = []
+            if len(combine) == 1:
+                errors["combine"] = "combine_two"
+            elif combine:
+                data = {CONF_SOURCES: combine, CONF_MODE: MODE_BIDIRECTIONAL, CONF_SOURCE_LABEL: LABEL_SUFFIX, CONF_SORT: SORT_CATEGORY,
+                        CONF_FOREIGN: []}
+                if user_input.get(CONF_DEFAULT_ADD) in combine:
+                    data[CONF_DEFAULT_ADD] = user_input[CONF_DEFAULT_ADD]
+                subentries.append({"subentry_type": SUBENTRY_COMBINED, "title": user_input.get(CONF_NAME) or "Einkauf",
+                                   "data": data, "unique_id": None})
+            if not errors:
+                return self.async_create_entry(title="SmartLists", data={}, subentries=subentries)
+        schema = vol.Schema(
+            {
+                vol.Optional("combine", default=todo_ids if 2 <= len(todo_ids) <= 4 else []): _todo_selector(True),
+                vol.Optional(CONF_NAME, default="Einkauf"): selector.TextSelector(),
+                vol.Optional(CONF_DEFAULT_ADD): _todo_selector(False),
+            }
+        )
+        return self.async_show_form(step_id="user", data_schema=schema, errors=errors,
+                                    description_placeholders={"count": str(len(todo_ids))})
 
     @classmethod
     @callback
@@ -203,7 +228,7 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned", "devices"])
+        return self.async_show_menu(step_id="init", menu_options=["naming", "controls", "learned", "automation", "devices"])
 
     def _done(self) -> ConfigFlowResult:
         # Optionen unverändert lassen → kein unnötiges Neuladen der Integration
@@ -333,4 +358,30 @@ class SmartListsOptionsFlow(OptionsFlow):
             step_id="devices",
             data_schema=vol.Schema(fields),
             description_placeholders={"count": str(len(entries)), "devices": "\n".join(lines) or "–"},
+        )
+
+    async def async_step_automation(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Sprache & Automationen: Standard-Liste für Assist, fällige Artikel automatisch, Assist-Sätze."""
+        from .automation import async_install_sentences
+
+        learning = _learning(self.hass)
+        if user_input is not None:
+            learning.set_automation(
+                {k: user_input.get(k) for k in ("voice_default_list", "auto_due_list")}
+            )
+            if user_input.get("install_sentences"):
+                await async_install_sentences(self.hass)
+            return self._done()
+        cur = learning.automation
+        fields: dict[Any, Any] = {}
+        for key in ("voice_default_list", "auto_due_list"):
+            fields[vol.Optional(key, description={"suggested_value": cur.get(key)})] = _todo_selector(False)
+        fields[vol.Optional("install_sentences", default=False)] = selector.BooleanSelector()
+        due = learning.due_items()
+        return self.async_show_form(
+            step_id="automation",
+            data_schema=vol.Schema(fields),
+            description_placeholders={
+                "due": ", ".join(f"{d['name']} (alle {d['every_days']:g} Tage)" for d in due[:8]) or "–",
+            },
         )

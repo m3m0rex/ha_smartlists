@@ -1,0 +1,71 @@
+blueprint:
+  name: SmartLists – store reminder
+  description: >
+    When a person enters the zone of a store (e.g. zone.rewe) and there are open items for that store
+    (@REWE), send them the list.
+  domain: automation
+  source_url: https://github.com/m3m0rex/ha_smartlists_hacs/blob/main/blueprints/automation/smartlists/store_reminder.yaml
+  input:
+    person:
+      name: Person
+      selector:
+        entity:
+          domain: person
+    store_zone:
+      name: Store zone
+      selector:
+        entity:
+          domain: zone
+    store:
+      name: Store name as used in the list
+      description: "Without @, e.g. REWE"
+      selector:
+        text:
+    lists:
+      name: Lists (optional, empty = all)
+      default: []
+      selector:
+        entity:
+          domain: todo
+          multiple: true
+    notify_target:
+      name: Notify action
+      description: "e.g. notify.mobile_app_pixel_anna"
+      selector:
+        text:
+    include_untagged:
+      name: Also items without any store
+      default: false
+      selector:
+        boolean:
+
+mode: single
+max_exceeded: silent
+
+trigger:
+  - trigger: zone
+    entity_id: !input person
+    zone: !input store_zone
+    event: enter
+
+variables:
+  store: !input store
+  lists: !input lists
+  include_untagged: !input include_untagged
+
+action:
+  - action: smartlists.get_items
+    data:
+      entity_id: "{{ lists }}"
+    response_variable: all_items
+  - variables:
+      matching: >
+        {{ all_items['items'] | selectattr('stores', 'contains', store) | list
+           + ((all_items['items'] | selectattr('stores', 'eq', []) | list) if include_untagged else []) }}
+  - condition: template
+    value_template: "{{ matching | length > 0 }}"
+  - action: !input notify_target
+    data:
+      title: "🛒 {{ matching | length }} × bei {{ store }}"
+      message: >
+        {% for i in matching %}{{ (i.quantity | string ~ ' ' ~ (i.unit or '') ~ ' ') if i.quantity is not none else '' }}{{ i.name }}{{ ', ' if not loop.last }}{% endfor %}

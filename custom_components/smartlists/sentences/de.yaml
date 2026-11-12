@@ -1,0 +1,25 @@
+# SmartLists – Sätze für Assist (wird nach config/custom_sentences/de/smartlists.yaml kopiert)
+language: "de"
+intents:
+  SmartListsAddItem:
+    data:
+      - sentences:
+          - "(setz|schreib|pack|füg) {item} [bei {store}] auf [die|meine|unsere] {list} [hinzu]"
+          - "(setze|schreibe|packe|füge) {item} [bei {store}] auf [die|meine|unsere] {list} [hinzu]"
+          - "(setz|schreib|pack|setze|schreibe|packe) {item} bei {store} auf [die] Liste"
+          - "wir brauchen {item} [von {store}]"
+          - "ich brauche {item} [von {store}]"
+  SmartListsListItems:
+    data:
+      - sentences:
+          - "was (steht|ist) auf [der|meiner|unserer] {list}"
+          - "was (muss|soll) ich bei {store} (kaufen|holen|mitbringen)"
+          - "was brauchen wir [noch] [bei|von] {store}"
+          - "was brauchen wir [noch]"
+lists:
+  item:
+    wildcard: true
+  list:
+    wildcard: true
+  store:
+    wildcard: true

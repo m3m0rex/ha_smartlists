@@ -3,11 +3,22 @@
     "step": {
       "user": {
         "title": "SmartLists einrichten",
-        "description": "Danach kannst du bei der Integration kombinierte Listen hinzufügen und über „Konfigurieren“ Namenskonvention, Bedienung und gemerkte Kategorien einstellen. Die Lovelace-Karte „SmartLists“ steht ab jetzt im Dashboard zur Verfügung."
+        "description": "{count} To-do-Listen gefunden. Wähle zwei oder mehr aus, um gleich eine kombinierte Liste anzulegen – oder leer lassen und später bei der Integration „Kombinierte Liste hinzufügen“. Die Karte „SmartLists“ und die Seite in der Seitenleiste stehen danach sofort bereit.",
+        "data": {
+          "combine": "Diese Listen kombinieren (optional)",
+          "name": "Name der kombinierten Liste",
+          "default_add_entity": "Neue Artikel landen in"
+        },
+        "data_description": {
+          "combine": "Z. B. die Einkaufslisten mehrerer Personen."
+        }
       }
     },
     "abort": {
       "single_instance_allowed": "SmartLists ist bereits eingerichtet. Kombinierte Listen fügst du direkt bei der Integration hinzu."
+    },
+    "error": {
+      "combine_two": "Bitte mindestens zwei Listen wählen – oder keine."
     }
   },
   "config_subentries": {
@@ -80,7 +91,8 @@
           "naming": "Namenskonvention (@Markt, *Person, #Schlagwort)",
           "controls": "Bedienung (Standard für alle)",
           "learned": "Gemerkte Kategorien & Verlauf",
-          "devices": "Verbundene Geräte (App)"
+          "devices": "Verbundene Geräte (App)",
+          "automation": "Sprache & Automationen (Assist, fällige Artikel)"
         }
       },
       "naming": {
@@ -120,6 +132,20 @@
         "description": "{count} Handys mit der HA-SmartLists-App:\n\n{devices}\n\n⚠️ = länger als 7 Tage nicht abgeglichen. Ausgewählte Geräte werden aus der Liste genommen; meldet sich ein Handy wieder, erscheint es erneut. Den Zugang sperrst du im Profil unter „Langlebige Zugangstoken“.",
         "data": {
           "remove": "Aus der Liste nehmen"
+        }
+      },
+      "automation": {
+        "title": "Sprache & Automationen",
+        "description": "Fällig nach eurem Rhythmus: {due}\\n\\nFür „Bin im Laden“- und Standort-Benachrichtigungen gibt es fertige Blueprints im Repository (Wiki → Automations).",
+        "data": {
+          "voice_default_list": "Standard-Liste für Assist",
+          "auto_due_list": "Fällige Artikel automatisch auf diese Liste setzen",
+          "install_sentences": "Assist-Sätze installieren/aktualisieren"
+        },
+        "data_description": {
+          "voice_default_list": "Wenn man im Satz keine Liste nennt („Setz Milch auf die Liste“).",
+          "auto_due_list": "Stündlich: Artikel, die ihr regelmäßig kauft und deren üblicher Abstand erreicht ist. Leer = aus.",
+          "install_sentences": "Kopiert die Sätze nach config/custom_sentences (Deutsch, Englisch) und lädt Assist neu."
         }
       }
     },
@@ -199,6 +225,42 @@
       "app_version": {
         "name": "App-Version"
       }
+    }
+  },
+  "services": {
+    "get_items": {
+      "name": "Artikel abfragen",
+      "description": "Offene Artikel einer oder aller Listen, gefiltert nach Markt, Person, Schlagwort oder Kategorie (mit Antwort, z. B. für Benachrichtigungen).",
+      "fields": {
+        "entity_id": {
+          "name": "Listen",
+          "description": "Leer = alle To-do-Listen."
+        },
+        "store": {
+          "name": "Markt",
+          "description": "Nur Artikel mit diesem Markt (@REWE)."
+        },
+        "person": {
+          "name": "Person",
+          "description": "Nur Artikel für diese Person (*Anna)."
+        },
+        "tag": {
+          "name": "Schlagwort",
+          "description": "Nur Artikel mit diesem Schlagwort (#bio)."
+        },
+        "category": {
+          "name": "Kategorie",
+          "description": "Nur diese Einkaufs-Kategorie."
+        },
+        "include_completed": {
+          "name": "Erledigte mitliefern",
+          "description": "Auch abgehakte Artikel."
+        }
+      }
+    },
+    "add_due_items": {
+      "name": "Fällige Artikel eintragen",
+      "description": "Setzt fällige Artikel jetzt auf die unter „Sprache & Automationen“ gewählte Liste."
     }
   }
 }

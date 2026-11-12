@@ -1,0 +1,41 @@
+get_items:
+  fields:
+    entity_id:
+      selector:
+        entity:
+          domain: todo
+          multiple: true
+    store:
+      example: "REWE"
+      selector:
+        text:
+    person:
+      example: "Anna"
+      selector:
+        text:
+    tag:
+      example: "bio"
+      selector:
+        text:
+    category:
+      example: "drogerie"
+      selector:
+        select:
+          options:
+            - obst_gemuese
+            - fleisch
+            - kuehlung
+            - grundnahrung
+            - backwaren
+            - getraenke
+            - suessigkeiten
+            - haushalt
+            - drogerie
+            - tiefkuehl
+            - tierbedarf
+            - sonstiges
+    include_completed:
+      default: false
+      selector:
+        boolean:
+add_due_items:

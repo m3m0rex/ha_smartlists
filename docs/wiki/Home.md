@@ -12,6 +12,7 @@ and use a shopping mode – in a Lovelace card, on its own sidebar page and in t
 - [[Sidebar page]]
 - [[Item text and naming convention]] – quantities, `@store`, `*person`, `#tag`, offers
 - [[Categories and suggestions]]
+- [[Automations and voice]] – "I'm at the store", store reminder, Assist, due items
 - [[App pairing and devices]]
 - [[Troubleshooting]]
 

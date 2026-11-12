@@ -20,6 +20,7 @@ from homeassistant.core import Context, HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 
 from .const import DOMAIN
+from .itemtext import join_offer, split_offer
 from .learning import Learning
 
 STATUS_DONE = "completed"
@@ -104,6 +105,8 @@ async def get_list(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
     person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
     for raw in await raw_items(hass, entity_id):
         info = learning.describe(raw["text"])
+        # Angebot aus der App (⚙OFFER-Zeile in der Notiz) zerlegen statt als Text zeigen
+        note, offer, _ = split_offer(raw.get("note"))
         # Herkunft als Person (kombinierte Liste, z.B. todo.peter → 👤 Peter) – außer im Artikel
         # steht schon eine Person (*Anna) oder Personen-Tags sind abgeschaltet
         person = raw.get("person")
@@ -115,7 +118,8 @@ async def get_list(hass: HomeAssistant, entity_id: str) -> dict[str, Any]:
                 **info,
                 "uid": raw["uid"],
                 "text": raw["text"],
-                "note": raw.get("note", ""),
+                "note": note,
+                "offer": offer,
                 "checked": raw["checked"],
                 "source": raw.get("source"),
                 "permissions": {
@@ -207,8 +211,11 @@ async def update_item(
             raise ListError("Artikel nicht gefunden – die Liste wird neu geladen")
         if text.strip() != current["text"]:
             data["rename"] = text.strip()
-        if note is not None and note != current.get("note", "") and list_permissions(hass, entity_id)["note"]:
-            data["description"] = note
+        if note is not None and list_permissions(hass, entity_id)["note"]:
+            # Karte/App kennen nur die Notiz ohne ⚙OFFER-Zeile → die Zeile beim Speichern erhalten
+            old_clean, _, raw_line = split_offer(current.get("note", ""))
+            if note != old_clean:
+                data["description"] = join_offer(note, raw_line)
     if len(data) > 2:
         await _call(hass, "update_item", data, context)
     return {"uid": uid}

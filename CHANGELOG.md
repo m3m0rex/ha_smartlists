@@ -3,6 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] – 2026-11-12
+
+### Added
+
+- Offers added in the HA SmartLists app (the `⚙OFFER:{…}` line in the item description) are now
+  read instead of shown as raw text: the card and sidebar page show store badge, price, old price,
+  discount and "until 14.11." (red when expired); search also finds the offer's store.
+- Home Assistant's own to-do view shows a readable line for combined lists
+  ("🏷️ REWE · 0,39 € · bis 14.11.") instead of the JSON.
+- Card editor option "Offers from the app".
+
+### Fixed
+
+- Editing the note of an offer item keeps the offer line, so the app still recognises the offer.
+
 ## [1.5.2] – 2026-11-04
 
 ### Fixed

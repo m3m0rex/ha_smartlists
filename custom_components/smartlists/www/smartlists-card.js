@@ -42,7 +42,7 @@ const CARD_DEFAULTS = {
   show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
   show_undo: true, show_import: true, show_settings: true,
   show_add: true, show_frequent: true,
-  show_stepper: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
+  show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
   show_completed: true, collapse_completed: true,
   start_shopping: false,
 };
@@ -70,6 +70,7 @@ const TEXTS = {
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
+    offer: "Angebot", offer_until: "bis", offer_expired: "abgelaufen seit",
     qty_less: "Menge verringern", qty_more: "Menge erhöhen", qty_changed: "Menge geändert",
     search: "Suchen", search_placeholder: "In der Liste suchen …", hits: "Treffer", no_hits: "Nichts gefunden für", add_this: "hinzufügen",
     imp: "Importieren", imp_ha: "Aus Home Assistant", imp_text: "Als Text", imp_source: "Liste",
@@ -107,6 +108,7 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
+    offer: "Offer", offer_until: "until", offer_expired: "expired",
     qty_less: "Decrease quantity", qty_more: "Increase quantity", qty_changed: "quantity changed",
     search: "Search", search_placeholder: "Search this list …", hits: "matches", no_hits: "Nothing found for", add_this: "add",
     imp: "Import", imp_ha: "From Home Assistant", imp_text: "As text", imp_source: "List",
@@ -375,6 +377,14 @@ const STYLE = `
   .tag.hash { background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); font-weight:600; border-radius:9px; }
   .tags { display:flex; gap:4px; margin-left:auto; flex-wrap:wrap; justify-content:flex-end; }
   .catemoji { text-align:center; }
+  .offer { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:2px; font-size:.78rem; color:var(--secondary-text-color); }
+  .offer .olabel { font-weight:600; color:var(--success-color,#43a047); }
+  .offer .oprice { font-weight:700; color:var(--primary-text-color); }
+  .offer .oold { text-decoration:line-through; }
+  .offer .odisc { font-weight:700; color:var(--error-color,#db4437); }
+  .offer.expired .olabel, .offer.expired .odate { color:var(--error-color,#db4437); }
+  .offer.expired .oprice { color:var(--secondary-text-color); }
+  .row.checked .offer { opacity:.55; }
   .note { font-size:.8rem; color:var(--secondary-text-color); margin-top:1px; }
   .actions { display:flex; justify-content:flex-end; gap:2px; }
   .icon-btn { background:none; border:none; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center;
@@ -891,6 +901,24 @@ class SmartListsCard extends HTMLElement {
       h("div", { class: "menu", role: "menu", style: `top:${top}px` }, body));
   }
 
+  /* ---------------- Angebote aus der App ----------------
+   * Die App speichert Angebote als ⚙OFFER-Zeile in der Notiz; die Integration liefert sie zerlegt
+   * als it.offer. Markt-Badge nur, wenn nicht schon ein @Markt-Tag dasselbe zeigt. */
+  _offerLine(it, tags) {
+    const o = it.offer;
+    const t = this._t;
+    const euro = (v) => `${v.toFixed(2).replace(".", ",")} €`;
+    const day = (iso) => { const p = String(iso).slice(0, 10).split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : iso; };
+    const hasStoreTag = tags.some((x) => x.kind === "store" && x.label.toLowerCase() === String(o.store_label).toLowerCase());
+    return h("div", { class: `offer ${o.expired ? "expired" : ""}` },
+      hasStoreTag ? null : badge({ kind: "store", value: o.store, label: o.store_label, color: o.color }),
+      h("span", { class: "olabel" }, "🏷️ " + t.offer),
+      o.price != null ? h("span", { class: "oprice" }, euro(o.price)) : null,
+      o.old_price != null ? h("span", { class: "oold" }, euro(o.old_price)) : null,
+      o.discount ? h("span", { class: "odisc" }, o.discount) : null,
+      o.valid_until ? h("span", { class: "odate" }, o.expired ? `${t.offer_expired} ${day(o.valid_until)}` : `${t.offer_until} ${day(o.valid_until)}`) : null);
+  }
+
   /* ---------------- Mengen-Stepper ----------------
    * Wie in der App: ±1, nie unter 0; bei Mehrfachpackungen ("4× 150 g") ändert sich die Anzahl
    * der Packungen (nie unter 1). Schnelles Tippen wird gesammelt und nach kurzer Pause einmal
@@ -938,7 +966,8 @@ class SmartListsCard extends HTMLElement {
     const q = this._searchQuery;
     if (!q) return true;
     const cat = d.categories.find((c) => c.id === it.category);
-    const hay = [it.name, it.note, it.source, cat && cat.label, ...(it.tags || []).map((x) => x.label)].map(searchKey).join("\n");
+    const hay = [it.name, it.note, it.source, cat && cat.label, ...(it.tags || []).map((x) => x.label),
+      ...(it.offer ? [it.offer.store_label, this._t.offer] : [])].map(searchKey).join("\n");
     return q.split(/\s+/).every((w) => hay.includes(w));
   }
   // Treffer im Namen markieren (Position über die normalisierte Form, Länge bleibt bis auf ß gleich)
@@ -1255,6 +1284,7 @@ class SmartListsCard extends HTMLElement {
           tags.map(badge),
           // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
           this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
+        it.offer && this._config.show_offer !== false ? this._offerLine(it, tags) : null,
         this._config.show_note && it.note ? h("div", { class: "note" }, it.note) : null),
       h("span", { class: "qtycol" }, p.rename && it.quantity != null && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
@@ -1489,7 +1519,7 @@ class SmartListsCardEditor extends HTMLElement {
         show_sort: "Sortier-Auswahl", show_shopping: "Einkaufsmodus-Knopf", show_undo: "Rückgängig (↶)",
         show_import: "Import-Knopf", show_settings: "Zahnrad (persönliche Einstellungen)",
         show_add: "Eingabefeld zum Hinzufügen", show_frequent: "„Häufig gekauft“",
-        show_stepper: "Mengen-Stepper (− +)", show_tags: "Badges (@Markt, *Person, #Schlagwort)",
+        show_stepper: "Mengen-Stepper (− +)", show_offer: "Angebote aus der App (Markt, Preis, gültig bis)", show_tags: "Badges (@Markt, *Person, #Schlagwort)",
         show_source: "Herkunft (Quell-Liste / Person)", show_note: "Notizen", show_category_titles: "Kategorie-Überschriften",
         compact: "Kompakte Zeilen", max_height: "Maximale Höhe der Liste (px, leer = unbegrenzt)",
         show_completed: "Erledigte anzeigen", collapse_completed: "Erledigte anfangs zugeklappt",
@@ -1513,7 +1543,7 @@ class SmartListsCardEditor extends HTMLElement {
           [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
         section("Eingabe", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
         section("Liste", "mdi:format-list-bulleted",
-          [b("show_stepper"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles"), b("compact"),
+          [b("show_stepper"), b("show_offer"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles"), b("compact"),
             { name: "max_height", selector: { number: { min: 150, max: 2000, step: 50, mode: "box", unit_of_measurement: "px" } } }]),
         section("Erledigte", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
         section("Einkaufsmodus", "mdi:cart-outline", [b("start_shopping")]),

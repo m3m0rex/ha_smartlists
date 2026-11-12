@@ -174,6 +174,88 @@ def encode(item: ParsedItem, rules: list[dict[str, str]]) -> str:
     return " ".join(p for p in parts if p)
 
 
+# ----------------------------------------------------------------------
+# Angebote aus der App
+# ----------------------------------------------------------------------
+# Die HA-SmartLists-App hängt beim Hinzufügen aus der Angebote-Übersicht eine Zeile an die Notiz:
+#   ⚙OFFER:{"s":"REWE","e":"2026-11-14","v":"2026-11-09","a":1794055898321,"p":0.39}
+# s = Markt, p = Preis, o = alter Preis, d = Rabatt, v/e = gültig ab/bis (JJJJ-MM-TT),
+# a = hinzugefügt (Epoch-Millis). Siehe HomeAssistantStore.encodeOfferMetaIntoDescription.
+OFFER_TAG = "⚙OFFER:"
+
+
+def split_offer(note: str | None) -> tuple[str, dict[str, Any] | None, str]:
+    """Notiz → (Notiz ohne Angebots-Zeile, Angebot oder None, rohe Angebots-Zeile oder "").
+    Ein kaputtes Tag wird trotzdem abgeschnitten (wie in der App), damit nie JSON angezeigt wird."""
+    import json
+    from datetime import date
+
+    text = note or ""
+    idx = text.find(OFFER_TAG)
+    if idx < 0:
+        return text, None, ""
+    clean = text[:idx].strip("\n ")
+    raw_line = text[idx:].strip()
+    try:
+        data = json.loads(raw_line[len(OFFER_TAG):])
+    except ValueError:
+        return clean, None, raw_line
+    if not isinstance(data, dict) or not data.get("s"):
+        return clean, None, raw_line
+    label, color = store_display(str(data["s"]))
+
+    def _num(v: Any) -> float | None:
+        try:
+            return float(str(v).replace(",", ".").replace("€", "").strip())
+        except (TypeError, ValueError):
+            return None
+
+    until = str(data.get("e") or "") or None
+    expired = False
+    if until:
+        try:
+            expired = date.fromisoformat(until[:10]) < date.today()
+        except ValueError:
+            pass
+    offer = {
+        "store": str(data["s"]),
+        "store_label": label,
+        "color": color,
+        "price": _num(data.get("p")),
+        "old_price": _num(data.get("o")),
+        "discount": str(data["d"]) if data.get("d") else None,
+        "valid_from": str(data.get("v") or "") or None,
+        "valid_until": until,
+        "added_at": int(data["a"]) if str(data.get("a", "")).isdigit() else None,
+        "expired": expired,
+    }
+    return clean, offer, raw_line
+
+
+def join_offer(note: str, raw_line: str) -> str:
+    """Notiz + rohe Angebots-Zeile wieder zusammensetzen (Format wie in der App)."""
+    note = (note or "").rstrip()
+    if not raw_line:
+        return note
+    return f"{note}\n{raw_line}" if note else raw_line
+
+
+def offer_summary(offer: dict[str, Any]) -> str:
+    """Lesbare Zeile für Oberflächen ohne Badges, z.B. „🏷️ REWE · 0,39 € · bis 14.11.“."""
+    parts = [f"🏷️ {offer['store_label']}"]
+    if offer.get("price") is not None:
+        price = f"{offer['price']:.2f}".replace(".", ",") + " €"
+        if offer.get("old_price") is not None:
+            price += f" (statt {offer['old_price']:.2f}".replace(".", ",") + " €)"
+        parts.append(price)
+    if offer.get("discount"):
+        parts.append(str(offer["discount"]))
+    if offer.get("valid_until"):
+        d = offer["valid_until"][:10].split("-")
+        parts.append(("abgelaufen " if offer.get("expired") else "bis ") + (f"{d[2]}.{d[1]}." if len(d) == 3 else offer["valid_until"]))
+    return " · ".join(parts)
+
+
 # Wörter, die in Listennamen nichts über die Person sagen ("Einkaufsliste Peter" → "Peter")
 _LIST_NOISE = {
     "einkaufsliste", "einkaufslisten", "einkauf", "einkaufen", "liste", "listen", "todo", "to-do", "aufgaben",

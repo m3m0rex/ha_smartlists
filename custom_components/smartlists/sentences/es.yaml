@@ -1,0 +1,22 @@
+# SmartLists – frases para Assist (se copian a config/custom_sentences/es/smartlists.yaml)
+language: "es"
+intents:
+  SmartListsAddItem:
+    data:
+      - sentences:
+          - "(añade|pon|apunta) {item} [de {store}] (a|en) [la|mi|nuestra] {list}"
+          - "(necesitamos|necesito) {item} [de {store}]"
+          - "hace falta {item} [de {store}]"
+  SmartListsListItems:
+    data:
+      - sentences:
+          - "qué hay en [la|mi|nuestra] {list}"
+          - "qué tengo que comprar en {store}"
+          - "qué (necesitamos|necesito) [en {store}]"
+lists:
+  item:
+    wildcard: true
+  list:
+    wildcard: true
+  store:
+    wildcard: true

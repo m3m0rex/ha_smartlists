@@ -1,0 +1,302 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurar SmartLists",
+        "description": "Se encontraron {count} listas de tareas. Elige dos o más para crear ahora mismo una lista combinada – o déjalo vacío y usa más tarde «Añadir lista combinada» en la integración. La tarjeta «SmartLists» y la página de la barra lateral están disponibles de inmediato.",
+        "data": {
+          "combine": "Combinar estas listas (opcional)",
+          "name": "Nombre de la lista combinada",
+          "default_add_entity": "Los elementos nuevos van a"
+        },
+        "data_description": {
+          "combine": "P. ej., las listas de la compra de varias personas."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "SmartLists ya está configurado. Añade las listas combinadas directamente en la integración."
+    },
+    "error": {
+      "combine_two": "Elige al menos dos listas – o ninguna."
+    }
+  },
+  "config_subentries": {
+    "combined_list": {
+      "initiate_flow": {
+        "user": "Añadir lista combinada"
+      },
+      "entry_type": "Lista combinada",
+      "step": {
+        "user": {
+          "title": "Crear lista combinada",
+          "description": "Combina varias listas de tareas en una lista compartida.",
+          "data": {
+            "name": "Nombre de la lista combinada",
+            "sources": "Listas que combinar",
+            "default_add_entity": "Lista predeterminada para elementos nuevos",
+            "mode": "Marcar afecta a",
+            "source_label": "Mostrar la lista de origen en el nombre del elemento",
+            "sort": "Orden",
+            "foreign_entities": "Listas ajenas (solo marcar, sin renombrar/eliminar)",
+            "source_as_person": "Mostrar la lista de origen como persona"
+          },
+          "data_description": {
+            "sources": "Cualquier lista de tareas, p. ej., las listas de la compra de varias personas.",
+            "default_add_entity": "Los elementos añadidos a la lista combinada van aquí. Vacío = añadir desactivado.",
+            "mode": "Bidireccional: marcar escribe en la lista de origen. Local: las marcas se quedan solo en la lista combinada.",
+            "foreign_entities": "Listas de otras personas que solo puedes marcar.",
+            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra»."
+          }
+        },
+        "reconfigure": {
+          "title": "Editar lista combinada",
+          "data": {
+            "name": "Nombre de la lista combinada",
+            "sources": "Listas que combinar",
+            "default_add_entity": "Lista predeterminada para elementos nuevos",
+            "mode": "Marcar afecta a",
+            "source_label": "Mostrar la lista de origen en el nombre del elemento",
+            "sort": "Orden",
+            "foreign_entities": "Listas ajenas (solo marcar, sin renombrar/eliminar)",
+            "source_as_person": "Mostrar la lista de origen como persona"
+          },
+          "data_description": {
+            "sources": "Cualquier lista de tareas, p. ej., las listas de la compra de varias personas.",
+            "default_add_entity": "Los elementos añadidos a la lista combinada van aquí. Vacío = añadir desactivado.",
+            "mode": "Bidireccional: marcar escribe en la lista de origen. Local: las marcas se quedan solo en la lista combinada.",
+            "foreign_entities": "Listas de otras personas que solo puedes marcar.",
+            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra»."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Selecciona al menos una lista.",
+        "nested_combined_list": "Las listas combinadas no se pueden anidar.",
+        "default_not_in_sources": "La lista predeterminada debe ser una de las listas seleccionadas.",
+        "foreign_not_in_sources": "Las listas ajenas también deben estar seleccionadas arriba.",
+        "default_is_foreign": "Una lista ajena no puede ser la lista predeterminada."
+      },
+      "abort": {
+        "reconfigure_successful": "Guardado."
+      }
+    },
+    "own_list": {
+      "initiate_flow": {
+        "user": "Añadir lista propia"
+      },
+      "entry_type": "Lista propia",
+      "step": {
+        "user": {
+          "title": "Lista propia",
+          "description": "Una lista guardada por el propio SmartLists. El propietario y los administradores pueden hacerlo todo; editar = añadir/cambiar/eliminar elementos, marcar = solo marcar, ver = solo ver. Nota: la vista de tareas integrada de Home Assistant muestra todas las listas a todo el mundo – está oculta en la tarjeta, la página y la app de SmartLists.",
+          "data": {
+            "name": "Nombre",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver"
+          }
+        },
+        "reconfigure": {
+          "title": "Editar lista propia",
+          "description": "Una lista guardada por el propio SmartLists. El propietario y los administradores pueden hacerlo todo; editar = añadir/cambiar/eliminar elementos, marcar = solo marcar, ver = solo ver. Nota: la vista de tareas integrada de Home Assistant muestra todas las listas a todo el mundo – está oculta en la tarjeta, la página y la app de SmartLists.",
+          "data": {
+            "name": "Nombre",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver"
+          }
+        }
+      },
+      "abort": {
+        "reconfigure_successful": "Guardado."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SmartLists – ajustes para todos",
+        "description": "Cada usuario puede definir sus propias diferencias con el icono de engranaje de la tarjeta.",
+        "menu_options": {
+          "naming": "Convención de nombres (@tienda, *persona, #etiqueta)",
+          "controls": "Controles (predeterminados para todos)",
+          "learned": "Categorías recordadas e historial",
+          "devices": "Dispositivos conectados (app)",
+          "automation": "Voz y automatizaciones (Assist, elementos pendientes)"
+        }
+      },
+      "naming": {
+        "title": "Convención de nombres",
+        "description": "Un carácter delante de una palabra la convierte en una etiqueta, p. ej. «Leche @REWE» → etiqueta de tienda REWE. Los caracteres se quedan en el nombre del elemento. «—» desactiva un tipo.",
+        "data": {
+          "prefix_store": "Tienda",
+          "prefix_person": "Persona",
+          "prefix_tag": "Etiqueta"
+        }
+      },
+      "controls": {
+        "title": "Controles – predeterminados para todos",
+        "description": "Se aplica a cada usuario que no haya definido los suyos en la tarjeta.",
+        "data": {
+          "press_gesture": "Gesto para el menú del elemento",
+          "press_target": "Dónde funciona el gesto",
+          "press_result": "Qué hace el gesto",
+          "menu_actions": "Entradas del menú",
+          "row_buttons": "Mostrar lápiz y papelera en cada fila",
+          "shop_hide_checked": "Modo compra: ocultar elementos marcados",
+          "shop_keep_awake": "Modo compra: mantener la pantalla encendida",
+          "shop_large": "Modo compra: filas grandes",
+          "shop_tap_row": "Modo compra: tocar toda la fila para marcar"
+        }
+      },
+      "learned": {
+        "title": "Categorías recordadas e historial",
+        "description": "{count} asignaciones recordadas, {history} elementos en el historial. Las asignaciones seleccionadas se olvidarán.",
+        "data": {
+          "forget": "Olvidar",
+          "clear_history": "Borrar historial (sugerencias, comprados con frecuencia)"
+        }
+      },
+      "devices": {
+        "title": "Dispositivos conectados",
+        "description": "{count} teléfonos con la app HA SmartLists:\n\n{devices}\n\n⚠️ = sin sincronizar desde hace más de 7 días. Los dispositivos seleccionados se quitan de la lista; un teléfono que se vuelva a conectar reaparece. Para revocar el acceso, elimina su token en Perfil → Tokens de acceso de larga duración.",
+        "data": {
+          "remove": "Quitar de la lista"
+        }
+      },
+      "automation": {
+        "title": "Voz y automatizaciones",
+        "description": "Pendientes según tu ritmo: {due}\\n\\nEn el repositorio hay blueprints listos para «Estoy en la tienda» y notificaciones por ubicación (wiki → Automations).",
+        "data": {
+          "voice_default_list": "Lista predeterminada para Assist",
+          "auto_due_list": "Añadir automáticamente los elementos pendientes a esta lista",
+          "install_sentences": "Instalar/actualizar frases de Assist"
+        },
+        "data_description": {
+          "voice_default_list": "Se usa cuando una frase no nombra ninguna lista («Pon leche en la lista»).",
+          "auto_due_list": "Cada hora: elementos que compras con regularidad cuyo intervalo habitual ha pasado. Vacío = desactivado.",
+          "install_sentences": "Copia las frases a config/custom_sentences (alemán, inglés, francés, español, italiano, polaco) y recarga Assist."
+        }
+      }
+    },
+    "error": {
+      "duplicate_prefix": "Cada carácter solo se puede usar para un tipo."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "bidirectional": "Lista de origen (bidireccional, predeterminado)",
+        "local": "Solo esta lista combinada"
+      }
+    },
+    "source_label": {
+      "options": {
+        "suffix": "Sufijo (Leche · Anna)",
+        "prefix": "Prefijo ([Anna] Leche)",
+        "none": "Ocultar"
+      }
+    },
+    "sort": {
+      "options": {
+        "source": "Por lista (orden de origen)",
+        "status": "Pendientes primero, luego alfabético",
+        "alphabetical": "Alfabético",
+        "category": "Por categoría de compra (fruta y verdura, refrigerados, …)"
+      }
+    },
+    "press_gesture": {
+      "options": {
+        "long": "Pulsación larga",
+        "double": "Doble clic",
+        "right": "Clic derecho",
+        "off": "Desactivado"
+      }
+    },
+    "press_target": {
+      "options": {
+        "row": "Toda la fila",
+        "name": "Solo el nombre"
+      }
+    },
+    "press_result": {
+      "options": {
+        "menu": "Abrir menú",
+        "edit": "Editar directamente",
+        "delete": "Eliminar (con confirmación)"
+      }
+    },
+    "menu_actions": {
+      "options": {
+        "rename": "Renombrar / editar",
+        "move": "Mover",
+        "copy": "Copiar",
+        "category": "Cambiar categoría",
+        "delete": "Eliminar"
+      }
+    }
+  },
+  "exceptions": {
+    "item_not_found": {
+      "message": "Elemento {uid} no encontrado – la lista se está recargando."
+    },
+    "no_default_list": {
+      "message": "No hay configurada ninguna lista predeterminada para elementos nuevos."
+    },
+    "foreign_list": {
+      "message": "Los elementos de listas ajenas solo se pueden marcar."
+    },
+    "not_permitted": {
+      "message": "No tienes permiso para hacer esto en «{list}»."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_seen": {
+        "name": "Visto por última vez"
+      },
+      "app_version": {
+        "name": "Versión de la app"
+      }
+    }
+  },
+  "services": {
+    "get_items": {
+      "name": "Obtener elementos",
+      "description": "Elementos pendientes de una o de todas las listas, filtrados por tienda, persona, etiqueta o categoría (con respuesta, p. ej. para notificaciones).",
+      "fields": {
+        "entity_id": {
+          "name": "Listas",
+          "description": "Vacío = todas las listas de tareas."
+        },
+        "store": {
+          "name": "Tienda",
+          "description": "Solo elementos de esta tienda (@REWE)."
+        },
+        "person": {
+          "name": "Persona",
+          "description": "Solo elementos para esta persona (*Anna)."
+        },
+        "tag": {
+          "name": "Etiqueta",
+          "description": "Solo elementos con esta etiqueta (#bio)."
+        },
+        "category": {
+          "name": "Categoría",
+          "description": "Solo esta categoría de compra."
+        },
+        "include_completed": {
+          "name": "Incluir completados",
+          "description": "Devolver también los elementos marcados."
+        }
+      }
+    },
+    "add_due_items": {
+      "name": "Añadir elementos pendientes",
+      "description": "Añade ahora los elementos pendientes a la lista elegida en «Voz y automatizaciones»."
+    }
+  }
+}

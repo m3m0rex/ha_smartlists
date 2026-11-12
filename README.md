@@ -23,7 +23,10 @@ dashboards, with voice assistants, in automations and in the HA SmartLists app.
   (same as `*Peter`); filler words like "shopping list" are dropped. Can be turned off per list.
 - **Show source**: `Milk · Anna` or `[Anna] Milk`, or off.
 - **Sorting**: by list, by shopping category, open first, or alphabetical. Category detection uses
-  the same keyword pack as the app (6,500 German terms, 1,049 products).
+  **keyword packs**: built in are German (the app's pack, 6,500 terms, 1,049 products) plus starter
+  packs for English, French, Spanish, Italian and Polish (about 400 terms each). Several packs can be
+  active at once, and admins can **upload their own packs** (JSON) in the card's gear menu →
+  *Household* → *Category detection*.
 - Attributes for dashboards and automations: `open_items`, `completed_items`, `open_by_category`,
   `source_lists`, `unavailable_sources`.
 - "Remove completed" (`todo.remove_completed_items`) works across all source lists.
@@ -147,7 +150,8 @@ icon in the card; admins can change the household settings there as well – bot
   (`.storage/smartlists.<id>`) and removed together with the integration.
 - Items without a unique ID (very old integrations) are skipped.
 - Requires Home Assistant 2025.3 or newer (sub-entries for the lists).
-- The user interface is available in German and English; category detection is German.
+- The user interface (card, sidebar page, setup dialogs, Assist sentences) is available in German, English,
+  French, Spanish, Italian and Polish. Category names follow the Home Assistant language.
 
 ## License
 
@@ -170,7 +174,8 @@ custom_components/smartlists/
   lists.py           read/change lists (combined and regular to-do lists)
   websocket.py       commands for card and app (see docs/app-api.md)
   www/smartlists-card.js   Lovelace card and sidebar page
-  strings.json, translations/   texts (German/English)
+  strings.json, translations/   texts (de, en, fr, es, it, pl)
+  packs/                        built-in keyword packs (one JSON per language)
 blueprints/automation/smartlists/   ready-made automations
 tests/                          tests (pytest, no HA needed)
 scripts/build_categories.py     generate categories.json from the app's pack

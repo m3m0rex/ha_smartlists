@@ -119,7 +119,6 @@ class CombinedTodoListEntity(TodoListEntity):
         self.hass = hass
         self._store = store
         self._learning = learning
-        self._categories: CategoryIndex = learning.categories
         self._sources: list[str] = list(opts.get(CONF_SOURCES, []))
         self._foreign: set[str] = set(opts.get(CONF_FOREIGN, []))
         self._default_add: str | None = opts.get(CONF_DEFAULT_ADD) or None
@@ -256,8 +255,8 @@ class CombinedTodoListEntity(TodoListEntity):
             category_id = self._learning.resolve_text(self._index[item.uid][2])
             counts[category_id] = counts.get(category_id, 0) + 1
         return {
-            self._categories.label(cid): n
-            for cid, n in sorted(counts.items(), key=lambda kv: self._categories.rank(kv[0]))
+            self._learning.categories.label(cid): n
+            for cid, n in sorted(counts.items(), key=lambda kv: self._learning.categories.rank(kv[0]))
         }
 
     # ------------------------------------------------------------------
@@ -350,7 +349,7 @@ class CombinedTodoListEntity(TodoListEntity):
         if self._sort == SORT_ALPHABETICAL:
             flat.sort(key=lambda i: (index[i.uid][2].casefold() if i.uid else ""))
         elif self._sort == SORT_CATEGORY:
-            cats = self._categories
+            cats = self._learning.categories
             resolve = self._learning.resolve_text
             flat.sort(
                 key=lambda i: (

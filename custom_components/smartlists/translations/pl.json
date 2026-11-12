@@ -1,0 +1,302 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Skonfiguruj SmartLists",
+        "description": "Znaleziono list zadań: {count}. Wybierz dwie lub więcej, aby od razu utworzyć listę połączoną – albo zostaw puste i użyj później „Dodaj listę połączoną” w integracji. Karta „SmartLists” i strona na pasku bocznym są dostępne od razu.",
+        "data": {
+          "combine": "Połącz te listy (opcjonalnie)",
+          "name": "Nazwa listy połączonej",
+          "default_add_entity": "Nowe produkty trafiają do"
+        },
+        "data_description": {
+          "combine": "Np. listy zakupów kilku osób."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "SmartLists jest już skonfigurowane. Listy połączone dodawaj bezpośrednio w integracji."
+    },
+    "error": {
+      "combine_two": "Wybierz co najmniej dwie listy – albo żadnej."
+    }
+  },
+  "config_subentries": {
+    "combined_list": {
+      "initiate_flow": {
+        "user": "Dodaj listę połączoną"
+      },
+      "entry_type": "Lista połączona",
+      "step": {
+        "user": {
+          "title": "Utwórz listę połączoną",
+          "description": "Łączy kilka list zadań w jedną wspólną listę.",
+          "data": {
+            "name": "Nazwa listy połączonej",
+            "sources": "Listy do połączenia",
+            "default_add_entity": "Domyślna lista dla nowych produktów",
+            "mode": "Odhaczanie wpływa na",
+            "source_label": "Pokaż listę źródłową w nazwie produktu",
+            "sort": "Sortowanie",
+            "foreign_entities": "Cudze listy (tylko odhaczanie, bez zmiany nazwy/usuwania)",
+            "source_as_person": "Pokaż listę źródłową jako osobę"
+          },
+          "data_description": {
+            "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
+            "default_add_entity": "Nowe produkty dodane do listy połączonej trafiają tutaj. Puste = dodawanie wyłączone.",
+            "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
+            "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
+            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane."
+          }
+        },
+        "reconfigure": {
+          "title": "Edytuj listę połączoną",
+          "data": {
+            "name": "Nazwa listy połączonej",
+            "sources": "Listy do połączenia",
+            "default_add_entity": "Domyślna lista dla nowych produktów",
+            "mode": "Odhaczanie wpływa na",
+            "source_label": "Pokaż listę źródłową w nazwie produktu",
+            "sort": "Sortowanie",
+            "foreign_entities": "Cudze listy (tylko odhaczanie, bez zmiany nazwy/usuwania)",
+            "source_as_person": "Pokaż listę źródłową jako osobę"
+          },
+          "data_description": {
+            "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
+            "default_add_entity": "Nowe produkty dodane do listy połączonej trafiają tutaj. Puste = dodawanie wyłączone.",
+            "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
+            "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
+            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Wybierz co najmniej jedną listę.",
+        "nested_combined_list": "Listy połączone nie mogą być zagnieżdżane.",
+        "default_not_in_sources": "Lista domyślna musi być jedną z wybranych list.",
+        "foreign_not_in_sources": "Cudze listy muszą być również wybrane powyżej.",
+        "default_is_foreign": "Cudza lista nie może być listą domyślną."
+      },
+      "abort": {
+        "reconfigure_successful": "Zapisano."
+      }
+    },
+    "own_list": {
+      "initiate_flow": {
+        "user": "Dodaj własną listę"
+      },
+      "entry_type": "Własna lista",
+      "step": {
+        "user": {
+          "title": "Własna lista",
+          "description": "Lista przechowywana bezpośrednio przez SmartLists. Właściciel i administratorzy mogą wszystko; edycja = dodawanie/zmiana/usuwanie produktów, odhaczanie = tylko odhaczanie, podgląd = tylko wyświetlanie. Uwaga: wbudowany widok list zadań w Home Assistant pokazuje każdą listę wszystkim – w karcie, na stronie i w aplikacji SmartLists jest ona ukryta.",
+          "data": {
+            "name": "Nazwa",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko przeglądać"
+          }
+        },
+        "reconfigure": {
+          "title": "Edytuj własną listę",
+          "description": "Lista przechowywana bezpośrednio przez SmartLists. Właściciel i administratorzy mogą wszystko; edycja = dodawanie/zmiana/usuwanie produktów, odhaczanie = tylko odhaczanie, podgląd = tylko wyświetlanie. Uwaga: wbudowany widok list zadań w Home Assistant pokazuje każdą listę wszystkim – w karcie, na stronie i w aplikacji SmartLists jest ona ukryta.",
+          "data": {
+            "name": "Nazwa",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko przeglądać"
+          }
+        }
+      },
+      "abort": {
+        "reconfigure_successful": "Zapisano."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SmartLists – ustawienia dla wszystkich",
+        "description": "Każdy użytkownik może ustawić własne odstępstwa za pomocą ikony koła zębatego w karcie.",
+        "menu_options": {
+          "naming": "Konwencja nazw (@sklep, *osoba, #tag)",
+          "controls": "Sterowanie (domyślne dla wszystkich)",
+          "learned": "Zapamiętane kategorie i historia",
+          "devices": "Połączone urządzenia (aplikacja)",
+          "automation": "Głos i automatyzacje (Assist, produkty do kupienia)"
+        }
+      },
+      "naming": {
+        "title": "Konwencja nazw",
+        "description": "Znak przed słowem zamienia je w plakietkę, np. „Mleko @REWE” → plakietka sklepu REWE. Znaki pozostają w nazwie produktu. „—” wyłącza dany rodzaj.",
+        "data": {
+          "prefix_store": "Sklep",
+          "prefix_person": "Osoba",
+          "prefix_tag": "Tag"
+        }
+      },
+      "controls": {
+        "title": "Sterowanie – domyślne dla wszystkich",
+        "description": "Dotyczy każdego użytkownika, który nie ustawił własnych opcji w karcie.",
+        "data": {
+          "press_gesture": "Gest otwierający menu produktu",
+          "press_target": "Gdzie działa gest",
+          "press_result": "Co robi gest",
+          "menu_actions": "Pozycje menu",
+          "row_buttons": "Pokaż ołówek i kosz w każdym wierszu",
+          "shop_hide_checked": "Tryb zakupów: ukryj odhaczone produkty",
+          "shop_keep_awake": "Tryb zakupów: nie wygaszaj ekranu",
+          "shop_large": "Tryb zakupów: duże wiersze",
+          "shop_tap_row": "Tryb zakupów: dotknij całego wiersza, aby odhaczyć"
+        }
+      },
+      "learned": {
+        "title": "Zapamiętane kategorie i historia",
+        "description": "Zapamiętane przypisania: {count}, produkty w historii: {history}. Wybrane przypisania zostaną zapomniane.",
+        "data": {
+          "forget": "Zapomnij",
+          "clear_history": "Wyczyść historię (sugestie, często kupowane)"
+        }
+      },
+      "devices": {
+        "title": "Połączone urządzenia",
+        "description": "Telefony z aplikacją HA SmartLists: {count}\n\n{devices}\n\n⚠️ = brak synchronizacji od ponad 7 dni. Wybrane urządzenia zostaną usunięte z listy; telefon, który połączy się ponownie, pojawi się znowu. Aby cofnąć dostęp, usuń jego token w Profil → Tokeny dostępu długoterminowego.",
+        "data": {
+          "remove": "Usuń z listy"
+        }
+      },
+      "automation": {
+        "title": "Głos i automatyzacje",
+        "description": "Do kupienia według twojego rytmu: {due}\\n\\nGotowe schematy (blueprints) dla „Jestem w sklepie” i powiadomień o lokalizacji znajdziesz w repozytorium (wiki → Automations).",
+        "data": {
+          "voice_default_list": "Domyślna lista dla Assist",
+          "auto_due_list": "Automatycznie dodawaj produkty do kupienia do tej listy",
+          "install_sentences": "Zainstaluj/zaktualizuj zdania Assist"
+        },
+        "data_description": {
+          "voice_default_list": "Używana, gdy zdanie nie wymienia żadnej listy („Dodaj mleko do listy”).",
+          "auto_due_list": "Co godzinę: produkty kupowane regularnie, których zwykły odstęp czasu minął. Puste = wyłączone.",
+          "install_sentences": "Kopiuje zdania do config/custom_sentences (niemiecki, angielski, francuski, hiszpański, włoski, polski) i przeładowuje Assist."
+        }
+      }
+    },
+    "error": {
+      "duplicate_prefix": "Każdy znak może być użyty tylko dla jednego rodzaju."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "bidirectional": "Lista źródłowa (dwukierunkowo, domyślnie)",
+        "local": "Tylko ta lista połączona"
+      }
+    },
+    "source_label": {
+      "options": {
+        "suffix": "Przyrostek (Mleko · Anna)",
+        "prefix": "Przedrostek ([Anna] Mleko)",
+        "none": "Ukryj"
+      }
+    },
+    "sort": {
+      "options": {
+        "source": "Według listy (kolejność źródeł)",
+        "status": "Najpierw otwarte, potem alfabetycznie",
+        "alphabetical": "Alfabetycznie",
+        "category": "Według kategorii zakupów (owoce i warzywa, chłodzone, …)"
+      }
+    },
+    "press_gesture": {
+      "options": {
+        "long": "Długie naciśnięcie",
+        "double": "Podwójne kliknięcie",
+        "right": "Kliknięcie prawym przyciskiem",
+        "off": "Wyłączone"
+      }
+    },
+    "press_target": {
+      "options": {
+        "row": "Cały wiersz",
+        "name": "Tylko nazwa"
+      }
+    },
+    "press_result": {
+      "options": {
+        "menu": "Otwórz menu",
+        "edit": "Edytuj bezpośrednio",
+        "delete": "Usuń (z potwierdzeniem)"
+      }
+    },
+    "menu_actions": {
+      "options": {
+        "rename": "Zmień nazwę / edytuj",
+        "move": "Przenieś",
+        "copy": "Kopiuj",
+        "category": "Zmień kategorię",
+        "delete": "Usuń"
+      }
+    }
+  },
+  "exceptions": {
+    "item_not_found": {
+      "message": "Nie znaleziono produktu {uid} – lista jest przeładowywana."
+    },
+    "no_default_list": {
+      "message": "Nie skonfigurowano domyślnej listy dla nowych produktów."
+    },
+    "foreign_list": {
+      "message": "Produkty z cudzych list można tylko odhaczać."
+    },
+    "not_permitted": {
+      "message": "Nie masz uprawnień, aby zrobić to na liście „{list}”."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_seen": {
+        "name": "Ostatnio widziany"
+      },
+      "app_version": {
+        "name": "Wersja aplikacji"
+      }
+    }
+  },
+  "services": {
+    "get_items": {
+      "name": "Pobierz produkty",
+      "description": "Otwarte produkty z jednej lub wszystkich list, filtrowane według sklepu, osoby, tagu lub kategorii (z odpowiedzią, np. do powiadomień).",
+      "fields": {
+        "entity_id": {
+          "name": "Listy",
+          "description": "Puste = wszystkie listy zadań."
+        },
+        "store": {
+          "name": "Sklep",
+          "description": "Tylko produkty z tym sklepem (@REWE)."
+        },
+        "person": {
+          "name": "Osoba",
+          "description": "Tylko produkty dla tej osoby (*Anna)."
+        },
+        "tag": {
+          "name": "Tag",
+          "description": "Tylko produkty z tym tagiem (#bio)."
+        },
+        "category": {
+          "name": "Kategoria",
+          "description": "Tylko ta kategoria zakupów."
+        },
+        "include_completed": {
+          "name": "Uwzględnij ukończone",
+          "description": "Zwróć również odhaczone produkty."
+        }
+      }
+    },
+    "add_due_items": {
+      "name": "Dodaj produkty do kupienia",
+      "description": "Dodaje teraz produkty do kupienia do listy wybranej w „Głos i automatyzacje”."
+    }
+  }
+}

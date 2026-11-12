@@ -74,7 +74,7 @@ when a note is edited.
 | Command | Fields | Response |
 |---|---|---|
 | `smartlists/lists` | – | `{lists: [{entity_id, name, type, can_add}]}` |
-| `smartlists/get_list` | `entity_id` | see below |
+| `smartlists/get_list` | `entity_id, language?` | see below (`language` = UI language for category names, e.g. `en`) |
 | `smartlists/add_item` | `entity_id, text, note?, checked?` | `{uid}` |
 | `smartlists/update_item` | `entity_id, uid, checked?, text?, note?` | `{uid}` |
 | `smartlists/remove_items` | `entity_id, uids[]` | `{}` |
@@ -120,7 +120,7 @@ when a note is edited.
   visible through `state_changed`).
 
 Errors: `{"success": false, "error": {"code": "smartlists_error", "message": "…"}}` – the message is
-user-facing (German).
+user-facing.
 
 ### Recognising combined lists (without WebSocket)
 
@@ -186,6 +186,14 @@ Every change is enforced by the list entity for the requesting user – also thr
 | `smartlists/learned` | – | remembered assignments |
 | `smartlists/forget` | `word` | forget (admin) |
 | `smartlists/set_tag_rules` | `rules[]` | change the naming convention (admin) |
+| `smartlists/config` | `language?` | naming convention, categories (names in `language`), … |
+| `smartlists/packs` | – | keyword packs `{id, name, language, builtin, terms, products, active, priority}` |
+| `smartlists/pack_upload` | `pack, name?, activate?` | add/replace a custom pack (admin); format: wiki → Categories and suggestions |
+| `smartlists/pack_set_active` | `active[]` | active pack ids in order of precedence (admin) |
+| `smartlists/pack_delete` | `pack_id` | delete a custom pack (admin) |
+| `smartlists/pack_export` | `pack_id` | download a pack in the integration format |
+
+Category **ids** never change and are the same in every language; only the labels follow `language`.
 
 Remembered categories apply to the whole household. On first pairing the app uploads its manual
 assignments once via `set_category` and then uses the integration's, so app, card and HA agree.

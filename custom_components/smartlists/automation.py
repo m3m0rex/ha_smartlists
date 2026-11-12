@@ -117,18 +117,47 @@ async def query_items(hass: HomeAssistant, entity_ids: list[str] | None, *, stor
     return out
 
 
-def spoken_list(items: list[dict[str, Any]]) -> str:
+# Antworten von Assist je Sprache (Sprache des Gesprächs, sonst Englisch)
+SPEECH: dict[str, dict[str, str]] = {
+    "de": {"and": "und", "at": "bei", "which_list": "Auf welche Liste? Lege unter SmartLists eine Standard-Liste für Assist fest.",
+           "added": "{items}{store} steht jetzt auf {list}.", "nothing": "Nichts zu besorgen{store}.",
+           "count": "{n} Artikel{store}: {items}{more}.", "more": " und {n} weitere", "dec": ","},
+    "en": {"and": "and", "at": "at", "which_list": "Which list? Set a default list for Assist under SmartLists.",
+           "added": "Added {items}{store} to {list}.", "nothing": "Nothing to buy{store}.",
+           "count": "{n} items{store}: {items}{more}.", "more": " and {n} more", "dec": "."},
+    "fr": {"and": "et", "at": "chez", "which_list": "Sur quelle liste ? Choisis une liste par défaut pour Assist dans SmartLists.",
+           "added": "{items}{store} ajouté à {list}.", "nothing": "Rien à acheter{store}.",
+           "count": "{n} articles{store} : {items}{more}.", "more": " et {n} autres", "dec": ","},
+    "es": {"and": "y", "at": "en", "which_list": "¿En qué lista? Elige una lista predeterminada para Assist en SmartLists.",
+           "added": "{items}{store} añadido a {list}.", "nothing": "Nada que comprar{store}.",
+           "count": "{n} artículos{store}: {items}{more}.", "more": " y {n} más", "dec": ","},
+    "it": {"and": "e", "at": "da", "which_list": "Su quale lista? Imposta una lista predefinita per Assist in SmartLists.",
+           "added": "{items}{store} aggiunto a {list}.", "nothing": "Niente da comprare{store}.",
+           "count": "{n} articoli{store}: {items}{more}.", "more": " e altri {n}", "dec": ","},
+    "pl": {"and": "i", "at": "w", "which_list": "Na którą listę? Ustaw domyślną listę dla Assist w SmartLists.",
+           "added": "Dodano {items}{store} do {list}.", "nothing": "Nic do kupienia{store}.",
+           "count": "{n} produktów{store}: {items}{more}.", "more": " i {n} więcej", "dec": ","},
+}
+
+
+def _speech(language: str | None) -> dict[str, str]:
+    code = (language or "en").split("-")[0].lower()
+    return SPEECH.get(code, SPEECH["en"])
+
+
+def spoken_list(items: list[dict[str, Any]], language: str | None = "de") -> str:
     """„2 kg Äpfel, Milch und Brot“."""
+    sp = _speech(language)
     parts = []
     for it in items:
         qty = ""
         if it["quantity"] is not None:
             q = it["quantity"]
-            qty = (str(int(q)) if float(q).is_integer() else str(q).replace(".", ",")) + (f" {it['unit']}" if it["unit"] else "") + " "
+            qty = (str(int(q)) if float(q).is_integer() else str(q).replace(".", sp["dec"])) + (f" {it['unit']}" if it["unit"] else "") + " "
         parts.append(qty + it["name"])
     if len(parts) <= 1:
         return "".join(parts)
-    return ", ".join(parts[:-1]) + " und " + parts[-1]
+    return ", ".join(parts[:-1]) + f" {sp['and']} " + parts[-1]
 
 
 # ----------------------------------------------------------------------
@@ -163,9 +192,11 @@ class AddItemIntent(intent.IntentHandler):
         slots = self.async_validate_slots(intent_obj.slots)
         learning = _learning(hass)
         response = intent_obj.create_response()
+        lang = intent_obj.language
+        sp = _speech(lang)
         entity_id = _find_list(hass, slots.get("list", {}).get("value"))
         if entity_id is None:
-            response.async_set_speech("Auf welche Liste? Lege unter SmartLists eine Standard-Liste für Assist fest.")
+            response.async_set_speech(sp["which_list"])
             return response
         item = learning.parse(slots["item"]["value"], typed=True)
         store = slots.get("store", {}).get("value")
@@ -181,8 +212,9 @@ class AddItemIntent(intent.IntentHandler):
             response.async_set_speech(str(err))
             return response
         name = hass.states.get(entity_id).attributes.get(ATTR_FRIENDLY_NAME, entity_id)
-        store_txt = next((f" bei {t.get('label', t['value'])}" for t in item.tags if t["kind"] == "store"), "")
-        response.async_set_speech(f"{spoken_list([{'name': item.name, 'quantity': item.quantity, 'unit': item.unit}])}{store_txt} steht jetzt auf {name}.")
+        store_txt = next((f" {sp['at']} {t.get('label', t['value'])}" for t in item.tags if t["kind"] == "store"), "")
+        spoken = spoken_list([{"name": item.name, "quantity": item.quantity, "unit": item.unit}], lang)
+        response.async_set_speech(sp["added"].format(items=spoken, store=store_txt, list=name))
         return response
 
 
@@ -195,19 +227,21 @@ class ListItemsIntent(intent.IntentHandler):
         hass = intent_obj.hass
         slots = self.async_validate_slots(intent_obj.slots)
         response = intent_obj.create_response()
+        lang = intent_obj.language
+        sp = _speech(lang)
         spoken_name = slots.get("list", {}).get("value")
         store = slots.get("store", {}).get("value")
         entity_id = _find_list(hass, spoken_name)
         # nur Listen, die der Sprecher sehen darf (eigene Listen mit Freigaben)
         user = await hass.auth.async_get_user(intent_obj.context.user_id) if intent_obj.context and intent_obj.context.user_id else None
         items = await query_items(hass, [entity_id] if entity_id else None, store=store, user=user)
-        where = f" bei {store}" if store else ""
+        where = f" {sp['at']} {store}" if store else ""
         if not items:
-            response.async_set_speech(f"Nichts zu besorgen{where}.")
+            response.async_set_speech(sp["nothing"].format(store=where))
             return response
         head = items[:12]
-        more = f" und {len(items) - 12} weitere" if len(items) > 12 else ""
-        response.async_set_speech(f"{len(items)} Artikel{where}: {spoken_list(head)}{more}.")
+        more = sp["more"].format(n=len(items) - 12) if len(items) > 12 else ""
+        response.async_set_speech(sp["count"].format(n=len(items), store=where, items=spoken_list(head, lang), more=more))
         return response
 
 
@@ -258,7 +292,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
             hass, call.data.get("entity_id"), store=call.data.get("store"), person=call.data.get("person"),
             tag=call.data.get("tag"), category=call.data.get("category"), include_completed=call.data["include_completed"],
         )
-        return {"items": items, "count": len(items), "spoken": spoken_list(items)}
+        return {"items": items, "count": len(items), "spoken": spoken_list(items, hass.config.language)}
 
     hass.services.async_register(DOMAIN, SERVICE_GET_ITEMS, _get_items, schema=GET_ITEMS_SCHEMA,
                                  supports_response=SupportsResponse.ONLY)

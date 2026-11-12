@@ -1,0 +1,22 @@
+# SmartLists – phrases pour Assist (copiées dans config/custom_sentences/fr/smartlists.yaml)
+language: "fr"
+intents:
+  SmartListsAddItem:
+    data:
+      - sentences:
+          - "(ajoute|mets|note) {item} [chez {store}] (à|sur|dans) [la|ma|notre] {list}"
+          - "il (nous|me) faut {item} [chez {store}]"
+          - "(on a|j'ai) besoin de {item} [chez {store}]"
+  SmartListsListItems:
+    data:
+      - sentences:
+          - "qu'est-ce qu'il y a sur [la|ma|notre] {list}"
+          - "qu'est-ce que je dois acheter chez {store}"
+          - "qu'est-ce qu'il (nous|me) faut [chez {store}]"
+lists:
+  item:
+    wildcard: true
+  list:
+    wildcard: true
+  store:
+    wildcard: true

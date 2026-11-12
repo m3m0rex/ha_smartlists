@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.2.1";
+const CARD_VERSION = "2.3.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -56,20 +56,38 @@ const CARD_DEFAULTS = {
   filter_store: "", filter_person: "", filter_tag: "", filter_category: [], filter_offers: false,
   filter_tags_new_items: true, show_filter_chips: false,
 };
-const CATEGORY_IDS = [
-  ["obst_gemuese", "🥬 Obst & Gemüse"], ["fleisch", "🥩 Fleisch & Fisch"], ["kuehlung", "🥛 Kühlung"], ["grundnahrung", "🥫 Konserven & Trockenes"],
-  ["backwaren", "🍞 Brot & Backwaren"], ["getraenke", "🥤 Getränke"], ["suessigkeiten", "🍫 Süßwaren & Snacks"], ["haushalt", "🧹 Haushalt"],
-  ["drogerie", "🧴 Drogerie"], ["tiefkuehl", "❄️ Tiefkühl"], ["tierbedarf", "🐕 Tierbedarf"], ["sonstiges", "📦 Sonstiges"],
+// Gleiche Kategorien wie categories.py (Reihenfolge = Sortierung)
+const CATEGORY_DEFS = [
+  ["obst_gemuese", "🥬", {"de": "Obst & Gemüse", "en": "Fruit & veg", "fr": "Fruits & légumes", "es": "Frutas y verduras", "it": "Frutta e verdura", "pl": "Owoce i warzywa"}],
+  ["fleisch", "🥩", {"de": "Fleisch- & Fischtheke", "en": "Meat & fish", "fr": "Viande & poisson", "es": "Carne y pescado", "it": "Carne e pesce", "pl": "Mięso i ryby"}],
+  ["kuehlung", "🥛", {"de": "Kühlung", "en": "Chilled & dairy", "fr": "Frais & produits laitiers", "es": "Refrigerados y lácteos", "it": "Freschi e latticini", "pl": "Nabiał i chłodzone"}],
+  ["grundnahrung", "🥫", {"de": "Konserven & Trockensortiment", "en": "Pantry & tins", "fr": "Épicerie & conserves", "es": "Despensa y conservas", "it": "Dispensa e scatolame", "pl": "Spiżarnia i konserwy"}],
+  ["backwaren", "🍞", {"de": "Brot & Backwaren", "en": "Bread & bakery", "fr": "Pain & boulangerie", "es": "Pan y bollería", "it": "Pane e prodotti da forno", "pl": "Pieczywo"}],
+  ["getraenke", "🥤", {"de": "Getränke", "en": "Drinks", "fr": "Boissons", "es": "Bebidas", "it": "Bevande", "pl": "Napoje"}],
+  ["suessigkeiten", "🍫", {"de": "Süßwaren & Snacks", "en": "Sweets & snacks", "fr": "Confiserie & snacks", "es": "Dulces y snacks", "it": "Dolci e snack", "pl": "Słodycze i przekąski"}],
+  ["haushalt", "🧹", {"de": "Haushalt", "en": "Household", "fr": "Entretien", "es": "Hogar y limpieza", "it": "Casa e pulizia", "pl": "Chemia domowa"}],
+  ["drogerie", "🧴", {"de": "Drogerie", "en": "Personal care", "fr": "Hygiène & beauté", "es": "Higiene y belleza", "it": "Igiene e bellezza", "pl": "Drogeria"}],
+  ["tiefkuehl", "❄️", {"de": "Tiefkühl", "en": "Frozen", "fr": "Surgelés", "es": "Congelados", "it": "Surgelati", "pl": "Mrożonki"}],
+  ["tierbedarf", "🐕", {"de": "Tierbedarf", "en": "Pets", "fr": "Animaux", "es": "Mascotas", "it": "Animali", "pl": "Zwierzęta"}],
+  ["sonstiges", "📦", {"de": "Sonstiges", "en": "Other", "fr": "Autres", "es": "Otros", "it": "Altro", "pl": "Inne"}],
 ];
+const categoryOptions = (lang) => CATEGORY_DEFS.map(([id, emoji, names]) => [id, `${emoji} ${names[lang] || names.en}`]);
 // Vorlagen für den Editor: setzen viele Optionen auf einmal, danach ist alles einzeln änderbar
 const PRESETS = {
-  family:    { label: "Familien-Einkauf (alles an)", values: { view: "list", density: "normal", show_filter_chips: true, show_add: true, show_frequent: true, show_stepper: true, show_import: true } },
-  kitchen:   { label: "Küchen-Tablet (große Kacheln)", values: { view: "tiles", density: "comfortable", font_scale: 1.2, show_import: false, show_undo: true, show_settings: false } },
-  store:     { label: "Im Laden (Einkaufsmodus, ohne Eingabe)", values: { view: "list", start_shopping: true, show_add: false, show_frequent: false, show_import: false, density: "comfortable" } },
-  readonly:  { label: "Nur ansehen", values: { show_add: false, show_frequent: false, show_stepper: false, show_import: false, show_settings: false, show_undo: false, show_shopping: false } },
-  tile:      { label: "Kompakte Dashboard-Kachel", values: { view: "mini", density: "compact", show_frequent: false, show_import: false } },
+  family:    { values: { view: "list", density: "normal", show_filter_chips: true, show_add: true, show_frequent: true, show_stepper: true, show_import: true } },
+  kitchen:   { values: { view: "tiles", density: "comfortable", font_scale: 1.2, show_import: false, show_undo: true, show_settings: false } },
+  store:     { values: { view: "list", start_shopping: true, show_add: false, show_frequent: false, show_import: false, density: "comfortable" } },
+  readonly:  { values: { show_add: false, show_frequent: false, show_stepper: false, show_import: false, show_settings: false, show_undo: false, show_shopping: false } },
+  tile:      { values: { view: "mini", density: "compact", show_frequent: false, show_import: false } },
 };
 const MENU_ACTIONS = ["rename", "move", "copy", "category", "delete"];
+// Vorlage für eigene Keyword-Packs (Kategorie-IDs siehe CATEGORY_DEFS; "products" ist optional)
+const PACK_TEMPLATE = {
+  name: "My pack", language: "en", version: 1,
+  terms: { "oat milk": "kuehlung", "sourdough": "backwaren", "dish soap": "haushalt", "kombucha": "getraenke" },
+  products: [["Oat milk", "l", "kuehlung"], ["Sourdough bread", "", "backwaren"]],
+  _help: "terms: keyword → category id. Longest matching keyword wins; packs higher in the list win on equal keywords. Category ids: obst_gemuese, fleisch, kuehlung, grundnahrung, backwaren, getraenke, suessigkeiten, haushalt, drogerie, tiefkuehl, tierbedarf, sonstiges. The app format (category_pack_v2.json) is accepted too.",
+};
 // Bedienung: Standard < Einstellung des HA-Benutzers (in der Integration gespeichert, gilt auf allen
 // seinen Geräten) < optional abweichend nur für dieses Gerät (Browser-Speicher). Bewusst NICHT in der
 // Dashboard-/Lovelace-Konfiguration, weil jeder Benutzer das für sich einstellen soll.
@@ -140,6 +158,41 @@ const TEXTS = {
     shop: "Einkaufsmodus", shop_hide_checked: "Abgehakte ausblenden", shop_keep_awake: "Bildschirm anlassen",
     shop_large: "Große Zeilen", shop_tap_row: "Ganze Zeile antippen zum Abhaken", reset: "Zurücksetzen",
     sort: "Sortierung", sort_category: "Kategorie", sort_alpha: "A–Z", sort_added: "Hinzugefügt", sort_list: "Nach Liste",
+    packs: "Kategorie-Erkennung (Keyword-Packs)", packs_help: "Stichwörter → Kategorie. Mehrere Packs gleichzeitig möglich (z. B. Deutsch + eigenes). Bei gleichem Stichwort gewinnt das Pack weiter oben. Gemerkte Kategorien haben immer Vorrang.",
+    pack_terms: "Stichwörter", pack_products: "Produkte", pack_builtin: "eingebaut", pack_custom: "eigenes", pack_priority: "Rang",
+    pack_up: "Nach oben (Vorrang)", pack_download: "Herunterladen", pack_delete: "Eigenes Pack löschen?", pack_bad_json: "Datei ist kein gültiges JSON.",
+    pack_upload: "Pack hochladen …", pack_name_help: "Name für das Pack. Gleicher Name ersetzt ein vorhandenes eigenes Pack.", pack_add: "Hinzufügen",
+    pack_skipped: "übersprungen (unbekannte Kategorie)", pack_template: "Vorlage",
+    card_desc: "Einkaufsliste mit Kategorien, Vorschlägen, Mengen, Markt-Badges (@REWE) und Berechtigungen.",
+    imp_placeholder: "- Milch 2 l @REWE\n- [ ] Brot\n- [x] Butter\n3 Äpfel",
+    e_preset_pick: "— Vorlage wählen (setzt mehrere Optionen) —", e_view_list: "Liste", e_view_tiles: "Kacheln (z. B. Küchen-Tablet)", e_view_mini: "Mini-Kachel (Zusammenfassung, aufklappbar)",
+    e_sort_category: "Nach Kategorie", e_sort_added: "Reihenfolge des Hinzufügens", e_sort_list: "Nach Quell-Liste (kombiniert)",
+    e_layout_tabs: "Reiter", e_layout_columns: "Nebeneinander", e_layout_stack: "Untereinander",
+    e_density_compact: "Kompakt", e_density_normal: "Normal", e_density_comfortable: "Groß (Touch)",
+    e_sec_multi: "Mehrere Listen in einer Karte", e_sec_filter: "Filter", e_sec_look: "Aussehen", e_sec_header: "Kopfzeile", e_sec_input: "Eingabe",
+    e_sec_list: "Liste", e_sec_done: "Erledigte", e_sec_shop: "Einkaufsmodus",
+    e_pre_family: "Familien-Einkauf (alles an)", e_pre_kitchen: "Küchen-Tablet (große Kacheln)", e_pre_store: "Im Laden (Einkaufsmodus, ohne Eingabe)",
+    e_pre_readonly: "Nur ansehen", e_pre_tile: "Kompakte Dashboard-Kachel",
+    l_preset: "Vorlage", l_entity: "Liste", l_entities: "Listen (statt „Liste“ oben)", l_layout: "Anordnung", l_title: "Titel (leer = Name der Liste)",
+    l_view: "Ansicht", l_sort: "Standard-Sortierung", l_advanced: "Erweiterte Optionen anzeigen",
+    l_filter_store: "Nur Markt (z. B. REWE; mehrere mit Komma)", l_filter_person: "Nur Person (z. B. Anna)", l_filter_tag: "Nur Schlagwort (z. B. bio)",
+    l_filter_category: "Nur Kategorien", l_filter_offers: "Nur Angebote", l_filter_tags_new_items: "Neue Artikel bekommen den Filter-Tag (@REWE …)",
+    l_show_filter_chips: "Filter-Leiste (Märkte, Personen, Angebote antippen)",
+    l_density: "Zeilenhöhe", l_font_scale: "Schriftgröße", l_radius: "Eckenradius", l_accent_color: "Akzentfarbe (leer = Theme)",
+    l_show_header: "Kopfzeile anzeigen", l_show_count: "Anzahl offen / Treffer", l_show_search: "Suche (Lupe)",
+    l_show_sort: "Sortier-Auswahl", l_show_shopping: "Einkaufsmodus-Knopf", l_show_undo: "Rückgängig (↶)",
+    l_show_import: "Import-Knopf", l_show_settings: "Zahnrad (persönliche Einstellungen)",
+    l_show_add: "Eingabefeld zum Hinzufügen", l_show_frequent: "„Häufig gekauft“",
+    l_drag_drop: "Ziehen & Ablegen (Maus): in andere Liste verschieben, Reihenfolge ändern", l_show_stepper: "Mengen-Stepper (− +)", l_show_offer: "Angebote aus der App (Markt, Preis, gültig bis)",
+    l_show_tags: "Badges (@Markt, *Person, #Schlagwort)", l_show_source: "Herkunft (Quell-Liste / Person)", l_show_note: "Notizen",
+    l_show_category_titles: "Kategorie-Überschriften", l_max_height: "Maximale Höhe der Liste (leer = unbegrenzt)",
+    l_show_completed: "Erledigte anzeigen", l_collapse_completed: "Erledigte anfangs zugeklappt", l_start_shopping: "Im Einkaufsmodus starten",
+    hh_preset: "Setzt passende Optionen auf einmal – danach ist alles einzeln änderbar.",
+    hh_entities: "Mehrere Listen: als Reiter, nebeneinander oder untereinander. Alle Optionen gelten für jede Liste.",
+    hh_filter_tags_new_items: "Sonst wären neue Artikel in einer gefilterten Karte gleich wieder unsichtbar.",
+    hh_show_settings: "Geste, Menü und Einkaufsmodus stellt jeder Benutzer für sich im Zahnrad ein.",
+    hh_show_category_titles: "Aus: nach Kategorie sortiert, aber als eine Liste mit Kategorie-Symbol vorne.",
+    hh_start_shopping: "Praktisch für ein Tablet im Flur oder ein Dashboard nur fürs Einkaufen.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -201,6 +254,425 @@ const TEXTS = {
     shop: "Shopping mode", shop_hide_checked: "Hide checked items", shop_keep_awake: "Keep screen on",
     shop_large: "Large rows", shop_tap_row: "Tap whole row to check", reset: "Reset",
     sort: "Sort", sort_category: "Category", sort_alpha: "A–Z", sort_added: "Added", sort_list: "By list",
+    packs: "Category detection (keyword packs)", packs_help: "Keywords → category. Several packs can be active at once (e.g. English + your own). On equal keywords the pack higher up wins. Remembered categories always take precedence.",
+    pack_terms: "keywords", pack_products: "products", pack_builtin: "built-in", pack_custom: "custom", pack_priority: "rank",
+    pack_up: "Move up (precedence)", pack_download: "Download", pack_delete: "Delete custom pack?", pack_bad_json: "File is not valid JSON.",
+    pack_upload: "Upload pack …", pack_name_help: "Name for the pack. The same name replaces an existing custom pack.", pack_add: "Add",
+    pack_skipped: "skipped (unknown category)", pack_template: "Template",
+    card_desc: "Shopping list with categories, suggestions, quantities, store badges (@REWE) and permissions.",
+    imp_placeholder: "- Milk 2 l @REWE\n- [ ] Bread\n- [x] Butter\n3 apples",
+    e_preset_pick: "— Choose a preset (sets several options) —", e_view_list: "List", e_view_tiles: "Tiles (e.g. kitchen tablet)", e_view_mini: "Mini tile (summary, expandable)",
+    e_sort_category: "By category", e_sort_added: "Order added", e_sort_list: "By source list (combined)",
+    e_layout_tabs: "Tabs", e_layout_columns: "Side by side", e_layout_stack: "Stacked",
+    e_density_compact: "Compact", e_density_normal: "Normal", e_density_comfortable: "Large (touch)",
+    e_sec_multi: "Several lists in one card", e_sec_filter: "Filters", e_sec_look: "Appearance", e_sec_header: "Header", e_sec_input: "Input",
+    e_sec_list: "List", e_sec_done: "Completed", e_sec_shop: "Shopping mode",
+    e_pre_family: "Family shopping (everything on)", e_pre_kitchen: "Kitchen tablet (large tiles)", e_pre_store: "In the store (shopping mode, no input)",
+    e_pre_readonly: "View only", e_pre_tile: "Compact dashboard tile",
+    l_preset: "Preset", l_entity: "List", l_entities: "Lists (instead of “List” above)", l_layout: "Layout", l_title: "Title (empty = list name)",
+    l_view: "View", l_sort: "Default sort", l_advanced: "Show advanced options",
+    l_filter_store: "Only store (e.g. REWE; several separated by commas)", l_filter_person: "Only person (e.g. Anna)", l_filter_tag: "Only tag (e.g. organic)",
+    l_filter_category: "Only categories", l_filter_offers: "Only offers", l_filter_tags_new_items: "New items get the filter tag (@REWE …)",
+    l_show_filter_chips: "Filter bar (tap stores, people, offers)",
+    l_density: "Row height", l_font_scale: "Font size", l_radius: "Corner radius", l_accent_color: "Accent colour (empty = theme)",
+    l_show_header: "Show header", l_show_count: "Open count / matches", l_show_search: "Search (magnifier)",
+    l_show_sort: "Sort picker", l_show_shopping: "Shopping mode button", l_show_undo: "Undo (↶)",
+    l_show_import: "Import button", l_show_settings: "Gear (personal settings)",
+    l_show_add: "Input field for adding", l_show_frequent: "“Frequently bought”",
+    l_drag_drop: "Drag & drop (mouse): move to another list, reorder", l_show_stepper: "Quantity stepper (− +)", l_show_offer: "Offers from the app (store, price, valid until)",
+    l_show_tags: "Badges (@store, *person, #tag)", l_show_source: "Origin (source list / person)", l_show_note: "Notes",
+    l_show_category_titles: "Category headings", l_max_height: "Maximum list height (empty = unlimited)",
+    l_show_completed: "Show completed", l_collapse_completed: "Completed collapsed at first", l_start_shopping: "Start in shopping mode",
+    hh_preset: "Sets matching options at once – afterwards everything can be changed individually.",
+    hh_entities: "Several lists: as tabs, side by side or stacked. All options apply to every list.",
+    hh_filter_tags_new_items: "Otherwise new items would disappear right away in a filtered card.",
+    hh_show_settings: "Gesture, menu and shopping mode are set by each user in the gear menu.",
+    hh_show_category_titles: "Off: sorted by category, but as one list with the category icon in front.",
+    hh_start_shopping: "Handy for a tablet in the hallway or a dashboard just for shopping.",
+  },
+  fr: {
+    add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
+    done: "Terminé", clear: "Supprimer les terminés", own: "Liste propre", combined: "Combinée", foreign: "Externe",
+    empty: "Rien à acheter 🎉", no_add: "L'ajout est désactivé pour cette liste.", open: "à faire",
+    confirm_delete: "Supprimer vraiment cet article ?", confirm_clear: "Supprimer tous les articles terminés ?",
+    error: "Erreur", loading: "Chargement …", readonly: "Lecture seule", delete: "Supprimer", edit: "Modifier",
+    frequent: "Achetés souvent", src_manual: "mémorisé", src_learned: "appris", src_pack: "automatique", src_fallback: "inconnu",
+    unit_hint: "unité habituelle", category: "Catégorie", settings: "Paramètres", naming: "Convention de nommage",
+    naming_help: "Un caractère devant un mot en fait un badge. S'applique à toutes les listes et à tous les appareils.",
+    kind_store: "Magasin", kind_person: "Personne", kind_tag: "Mot-clé", add_rule: "Ajouter une règle", example: "Exemple",
+    learned: "Catégories mémorisées", learned_help: "Créées quand tu choisis une catégorie à la main.", forget: "Oublier",
+    none_learned: "Rien de mémorisé pour l'instant.", saved: "Enregistré", admin_only: "Seuls les administrateurs peuvent modifier ceci.",
+    in_list: "déjà sur la liste",
+    tab_me: "Pour moi", tab_house: "Foyer", tab_list: "Cette liste", ui_me_help: "S'applique à toi. Les écarts par rapport au réglage du foyer sont marqués •.",
+    ui_house: "Commandes – réglage par défaut pour tous", reset_default: "Rétablir les valeurs par défaut", about_list: "À propos de cette liste", type: "Type", entity: "Entité", sources: "Sources",
+    type_combined: "Liste combinée", type_own: "Liste SmartLists propre", type_list: "Liste de tâches Home Assistant", char: "Caractère", kind: "Type",
+    no_hits_short: "Aucun résultat.", by_hand: "à la main", search_learned: "Rechercher … (p. ex. lait)",
+    automation: "Voix & automatisations", automation_help: "Assist et articles à racheter. Blueprints « Je suis au magasin » et rappel de magasin : voir le wiki.",
+    auto_voice_default_list: "Liste par défaut pour Assist", auto_voice_help: "Utilisée quand la phrase ne cite aucune liste.",
+    auto_auto_due_list: "Ajouter automatiquement les articles à racheter à", auto_due_help: "Toutes les heures, selon votre rythme d'achat. « — » = désactivé.",
+    install_sentences: "Installer les phrases Assist", sentences_installed: "installées",
+    devices: "Appareils connectés", devices_help: "Téléphones avec l'app HA SmartLists. ⚠️ = pas synchronisé depuis plus de 7 jours. Pour retirer l'accès, supprime le jeton dans le profil.",
+    no_devices: "Aucun téléphone connecté.", remove_device: "Retirer de la liste", last_seen: "vu",
+    role_all: "tous les droits", admin_always: "Admin – peut toujours tout faire", shop_large_help: "Plus facile à toucher avec le pouce",
+    new_list_help: "Tu en es le propriétaire et peux la partager ensuite.", new_list_placeholder: "p. ex. Droguerie", create: "Créer",
+    p_columns: "Plusieurs listes côte à côte", p_wide: "Affichage large", p_settings: "Paramètres", p_back: "Retour aux listes",
+    p_hint: "Touche jusqu'à 3 listes. Glisse un article à la souris vers une autre liste pour le déplacer (Ctrl = copier).",
+    p_empty: "Aucune liste trouvée. Crée-en une sous Paramètres → Appareils et services → SmartLists – ou avec + en haut.",
+    owner: "propriétaire", shared: "partagée", private: "privée", admin: "admin", sharing: "Partage",
+    sharing_help: "Qui peut voir et modifier cette liste. Les admins peuvent toujours tout faire. La vue To-do de HA montre chaque liste à tout le monde – elle n'est masquée que dans SmartLists (carte, page, app).",
+    role_none: "aucun accès", role_viewer: "voir", role_checker: "cocher", role_editor: "modifier", role_owner: "propriétaire",
+    no_users: "Aucun autre utilisateur dans Home Assistant.", delete_list: "Supprimer la liste", confirm_delete_list: "Supprimer cette liste avec tous ses articles ?",
+    new_list: "Nouvelle liste", new_list_prompt: "Nom de la nouvelle liste :",
+    due_every: "à racheter – vous l'achetez environ tous les", days: "jours", backup: "Sauvegarder & transférer",
+    backup_help: "Catégories mémorisées, historique, convention de nommage et commandes dans un fichier – p. ex. pour une deuxième instance HA. L'import ajoute sans rien supprimer.",
+    export: "Exporter", import: "Importer …",
+    mini_open: "Ouvrir la liste", mini_close: "Réduire", card_version: "carte", stale_card: "Cette carte est obsolète – recharge la page (Ctrl+F5) ou vide le cache du frontend dans l'app.", offer: "Promo", offer_until: "jusqu'au", offer_expired: "expirée depuis",
+    qty_less: "Diminuer la quantité", qty_more: "Augmenter la quantité", qty_changed: "quantité modifiée",
+    search: "Rechercher", search_placeholder: "Rechercher dans la liste …", hits: "résultats", no_hits: "Aucun résultat pour", add_this: "ajouter",
+    imp: "Importer", imp_ha: "Depuis Home Assistant", imp_text: "En texte", imp_source: "Liste",
+    imp_done: "Inclure les terminés", imp_skip_dupes: "Ignorer ceux déjà présents", imp_go: "Importer",
+    imp_text_help: "Un article par ligne. Puces, [ ] / [x] et numéros sont reconnus, ainsi que quantités et tags.",
+    imp_preview: "Aperçu", imp_none: "Rien à importer.", imp_count: "articles", imported: "importés", imp_dupe: "existe",
+    imp_no_lists: "Aucune autre liste trouvée dans Home Assistant.",
+    shop_on: "Démarrer le mode courses", shop_off: "Terminer le mode courses", in_cart: "dans le chariot", undo: "Annuler", checked_off: "coché", unchecked: "rouvert",
+    deleted: "supprimé", removed: "terminés supprimés", added: "ajouté", changed: "modifié",
+    m_rename: "Renommer / modifier", m_move: "Déplacer vers …", m_copy: "Copier vers …", m_category: "Changer de catégorie", m_delete: "Supprimer",
+    moved: "déplacé vers", copied: "copié vers", no_targets: "Aucune autre liste dans laquelle tu peux écrire.",
+    ui: "Commandes", ui_help: "Chaque utilisateur règle ceci pour lui-même. Éventuellement différent par appareil.",
+    scope_household: "Par défaut pour tous", scope_user: "Pour moi sur tous les appareils", scope_device: "Seulement sur cet appareil",
+    scope_help_household: "S'applique à tous ceux qui n'ont rien réglé eux-mêmes.",
+    scope_help_user: "Seuls tes écarts par rapport au défaut sont enregistrés (marqués •). « Réinitialiser » = retour au défaut.",
+    scope_help_device: "S'applique seulement à ce navigateur ou ce téléphone. « Réinitialiser » = retour à ton réglage.",
+    press_gesture: "Geste pour le menu d'article", g_long: "Appui long", g_double: "Double-clic", g_right: "Clic droit", g_off: "Désactivé",
+    press_target: "Où le geste agit", t_row: "Toute la ligne", t_name: "Seulement sur le nom",
+    press_result: "Ce que fait le geste", r_menu: "Ouvrir le menu", r_edit: "Modifier directement", r_delete: "Supprimer (avec confirmation)",
+    menu_actions: "Entrées du menu", row_buttons: "Afficher crayon et corbeille dans la ligne",
+    shop: "Mode courses", shop_hide_checked: "Masquer les articles cochés", shop_keep_awake: "Garder l'écran allumé",
+    shop_large: "Grandes lignes", shop_tap_row: "Toucher toute la ligne pour cocher", reset: "Réinitialiser",
+    sort: "Tri", sort_category: "Catégorie", sort_alpha: "A–Z", sort_added: "Ajout", sort_list: "Par liste",
+    packs: "Détection des catégories (packs de mots-clés)", packs_help: "Mots-clés → catégorie. Plusieurs packs peuvent être actifs (p. ex. français + le tien). Pour un même mot-clé, le pack le plus haut l'emporte. Les catégories mémorisées sont toujours prioritaires.",
+    pack_terms: "mots-clés", pack_products: "produits", pack_builtin: "intégré", pack_custom: "personnel", pack_priority: "rang",
+    pack_up: "Monter (priorité)", pack_download: "Télécharger", pack_delete: "Supprimer ce pack personnel ?", pack_bad_json: "Le fichier n'est pas un JSON valide.",
+    pack_upload: "Importer un pack …", pack_name_help: "Nom du pack. Le même nom remplace un pack personnel existant.", pack_add: "Ajouter",
+    pack_skipped: "ignorés (catégorie inconnue)", pack_template: "Modèle",
+    card_desc: "Liste de courses avec catégories, suggestions, quantités, badges de magasin (@Carrefour) et droits d'accès.",
+    imp_placeholder: "- Lait 2 l @Carrefour\n- [ ] Pain\n- [x] Beurre\n3 pommes",
+    e_preset_pick: "— Choisir un modèle (règle plusieurs options) —", e_view_list: "Liste", e_view_tiles: "Tuiles (p. ex. tablette de cuisine)", e_view_mini: "Mini-tuile (résumé, dépliable)",
+    e_sort_category: "Par catégorie", e_sort_added: "Ordre d'ajout", e_sort_list: "Par liste source (combinée)",
+    e_layout_tabs: "Onglets", e_layout_columns: "Côte à côte", e_layout_stack: "Empilées",
+    e_density_compact: "Compact", e_density_normal: "Normal", e_density_comfortable: "Grand (tactile)",
+    e_sec_multi: "Plusieurs listes dans une carte", e_sec_filter: "Filtres", e_sec_look: "Apparence", e_sec_header: "En-tête", e_sec_input: "Saisie",
+    e_sec_list: "Liste", e_sec_done: "Terminés", e_sec_shop: "Mode courses",
+    e_pre_family: "Courses en famille (tout activé)", e_pre_kitchen: "Tablette de cuisine (grandes tuiles)", e_pre_store: "Au magasin (mode courses, sans saisie)",
+    e_pre_readonly: "Lecture seule", e_pre_tile: "Tuile compacte pour tableau de bord",
+    l_preset: "Modèle", l_entity: "Liste", l_entities: "Listes (au lieu de « Liste » ci-dessus)", l_layout: "Disposition", l_title: "Titre (vide = nom de la liste)",
+    l_view: "Vue", l_sort: "Tri par défaut", l_advanced: "Afficher les options avancées",
+    l_filter_store: "Seulement le magasin (p. ex. Carrefour ; plusieurs séparés par des virgules)", l_filter_person: "Seulement la personne (p. ex. Anna)", l_filter_tag: "Seulement le mot-clé (p. ex. bio)",
+    l_filter_category: "Seulement les catégories", l_filter_offers: "Seulement les promos", l_filter_tags_new_items: "Les nouveaux articles reçoivent le tag du filtre (@Carrefour …)",
+    l_show_filter_chips: "Barre de filtres (magasins, personnes, promos)",
+    l_density: "Hauteur des lignes", l_font_scale: "Taille du texte", l_radius: "Rayon des coins", l_accent_color: "Couleur d'accent (vide = thème)",
+    l_show_header: "Afficher l'en-tête", l_show_count: "Nombre à faire / résultats", l_show_search: "Recherche (loupe)",
+    l_show_sort: "Choix du tri", l_show_shopping: "Bouton mode courses", l_show_undo: "Annuler (↶)",
+    l_show_import: "Bouton d'import", l_show_settings: "Engrenage (paramètres personnels)",
+    l_show_add: "Champ de saisie pour ajouter", l_show_frequent: "« Achetés souvent »",
+    l_drag_drop: "Glisser-déposer (souris) : déplacer vers une autre liste, réordonner", l_show_stepper: "Sélecteur de quantité (− +)", l_show_offer: "Promos de l'app (magasin, prix, valable jusqu'au)",
+    l_show_tags: "Badges (@magasin, *personne, #mot-clé)", l_show_source: "Origine (liste source / personne)", l_show_note: "Notes",
+    l_show_category_titles: "Titres de catégorie", l_max_height: "Hauteur maximale de la liste (vide = illimitée)",
+    l_show_completed: "Afficher les terminés", l_collapse_completed: "Terminés repliés au départ", l_start_shopping: "Démarrer en mode courses",
+    hh_preset: "Règle les options adaptées d'un coup – ensuite tout reste modifiable individuellement.",
+    hh_entities: "Plusieurs listes : en onglets, côte à côte ou empilées. Toutes les options s'appliquent à chaque liste.",
+    hh_filter_tags_new_items: "Sinon, les nouveaux articles disparaîtraient aussitôt d'une carte filtrée.",
+    hh_show_settings: "Geste, menu et mode courses sont réglés par chaque utilisateur dans l'engrenage.",
+    hh_show_category_titles: "Désactivé : trié par catégorie, mais en une seule liste avec l'icône de catégorie devant.",
+    hh_start_shopping: "Pratique pour une tablette dans l'entrée ou un tableau de bord dédié aux courses.",
+  },
+  es: {
+    add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
+    done: "Hecho", clear: "Quitar completados", own: "Lista propia", combined: "Combinada", foreign: "Ajena",
+    empty: "Nada que comprar 🎉", no_add: "Añadir está desactivado para esta lista.", open: "pendientes",
+    confirm_delete: "¿Seguro que quieres borrar el artículo?", confirm_clear: "¿Quitar todos los artículos completados?",
+    error: "Error", loading: "Cargando …", readonly: "Solo ver", delete: "Borrar", edit: "Editar",
+    frequent: "Comprados a menudo", src_manual: "recordada", src_learned: "aprendida", src_pack: "automática", src_fallback: "desconocida",
+    unit_hint: "unidad habitual", category: "Categoría", settings: "Ajustes", naming: "Convención de nombres",
+    naming_help: "Un carácter delante de una palabra la convierte en una etiqueta. Vale para todas las listas y dispositivos.",
+    kind_store: "Tienda", kind_person: "Persona", kind_tag: "Etiqueta", add_rule: "Añadir regla", example: "Ejemplo",
+    learned: "Categorías recordadas", learned_help: "Se crean cuando eliges una categoría a mano.", forget: "Olvidar",
+    none_learned: "Todavía no hay nada recordado.", saved: "Guardado", admin_only: "Solo los administradores pueden cambiar esto.",
+    in_list: "ya está en la lista",
+    tab_me: "Para mí", tab_house: "Hogar", tab_list: "Esta lista", ui_me_help: "Se aplica a ti. Las diferencias con el ajuste del hogar se marcan con •.",
+    ui_house: "Controles – predeterminado para todos", reset_default: "Restablecer predeterminado", about_list: "Sobre esta lista", type: "Tipo", entity: "Entidad", sources: "Fuentes",
+    type_combined: "Lista combinada", type_own: "Lista propia de SmartLists", type_list: "Lista de tareas de Home Assistant", char: "Carácter", kind: "Tipo",
+    no_hits_short: "Sin resultados.", by_hand: "a mano", search_learned: "Buscar … (p. ej. leche)",
+    automation: "Voz y automatizaciones", automation_help: "Assist y artículos pendientes de recompra. Blueprints «Estoy en la tienda» y recordatorio de tienda: ver la wiki.",
+    auto_voice_default_list: "Lista predeterminada para Assist", auto_voice_help: "Se usa cuando la frase no nombra ninguna lista.",
+    auto_auto_due_list: "Añadir automáticamente los artículos pendientes a", auto_due_help: "Cada hora, según vuestro ritmo de compra. «—» = desactivado.",
+    install_sentences: "Instalar frases de Assist", sentences_installed: "instaladas",
+    devices: "Dispositivos conectados", devices_help: "Móviles con la app HA SmartLists. ⚠️ = sin sincronizar desde hace más de 7 días. Para quitar el acceso, borra el token en el perfil.",
+    no_devices: "Ningún móvil conectado todavía.", remove_device: "Quitar de la lista", last_seen: "visto",
+    role_all: "todos los permisos", admin_always: "Admin – siempre puede hacerlo todo", shop_large_help: "Más fácil de tocar con el pulgar",
+    new_list_help: "Eres el propietario y luego puedes compartirla con otros.", new_list_placeholder: "p. ej. Droguería", create: "Crear",
+    p_columns: "Varias listas una al lado de otra", p_wide: "Vista ancha", p_settings: "Ajustes", p_back: "Volver a las listas",
+    p_hint: "Toca hasta 3 listas. Arrastra artículos con el ratón a otra lista para moverlos (Ctrl = copiar).",
+    p_empty: "No se encontraron listas. Crea una en Ajustes → Dispositivos y servicios → SmartLists – o con + arriba.",
+    owner: "propietario", shared: "compartida", private: "privada", admin: "admin", sharing: "Compartir",
+    sharing_help: "Quién puede ver y cambiar esta lista. Los admins siempre pueden hacerlo todo. La vista de tareas de HA muestra cada lista a todos – solo se oculta en SmartLists (tarjeta, página, app).",
+    role_none: "sin acceso", role_viewer: "ver", role_checker: "marcar", role_editor: "editar", role_owner: "propietario",
+    no_users: "No hay más usuarios en Home Assistant.", delete_list: "Borrar lista", confirm_delete_list: "¿Borrar esta lista con todos sus artículos?",
+    new_list: "Nueva lista", new_list_prompt: "Nombre de la nueva lista:",
+    due_every: "toca comprar – lo compráis aprox. cada", days: "días", backup: "Copia y traspaso",
+    backup_help: "Categorías recordadas, historial, convención de nombres y controles en un archivo – p. ej. para una segunda instancia de HA. Importar añade sin borrar nada.",
+    export: "Exportar", import: "Importar …",
+    mini_open: "Abrir lista", mini_close: "Contraer", card_version: "tarjeta", stale_card: "Esta tarjeta está desactualizada – recarga la página (Ctrl+F5) o borra la caché del frontend en la app.", offer: "Oferta", offer_until: "hasta", offer_expired: "caducada desde",
+    qty_less: "Reducir cantidad", qty_more: "Aumentar cantidad", qty_changed: "cantidad cambiada",
+    search: "Buscar", search_placeholder: "Buscar en la lista …", hits: "resultados", no_hits: "Nada encontrado para", add_this: "añadir",
+    imp: "Importar", imp_ha: "Desde Home Assistant", imp_text: "Como texto", imp_source: "Lista",
+    imp_done: "Incluir completados", imp_skip_dupes: "Omitir los que ya están", imp_go: "Importar",
+    imp_text_help: "Un artículo por línea. Se reconocen viñetas, [ ] / [x] y números, así como cantidades y etiquetas.",
+    imp_preview: "Vista previa", imp_none: "Nada que importar.", imp_count: "artículos", imported: "importados", imp_dupe: "existe",
+    imp_no_lists: "No se encontraron otras listas en Home Assistant.",
+    shop_on: "Iniciar modo compra", shop_off: "Terminar modo compra", in_cart: "en el carro", undo: "Deshacer", checked_off: "marcado", unchecked: "reabierto",
+    deleted: "borrado", removed: "completados quitados", added: "añadido", changed: "cambiado",
+    m_rename: "Renombrar / editar", m_move: "Mover a …", m_copy: "Copiar a …", m_category: "Cambiar categoría", m_delete: "Borrar",
+    moved: "movido a", copied: "copiado a", no_targets: "No hay otra lista en la que puedas escribir.",
+    ui: "Controles", ui_help: "Cada usuario lo ajusta para sí mismo. Opcionalmente distinto por dispositivo.",
+    scope_household: "Predeterminado para todos", scope_user: "Para mí en todos los dispositivos", scope_device: "Solo en este dispositivo",
+    scope_help_household: "Se aplica a todos los que no han ajustado nada propio.",
+    scope_help_user: "Solo se guardan tus diferencias con el predeterminado (marcadas con •). «Restablecer» = volver al predeterminado.",
+    scope_help_device: "Se aplica solo a este navegador o móvil. «Restablecer» = volver a tu ajuste.",
+    press_gesture: "Gesto para el menú del artículo", g_long: "Pulsación larga", g_double: "Doble clic", g_right: "Clic derecho", g_off: "Desactivado",
+    press_target: "Dónde funciona el gesto", t_row: "Toda la fila", t_name: "Solo en el nombre",
+    press_result: "Qué hace el gesto", r_menu: "Abrir menú", r_edit: "Editar directamente", r_delete: "Borrar (con confirmación)",
+    menu_actions: "Entradas del menú", row_buttons: "Mostrar lápiz y papelera en la fila",
+    shop: "Modo compra", shop_hide_checked: "Ocultar marcados", shop_keep_awake: "Mantener la pantalla encendida",
+    shop_large: "Filas grandes", shop_tap_row: "Tocar toda la fila para marcar", reset: "Restablecer",
+    sort: "Orden", sort_category: "Categoría", sort_alpha: "A–Z", sort_added: "Añadido", sort_list: "Por lista",
+    packs: "Detección de categorías (paquetes de palabras clave)", packs_help: "Palabras clave → categoría. Puede haber varios paquetes activos (p. ej. español + el tuyo). Con la misma palabra clave gana el paquete más arriba. Las categorías recordadas siempre tienen prioridad.",
+    pack_terms: "palabras clave", pack_products: "productos", pack_builtin: "integrado", pack_custom: "propio", pack_priority: "puesto",
+    pack_up: "Subir (prioridad)", pack_download: "Descargar", pack_delete: "¿Borrar el paquete propio?", pack_bad_json: "El archivo no es un JSON válido.",
+    pack_upload: "Subir paquete …", pack_name_help: "Nombre del paquete. El mismo nombre reemplaza un paquete propio existente.", pack_add: "Añadir",
+    pack_skipped: "omitidas (categoría desconocida)", pack_template: "Plantilla",
+    card_desc: "Lista de la compra con categorías, sugerencias, cantidades, etiquetas de tienda (@Mercadona) y permisos.",
+    imp_placeholder: "- Leche 2 l @Mercadona\n- [ ] Pan\n- [x] Mantequilla\n3 manzanas",
+    e_preset_pick: "— Elegir plantilla (ajusta varias opciones) —", e_view_list: "Lista", e_view_tiles: "Mosaicos (p. ej. tablet de cocina)", e_view_mini: "Mini mosaico (resumen, desplegable)",
+    e_sort_category: "Por categoría", e_sort_added: "Orden de añadido", e_sort_list: "Por lista de origen (combinada)",
+    e_layout_tabs: "Pestañas", e_layout_columns: "Lado a lado", e_layout_stack: "Una debajo de otra",
+    e_density_compact: "Compacto", e_density_normal: "Normal", e_density_comfortable: "Grande (táctil)",
+    e_sec_multi: "Varias listas en una tarjeta", e_sec_filter: "Filtros", e_sec_look: "Apariencia", e_sec_header: "Cabecera", e_sec_input: "Entrada",
+    e_sec_list: "Lista", e_sec_done: "Completados", e_sec_shop: "Modo compra",
+    e_pre_family: "Compra familiar (todo activado)", e_pre_kitchen: "Tablet de cocina (mosaicos grandes)", e_pre_store: "En la tienda (modo compra, sin entrada)",
+    e_pre_readonly: "Solo ver", e_pre_tile: "Mosaico compacto para el panel",
+    l_preset: "Plantilla", l_entity: "Lista", l_entities: "Listas (en lugar de «Lista» arriba)", l_layout: "Disposición", l_title: "Título (vacío = nombre de la lista)",
+    l_view: "Vista", l_sort: "Orden predeterminado", l_advanced: "Mostrar opciones avanzadas",
+    l_filter_store: "Solo tienda (p. ej. Mercadona; varias separadas por comas)", l_filter_person: "Solo persona (p. ej. Anna)", l_filter_tag: "Solo etiqueta (p. ej. bio)",
+    l_filter_category: "Solo categorías", l_filter_offers: "Solo ofertas", l_filter_tags_new_items: "Los artículos nuevos reciben la etiqueta del filtro (@Mercadona …)",
+    l_show_filter_chips: "Barra de filtros (tiendas, personas, ofertas)",
+    l_density: "Altura de fila", l_font_scale: "Tamaño de letra", l_radius: "Radio de las esquinas", l_accent_color: "Color de acento (vacío = tema)",
+    l_show_header: "Mostrar cabecera", l_show_count: "Número pendiente / resultados", l_show_search: "Búsqueda (lupa)",
+    l_show_sort: "Selector de orden", l_show_shopping: "Botón de modo compra", l_show_undo: "Deshacer (↶)",
+    l_show_import: "Botón de importar", l_show_settings: "Engranaje (ajustes personales)",
+    l_show_add: "Campo para añadir", l_show_frequent: "«Comprados a menudo»",
+    l_drag_drop: "Arrastrar y soltar (ratón): mover a otra lista, reordenar", l_show_stepper: "Selector de cantidad (− +)", l_show_offer: "Ofertas de la app (tienda, precio, válida hasta)",
+    l_show_tags: "Etiquetas (@tienda, *persona, #etiqueta)", l_show_source: "Origen (lista de origen / persona)", l_show_note: "Notas",
+    l_show_category_titles: "Títulos de categoría", l_max_height: "Altura máxima de la lista (vacío = sin límite)",
+    l_show_completed: "Mostrar completados", l_collapse_completed: "Completados contraídos al inicio", l_start_shopping: "Empezar en modo compra",
+    hh_preset: "Ajusta las opciones adecuadas de una vez – después todo se puede cambiar por separado.",
+    hh_entities: "Varias listas: en pestañas, lado a lado o una debajo de otra. Todas las opciones valen para cada lista.",
+    hh_filter_tags_new_items: "Si no, los artículos nuevos desaparecerían enseguida en una tarjeta filtrada.",
+    hh_show_settings: "Cada usuario ajusta gesto, menú y modo compra en el engranaje.",
+    hh_show_category_titles: "Desactivado: ordenado por categoría, pero como una sola lista con el icono de categoría delante.",
+    hh_start_shopping: "Práctico para una tablet en el pasillo o un panel solo para la compra.",
+  },
+  it: {
+    add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
+    done: "Fatto", clear: "Rimuovi completati", own: "Lista propria", combined: "Combinata", foreign: "Esterna",
+    empty: "Niente da comprare 🎉", no_add: "L'aggiunta è disattivata per questa lista.", open: "da fare",
+    confirm_delete: "Eliminare davvero l'articolo?", confirm_clear: "Rimuovere tutti gli articoli completati?",
+    error: "Errore", loading: "Caricamento …", readonly: "Solo lettura", delete: "Elimina", edit: "Modifica",
+    frequent: "Acquistati spesso", src_manual: "memorizzata", src_learned: "appresa", src_pack: "automatica", src_fallback: "sconosciuta",
+    unit_hint: "unità abituale", category: "Categoria", settings: "Impostazioni", naming: "Convenzione dei nomi",
+    naming_help: "Un carattere davanti a una parola la trasforma in un badge. Vale per tutte le liste e tutti i dispositivi.",
+    kind_store: "Negozio", kind_person: "Persona", kind_tag: "Tag", add_rule: "Aggiungi regola", example: "Esempio",
+    learned: "Categorie memorizzate", learned_help: "Si creano quando scegli una categoria a mano.", forget: "Dimentica",
+    none_learned: "Ancora niente di memorizzato.", saved: "Salvato", admin_only: "Solo gli amministratori possono modificarlo.",
+    in_list: "è già nella lista",
+    tab_me: "Per me", tab_house: "Casa", tab_list: "Questa lista", ui_me_help: "Vale per te. Le differenze rispetto all'impostazione di casa sono segnate con •.",
+    ui_house: "Comandi – predefinito per tutti", reset_default: "Ripristina predefinito", about_list: "Informazioni sulla lista", type: "Tipo", entity: "Entità", sources: "Origini",
+    type_combined: "Lista combinata", type_own: "Lista SmartLists propria", type_list: "Lista to-do di Home Assistant", char: "Carattere", kind: "Tipo",
+    no_hits_short: "Nessun risultato.", by_hand: "a mano", search_learned: "Cerca … (es. latte)",
+    automation: "Voce e automazioni", automation_help: "Assist e articoli da ricomprare. Blueprint «Sono al negozio» e promemoria negozio: vedi wiki.",
+    auto_voice_default_list: "Lista predefinita per Assist", auto_voice_help: "Usata quando la frase non nomina nessuna lista.",
+    auto_auto_due_list: "Aggiungi automaticamente gli articoli da ricomprare a", auto_due_help: "Ogni ora, secondo il vostro ritmo di acquisto. «—» = disattivato.",
+    install_sentences: "Installa frasi Assist", sentences_installed: "installate",
+    devices: "Dispositivi collegati", devices_help: "Telefoni con l'app HA SmartLists. ⚠️ = non sincronizzato da oltre 7 giorni. Per revocare l'accesso, elimina il token nel profilo.",
+    no_devices: "Nessun telefono collegato.", remove_device: "Rimuovi dalla lista", last_seen: "visto",
+    role_all: "tutti i permessi", admin_always: "Admin – può sempre fare tutto", shop_large_help: "Più facile da toccare con il pollice",
+    new_list_help: "Sei il proprietario e poi puoi condividerla con altri.", new_list_placeholder: "es. Drogheria", create: "Crea",
+    p_columns: "Più liste affiancate", p_wide: "Vista larga", p_settings: "Impostazioni", p_back: "Torna alle liste",
+    p_hint: "Tocca fino a 3 liste. Trascina gli articoli col mouse in un'altra lista per spostarli (Ctrl = copia).",
+    p_empty: "Nessuna lista trovata. Creane una in Impostazioni → Dispositivi e servizi → SmartLists – oppure con + in alto.",
+    owner: "proprietario", shared: "condivisa", private: "privata", admin: "admin", sharing: "Condivisione",
+    sharing_help: "Chi può vedere e modificare questa lista. Gli admin possono sempre fare tutto. La vista to-do di HA mostra ogni lista a tutti – è nascosta solo in SmartLists (scheda, pagina, app).",
+    role_none: "nessun accesso", role_viewer: "vedere", role_checker: "spuntare", role_editor: "modificare", role_owner: "proprietario",
+    no_users: "Nessun altro utente in Home Assistant.", delete_list: "Elimina lista", confirm_delete_list: "Eliminare questa lista con tutti gli articoli?",
+    new_list: "Nuova lista", new_list_prompt: "Nome della nuova lista:",
+    due_every: "da ricomprare – lo comprate circa ogni", days: "giorni", backup: "Backup e trasferimento",
+    backup_help: "Categorie memorizzate, cronologia, convenzione dei nomi e comandi in un file – es. per una seconda istanza HA. L'importazione aggiunge senza cancellare nulla.",
+    export: "Esporta", import: "Importa …",
+    mini_open: "Apri lista", mini_close: "Comprimi", card_version: "scheda", stale_card: "Questa scheda è obsoleta – ricarica la pagina (Ctrl+F5) o svuota la cache del frontend nell'app.", offer: "Offerta", offer_until: "fino al", offer_expired: "scaduta dal",
+    qty_less: "Diminuisci quantità", qty_more: "Aumenta quantità", qty_changed: "quantità modificata",
+    search: "Cerca", search_placeholder: "Cerca nella lista …", hits: "risultati", no_hits: "Nessun risultato per", add_this: "aggiungi",
+    imp: "Importa", imp_ha: "Da Home Assistant", imp_text: "Come testo", imp_source: "Lista",
+    imp_done: "Includi completati", imp_skip_dupes: "Salta quelli già presenti", imp_go: "Importa",
+    imp_text_help: "Un articolo per riga. Elenchi puntati, [ ] / [x] e numeri vengono riconosciuti, così come quantità e tag.",
+    imp_preview: "Anteprima", imp_none: "Niente da importare.", imp_count: "articoli", imported: "importati", imp_dupe: "presente",
+    imp_no_lists: "Nessun'altra lista trovata in Home Assistant.",
+    shop_on: "Avvia modalità spesa", shop_off: "Termina modalità spesa", in_cart: "nel carrello", undo: "Annulla", checked_off: "spuntato", unchecked: "riaperto",
+    deleted: "eliminato", removed: "completati rimossi", added: "aggiunto", changed: "modificato",
+    m_rename: "Rinomina / modifica", m_move: "Sposta in …", m_copy: "Copia in …", m_category: "Cambia categoria", m_delete: "Elimina",
+    moved: "spostato in", copied: "copiato in", no_targets: "Nessun'altra lista in cui puoi scrivere.",
+    ui: "Comandi", ui_help: "Ogni utente lo imposta per sé. Facoltativamente diverso per dispositivo.",
+    scope_household: "Predefinito per tutti", scope_user: "Per me su tutti i dispositivi", scope_device: "Solo su questo dispositivo",
+    scope_help_household: "Vale per chi non ha impostato nulla di proprio.",
+    scope_help_user: "Si salvano solo le tue differenze dal predefinito (segnate con •). «Ripristina» = torna al predefinito.",
+    scope_help_device: "Vale solo per questo browser o telefono. «Ripristina» = torna alla tua impostazione.",
+    press_gesture: "Gesto per il menu dell'articolo", g_long: "Pressione lunga", g_double: "Doppio clic", g_right: "Clic destro", g_off: "Disattivato",
+    press_target: "Dove funziona il gesto", t_row: "Tutta la riga", t_name: "Solo sul nome",
+    press_result: "Cosa fa il gesto", r_menu: "Apri menu", r_edit: "Modifica direttamente", r_delete: "Elimina (con conferma)",
+    menu_actions: "Voci del menu", row_buttons: "Mostra matita e cestino nella riga",
+    shop: "Modalità spesa", shop_hide_checked: "Nascondi spuntati", shop_keep_awake: "Mantieni lo schermo acceso",
+    shop_large: "Righe grandi", shop_tap_row: "Tocca tutta la riga per spuntare", reset: "Ripristina",
+    sort: "Ordine", sort_category: "Categoria", sort_alpha: "A–Z", sort_added: "Aggiunta", sort_list: "Per lista",
+    packs: "Riconoscimento categorie (pacchetti di parole chiave)", packs_help: "Parole chiave → categoria. Possono essere attivi più pacchetti (es. italiano + il tuo). A parità di parola chiave vince il pacchetto più in alto. Le categorie memorizzate hanno sempre la precedenza.",
+    pack_terms: "parole chiave", pack_products: "prodotti", pack_builtin: "integrato", pack_custom: "personale", pack_priority: "posizione",
+    pack_up: "Sposta su (precedenza)", pack_download: "Scarica", pack_delete: "Eliminare il pacchetto personale?", pack_bad_json: "Il file non è un JSON valido.",
+    pack_upload: "Carica pacchetto …", pack_name_help: "Nome del pacchetto. Lo stesso nome sostituisce un pacchetto personale esistente.", pack_add: "Aggiungi",
+    pack_skipped: "saltate (categoria sconosciuta)", pack_template: "Modello",
+    card_desc: "Lista della spesa con categorie, suggerimenti, quantità, badge dei negozi (@Esselunga) e permessi.",
+    imp_placeholder: "- Latte 2 l @Esselunga\n- [ ] Pane\n- [x] Burro\n3 mele",
+    e_preset_pick: "— Scegli un modello (imposta più opzioni) —", e_view_list: "Lista", e_view_tiles: "Riquadri (es. tablet in cucina)", e_view_mini: "Mini riquadro (riepilogo, espandibile)",
+    e_sort_category: "Per categoria", e_sort_added: "Ordine di aggiunta", e_sort_list: "Per lista di origine (combinata)",
+    e_layout_tabs: "Schede", e_layout_columns: "Affiancate", e_layout_stack: "Una sotto l'altra",
+    e_density_compact: "Compatta", e_density_normal: "Normale", e_density_comfortable: "Grande (touch)",
+    e_sec_multi: "Più liste in una scheda", e_sec_filter: "Filtri", e_sec_look: "Aspetto", e_sec_header: "Intestazione", e_sec_input: "Inserimento",
+    e_sec_list: "Lista", e_sec_done: "Completati", e_sec_shop: "Modalità spesa",
+    e_pre_family: "Spesa di famiglia (tutto attivo)", e_pre_kitchen: "Tablet in cucina (riquadri grandi)", e_pre_store: "Al negozio (modalità spesa, senza inserimento)",
+    e_pre_readonly: "Solo lettura", e_pre_tile: "Riquadro compatto per la dashboard",
+    l_preset: "Modello", l_entity: "Lista", l_entities: "Liste (al posto di «Lista» sopra)", l_layout: "Disposizione", l_title: "Titolo (vuoto = nome della lista)",
+    l_view: "Vista", l_sort: "Ordine predefinito", l_advanced: "Mostra opzioni avanzate",
+    l_filter_store: "Solo negozio (es. Esselunga; più negozi separati da virgole)", l_filter_person: "Solo persona (es. Anna)", l_filter_tag: "Solo tag (es. bio)",
+    l_filter_category: "Solo categorie", l_filter_offers: "Solo offerte", l_filter_tags_new_items: "I nuovi articoli ricevono il tag del filtro (@Esselunga …)",
+    l_show_filter_chips: "Barra dei filtri (negozi, persone, offerte)",
+    l_density: "Altezza righe", l_font_scale: "Dimensione testo", l_radius: "Raggio degli angoli", l_accent_color: "Colore d'accento (vuoto = tema)",
+    l_show_header: "Mostra intestazione", l_show_count: "Numero da fare / risultati", l_show_search: "Ricerca (lente)",
+    l_show_sort: "Scelta dell'ordine", l_show_shopping: "Pulsante modalità spesa", l_show_undo: "Annulla (↶)",
+    l_show_import: "Pulsante importa", l_show_settings: "Ingranaggio (impostazioni personali)",
+    l_show_add: "Campo per aggiungere", l_show_frequent: "«Acquistati spesso»",
+    l_drag_drop: "Trascina e rilascia (mouse): sposta in un'altra lista, riordina", l_show_stepper: "Selettore quantità (− +)", l_show_offer: "Offerte dall'app (negozio, prezzo, valida fino al)",
+    l_show_tags: "Badge (@negozio, *persona, #tag)", l_show_source: "Origine (lista di origine / persona)", l_show_note: "Note",
+    l_show_category_titles: "Titoli delle categorie", l_max_height: "Altezza massima della lista (vuoto = illimitata)",
+    l_show_completed: "Mostra completati", l_collapse_completed: "Completati compressi all'inizio", l_start_shopping: "Avvia in modalità spesa",
+    hh_preset: "Imposta le opzioni adatte in un colpo – dopo tutto resta modificabile singolarmente.",
+    hh_entities: "Più liste: in schede, affiancate o una sotto l'altra. Tutte le opzioni valgono per ogni lista.",
+    hh_filter_tags_new_items: "Altrimenti i nuovi articoli sparirebbero subito in una scheda filtrata.",
+    hh_show_settings: "Gesto, menu e modalità spesa li imposta ogni utente nell'ingranaggio.",
+    hh_show_category_titles: "Disattivato: ordinato per categoria, ma come un'unica lista con l'icona della categoria davanti.",
+    hh_start_shopping: "Comodo per un tablet all'ingresso o una dashboard solo per la spesa.",
+  },
+  pl: {
+    add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
+    done: "Zrobione", clear: "Usuń zrobione", own: "Własna lista", combined: "Połączona", foreign: "Obca",
+    empty: "Nic do kupienia 🎉", no_add: "Dodawanie jest wyłączone dla tej listy.", open: "do kupienia",
+    confirm_delete: "Na pewno usunąć produkt?", confirm_clear: "Usunąć wszystkie zrobione produkty?",
+    error: "Błąd", loading: "Ładowanie …", readonly: "Tylko podgląd", delete: "Usuń", edit: "Edytuj",
+    frequent: "Często kupowane", src_manual: "zapamiętana", src_learned: "nauczona", src_pack: "automatyczna", src_fallback: "nieznana",
+    unit_hint: "zwykła jednostka", category: "Kategoria", settings: "Ustawienia", naming: "Konwencja nazw",
+    naming_help: "Znak przed słowem zamienia je w plakietkę. Dotyczy wszystkich list i urządzeń.",
+    kind_store: "Sklep", kind_person: "Osoba", kind_tag: "Tag", add_rule: "Dodaj regułę", example: "Przykład",
+    learned: "Zapamiętane kategorie", learned_help: "Powstają, gdy wybierasz kategorię ręcznie.", forget: "Zapomnij",
+    none_learned: "Nic jeszcze nie zapamiętano.", saved: "Zapisano", admin_only: "Tylko administratorzy mogą to zmienić.",
+    in_list: "jest już na liście",
+    tab_me: "Dla mnie", tab_house: "Dom", tab_list: "Ta lista", ui_me_help: "Dotyczy ciebie. Różnice względem ustawień domu są oznaczone •.",
+    ui_house: "Sterowanie – domyślne dla wszystkich", reset_default: "Przywróć domyślne", about_list: "O tej liście", type: "Typ", entity: "Encja", sources: "Źródła",
+    type_combined: "Lista połączona", type_own: "Własna lista SmartLists", type_list: "Lista zadań Home Assistant", char: "Znak", kind: "Rodzaj",
+    no_hits_short: "Nic nie znaleziono.", by_hand: "ręcznie", search_learned: "Szukaj … (np. mleko)",
+    automation: "Głos i automatyzacje", automation_help: "Assist i produkty do ponownego zakupu. Blueprinty „Jestem w sklepie” i przypomnienie o sklepie: zobacz wiki.",
+    auto_voice_default_list: "Domyślna lista dla Assist", auto_voice_help: "Używana, gdy zdanie nie wymienia listy.",
+    auto_auto_due_list: "Automatycznie dodawaj produkty do ponownego zakupu do", auto_due_help: "Co godzinę, według waszego rytmu zakupów. „—” = wyłączone.",
+    install_sentences: "Zainstaluj zdania Assist", sentences_installed: "zainstalowane",
+    devices: "Połączone urządzenia", devices_help: "Telefony z aplikacją HA SmartLists. ⚠️ = brak synchronizacji od ponad 7 dni. Aby odebrać dostęp, usuń token w profilu.",
+    no_devices: "Nie połączono jeszcze żadnego telefonu.", remove_device: "Usuń z listy", last_seen: "ostatnio",
+    role_all: "wszystkie prawa", admin_always: "Admin – zawsze może wszystko", shop_large_help: "Łatwiej trafić kciukiem",
+    new_list_help: "Jesteś właścicielem i możesz potem udostępnić ją innym.", new_list_placeholder: "np. Drogeria", create: "Utwórz",
+    p_columns: "Kilka list obok siebie", p_wide: "Szeroki widok", p_settings: "Ustawienia", p_back: "Wróć do list",
+    p_hint: "Dotknij do 3 list. Przeciągnij produkt myszą na inną listę, aby go przenieść (Ctrl = kopiuj).",
+    p_empty: "Nie znaleziono list. Utwórz ją w Ustawienia → Urządzenia i usługi → SmartLists – albo przyciskiem + u góry.",
+    owner: "właściciel", shared: "udostępniona", private: "prywatna", admin: "admin", sharing: "Udostępnianie",
+    sharing_help: "Kto może widzieć i zmieniać tę listę. Admini zawsze mogą wszystko. Widok zadań HA pokazuje każdą listę wszystkim – jest ukryta tylko w SmartLists (karta, strona, aplikacja).",
+    role_none: "brak dostępu", role_viewer: "podgląd", role_checker: "odhaczanie", role_editor: "edycja", role_owner: "właściciel",
+    no_users: "Brak innych użytkowników w Home Assistant.", delete_list: "Usuń listę", confirm_delete_list: "Usunąć tę listę ze wszystkimi produktami?",
+    new_list: "Nowa lista", new_list_prompt: "Nazwa nowej listy:",
+    due_every: "do kupienia – kupujecie mniej więcej co", days: "dni", backup: "Kopia i przeniesienie",
+    backup_help: "Zapamiętane kategorie, historia, konwencja nazw i sterowanie w pliku – np. dla drugiej instancji HA. Import dodaje, niczego nie usuwając.",
+    export: "Eksportuj", import: "Importuj …",
+    mini_open: "Otwórz listę", mini_close: "Zwiń", card_version: "karta", stale_card: "Ta karta jest nieaktualna – odśwież stronę (Ctrl+F5) lub wyczyść pamięć podręczną frontendu w aplikacji.", offer: "Promocja", offer_until: "do", offer_expired: "wygasła",
+    qty_less: "Zmniejsz ilość", qty_more: "Zwiększ ilość", qty_changed: "zmieniono ilość",
+    search: "Szukaj", search_placeholder: "Szukaj na liście …", hits: "wyników", no_hits: "Nic nie znaleziono dla", add_this: "dodaj",
+    imp: "Importuj", imp_ha: "Z Home Assistant", imp_text: "Jako tekst", imp_source: "Lista",
+    imp_done: "Uwzględnij zrobione", imp_skip_dupes: "Pomiń już istniejące", imp_go: "Importuj",
+    imp_text_help: "Jeden produkt w wierszu. Rozpoznawane są wypunktowania, [ ] / [x] i numery, a także ilości i tagi.",
+    imp_preview: "Podgląd", imp_none: "Nic do zaimportowania.", imp_count: "produktów", imported: "zaimportowano", imp_dupe: "istnieje",
+    imp_no_lists: "Nie znaleziono innych list w Home Assistant.",
+    shop_on: "Włącz tryb zakupów", shop_off: "Zakończ tryb zakupów", in_cart: "w koszyku", undo: "Cofnij", checked_off: "odhaczono", unchecked: "przywrócono",
+    deleted: "usunięto", removed: "usunięto zrobione", added: "dodano", changed: "zmieniono",
+    m_rename: "Zmień nazwę / edytuj", m_move: "Przenieś do …", m_copy: "Kopiuj do …", m_category: "Zmień kategorię", m_delete: "Usuń",
+    moved: "przeniesiono do", copied: "skopiowano do", no_targets: "Brak innej listy, do której możesz pisać.",
+    ui: "Sterowanie", ui_help: "Każdy użytkownik ustawia to dla siebie. Opcjonalnie inaczej na każdym urządzeniu.",
+    scope_household: "Domyślne dla wszystkich", scope_user: "Dla mnie na wszystkich urządzeniach", scope_device: "Tylko na tym urządzeniu",
+    scope_help_household: "Dotyczy każdego, kto nie ustawił nic własnego.",
+    scope_help_user: "Zapisywane są tylko twoje różnice względem domyślnych (oznaczone •). „Resetuj” = powrót do domyślnych.",
+    scope_help_device: "Dotyczy tylko tej przeglądarki lub telefonu. „Resetuj” = powrót do twojego ustawienia.",
+    press_gesture: "Gest menu produktu", g_long: "Długie naciśnięcie", g_double: "Dwuklik", g_right: "Prawy przycisk", g_off: "Wyłączony",
+    press_target: "Gdzie działa gest", t_row: "Cały wiersz", t_name: "Tylko na nazwie",
+    press_result: "Co robi gest", r_menu: "Otwórz menu", r_edit: "Edytuj od razu", r_delete: "Usuń (z potwierdzeniem)",
+    menu_actions: "Pozycje menu", row_buttons: "Pokaż ołówek i kosz w wierszu",
+    shop: "Tryb zakupów", shop_hide_checked: "Ukryj odhaczone", shop_keep_awake: "Nie wygaszaj ekranu",
+    shop_large: "Duże wiersze", shop_tap_row: "Dotknij całego wiersza, aby odhaczyć", reset: "Resetuj",
+    sort: "Sortowanie", sort_category: "Kategoria", sort_alpha: "A–Z", sort_added: "Dodanie", sort_list: "Wg listy",
+    packs: "Rozpoznawanie kategorii (pakiety słów kluczowych)", packs_help: "Słowa kluczowe → kategoria. Może być aktywnych kilka pakietów (np. polski + własny). Przy tym samym słowie wygrywa pakiet wyżej. Zapamiętane kategorie mają zawsze pierwszeństwo.",
+    pack_terms: "słów kluczowych", pack_products: "produktów", pack_builtin: "wbudowany", pack_custom: "własny", pack_priority: "pozycja",
+    pack_up: "W górę (pierwszeństwo)", pack_download: "Pobierz", pack_delete: "Usunąć własny pakiet?", pack_bad_json: "Plik nie jest poprawnym JSON-em.",
+    pack_upload: "Wgraj pakiet …", pack_name_help: "Nazwa pakietu. Ta sama nazwa zastępuje istniejący własny pakiet.", pack_add: "Dodaj",
+    pack_skipped: "pominięto (nieznana kategoria)", pack_template: "Szablon",
+    card_desc: "Lista zakupów z kategoriami, podpowiedziami, ilościami, plakietkami sklepów (@Biedronka) i uprawnieniami.",
+    imp_placeholder: "- Mleko 2 l @Biedronka\n- [ ] Chleb\n- [x] Masło\n3 jabłka",
+    e_preset_pick: "— Wybierz szablon (ustawia kilka opcji) —", e_view_list: "Lista", e_view_tiles: "Kafelki (np. tablet w kuchni)", e_view_mini: "Mini kafelek (podsumowanie, rozwijany)",
+    e_sort_category: "Wg kategorii", e_sort_added: "Kolejność dodania", e_sort_list: "Wg listy źródłowej (połączona)",
+    e_layout_tabs: "Karty", e_layout_columns: "Obok siebie", e_layout_stack: "Jedna pod drugą",
+    e_density_compact: "Kompaktowo", e_density_normal: "Normalnie", e_density_comfortable: "Duże (dotyk)",
+    e_sec_multi: "Kilka list w jednej karcie", e_sec_filter: "Filtry", e_sec_look: "Wygląd", e_sec_header: "Nagłówek", e_sec_input: "Wprowadzanie",
+    e_sec_list: "Lista", e_sec_done: "Zrobione", e_sec_shop: "Tryb zakupów",
+    e_pre_family: "Zakupy rodzinne (wszystko włączone)", e_pre_kitchen: "Tablet w kuchni (duże kafelki)", e_pre_store: "W sklepie (tryb zakupów, bez wprowadzania)",
+    e_pre_readonly: "Tylko podgląd", e_pre_tile: "Kompaktowy kafelek na pulpit",
+    l_preset: "Szablon", l_entity: "Lista", l_entities: "Listy (zamiast „Lista” powyżej)", l_layout: "Układ", l_title: "Tytuł (pusty = nazwa listy)",
+    l_view: "Widok", l_sort: "Domyślne sortowanie", l_advanced: "Pokaż opcje zaawansowane",
+    l_filter_store: "Tylko sklep (np. Biedronka; kilka oddziel przecinkami)", l_filter_person: "Tylko osoba (np. Anna)", l_filter_tag: "Tylko tag (np. bio)",
+    l_filter_category: "Tylko kategorie", l_filter_offers: "Tylko promocje", l_filter_tags_new_items: "Nowe produkty dostają tag filtra (@Biedronka …)",
+    l_show_filter_chips: "Pasek filtrów (sklepy, osoby, promocje)",
+    l_density: "Wysokość wierszy", l_font_scale: "Rozmiar czcionki", l_radius: "Promień narożników", l_accent_color: "Kolor akcentu (pusty = motyw)",
+    l_show_header: "Pokaż nagłówek", l_show_count: "Liczba do kupienia / wyników", l_show_search: "Wyszukiwanie (lupa)",
+    l_show_sort: "Wybór sortowania", l_show_shopping: "Przycisk trybu zakupów", l_show_undo: "Cofnij (↶)",
+    l_show_import: "Przycisk importu", l_show_settings: "Zębatka (ustawienia osobiste)",
+    l_show_add: "Pole do dodawania", l_show_frequent: "„Często kupowane”",
+    l_drag_drop: "Przeciągnij i upuść (mysz): przenieś na inną listę, zmień kolejność", l_show_stepper: "Regulacja ilości (− +)", l_show_offer: "Promocje z aplikacji (sklep, cena, ważna do)",
+    l_show_tags: "Plakietki (@sklep, *osoba, #tag)", l_show_source: "Pochodzenie (lista źródłowa / osoba)", l_show_note: "Notatki",
+    l_show_category_titles: "Nagłówki kategorii", l_max_height: "Maksymalna wysokość listy (pusta = bez limitu)",
+    l_show_completed: "Pokaż zrobione", l_collapse_completed: "Zrobione na początku zwinięte", l_start_shopping: "Uruchom w trybie zakupów",
+    hh_preset: "Ustawia pasujące opcje za jednym razem – potem wszystko można zmieniać osobno.",
+    hh_entities: "Kilka list: jako karty, obok siebie lub jedna pod drugą. Wszystkie opcje dotyczą każdej listy.",
+    hh_filter_tags_new_items: "W przeciwnym razie nowe produkty od razu znikałyby z przefiltrowanej karty.",
+    hh_show_settings: "Gest, menu i tryb zakupów każdy użytkownik ustawia sam w zębatce.",
+    hh_show_category_titles: "Wyłączone: sortowane wg kategorii, ale jako jedna lista z ikoną kategorii z przodu.",
+    hh_start_shopping: "Przydatne dla tabletu w przedpokoju lub pulpitu tylko do zakupów.",
   },
 };
 
@@ -208,12 +680,14 @@ const TEXTS = {
 /* Artikeltext – gleiche Regeln wie itemtext.py in der Integration     */
 /* ------------------------------------------------------------------ */
 const NUM = "[0-9]+(?:[.,][0-9]+)?";
-const UNIT = "[a-zA-ZäöüÄÖÜß%°]+\\.?";
+const UNIT = "[a-zA-Z\\u00C0-\\u024F%°]+\\.?";
 const RE_SUFFIX_UNIT = new RegExp(`^(.+?)\\s+(?:([0-9]+)[×xX]\\s+)?(${NUM})\\s+(${UNIT})$`);
 const RE_SUFFIX_ONLY = new RegExp(`^(.+?)\\s+(?:([0-9]+)[×xX]\\s+)?(${NUM})$`);
 const RE_PREFIX_QTY = new RegExp(`^(${NUM})\\s*(?:(${UNIT})\\s+)?(.+)$`);
 const UNIT_WORDS = new Set(("stk stück st kg g gr l ml cl pck pk packung packungen fl flasche flaschen dose dosen becher " +
-  "glas gläser tube bund netz beutel tüte kiste kasten rolle rollen scheiben pkg x").split(" "));
+  "glas gläser tube bund netz beutel tüte kiste kasten rolle rollen scheiben pkg x " +
+  // weitere Sprachen (gleiche Liste in itemtext.py)
+  "pcs pc piece pieces pack packs bottle bottles can cans jar jars box boxes bag bags roll rolls tin tins bunch slices dozen pièce pièces paquet paquets bouteille bouteilles boîte boîtes sachet sachets rouleau rouleaux tranches ud uds unidad unidades paquete paquetes botella botellas lata latas bolsa bolsas caja cajas bote botes rollo rollos pz pezzo pezzi confezione confezioni bottiglia bottiglie lattina lattine scatola scatole busta buste vasetto rotolo rotoli szt sztuka sztuki opak opakowanie butelka butelki puszka puszki paczka paczki słoik słoiki rolka rolki").split(" "));
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const num = (s) => Number(String(s).replace(",", "."));
 const fmtQty = (q) => (Number.isInteger(q) ? String(q) : String(q).replace(".", ","));
@@ -675,6 +1149,7 @@ const STYLE = `
   .ok2 { margin-right:auto; color:var(--success-color,#43a047); font-size:.8rem; }
   .btn2 { height:36px; padding:0 14px; border-radius:18px; font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--divider-color,#ddd); background:none; color:var(--sl-accent); }
   .btn2.primary { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
+  .srow2 .icon-btn.up svg { transform:rotate(180deg); }
   .btn2.danger { color:var(--error-color,#db4437); }
   .search2 { width:100%; height:40px; }
   .learned2 { max-height:236px; overflow:auto; margin-top:8px; border:1px solid var(--divider-color,#e0e0e0); border-radius:10px; }
@@ -691,7 +1166,7 @@ const STYLE = `
 class SmartListsCard extends HTMLElement {
   setConfig(config) {
     const many = Array.isArray(config && config.entities) ? config.entities.filter(Boolean) : [];
-    if (!config || (!config.entity && !many.length)) throw new Error("Bitte 'entity' (eine Liste) oder 'entities' (mehrere) angeben.");
+    if (!config || (!config.entity && !many.length)) throw new Error("Please set 'entity' (one list) or 'entities' (several).");
     if (many.length && !config.entity) return this._setupMulti(config, many);
     this._multi = null;
     this._rawConfig = config;
@@ -746,7 +1221,8 @@ class SmartListsCard extends HTMLElement {
     return { entity: e || "todo.einkaufsliste" };
   }
 
-  get _t() { return TEXTS[((this._hass && this._hass.language) || "de").slice(0, 2)] || TEXTS.en; }
+  get _lang() { return ((this._hass && this._hass.language) || "de").slice(0, 2); }
+  get _t() { return TEXTS[this._lang] || TEXTS.en; }
   get _isAdmin() { return !this._hass.user || this._hass.user.is_admin; }
   _call(type, extra = {}, withEntity = true) {
     return this._hass.callWS({ type: `smartlists/${type}`, ...(withEntity ? { entity_id: this._config.entity } : {}), ...extra });
@@ -757,7 +1233,7 @@ class SmartListsCard extends HTMLElement {
 
   async _loadConfig() {
     try {
-      this._cfg = await this._call("config", {}, false);
+      this._cfg = await this._call("config", { language: this._lang }, false);
       // Version der Integration für die Anzeige im Zahnrad (hilft bei „neue Funktion fehlt“)
       this._call("info", {}, false).then((i) => {
         this._version = i.version;
@@ -771,8 +1247,8 @@ class SmartListsCard extends HTMLElement {
   }
   async _load() {
     try {
-      const data = await this._call("get_list");
-      if (!data || !Array.isArray(data.items)) throw new Error("Unerwartete Antwort der SmartLists-Integration – bitte Integration aktualisieren.");
+      const data = await this._call("get_list", { language: this._lang });
+      if (!data || !Array.isArray(data.items)) throw new Error("Unexpected response from the SmartLists integration – please update the integration.");
       // Rückfall: steht die ⚙OFFER-Zeile der App noch in der Notiz, hier selbst zerlegen
       for (const it of data.items) {
         if (!it.offer && it.note) { const r = parseOfferNote(it.note, this._cfg && this._cfg.known_stores); if (r.offer) { it.offer = r.offer; it.note = r.note; } }
@@ -1855,7 +2331,7 @@ class SmartListsCard extends HTMLElement {
         : h("p", { class: "help" }, t.imp_no_lists);
     } else {
       body = [h("p", { class: "help" }, t.imp_text_help),
-        h("textarea", { "aria-label": t.imp_text, placeholder: "- Milch 2 l @REWE\n- [ ] Brot\n- [x] Butter\n3 Äpfel", value: st.text,
+        h("textarea", { "aria-label": t.imp_text, placeholder: t.imp_placeholder, value: st.text,
           oninput: (e) => { st.text = e.target.value; st.rows = parseImportText(st.text); drawPreview(); } })];
     }
     const opt = (key, label) => h("label", {}, h("input", { type: "checkbox", checked: st[key],
@@ -1946,7 +2422,7 @@ class SmartListsCard extends HTMLElement {
   _paneHouse() {
     const t = this._t;
     if (!this._isAdmin) return h("p", { class: "shelp", style: "padding:8px 4px" }, t.admin_only);
-    return [this._namingSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
+    return [this._namingSection(), this._packsSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
       this._sec("✋", t.ui_house, t.scope_help_household, [...this._controls("household"),
         h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi("household") }, t.reset))])];
   }
@@ -2000,6 +2476,68 @@ class SmartListsCard extends HTMLElement {
           const free = [...cfg.allowed_prefixes].find((c) => !rules.some((r) => r.prefix === c));
           rules.push({ prefix: free || "", kind: "tag" }); drawRules(); drawExample(); } }, "+ " + t.add_rule),
         h("button", { class: "btn2 primary", type: "button", onclick: save }, t.save))]);
+  }
+
+  // Kategorie-Erkennung: eingebaute + eigene Keyword-Packs, an/aus und Reihenfolge (vorne gewinnt)
+  _packsSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
+    const count = h("span", { class: "cnt" });
+    let packs = [];
+    const fail = (err) => { status.textContent = (err && err.message) || t.error; };
+    const changed = async (r) => { packs = r.packs; draw(); status.textContent = "✓ " + t.saved; this._cfg = await this._call("config", { language: this._lang }, false); };
+    const activeIds = () => packs.filter((p) => p.active).sort((a, b) => a.priority - b.priority).map((p) => p.id);
+    const setActive = async (ids) => { try { await changed(await this._call("pack_set_active", { active: ids }, false)); } catch (err) { fail(err); } };
+    const download = (data, name) => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }));
+      a.download = name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    };
+    const draw = () => {
+      const ids = activeIds();
+      count.textContent = `${ids.length}/${packs.length}`;
+      fill(body, ...packs.map((p) => {
+        const pos = ids.indexOf(p.id);
+        const lang = p.language ? p.language.toUpperCase() + " · " : "";
+        const sub = `${lang}${p.terms.toLocaleString(this._hass.language || "de")} ${t.pack_terms}${p.products ? ` · ${p.products} ${t.pack_products}` : ""} · ${p.builtin ? t.pack_builtin : t.pack_custom}${pos >= 0 ? ` · ${t.pack_priority} ${pos + 1}` : ""}`;
+        return h("div", { class: "srow2" },
+          h("div", { class: "sl" }, p.name, h("small", {}, sub)),
+          pos > 0 ? iconBtn(ICON.chevron, t.pack_up, () => { const n = [...ids]; n.splice(pos, 1); n.splice(pos - 1, 0, p.id); setActive(n); }, "up") : null,
+          iconBtn(ICON.import, t.pack_download, async () => {
+            try { download(await this._call("pack_export", { pack_id: p.id }, false), `smartlists-pack-${p.id}.json`); } catch (err) { fail(err); }
+          }, "dl"),
+          p.builtin ? null : iconBtn(ICON.trash, t.delete, async () => {
+            if (!(await slDialog(this.shadowRoot, { title: t.pack_delete, text: p.name, ok: t.delete, cancel: t.cancel, danger: true }))) return;
+            try { await changed(await this._call("pack_delete", { pack_id: p.id }, false)); } catch (err) { fail(err); }
+          }, "danger"),
+          this._switch(pos >= 0, (on) => setActive(on ? [...ids, p.id] : ids.filter((x) => x !== p.id)), p.name));
+      }));
+    };
+    const file = h("input", { type: "file", accept: "application/json,.json", hidden: true, onchange: async (e) => {
+      const f = e.target.files && e.target.files[0];
+      e.target.value = "";
+      if (!f) return;
+      let pack;
+      try { pack = JSON.parse(await f.text()); } catch (err) { status.textContent = t.pack_bad_json; return; }
+      const name = await slDialog(this.shadowRoot, { title: t.pack_upload, text: t.pack_name_help, input: true,
+        value: (pack && pack.name) || f.name.replace(/\.json$/i, ""), ok: t.pack_add, cancel: t.cancel });
+      if (!name) return;
+      try {
+        const r = await this._call("pack_upload", { pack, name: String(name) }, false);
+        await changed(r);
+        status.textContent = `✓ ${r.terms} ${t.pack_terms}${r.skipped ? ` · ${r.skipped} ${t.pack_skipped}` : ""}`;
+      } catch (err) { fail(err); }
+    } });
+    this._call("packs", {}, false).then((r) => { packs = r.packs; draw(); }).catch(() => fill(body, t.error));
+    const sec = this._sec("🧠", t.packs, t.packs_help, [body,
+      h("div", { class: "acts" }, status,
+        h("button", { class: "btn2", type: "button", onclick: () => download(PACK_TEMPLATE, "smartlists-pack-template.json") }, "⬇ " + t.pack_template),
+        h("button", { class: "btn2 primary", type: "button", onclick: () => file.click() }, "⬆ " + t.pack_upload), file)]);
+    sec.firstChild.append(count);
+    return sec;
   }
 
   _learnedSection() {
@@ -2146,84 +2684,68 @@ class SmartListsCard extends HTMLElement {
 /* Visueller Editor für den Dashboard-Karten-Dialog */
 class SmartListsCardEditor extends HTMLElement {
   setConfig(config) { this._config = config; this._build(); }
-  set hass(hass) { this._hass = hass; if (this._form) this._form.hass = hass; }
+  set hass(hass) {
+    const relabel = this._form && this._hass && hass && this._hass.language !== hass.language;
+    this._hass = hass;
+    if (this._form) { this._form.hass = hass; if (relabel) this._form.schema = this._schema(); }
+  }
+  get _lang() { return ((this._hass && this._hass.language) || "de").slice(0, 2); }
+  get _t() { return TEXTS[this._lang] || TEXTS.en; }
 
   // Einfach: nur das Wichtigste. Erweitert: alle Abschnitte. Merkt sich die Wahl im Browser.
   get _advanced() { try { return localStorage.getItem("smartlists-editor-advanced") === "1"; } catch (e) { return false; } }
   set _advanced(v) { try { localStorage.setItem("smartlists-editor-advanced", v ? "1" : "0"); } catch (e) { /* */ } }
 
   _schema() {
+    const t = this._t;
     const b = (name) => ({ name, selector: { boolean: {} } });
-    const section = (title, icon, schema) => ({ type: "expandable", name: "", flatten: true, title, icon, schema });
+    const section = (key, icon, schema) => ({ type: "expandable", name: "", flatten: true, title: t["e_sec_" + key], icon, schema });
     const sel = (name, options) => ({ name, selector: { select: { mode: "dropdown", options: options.map(([value, label]) => ({ value, label })) } } });
     const basic = [
-      sel("preset", [["", "— Vorlage wählen (setzt mehrere Optionen) —"], ...Object.entries(PRESETS).map(([k, v]) => [k, v.label])]),
+      sel("preset", [["", t.e_preset_pick], ...Object.keys(PRESETS).map((k) => [k, t["e_pre_" + k]])]),
       { name: "entity", selector: { entity: { domain: "todo" } } },
       { name: "title", selector: { text: {} } },
-      sel("view", [["list", "Liste"], ["tiles", "Kacheln (z. B. Küchen-Tablet)"], ["mini", "Mini-Kachel (Zusammenfassung, aufklappbar)"]]),
-      sel("sort", [["category", "Nach Kategorie"], ["alpha", "A–Z"], ["added", "Reihenfolge des Hinzufügens"], ["list", "Nach Quell-Liste (kombiniert)"]]),
+      sel("view", [["list", t.e_view_list], ["tiles", t.e_view_tiles], ["mini", t.e_view_mini]]),
+      sel("sort", [["category", t.e_sort_category], ["alpha", t.sort_alpha], ["added", t.e_sort_added], ["list", t.e_sort_list]]),
       b("advanced"),
     ];
     if (!this._advanced) return basic;
     return [
       ...basic,
-      section("Mehrere Listen in einer Karte", "mdi:view-column-outline", [
+      section("multi", "mdi:view-column-outline", [
         { name: "entities", selector: { entity: { domain: "todo", multiple: true } } },
-        sel("layout", [["tabs", "Reiter"], ["columns", "Nebeneinander"], ["stack", "Untereinander"]]),
+        sel("layout", [["tabs", t.e_layout_tabs], ["columns", t.e_layout_columns], ["stack", t.e_layout_stack]]),
       ]),
-      section("Filter", "mdi:filter-outline", [
+      section("filter", "mdi:filter-outline", [
         { name: "filter_store", selector: { text: {} } },
         { name: "filter_person", selector: { text: {} } },
         { name: "filter_tag", selector: { text: {} } },
-        { name: "filter_category", selector: { select: { multiple: true, mode: "dropdown", options: CATEGORY_IDS.map(([value, label]) => ({ value, label })) } } },
+        { name: "filter_category", selector: { select: { multiple: true, mode: "dropdown", options: categoryOptions(this._lang).map(([value, label]) => ({ value, label })) } } },
         b("filter_offers"), b("filter_tags_new_items"), b("show_filter_chips"),
       ]),
-      section("Aussehen", "mdi:palette-outline", [
-        sel("density", [["compact", "Kompakt"], ["normal", "Normal"], ["comfortable", "Groß (Touch)"]]),
+      section("look", "mdi:palette-outline", [
+        sel("density", [["compact", t.e_density_compact], ["normal", t.e_density_normal], ["comfortable", t.e_density_comfortable]]),
         { name: "font_scale", selector: { number: { min: 0.8, max: 1.6, step: 0.05, mode: "slider" } } },
         { name: "radius", selector: { number: { min: 0, max: 32, step: 1, mode: "box", unit_of_measurement: "px" } } },
         { name: "accent_color", selector: { color_rgb: {} } },
         { name: "max_height", selector: { number: { min: 150, max: 2000, step: 50, mode: "box", unit_of_measurement: "px" } } },
       ]),
-      section("Kopfzeile", "mdi:page-layout-header",
+      section("header", "mdi:page-layout-header",
         [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-      section("Eingabe", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
-      section("Liste", "mdi:format-list-bulleted",
+      section("input", "mdi:plus-box-outline", [b("show_add"), b("show_frequent")]),
+      section("list", "mdi:format-list-bulleted",
         [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
-      section("Erledigte", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
-      section("Einkaufsmodus", "mdi:cart-outline", [b("start_shopping")]),
+      section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),
+      section("shop", "mdi:cart-outline", [b("start_shopping")]),
     ];
   }
 
   _build() {
-    const LABELS = {
-      preset: "Vorlage", entity: "Liste", entities: "Listen (statt „Liste“ oben)", layout: "Anordnung", title: "Titel (leer = Name der Liste)",
-      view: "Ansicht", sort: "Standard-Sortierung", advanced: "Erweiterte Optionen anzeigen",
-      filter_store: "Nur Markt (z. B. REWE; mehrere mit Komma)", filter_person: "Nur Person (z. B. Anna)", filter_tag: "Nur Schlagwort (z. B. bio)",
-      filter_category: "Nur Kategorien", filter_offers: "Nur Angebote", filter_tags_new_items: "Neue Artikel bekommen den Filter-Tag (@REWE …)",
-      show_filter_chips: "Filter-Leiste (Märkte, Personen, Angebote antippen)",
-      density: "Zeilenhöhe", font_scale: "Schriftgröße", radius: "Eckenradius", accent_color: "Akzentfarbe (leer = Theme)",
-      show_header: "Kopfzeile anzeigen", show_count: "Anzahl offen / Treffer", show_search: "Suche (Lupe)",
-      show_sort: "Sortier-Auswahl", show_shopping: "Einkaufsmodus-Knopf", show_undo: "Rückgängig (↶)",
-      show_import: "Import-Knopf", show_settings: "Zahnrad (persönliche Einstellungen)",
-      show_add: "Eingabefeld zum Hinzufügen", show_frequent: "„Häufig gekauft“",
-      drag_drop: "Ziehen & Ablegen (Maus): in andere Liste verschieben, Reihenfolge ändern", show_stepper: "Mengen-Stepper (− +)", show_offer: "Angebote aus der App (Markt, Preis, gültig bis)",
-      show_tags: "Badges (@Markt, *Person, #Schlagwort)", show_source: "Herkunft (Quell-Liste / Person)", show_note: "Notizen",
-      show_category_titles: "Kategorie-Überschriften", max_height: "Maximale Höhe der Liste (leer = unbegrenzt)",
-      show_completed: "Erledigte anzeigen", collapse_completed: "Erledigte anfangs zugeklappt", start_shopping: "Im Einkaufsmodus starten",
-    };
-    const HELP = {
-      preset: "Setzt passende Optionen auf einmal – danach ist alles einzeln änderbar.",
-      entities: "Mehrere Listen: als Reiter, nebeneinander oder untereinander. Alle Optionen gelten für jede Liste.",
-      filter_tags_new_items: "Sonst wären neue Artikel in einer gefilterten Karte gleich wieder unsichtbar.",
-      show_settings: "Geste, Menü und Einkaufsmodus stellt jeder Benutzer für sich im Zahnrad ein.",
-      show_category_titles: "Aus: nach Kategorie sortiert, aber als eine Liste mit Kategorie-Symbol vorne.",
-      start_shopping: "Praktisch für ein Tablet im Flur oder ein Dashboard nur fürs Einkaufen.",
-    };
     if (!this._form) {
       this._form = document.createElement("ha-form");
-      this._form.computeLabel = (sch) => LABELS[sch.name] || sch.name;
-      this._form.computeHelper = (sch) => HELP[sch.name];
+      // Texte in TEXTS (l_… = Beschriftung, hh_… = Hilfe), Sprache von HA
+      this._form.computeLabel = (sch) => this._t["l_" + sch.name] || sch.name;
+      this._form.computeHelper = (sch) => this._t["hh_" + sch.name];
       this._form.addEventListener("value-changed", (e) => {
         const cfg = { ...e.detail.value };
         if ("advanced" in cfg) {
@@ -2458,7 +2980,7 @@ if (_slResult !== "vorhanden" || !(window.customCards || []).some((c) => c.type 
     window.customCards.push({
       type: "smartlists-card",
       name: "SmartLists",
-      description: "Einkaufsliste mit Kategorien, Vorschlägen, Mengen, Markt-Badges (@REWE) und Berechtigungen.",
+      description: (TEXTS[String((document.documentElement && document.documentElement.lang) || navigator.language || "en").slice(0, 2)] || TEXTS.en).card_desc,
       preview: false,
     });
   }

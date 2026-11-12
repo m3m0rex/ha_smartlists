@@ -51,7 +51,8 @@ the next purchase cycle. Action `smartlists.add_due_items` does the same on dema
 ## Assist (voice)
 
 *Configure → Voice & automations*: choose the **default list for Assist** and tick **Install Assist
-sentences** (copies German and English sentences to `config/custom_sentences/` and reloads Assist).
+sentences** (copies the sentences for German, English, French, Spanish, Italian and Polish to
+`config/custom_sentences/` and reloads Assist). Assist answers in the language of the conversation.
 
 | German | English |
 |---|---|
@@ -59,6 +60,11 @@ sentences** (copies German and English sentences to `config/custom_sentences/` a
 | „Wir brauchen Milch“ | "We need milk" |
 | „Was steht auf der Einkaufsliste?“ | "What's on the shopping list?" |
 | „Was muss ich bei REWE kaufen?“ | "What do I need at REWE?" |
+
+French: « Ajoute du lait à la liste de courses », « Qu'est-ce qu'il y a sur la liste de courses ? » ·
+Spanish: «Añade leche a la lista de la compra», «¿Qué hay en la lista de la compra?» ·
+Italian: «Aggiungi latte alla lista della spesa», «Cosa c'è nella lista della spesa?» ·
+Polish: „Dodaj mleko do listy zakupów”, „Co jest na liście zakupów?”
 
 Quantity, unit (usual unit if only a number is said), store and category are recognised like in the
 card. Re-install the sentences after an update to get new ones.

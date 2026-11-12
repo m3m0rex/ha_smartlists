@@ -1,4 +1,4 @@
-"""Erzeugt custom_components/smartlists/categories.json aus dem Kategorie-Paket der App.
+"""Erzeugt custom_components/smartlists/packs/de.json (eingebautes deutsches Keyword-Pack) aus dem Paket der App.
 
 Damit App und Integration dieselben Stichwörter nutzen. Aufruf im Repo-Ordner:
     python scripts/build_categories.py [Pfad/zu/category_pack_v2.json]
@@ -60,8 +60,10 @@ def main(src: Path, dst: Path) -> None:
     if unknown:
         sys.exit(f"Unbekannte Kategorien im Paket: {sorted(unknown)}")
     out = {
+        "name": "Deutsch – HA SmartLists App",
+        "language": "de",
+        "version": pack.get("version", 2),
         "source": f"HA SmartLists Category Pack v{pack.get('version', '?')}",
-        "categories": [{"id": c, "emoji": e, "name": n} for c, e, n, _ in CATEGORIES],
         "terms": dict(sorted(terms.items())),
         "products": sorted(products, key=lambda p: p[0].casefold()),
     }
@@ -78,4 +80,4 @@ if __name__ == "__main__":
     )
     if not source.exists():
         sys.exit(f"Kategorie-Paket nicht gefunden: {source}\nPfad als Argument angeben.")
-    main(source, here / "custom_components/smartlists/categories.json")
+    main(source, here / "custom_components/smartlists/packs/de.json")

@@ -178,7 +178,7 @@
         "data_description": {
           "voice_default_list": "Used when a sentence names no list (“Put milk on the list”).",
           "auto_due_list": "Hourly: items you buy regularly whose usual interval has passed. Empty = off.",
-          "install_sentences": "Copies the sentences to config/custom_sentences (German, English) and reloads Assist."
+          "install_sentences": "Copies the sentences to config/custom_sentences (German, English, French, Spanish, Italian, Polish) and reloads Assist."
         }
       }
     },

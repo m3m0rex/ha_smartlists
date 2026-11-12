@@ -413,9 +413,9 @@ class Learning:
         self._changed()
         return self.user_settings(user_id)
 
-    def config(self) -> dict[str, Any]:
+    def config(self, language: str | None = None) -> dict[str, Any]:
         return {
-            "categories": self.categories.as_list(),
+            "categories": self.categories.as_list(language),
             "tag_rules": self.tag_rules,
             "tag_kinds": list(itemtext.TAG_KINDS),
             "allowed_prefixes": itemtext.ALLOWED_PREFIXES,

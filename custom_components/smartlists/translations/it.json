@@ -1,0 +1,302 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura SmartLists",
+        "description": "Trovate {count} liste di cose da fare. Scegline due o più per creare subito una lista combinata – oppure lascia vuoto e usa più tardi “Aggiungi lista combinata” nell'integrazione. La scheda “SmartLists” e la pagina nella barra laterale sono subito disponibili.",
+        "data": {
+          "combine": "Combina queste liste (facoltativo)",
+          "name": "Nome della lista combinata",
+          "default_add_entity": "I nuovi articoli vanno in"
+        },
+        "data_description": {
+          "combine": "Ad es. le liste della spesa di più persone."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "SmartLists è già configurato. Aggiungi le liste combinate direttamente nell'integrazione."
+    },
+    "error": {
+      "combine_two": "Scegli almeno due liste – oppure nessuna."
+    }
+  },
+  "config_subentries": {
+    "combined_list": {
+      "initiate_flow": {
+        "user": "Aggiungi lista combinata"
+      },
+      "entry_type": "Lista combinata",
+      "step": {
+        "user": {
+          "title": "Crea lista combinata",
+          "description": "Unisce più liste di cose da fare in un'unica lista condivisa.",
+          "data": {
+            "name": "Nome della lista combinata",
+            "sources": "Liste da combinare",
+            "default_add_entity": "Lista predefinita per i nuovi articoli",
+            "mode": "La spunta ha effetto su",
+            "source_label": "Mostra la lista di origine nel nome dell'articolo",
+            "sort": "Ordinamento",
+            "foreign_entities": "Liste altrui (solo spuntare, non rinominare/eliminare)",
+            "source_as_person": "Mostra la lista di origine come persona"
+          },
+          "data_description": {
+            "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
+            "default_add_entity": "I nuovi articoli aggiunti alla lista combinata finiscono qui. Vuoto = aggiunta disattivata.",
+            "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
+            "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
+            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse."
+          }
+        },
+        "reconfigure": {
+          "title": "Modifica lista combinata",
+          "data": {
+            "name": "Nome della lista combinata",
+            "sources": "Liste da combinare",
+            "default_add_entity": "Lista predefinita per i nuovi articoli",
+            "mode": "La spunta ha effetto su",
+            "source_label": "Mostra la lista di origine nel nome dell'articolo",
+            "sort": "Ordinamento",
+            "foreign_entities": "Liste altrui (solo spuntare, non rinominare/eliminare)",
+            "source_as_person": "Mostra la lista di origine come persona"
+          },
+          "data_description": {
+            "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
+            "default_add_entity": "I nuovi articoli aggiunti alla lista combinata finiscono qui. Vuoto = aggiunta disattivata.",
+            "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
+            "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
+            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Seleziona almeno una lista.",
+        "nested_combined_list": "Le liste combinate non possono essere annidate.",
+        "default_not_in_sources": "La lista predefinita deve essere una delle liste selezionate.",
+        "foreign_not_in_sources": "Le liste altrui devono essere selezionate anche sopra.",
+        "default_is_foreign": "Una lista altrui non può essere la lista predefinita."
+      },
+      "abort": {
+        "reconfigure_successful": "Salvato."
+      }
+    },
+    "own_list": {
+      "initiate_flow": {
+        "user": "Aggiungi lista propria"
+      },
+      "entry_type": "Lista propria",
+      "step": {
+        "user": {
+          "title": "Lista propria",
+          "description": "Una lista salvata direttamente da SmartLists. Il proprietario e gli amministratori possono fare tutto; modificare = aggiungere/cambiare/eliminare articoli, spuntare = solo spuntare, visualizzare = solo vedere. Nota: la vista integrata delle cose da fare di Home Assistant mostra ogni lista a tutti – nella scheda, nella pagina e nell'app SmartLists viene nascosta.",
+          "data": {
+            "name": "Nome",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo visualizzare"
+          }
+        },
+        "reconfigure": {
+          "title": "Modifica lista propria",
+          "description": "Una lista salvata direttamente da SmartLists. Il proprietario e gli amministratori possono fare tutto; modificare = aggiungere/cambiare/eliminare articoli, spuntare = solo spuntare, visualizzare = solo vedere. Nota: la vista integrata delle cose da fare di Home Assistant mostra ogni lista a tutti – nella scheda, nella pagina e nell'app SmartLists viene nascosta.",
+          "data": {
+            "name": "Nome",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo visualizzare"
+          }
+        }
+      },
+      "abort": {
+        "reconfigure_successful": "Salvato."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SmartLists – impostazioni per tutti",
+        "description": "Ogni utente può impostare le proprie differenze personali tramite l'icona a ingranaggio nella scheda.",
+        "menu_options": {
+          "naming": "Convenzione dei nomi (@negozio, *persona, #tag)",
+          "controls": "Comandi (predefiniti per tutti)",
+          "learned": "Categorie memorizzate e cronologia",
+          "devices": "Dispositivi connessi (app)",
+          "automation": "Voce e automazioni (Assist, articoli in scadenza)"
+        }
+      },
+      "naming": {
+        "title": "Convenzione dei nomi",
+        "description": "Un carattere davanti a una parola la trasforma in un badge, ad es. “Latte @REWE” → badge negozio REWE. I caratteri restano nel nome dell'articolo. “—” disattiva un tipo.",
+        "data": {
+          "prefix_store": "Negozio",
+          "prefix_person": "Persona",
+          "prefix_tag": "Tag"
+        }
+      },
+      "controls": {
+        "title": "Comandi – predefiniti per tutti",
+        "description": "Vale per ogni utente che non ha impostato i propri nella scheda.",
+        "data": {
+          "press_gesture": "Gesto per il menu dell'articolo",
+          "press_target": "Dove funziona il gesto",
+          "press_result": "Cosa fa il gesto",
+          "menu_actions": "Voci del menu",
+          "row_buttons": "Mostra matita e cestino in ogni riga",
+          "shop_hide_checked": "Modalità spesa: nascondi gli articoli spuntati",
+          "shop_keep_awake": "Modalità spesa: mantieni lo schermo acceso",
+          "shop_large": "Modalità spesa: righe grandi",
+          "shop_tap_row": "Modalità spesa: tocca l'intera riga per spuntare"
+        }
+      },
+      "learned": {
+        "title": "Categorie memorizzate e cronologia",
+        "description": "{count} assegnazioni memorizzate, {history} articoli nella cronologia. Le assegnazioni selezionate verranno dimenticate.",
+        "data": {
+          "forget": "Dimentica",
+          "clear_history": "Cancella cronologia (suggerimenti, acquistati spesso)"
+        }
+      },
+      "devices": {
+        "title": "Dispositivi connessi",
+        "description": "{count} telefoni con l'app HA SmartLists:\n\n{devices}\n\n⚠️ = non sincronizzato da più di 7 giorni. I dispositivi selezionati vengono rimossi dall'elenco; un telefono che si riconnette ricompare. Per revocare l'accesso, elimina il suo token in Profilo → Token di accesso a lunga vita.",
+        "data": {
+          "remove": "Rimuovi dall'elenco"
+        }
+      },
+      "automation": {
+        "title": "Voce e automazioni",
+        "description": "In scadenza secondo il tuo ritmo: {due}\\n\\nI blueprint pronti per “Sono al negozio” e per le notifiche di posizione si trovano nel repository (wiki → Automations).",
+        "data": {
+          "voice_default_list": "Lista predefinita per Assist",
+          "auto_due_list": "Aggiungi automaticamente gli articoli in scadenza a questa lista",
+          "install_sentences": "Installa/aggiorna le frasi di Assist"
+        },
+        "data_description": {
+          "voice_default_list": "Usata quando una frase non nomina alcuna lista (“Metti il latte nella lista”).",
+          "auto_due_list": "Ogni ora: articoli che compri regolarmente il cui intervallo abituale è trascorso. Vuoto = disattivato.",
+          "install_sentences": "Copia le frasi in config/custom_sentences (tedesco, inglese, francese, spagnolo, italiano, polacco) e ricarica Assist."
+        }
+      }
+    },
+    "error": {
+      "duplicate_prefix": "Ogni carattere può essere usato per un solo tipo."
+    }
+  },
+  "selector": {
+    "mode": {
+      "options": {
+        "bidirectional": "Lista di origine (bidirezionale, predefinito)",
+        "local": "Solo questa lista combinata"
+      }
+    },
+    "source_label": {
+      "options": {
+        "suffix": "Suffisso (Latte · Anna)",
+        "prefix": "Prefisso ([Anna] Latte)",
+        "none": "Nascondi"
+      }
+    },
+    "sort": {
+      "options": {
+        "source": "Per lista (ordine delle origini)",
+        "status": "Prima quelli aperti, poi in ordine alfabetico",
+        "alphabetical": "Alfabetico",
+        "category": "Per categoria di spesa (frutta e verdura, refrigerati, …)"
+      }
+    },
+    "press_gesture": {
+      "options": {
+        "long": "Pressione prolungata",
+        "double": "Doppio clic",
+        "right": "Clic destro",
+        "off": "Disattivato"
+      }
+    },
+    "press_target": {
+      "options": {
+        "row": "Intera riga",
+        "name": "Solo il nome"
+      }
+    },
+    "press_result": {
+      "options": {
+        "menu": "Apri menu",
+        "edit": "Modifica direttamente",
+        "delete": "Elimina (con conferma)"
+      }
+    },
+    "menu_actions": {
+      "options": {
+        "rename": "Rinomina / modifica",
+        "move": "Sposta",
+        "copy": "Copia",
+        "category": "Cambia categoria",
+        "delete": "Elimina"
+      }
+    }
+  },
+  "exceptions": {
+    "item_not_found": {
+      "message": "Articolo {uid} non trovato – la lista viene ricaricata."
+    },
+    "no_default_list": {
+      "message": "Non è configurata alcuna lista predefinita per i nuovi articoli."
+    },
+    "foreign_list": {
+      "message": "Gli articoli delle liste altrui possono solo essere spuntati."
+    },
+    "not_permitted": {
+      "message": "Non hai il permesso di farlo su “{list}”."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_seen": {
+        "name": "Ultima connessione"
+      },
+      "app_version": {
+        "name": "Versione app"
+      }
+    }
+  },
+  "services": {
+    "get_items": {
+      "name": "Ottieni articoli",
+      "description": "Articoli aperti di una o di tutte le liste, filtrati per negozio, persona, tag o categoria (con risposta, ad es. per le notifiche).",
+      "fields": {
+        "entity_id": {
+          "name": "Liste",
+          "description": "Vuoto = tutte le liste di cose da fare."
+        },
+        "store": {
+          "name": "Negozio",
+          "description": "Solo articoli con questo negozio (@REWE)."
+        },
+        "person": {
+          "name": "Persona",
+          "description": "Solo articoli per questa persona (*Anna)."
+        },
+        "tag": {
+          "name": "Tag",
+          "description": "Solo articoli con questo tag (#bio)."
+        },
+        "category": {
+          "name": "Categoria",
+          "description": "Solo questa categoria di spesa."
+        },
+        "include_completed": {
+          "name": "Includi completati",
+          "description": "Restituisci anche gli articoli spuntati."
+        }
+      }
+    },
+    "add_due_items": {
+      "name": "Aggiungi articoli in scadenza",
+      "description": "Aggiunge ora gli articoli in scadenza alla lista scelta in “Voce e automazioni”."
+    }
+  }
+}

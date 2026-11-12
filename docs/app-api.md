@@ -193,7 +193,18 @@ Deletions are synced too: words forgotten in the app are sent via `smartlists/fo
 in `smartlists/learned` at the last sync and are missing now were forgotten in HA and are removed in
 the app.
 
-## 8. Controls per user
+## 8. App backups
+
+| Command | Fields | Purpose |
+|---|---|---|
+| `smartlists/app_backup_save` | `device_id, profile_name?, data` | store the app's backup (JSON text, max 5 MB); one per installation |
+| `smartlists/app_backups` | – | list `{device_id, profile_name, updated_at, user_name, size}` (own; admins: all) |
+| `smartlists/app_backup_get` | `device_id` | the backup including `data` |
+| `smartlists/app_backup_delete` | `device_id` | delete a backup |
+
+Backups are kept in `.storage/smartlists.app_backups` and survive Home Assistant restarts.
+
+## 9. Controls per user
 
 | Command | Fields | Purpose |
 |---|---|---|

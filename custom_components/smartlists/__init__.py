@@ -28,6 +28,7 @@ from homeassistant.loader import async_get_integration
 
 from . import automation, websocket
 from .const import DOMAIN, LEGACY_UNIQUE_ID, STORAGE_VERSION, SUBENTRY_COMBINED
+from .app_backups import async_get_app_backups
 from .devices import async_get_devices
 from .learning import async_get_learning
 
@@ -43,6 +44,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Einmal pro HA-Start: Gedächtnis laden, WebSocket-Befehle und Karte bereitstellen."""
     await async_get_learning(hass)
     await async_get_devices(hass)
+    await async_get_app_backups(hass)
     websocket.async_register(hass)
     automation.async_setup_services(hass)
     automation.async_setup_intents(hass)

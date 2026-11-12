@@ -32,7 +32,8 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_user_settings, ws_set_user_settings,
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
-                    ws_install_sentences, ws_shopping, ws_due, ws_export, ws_import, ws_automation, ws_set_automation,
+                    ws_install_sentences, ws_shopping, ws_due,
+                    ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
 
@@ -181,7 +182,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "version": str(integration.version),
             "api_version": API_VERSION,
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
-                         "shopping_event", "due_items", "export", "own_lists"],
+                         "shopping_event", "due_items", "export", "own_lists", "app_backups"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -497,3 +498,66 @@ async def ws_install_sentences(hass: HomeAssistant, connection: websocket_api.Ac
     from .automation import async_install_sentences
 
     connection.send_result(msg["id"], {"languages": await async_install_sentences(hass)})
+
+
+# ----------------------------------------------------------------------
+# App-Backups (dauerhaft in HA, siehe app_backups.py)
+# ----------------------------------------------------------------------
+def _backups(hass: HomeAssistant):
+    return hass.data[DOMAIN]["app_backups"]
+
+
+def _may_see(hass: HomeAssistant, connection: websocket_api.ActiveConnection, device_id: str) -> bool:
+    return device_id in _backups(hass).visible(connection.user.id, connection.user.is_admin)
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/app_backup_save",
+        vol.Required("device_id"): str,
+        vol.Optional("profile_name", default=""): str,
+        vol.Required("data"): str,
+    }
+)
+@callback
+def ws_app_backup_save(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    backups = _backups(hass)
+    existing = backups.backups.get(msg["device_id"].strip()[:64])
+    # fremdes Backup (anderer Benutzer) nicht überschreiben – außer als Admin
+    if existing and existing.get("user_id") != connection.user.id and not connection.user.is_admin:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Backup gehört einem anderen Benutzer.")
+        return
+    try:
+        info = backups.save(msg["device_id"], msg["profile_name"], msg["data"], connection.user.id, connection.user.name or "")
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_backup", str(err))
+        return
+    connection.send_result(msg["id"], {"backup": info})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/app_backups"})
+@callback
+def ws_app_backups(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    backups = _backups(hass)
+    ids = backups.visible(connection.user.id, connection.user.is_admin)
+    connection.send_result(msg["id"], {"backups": sorted((backups.describe(i) for i in ids), key=lambda b: -b["updated_at"])})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/app_backup_get", vol.Required("device_id"): str})
+@callback
+def ws_app_backup_get(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if not _may_see(hass, connection, msg["device_id"]):
+        connection.send_error(msg["id"], "not_found", "Backup nicht gefunden.")
+        return
+    b = _backups(hass).backups[msg["device_id"]]
+    connection.send_result(msg["id"], {**_backups(hass).describe(msg["device_id"]), "data": b["data"]})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/app_backup_delete", vol.Required("device_id"): str})
+@callback
+def ws_app_backup_delete(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if not _may_see(hass, connection, msg["device_id"]):
+        connection.send_error(msg["id"], "not_found", "Backup nicht gefunden.")
+        return
+    _backups(hass).delete(msg["device_id"])
+    connection.send_result(msg["id"], {})

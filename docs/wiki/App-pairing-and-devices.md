@@ -11,6 +11,15 @@ When paired, the app:
 - syncs remembered categories in both directions, including deletions,
 - registers itself as a **device**.
 
+## Backups
+
+When paired, *App → Settings → Backup → Back up to Home Assistant* stores the **complete** app state –
+all lists and every setting (theme, colours, font size, categories, offers, sort orders, reminders,
+notes encryption, local account) – permanently in the integration. Restoring brings everything back
+and restarts the app. Not included on purpose: the Home Assistant token and the WebDAV password (the
+current ones are kept) and device-specific data (backup folder permission). Encrypted notes stay
+encrypted with your own password.
+
 ## Connected devices
 
 *Configure → Connected devices* lists every phone with user, model, app and Android version and last

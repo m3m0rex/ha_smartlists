@@ -217,7 +217,7 @@
           "name": "Nom (facultatif)",
           "json": "Pack (JSON)"
         },
-        "description": "Format : {\"terms\": {\"lait d'avoine\": \"kuehlung\"}} – ou le category_pack_v2.json de l'app. Le même nom remplace un pack personnel existant."
+        "description": "Format : {example} – ou le category_pack_v2.json de l'app. Le même nom remplace un pack personnel existant."
       },
       "pack_edit": {
         "title": "Modifier {name}",

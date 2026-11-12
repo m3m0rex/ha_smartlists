@@ -371,7 +371,9 @@ class SmartListsOptionsFlow(OptionsFlow):
                 return self._done()
             except (ValueError, TypeError):
                 errors["json"] = "pack_invalid"
-        return self.async_show_form(step_id="pack_import", errors=errors, data_schema=vol.Schema({
+        return self.async_show_form(step_id="pack_import", errors=errors,
+                                    description_placeholders={"example": '{"terms": {"oat milk": "kuehlung"}}'},
+                                    data_schema=vol.Schema({
             vol.Optional("name", default=""): selector.TextSelector(),
             vol.Required("json"): selector.TextSelector(selector.TextSelectorConfig(multiline=True)),
         }))

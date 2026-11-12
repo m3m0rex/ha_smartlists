@@ -217,7 +217,7 @@
           "name": "Name (optional)",
           "json": "Pack (JSON)"
         },
-        "description": "Format: {\"terms\": {\"hafermilch\": \"kuehlung\"}} – oder die category_pack_v2.json der App. Gleicher Name ersetzt ein vorhandenes eigenes Pack."
+        "description": "Format: {example} – oder die category_pack_v2.json der App. Gleicher Name ersetzt ein vorhandenes eigenes Pack."
       },
       "pack_edit": {
         "title": "{name} bearbeiten",

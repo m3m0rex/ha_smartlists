@@ -217,7 +217,7 @@
           "name": "Name (optional)",
           "json": "Pack (JSON)"
         },
-        "description": "Format: {\"terms\": {\"oat milk\": \"kuehlung\"}} – or the app's category_pack_v2.json. The same name replaces an existing custom pack."
+        "description": "Format: {example} – or the app's category_pack_v2.json. The same name replaces an existing custom pack."
       },
       "pack_edit": {
         "title": "Edit {name}",

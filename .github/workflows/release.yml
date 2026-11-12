@@ -6,6 +6,15 @@ on:
   push:
     tags:
       - "v*"
+  # Fehlendes/als Entwurf hängendes Release nachholen: Actions → Release → Run workflow → Tag eingeben
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag, z. B. v2.6.2"
+        required: true
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
 
 permissions:
   contents: write
@@ -16,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
       - uses: home-assistant/actions/hassfest@master
 
   hacs:
@@ -32,10 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
 
       - name: Version prüfen (Tag = manifest.json)
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
+          TAG="${TAG#v}"
           MANIFEST=$(python3 -c "import json;print(json.load(open('custom_components/smartlists/manifest.json'))['version'])")
           if [ "$TAG" != "$MANIFEST" ]; then
             echo "::error::Tag v$TAG passt nicht zur Version $MANIFEST in manifest.json"
@@ -44,7 +58,7 @@ jobs:
 
       - name: Text aus CHANGELOG.md
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${TAG#v}"
           # Abschnitt "## [VERSION]" bis zum nächsten "## [" (ohne die Überschrift)
           awk -v v="$VERSION" '
             index($0, "## [" v "]") == 1 { on = 1; next }
@@ -70,8 +84,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release edit "$GITHUB_REF_NAME" --title "${GITHUB_REF_NAME#v}" --notes-file notes.md
+          # „latest“ nur für die höchste Version (beim Nachholen älterer Releases nicht umstellen)
+          HIGHEST=$(git tag -l 'v*' --sort=-v:refname | head -1)
+          LATEST=$([ "$TAG" = "$HIGHEST" ] && echo true || echo false)
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # nach dem Neu-Pushen eines Tags macht GitHub das Release zum Entwurf → wieder veröffentlichen
+            gh release edit "$TAG" --title "${TAG#v}" --notes-file notes.md --draft=false --latest=$LATEST
           else
-            gh release create "$GITHUB_REF_NAME" --title "${GITHUB_REF_NAME#v}" --notes-file notes.md --verify-tag
+            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --verify-tag --latest=$LATEST
           fi

@@ -192,6 +192,17 @@ Every change is enforced by the list entity for the requesting user – also thr
 | `smartlists/pack_set_active` | `active[]` | active pack ids in order of precedence (admin) |
 | `smartlists/pack_delete` | `pack_id` | delete a custom pack (admin) |
 | `smartlists/pack_export` | `pack_id` | download a pack in the integration format |
+| `smartlists/pack_create` | `name, language?` | new empty custom pack (admin) |
+| `smartlists/pack_terms` | `pack_id, query?, offset?, limit?` | keywords of a pack (paged) |
+| `smartlists/pack_update` | `pack_id, terms{term: category \| null}, name?` | add/change/delete keywords (admin); built-in packs via add-on pack |
+| `smartlists/stores` | – | stores with linked zone |
+| `smartlists/set_store_zone` | `store, zone \| null` | link a store to `zone.*` (admin) |
+| `smartlists/notes` | – | app notes: `mode` (`hidden`/`section`), `scope` (`owner`/`household`), lists with owner |
+| `smartlists/set_notes` | `mode?, scope?, owners?{entity: user_id \| null}` | (admin) |
+
+`smartlists/register_device` accepts `notes_lists: [entity ids]` (only if `info.features` contains
+`notes`): the note lists of this app installation – they are assigned to the logged-in account if they
+have no owner yet. `smartlists/lists` and `get_list` return `type: "notes"` for them.
 
 Category **ids** never change and are the same in every language; only the labels follow `language`.
 

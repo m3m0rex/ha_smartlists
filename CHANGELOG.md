@@ -3,6 +3,27 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] – 2026-11-12
+
+### Added
+
+- **Stores & zones**: link stores (`@REWE`, `@Lidl`, …) to Home Assistant zones – or create a zone right
+  from SmartLists at the current location (⚙ → Household → Stores & zones). In **shopping mode** a store bar
+  (All | REWE · 4 | Lidl · 2) shows only the items of one store, and the store whose zone you are in is
+  selected automatically. Optional: also show items without a store.
+- **Keyword pack editor**: search, add, change and delete keywords of any pack in the card; create new
+  packs (e.g. for another language). Built-in packs are extended through an add-on pack "<name> +" so
+  updates never overwrite your changes. Downloading a built-in pack includes your additions.
+- **App notes hidden**: the note lists of the HA SmartLists app (`todo.ha_smartlists_note…`) no longer
+  appear as shopping lists. Admins can show them as a separate 📝 section on the sidebar page. Notes are
+  bound to an account: by default only the owner sees them (reported by the app, changeable by admins),
+  optionally the whole household. They are never used by Assist, `get_items` or due items, and are not
+  offered when creating combined lists.
+- **Sidebar page**: any number of lists side by side (wrapping into rows, up to 4 columns in wide layout)
+  and a custom **order** – ◀ ▶ or drag the chips with the mouse; remembered per browser.
+- WebSocket: `smartlists/pack_create`, `pack_terms`, `pack_update`, `stores`, `set_store_zone`, `notes`,
+  `set_notes`; `register_device` accepts `notes_lists`.
+
 ## [2.3.1] – 2026-11-12
 
 ### Changed

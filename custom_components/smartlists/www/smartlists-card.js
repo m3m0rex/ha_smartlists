@@ -36,7 +36,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "2.3.1";
+const CARD_VERSION = "2.4.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -94,7 +94,12 @@ const PACK_TEMPLATE = {
 const UI_DEFAULTS = {
   press_gesture: "long", press_target: "row", press_result: "menu", menu_actions: MENU_ACTIONS, row_buttons: true,
   shop_hide_checked: true, shop_keep_awake: true, shop_large: true, shop_tap_row: true,
+  shop_auto_store: true, shop_untagged: false,
 };
+// Notizlisten der App: keine Kategorien/Einkaufsfunktionen (nur wenn in der Karte nicht anders eingestellt)
+const NOTES_DEFAULTS = { sort: "added", show_category_titles: false, show_frequent: false, show_shopping: false, show_stepper: false, show_import: false, show_filter_chips: false };
+// Erkennung wie notes.py (für Auswahlfelder, ohne Rückfrage bei der Integration)
+const isNotesEntity = (id, name) => /^todo\.(ha_smartlists_note|notiz_)/i.test(id) || /^ha smartlists notes/i.test(String(name || "").trim());
 const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
@@ -124,7 +129,7 @@ const TEXTS = {
     role_all: "alle Rechte", admin_always: "Admin – darf immer alles", shop_large_help: "Leichter mit dem Daumen zu treffen",
     new_list_help: "Du bist Besitzer und kannst sie danach für andere freigeben.", new_list_placeholder: "z. B. Drogerie", create: "Anlegen",
     p_columns: "Mehrere Listen nebeneinander", p_wide: "Breite Ansicht", p_settings: "Einstellungen", p_back: "Zurück zu den Listen",
-    p_hint: "Bis zu 3 Listen antippen. Artikel mit der Maus in eine andere Liste ziehen = verschieben (Strg = kopieren).",
+    p_hint: "Listen antippen, um sie nebeneinander zu zeigen (mehr als 3 werden umgebrochen). Artikel mit der Maus in eine andere Liste ziehen = verschieben (Strg = kopieren).",
     p_empty: "Keine To-do-Listen gefunden. Lege unter Einstellungen → Geräte & Dienste → SmartLists eine Liste an – oder oben mit +.",
     owner: "Besitzer", shared: "geteilt", private: "privat", admin: "Admin", sharing: "Freigaben",
     sharing_help: "Wer diese Liste sehen und ändern darf. Admins dürfen immer alles. Die To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie nur in SmartLists (Karte, Seite, App).",
@@ -193,6 +198,23 @@ const TEXTS = {
     hh_show_settings: "Geste, Menü und Einkaufsmodus stellt jeder Benutzer für sich im Zahnrad ein.",
     hh_show_category_titles: "Aus: nach Kategorie sortiert, aber als eine Liste mit Kategorie-Symbol vorne.",
     hh_start_shopping: "Praktisch für ein Tablet im Flur oder ein Dashboard nur fürs Einkaufen.",
+    shop_auto_store: "Markt automatisch nach Zone wählen", shop_auto_store_help: "Bist du in der Zone eines Marktes (z. B. REWE), zeigt der Einkaufsmodus nur dessen Artikel.",
+    shop_untagged: "Artikel ohne Markt auch zeigen", shop_untagged_help: "Im Einkaufsmodus für einen Markt zusätzlich alles ohne @Markt.",
+    shop_store: "Markt", shop_all_stores: "Alle",
+    pack_edit: "Stichwörter bearbeiten", pack_new: "Neues Pack", pack_new_help: "Leeres Pack, z. B. für eine weitere Sprache oder eigene Begriffe. Es wird ganz oben aktiviert.", pack_new_placeholder: "z. B. Nederlands",
+    pack_empty: "Noch keine Stichwörter – oben hinzufügen.", pack_changed: "geändert", pack_revert: "Änderung zurücknehmen", pack_ignore: "Ignorieren (als Sonstiges)",
+    pack_more: "Mehr laden", pack_term_placeholder: "Stichwort (mehrere mit Komma)",
+    pack_builtin_edit_help: "Eingebautes Pack: Änderungen landen im Ergänzungs-Pack „+“ und bleiben bei Updates erhalten.", pack_edit_help: "Eigenes Pack: Änderungen gelten sofort.",
+    zone: "Zone", zone_new: "Neue Zone", zone_new_help: "Name der Zone. Position: aktueller Standort dieses Geräts (sonst Zuhause), Radius 100 m – feinjustieren unter Einstellungen → Bereiche & Zonen.",
+    zone_wait: "Zone angelegt – erscheint gleich, dann hier verknüpfen.", zone_here: "Standort dieses Geräts", zone_home: "Position von Zuhause – bitte anpassen",
+    zone_none: "keine Zone", zone_manage: "Zonen verwalten ↗", store_add: "Markt mit Zone", store_add_help: "Name des Marktes, wie in @REWE. Danach wird eine Zone dafür angelegt.",
+    stores: "Märkte & Zonen", stores_help: "Verknüpfe Märkte mit Zonen von Home Assistant. Im Einkaufsmodus siehst du dann automatisch nur die Artikel des Marktes, in dem du gerade bist.",
+    notes: "Notizen der App", notes_help: "Die HA-SmartLists-App speichert Notizen als eigene To-do-Liste. Sie sind keine Einkaufslisten und deshalb standardmäßig ausgeblendet.",
+    notes_show: "In SmartLists zeigen", notes_show_help: "Als eigener Bereich 📝 auf der Seite – nicht bei Assist, Diensten und kombinierten Listen.",
+    notes_scope: "Wer sieht Notizen", notes_scope_owner: "nur das eigene Konto", notes_scope_household: "der ganze Haushalt",
+    notes_lists: "Notizlisten und Besitzer", notes_none: "Keine Notizliste der App gefunden.", notes_no_owner: "unbekannt (nur Admins)",
+    p_order: "Reihenfolge ändern", p_order_hint: "◀ ▶ verschiebt eine Liste. Mit der Maus: Chip auf einen anderen ziehen. Die Reihenfolge gilt auch für die Spalten.",
+    p_left: "Nach links", p_right: "Nach rechts",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -220,7 +242,7 @@ const TEXTS = {
     role_all: "all rights", admin_always: "Admin – can always do everything", shop_large_help: "Easier to hit with your thumb",
     new_list_help: "You are the owner and can share it with others afterwards.", new_list_placeholder: "e.g. Drugstore", create: "Create",
     p_columns: "Several lists side by side", p_wide: "Wide layout", p_settings: "Settings", p_back: "Back to the lists",
-    p_hint: "Tap up to 3 lists. Drag items with the mouse into another list to move them (Ctrl = copy).",
+    p_hint: "Tap lists to show them side by side (more than 3 wrap into rows). Drag items with the mouse into another list to move them (Ctrl = copy).",
     p_empty: "No to-do lists found. Add one under Settings → Devices & services → SmartLists – or with + above.",
     owner: "owner", shared: "shared", private: "private", admin: "admin", sharing: "Sharing",
     sharing_help: "Who may see and change this list. Admins can always do everything. HA's to-do view shows every list to everyone – it is hidden only in SmartLists (card, page, app).",
@@ -289,6 +311,23 @@ const TEXTS = {
     hh_show_settings: "Gesture, menu and shopping mode are set by each user in the gear menu.",
     hh_show_category_titles: "Off: sorted by category, but as one list with the category icon in front.",
     hh_start_shopping: "Handy for a tablet in the hallway or a dashboard just for shopping.",
+    shop_auto_store: "Pick store by zone automatically", shop_auto_store_help: "When you are in a store's zone (e.g. REWE), shopping mode shows only its items.",
+    shop_untagged: "Also show items without a store", shop_untagged_help: "In shopping mode for one store, additionally everything without @store.",
+    shop_store: "Store", shop_all_stores: "All",
+    pack_edit: "Edit keywords", pack_new: "New pack", pack_new_help: "Empty pack, e.g. for another language or your own terms. It is activated at the top.", pack_new_placeholder: "e.g. Nederlands",
+    pack_empty: "No keywords yet – add some above.", pack_changed: "changed", pack_revert: "Revert change", pack_ignore: "Ignore (as Other)",
+    pack_more: "Load more", pack_term_placeholder: "Keyword (several with commas)",
+    pack_builtin_edit_help: "Built-in pack: changes go into the add-on pack “+” and survive updates.", pack_edit_help: "Custom pack: changes apply immediately.",
+    zone: "Zone", zone_new: "New zone", zone_new_help: "Name of the zone. Position: this device's current location (otherwise home), radius 100 m – fine-tune under Settings → Areas & zones.",
+    zone_wait: "Zone created – it appears in a moment, then link it here.", zone_here: "this device's location", zone_home: "home position – please adjust",
+    zone_none: "no zone", zone_manage: "Manage zones ↗", store_add: "Store with zone", store_add_help: "Name of the store, as in @REWE. A zone is created for it next.",
+    stores: "Stores & zones", stores_help: "Link stores to Home Assistant zones. In shopping mode you then automatically see only the items of the store you are in.",
+    notes: "App notes", notes_help: "The HA SmartLists app stores notes as a to-do list of its own. They are not shopping lists and are therefore hidden by default.",
+    notes_show: "Show in SmartLists", notes_show_help: "As a separate 📝 section on the page – not in Assist, actions or combined lists.",
+    notes_scope: "Who sees notes", notes_scope_owner: "own account only", notes_scope_household: "the whole household",
+    notes_lists: "Note lists and owners", notes_none: "No note list of the app found.", notes_no_owner: "unknown (admins only)",
+    p_order: "Change order", p_order_hint: "◀ ▶ moves a list. With the mouse: drag a chip onto another. The order also applies to the columns.",
+    p_left: "Move left", p_right: "Move right",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -316,7 +355,7 @@ const TEXTS = {
     role_all: "tous les droits", admin_always: "Admin – peut toujours tout faire", shop_large_help: "Plus facile à toucher avec le pouce",
     new_list_help: "Tu en es le propriétaire et peux la partager ensuite.", new_list_placeholder: "p. ex. Droguerie", create: "Créer",
     p_columns: "Plusieurs listes côte à côte", p_wide: "Affichage large", p_settings: "Paramètres", p_back: "Retour aux listes",
-    p_hint: "Touche jusqu'à 3 listes. Glisse un article à la souris vers une autre liste pour le déplacer (Ctrl = copier).",
+    p_hint: "Touche des listes pour les afficher côte à côte (au-delà de 3, elles passent à la ligne). Glisse un article à la souris vers une autre liste pour le déplacer (Ctrl = copier).",
     p_empty: "Aucune liste trouvée. Crée-en une sous Paramètres → Appareils et services → SmartLists – ou avec + en haut.",
     owner: "propriétaire", shared: "partagée", private: "privée", admin: "admin", sharing: "Partage",
     sharing_help: "Qui peut voir et modifier cette liste. Les admins peuvent toujours tout faire. La vue To-do de HA montre chaque liste à tout le monde – elle n'est masquée que dans SmartLists (carte, page, app).",
@@ -385,6 +424,23 @@ const TEXTS = {
     hh_show_settings: "Geste, menu et mode courses sont réglés par chaque utilisateur dans l'engrenage.",
     hh_show_category_titles: "Désactivé : trié par catégorie, mais en une seule liste avec l'icône de catégorie devant.",
     hh_start_shopping: "Pratique pour une tablette dans l'entrée ou un tableau de bord dédié aux courses.",
+    shop_auto_store: "Choisir le magasin selon la zone", shop_auto_store_help: "Quand tu es dans la zone d'un magasin (p. ex. Carrefour), le mode courses n'affiche que ses articles.",
+    shop_untagged: "Afficher aussi les articles sans magasin", shop_untagged_help: "En mode courses pour un magasin, aussi tout ce qui n'a pas de @magasin.",
+    shop_store: "Magasin", shop_all_stores: "Tous",
+    pack_edit: "Modifier les mots-clés", pack_new: "Nouveau pack", pack_new_help: "Pack vide, p. ex. pour une autre langue ou tes propres termes. Il est activé tout en haut.", pack_new_placeholder: "p. ex. Nederlands",
+    pack_empty: "Pas encore de mots-clés – ajoute-en ci-dessus.", pack_changed: "modifié", pack_revert: "Annuler la modification", pack_ignore: "Ignorer (comme Autres)",
+    pack_more: "Charger plus", pack_term_placeholder: "Mot-clé (plusieurs séparés par des virgules)",
+    pack_builtin_edit_help: "Pack intégré : les modifications vont dans le pack complémentaire « + » et sont conservées lors des mises à jour.", pack_edit_help: "Pack personnel : les modifications s'appliquent immédiatement.",
+    zone: "Zone", zone_new: "Nouvelle zone", zone_new_help: "Nom de la zone. Position : emplacement actuel de cet appareil (sinon domicile), rayon 100 m – à ajuster dans Paramètres → Pièces et zones.",
+    zone_wait: "Zone créée – elle apparaît dans un instant, associe-la ensuite ici.", zone_here: "emplacement de cet appareil", zone_home: "position du domicile – à ajuster",
+    zone_none: "aucune zone", zone_manage: "Gérer les zones ↗", store_add: "Magasin avec zone", store_add_help: "Nom du magasin, comme dans @Carrefour. Une zone est ensuite créée pour lui.",
+    stores: "Magasins & zones", stores_help: "Associe les magasins à des zones de Home Assistant. En mode courses, tu ne vois alors automatiquement que les articles du magasin où tu te trouves.",
+    notes: "Notes de l'app", notes_help: "L'app HA SmartLists enregistre les notes dans sa propre liste de tâches. Ce ne sont pas des listes de courses, elles sont donc masquées par défaut.",
+    notes_show: "Afficher dans SmartLists", notes_show_help: "Comme section 📝 séparée sur la page – pas dans Assist, les actions ni les listes combinées.",
+    notes_scope: "Qui voit les notes", notes_scope_owner: "seulement son propre compte", notes_scope_household: "tout le foyer",
+    notes_lists: "Listes de notes et propriétaires", notes_none: "Aucune liste de notes de l'app trouvée.", notes_no_owner: "inconnu (admins seulement)",
+    p_order: "Changer l'ordre", p_order_hint: "◀ ▶ déplace une liste. À la souris : glisse une puce sur une autre. L'ordre vaut aussi pour les colonnes.",
+    p_left: "Vers la gauche", p_right: "Vers la droite",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -412,7 +468,7 @@ const TEXTS = {
     role_all: "todos los permisos", admin_always: "Admin – siempre puede hacerlo todo", shop_large_help: "Más fácil de tocar con el pulgar",
     new_list_help: "Eres el propietario y luego puedes compartirla con otros.", new_list_placeholder: "p. ej. Droguería", create: "Crear",
     p_columns: "Varias listas una al lado de otra", p_wide: "Vista ancha", p_settings: "Ajustes", p_back: "Volver a las listas",
-    p_hint: "Toca hasta 3 listas. Arrastra artículos con el ratón a otra lista para moverlos (Ctrl = copiar).",
+    p_hint: "Toca listas para verlas una al lado de otra (con más de 3 pasan a otra fila). Arrastra artículos con el ratón a otra lista para moverlos (Ctrl = copiar).",
     p_empty: "No se encontraron listas. Crea una en Ajustes → Dispositivos y servicios → SmartLists – o con + arriba.",
     owner: "propietario", shared: "compartida", private: "privada", admin: "admin", sharing: "Compartir",
     sharing_help: "Quién puede ver y cambiar esta lista. Los admins siempre pueden hacerlo todo. La vista de tareas de HA muestra cada lista a todos – solo se oculta en SmartLists (tarjeta, página, app).",
@@ -481,6 +537,23 @@ const TEXTS = {
     hh_show_settings: "Cada usuario ajusta gesto, menú y modo compra en el engranaje.",
     hh_show_category_titles: "Desactivado: ordenado por categoría, pero como una sola lista con el icono de categoría delante.",
     hh_start_shopping: "Práctico para una tablet en el pasillo o un panel solo para la compra.",
+    shop_auto_store: "Elegir la tienda según la zona", shop_auto_store_help: "Si estás en la zona de una tienda (p. ej. Mercadona), el modo compra muestra solo sus artículos.",
+    shop_untagged: "Mostrar también artículos sin tienda", shop_untagged_help: "En el modo compra de una tienda, además todo lo que no tiene @tienda.",
+    shop_store: "Tienda", shop_all_stores: "Todas",
+    pack_edit: "Editar palabras clave", pack_new: "Nuevo paquete", pack_new_help: "Paquete vacío, p. ej. para otro idioma o términos propios. Se activa arriba del todo.", pack_new_placeholder: "p. ej. Nederlands",
+    pack_empty: "Aún no hay palabras clave – añade alguna arriba.", pack_changed: "cambiada", pack_revert: "Deshacer el cambio", pack_ignore: "Ignorar (como Otros)",
+    pack_more: "Cargar más", pack_term_placeholder: "Palabra clave (varias separadas por comas)",
+    pack_builtin_edit_help: "Paquete integrado: los cambios van al paquete complementario «+» y se conservan en las actualizaciones.", pack_edit_help: "Paquete propio: los cambios se aplican al momento.",
+    zone: "Zona", zone_new: "Nueva zona", zone_new_help: "Nombre de la zona. Posición: ubicación actual de este dispositivo (si no, casa), radio 100 m – ajústala en Ajustes → Áreas y zonas.",
+    zone_wait: "Zona creada – aparecerá enseguida; luego vincúlala aquí.", zone_here: "ubicación de este dispositivo", zone_home: "posición de casa – ajústala",
+    zone_none: "sin zona", zone_manage: "Gestionar zonas ↗", store_add: "Tienda con zona", store_add_help: "Nombre de la tienda, como en @Mercadona. Después se crea una zona para ella.",
+    stores: "Tiendas y zonas", stores_help: "Vincula tiendas con zonas de Home Assistant. En el modo compra verás automáticamente solo los artículos de la tienda en la que estás.",
+    notes: "Notas de la app", notes_help: "La app HA SmartLists guarda las notas en su propia lista de tareas. No son listas de la compra, por eso están ocultas por defecto.",
+    notes_show: "Mostrar en SmartLists", notes_show_help: "Como sección 📝 aparte en la página – no en Assist, acciones ni listas combinadas.",
+    notes_scope: "Quién ve las notas", notes_scope_owner: "solo la propia cuenta", notes_scope_household: "todo el hogar",
+    notes_lists: "Listas de notas y propietarios", notes_none: "No se encontró ninguna lista de notas de la app.", notes_no_owner: "desconocido (solo admins)",
+    p_order: "Cambiar el orden", p_order_hint: "◀ ▶ mueve una lista. Con el ratón: arrastra una etiqueta sobre otra. El orden vale también para las columnas.",
+    p_left: "A la izquierda", p_right: "A la derecha",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -508,7 +581,7 @@ const TEXTS = {
     role_all: "tutti i permessi", admin_always: "Admin – può sempre fare tutto", shop_large_help: "Più facile da toccare con il pollice",
     new_list_help: "Sei il proprietario e poi puoi condividerla con altri.", new_list_placeholder: "es. Drogheria", create: "Crea",
     p_columns: "Più liste affiancate", p_wide: "Vista larga", p_settings: "Impostazioni", p_back: "Torna alle liste",
-    p_hint: "Tocca fino a 3 liste. Trascina gli articoli col mouse in un'altra lista per spostarli (Ctrl = copia).",
+    p_hint: "Tocca le liste per affiancarle (oltre 3 vanno a capo). Trascina gli articoli col mouse in un'altra lista per spostarli (Ctrl = copia).",
     p_empty: "Nessuna lista trovata. Creane una in Impostazioni → Dispositivi e servizi → SmartLists – oppure con + in alto.",
     owner: "proprietario", shared: "condivisa", private: "privata", admin: "admin", sharing: "Condivisione",
     sharing_help: "Chi può vedere e modificare questa lista. Gli admin possono sempre fare tutto. La vista to-do di HA mostra ogni lista a tutti – è nascosta solo in SmartLists (scheda, pagina, app).",
@@ -577,6 +650,23 @@ const TEXTS = {
     hh_show_settings: "Gesto, menu e modalità spesa li imposta ogni utente nell'ingranaggio.",
     hh_show_category_titles: "Disattivato: ordinato per categoria, ma come un'unica lista con l'icona della categoria davanti.",
     hh_start_shopping: "Comodo per un tablet all'ingresso o una dashboard solo per la spesa.",
+    shop_auto_store: "Scegli il negozio in base alla zona", shop_auto_store_help: "Quando sei nella zona di un negozio (es. Esselunga), la modalità spesa mostra solo i suoi articoli.",
+    shop_untagged: "Mostra anche articoli senza negozio", shop_untagged_help: "Nella modalità spesa per un negozio, anche tutto ciò che non ha @negozio.",
+    shop_store: "Negozio", shop_all_stores: "Tutti",
+    pack_edit: "Modifica parole chiave", pack_new: "Nuovo pacchetto", pack_new_help: "Pacchetto vuoto, es. per un'altra lingua o termini propri. Viene attivato in cima.", pack_new_placeholder: "es. Nederlands",
+    pack_empty: "Ancora nessuna parola chiave – aggiungine sopra.", pack_changed: "modificata", pack_revert: "Annulla modifica", pack_ignore: "Ignora (come Altro)",
+    pack_more: "Carica altro", pack_term_placeholder: "Parola chiave (più parole separate da virgole)",
+    pack_builtin_edit_help: "Pacchetto integrato: le modifiche finiscono nel pacchetto aggiuntivo «+» e restano dopo gli aggiornamenti.", pack_edit_help: "Pacchetto personale: le modifiche valgono subito.",
+    zone: "Zona", zone_new: "Nuova zona", zone_new_help: "Nome della zona. Posizione: posizione attuale di questo dispositivo (altrimenti casa), raggio 100 m – da regolare in Impostazioni → Aree e zone.",
+    zone_wait: "Zona creata – compare tra un attimo, poi collegala qui.", zone_here: "posizione di questo dispositivo", zone_home: "posizione di casa – da regolare",
+    zone_none: "nessuna zona", zone_manage: "Gestisci zone ↗", store_add: "Negozio con zona", store_add_help: "Nome del negozio, come in @Esselunga. Poi viene creata una zona per esso.",
+    stores: "Negozi e zone", stores_help: "Collega i negozi alle zone di Home Assistant. In modalità spesa vedrai automaticamente solo gli articoli del negozio in cui ti trovi.",
+    notes: "Note dell'app", notes_help: "L'app HA SmartLists salva le note in una propria lista to-do. Non sono liste della spesa e perciò sono nascoste per impostazione predefinita.",
+    notes_show: "Mostra in SmartLists", notes_show_help: "Come sezione 📝 separata nella pagina – non in Assist, azioni o liste combinate.",
+    notes_scope: "Chi vede le note", notes_scope_owner: "solo il proprio account", notes_scope_household: "tutta la casa",
+    notes_lists: "Liste di note e proprietari", notes_none: "Nessuna lista di note dell'app trovata.", notes_no_owner: "sconosciuto (solo admin)",
+    p_order: "Cambia ordine", p_order_hint: "◀ ▶ sposta una lista. Col mouse: trascina un chip su un altro. L'ordine vale anche per le colonne.",
+    p_left: "A sinistra", p_right: "A destra",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -604,7 +694,7 @@ const TEXTS = {
     role_all: "wszystkie prawa", admin_always: "Admin – zawsze może wszystko", shop_large_help: "Łatwiej trafić kciukiem",
     new_list_help: "Jesteś właścicielem i możesz potem udostępnić ją innym.", new_list_placeholder: "np. Drogeria", create: "Utwórz",
     p_columns: "Kilka list obok siebie", p_wide: "Szeroki widok", p_settings: "Ustawienia", p_back: "Wróć do list",
-    p_hint: "Dotknij do 3 list. Przeciągnij produkt myszą na inną listę, aby go przenieść (Ctrl = kopiuj).",
+    p_hint: "Dotknij list, aby pokazać je obok siebie (więcej niż 3 przechodzą do kolejnego rzędu). Przeciągnij produkt myszą na inną listę, aby go przenieść (Ctrl = kopiuj).",
     p_empty: "Nie znaleziono list. Utwórz ją w Ustawienia → Urządzenia i usługi → SmartLists – albo przyciskiem + u góry.",
     owner: "właściciel", shared: "udostępniona", private: "prywatna", admin: "admin", sharing: "Udostępnianie",
     sharing_help: "Kto może widzieć i zmieniać tę listę. Admini zawsze mogą wszystko. Widok zadań HA pokazuje każdą listę wszystkim – jest ukryta tylko w SmartLists (karta, strona, aplikacja).",
@@ -673,6 +763,23 @@ const TEXTS = {
     hh_show_settings: "Gest, menu i tryb zakupów każdy użytkownik ustawia sam w zębatce.",
     hh_show_category_titles: "Wyłączone: sortowane wg kategorii, ale jako jedna lista z ikoną kategorii z przodu.",
     hh_start_shopping: "Przydatne dla tabletu w przedpokoju lub pulpitu tylko do zakupów.",
+    shop_auto_store: "Wybieraj sklep automatycznie wg strefy", shop_auto_store_help: "Gdy jesteś w strefie sklepu (np. Biedronka), tryb zakupów pokazuje tylko jego produkty.",
+    shop_untagged: "Pokazuj też produkty bez sklepu", shop_untagged_help: "W trybie zakupów dla jednego sklepu dodatkowo wszystko bez @sklep.",
+    shop_store: "Sklep", shop_all_stores: "Wszystkie",
+    pack_edit: "Edytuj słowa kluczowe", pack_new: "Nowy pakiet", pack_new_help: "Pusty pakiet, np. dla innego języka lub własnych słów. Zostanie aktywowany na samej górze.", pack_new_placeholder: "np. Nederlands",
+    pack_empty: "Brak słów kluczowych – dodaj je powyżej.", pack_changed: "zmienione", pack_revert: "Cofnij zmianę", pack_ignore: "Ignoruj (jako Inne)",
+    pack_more: "Wczytaj więcej", pack_term_placeholder: "Słowo kluczowe (kilka oddziel przecinkami)",
+    pack_builtin_edit_help: "Pakiet wbudowany: zmiany trafiają do pakietu uzupełniającego „+” i zostają po aktualizacjach.", pack_edit_help: "Własny pakiet: zmiany działają od razu.",
+    zone: "Strefa", zone_new: "Nowa strefa", zone_new_help: "Nazwa strefy. Pozycja: obecna lokalizacja tego urządzenia (inaczej dom), promień 100 m – dostosuj w Ustawienia → Obszary i strefy.",
+    zone_wait: "Strefa utworzona – pojawi się za chwilę, wtedy połącz ją tutaj.", zone_here: "lokalizacja tego urządzenia", zone_home: "pozycja domu – dostosuj",
+    zone_none: "brak strefy", zone_manage: "Zarządzaj strefami ↗", store_add: "Sklep ze strefą", store_add_help: "Nazwa sklepu, jak w @Biedronka. Następnie zostanie dla niego utworzona strefa.",
+    stores: "Sklepy i strefy", stores_help: "Połącz sklepy ze strefami Home Assistant. W trybie zakupów zobaczysz wtedy automatycznie tylko produkty ze sklepu, w którym jesteś.",
+    notes: "Notatki aplikacji", notes_help: "Aplikacja HA SmartLists zapisuje notatki we własnej liście zadań. To nie są listy zakupów, dlatego domyślnie są ukryte.",
+    notes_show: "Pokazuj w SmartLists", notes_show_help: "Jako osobna sekcja 📝 na stronie – nie w Assist, akcjach ani listach połączonych.",
+    notes_scope: "Kto widzi notatki", notes_scope_owner: "tylko własne konto", notes_scope_household: "cały dom",
+    notes_lists: "Listy notatek i właściciele", notes_none: "Nie znaleziono listy notatek aplikacji.", notes_no_owner: "nieznany (tylko admini)",
+    p_order: "Zmień kolejność", p_order_hint: "◀ ▶ przesuwa listę. Myszą: przeciągnij jeden chip na inny. Kolejność dotyczy też kolumn.",
+    p_left: "W lewo", p_right: "W prawo",
   },
 };
 
@@ -1217,7 +1324,8 @@ class SmartListsCard extends HTMLElement {
   getCardSize() { return 6; }
   static getConfigElement() { return document.createElement("smartlists-card-editor"); }
   static getStubConfig(hass) {
-    const e = Object.keys((hass && hass.states) || {}).find((k) => k.startsWith("todo."));
+    const st = (hass && hass.states) || {};
+    const e = Object.keys(st).find((k) => k.startsWith("todo.") && !isNotesEntity(k, st[k].attributes && st[k].attributes.friendly_name));
     return { entity: e || "todo.einkaufsliste" };
   }
 
@@ -1252,6 +1360,11 @@ class SmartListsCard extends HTMLElement {
       // Rückfall: steht die ⚙OFFER-Zeile der App noch in der Notiz, hier selbst zerlegen
       for (const it of data.items) {
         if (!it.offer && it.note) { const r = parseOfferNote(it.note, this._cfg && this._cfg.known_stores); if (r.offer) { it.offer = r.offer; it.note = r.note; } }
+      }
+      if (data.type === "notes" && !this._notesApplied) {
+        this._notesApplied = true;
+        for (const [k, v] of Object.entries(NOTES_DEFAULTS)) if (!(k in (this._rawConfig || {}))) this._config[k] = v;
+        this._sortMode = this._config.sort;
       }
       this._data = data;
       // noch nicht gespeicherte Stepper-Werte beibehalten (sonst springt die Anzeige zurück)
@@ -1465,6 +1578,12 @@ class SmartListsCard extends HTMLElement {
     if (!has("store", f.store) || !has("person", f.person) || !has("tag", f.tag)) return false;
     if (f.category.length && !f.category.includes(it.category)) return false;
     if (f.offers && !it.offer) return false;
+    // Einkaufsmodus für einen Markt: nur dessen Artikel (optional auch solche ohne Markt)
+    if (this._shopping && this._shopStore) {
+      const stores = (it.tags || []).filter((t) => t.kind === "store").map((t) => String(t.value).toLowerCase());
+      if (it.offer && it.offer.store) stores.push(String(it.offer.store).toLowerCase());
+      if (stores.length ? !stores.includes(this._shopStore) : !(this._ui && this._ui.shop_untagged)) return false;
+    }
     const chip = this._chip;
     if (chip) {
       if (chip.kind === "category") return it.category === chip.value;
@@ -1473,6 +1592,44 @@ class SmartListsCard extends HTMLElement {
     }
     return true;
   }
+  /* Märkte & Zonen: In welcher Markt-Zone ist meine Person gerade? (zone.* → Markt aus smartlists/config) */
+  _storeHere() {
+    const zones = (this._cfg && this._cfg.store_zones) || {};
+    const st = this._hass.states;
+    const me = Object.values(st).find((s) => s.entity_id.startsWith("person.") && s.attributes.user_id === (this._hass.user && this._hass.user.id));
+    if (!me) return null;
+    for (const [store, zone] of Object.entries(zones)) {
+      const z = st[zone];
+      if (!z) continue;
+      // Person-Zustand = Name der Zone; zusätzlich: Zone zählt Personen (state = Anzahl, attributes.persons)
+      if (me.state === z.attributes.friendly_name || (z.attributes.persons || []).includes(me.entity_id)) return store;
+    }
+    return null;
+  }
+  // Leiste im Einkaufsmodus: Alle | REWE · 4 | Lidl · 2 … (Markt der aktuellen Zone vorausgewählt)
+  _shopStoreBar(d) {
+    const t = this._t;
+    const open = d.items.filter((i) => !i.checked);
+    const counts = new Map();
+    for (const it of open) {
+      const seen = new Set();
+      (it.tags || []).filter((x) => x.kind === "store").forEach((x) => seen.add(JSON.stringify([String(x.value).toLowerCase(), x.label, x.color])));
+      if (it.offer && it.offer.store) seen.add(JSON.stringify([String(it.offer.store).toLowerCase(), it.offer.store_label || it.offer.store, it.offer.color]));
+      for (const k of seen) { const [key, label, color] = JSON.parse(k); const e = counts.get(key) || { key, label, color, n: 0 }; e.n++; counts.set(key, e); }
+    }
+    if (this._shopStore && !counts.has(this._shopStore)) counts.set(this._shopStore, { key: this._shopStore, label: this._shopStore.toUpperCase(), n: 0 });
+    if (!counts.size) return null;
+    const zones = (this._cfg && this._cfg.store_zones) || {};
+    const chip = (key, label, n, color) => {
+      const on = (this._shopStore || null) === key;
+      return h("button", { type: "button", class: `fchip ${on ? "on" : ""}`, "aria-pressed": String(on),
+        style: on && color ? `background:${color};border-color:${color};color:#fff` : "",
+        onclick: () => { this._shopStore = key; this._render(); } }, key && zones[key] ? "📍 " : "", label, n != null ? ` · ${n}` : "");
+    };
+    return h("div", { class: "filterbar shopstores", role: "toolbar", "aria-label": t.shop_store },
+      chip(null, t.shop_all_stores, open.length),
+      [...counts.values()].sort((a, b) => b.n - a.n).map((c) => chip(c.key, c.label, c.n, c.color)));
+  }
   _renderFilterBar(d) {
     const el = this._filterEl;
     if (!el) return;
@@ -1480,6 +1637,7 @@ class SmartListsCard extends HTMLElement {
     const fixed = [...f.store.map((v) => ({ kind: "store", value: v, label: v })), ...f.person.map((v) => ({ kind: "person", value: v, label: v })),
       ...f.tag.map((v) => ({ kind: "tag", value: v, label: v }))];
     const parts = [];
+    if (this._shopping && !f.store.length) parts.push(this._shopStoreBar(d));
     if (fixed.length || f.category.length || f.offers) {
       parts.push(h("div", { class: "fixedfilter" }, "Filter:", fixed.map((x) => badge(x)),
         f.category.map((cid) => h("span", { class: "chip" }, (d.categories.find((c) => c.id === cid) || {}).label || cid)),
@@ -1674,6 +1832,7 @@ class SmartListsCard extends HTMLElement {
 
   async _toggleShopping() {
     this._shopping = !this._shopping;
+    this._shopStore = this._shopping && this._ui && this._ui.shop_auto_store !== false ? this._storeHere() : null;
     this._card.classList.toggle("shopping", this._shopping);
     if (this._shopping && this._ui.shop_keep_awake) await this._wake(true);
     if (!this._shopping) await this._wake(false);
@@ -1681,7 +1840,7 @@ class SmartListsCard extends HTMLElement {
     // „Bin im Laden“: Ereignis smartlists_shopping für Automationen/Blueprint (Markt = fester Filter, falls einer)
     const f = this._fixedFilters();
     const open = this._data ? this._data.items.filter((i) => !i.checked).length : null;
-    this._call("shopping", { active: this._shopping, store: f.store.length === 1 ? f.store[0] : null, open_items: open }).catch(() => {});
+    this._call("shopping", { active: this._shopping, store: f.store.length === 1 ? f.store[0] : this._shopStore || null, open_items: open }).catch(() => {});
   }
   async _wake(on) {
     try {
@@ -1813,7 +1972,8 @@ class SmartListsCard extends HTMLElement {
       }, a === "delete" ? "danger" : ""))];
       if (!actions.length) body.push(h("div", { class: "empty" }, t.readonly));
     } else if (m.view === "move" || m.view === "copy") {
-      const targets = (this._targets || []).filter((l) => l.entity_id !== this._config.entity && l.can_add);
+      const targets = (this._targets || []).filter((l) => l.entity_id !== this._config.entity && l.can_add
+        && (l.type === "notes") === (d.type === "notes"));
       body = [head(t["m_" + m.view], true), targets.length
         ? targets.map((l) => item(ICON.list, l.name, async () => {
           this._closeMenu();
@@ -2404,6 +2564,7 @@ class SmartListsCard extends HTMLElement {
       sw("row_buttons"),
       h("div", { class: "grp" }, t.shop),
       sw("shop_hide_checked"), sw("shop_keep_awake"), sw("shop_large", t.shop_large_help), sw("shop_tap_row"),
+      sw("shop_auto_store", t.shop_auto_store_help), sw("shop_untagged", t.shop_untagged_help),
     ];
   }
 
@@ -2422,7 +2583,7 @@ class SmartListsCard extends HTMLElement {
   _paneHouse() {
     const t = this._t;
     if (!this._isAdmin) return h("p", { class: "shelp", style: "padding:8px 4px" }, t.admin_only);
-    return [this._namingSection(), this._packsSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
+    return [this._namingSection(), this._storesSection(), this._notesSection(), this._packsSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
       this._sec("✋", t.ui_house, t.scope_help_household, [...this._controls("household"),
         h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi("household") }, t.reset))])];
   }
@@ -2505,6 +2666,7 @@ class SmartListsCard extends HTMLElement {
         const sub = `${lang}${p.terms.toLocaleString(this._hass.language || "de")} ${t.pack_terms}${p.products ? ` · ${p.products} ${t.pack_products}` : ""} · ${p.builtin ? t.pack_builtin : t.pack_custom}${pos >= 0 ? ` · ${t.pack_priority} ${pos + 1}` : ""}`;
         return h("div", { class: "srow2" },
           h("div", { class: "sl" }, p.name, h("small", {}, sub)),
+          iconBtn(ICON.pencil, t.pack_edit, () => this._packEditor(sec, p, () => this._call("packs", {}, false).then((r) => { packs = r.packs; draw(); }))),
           pos > 0 ? iconBtn(ICON.chevron, t.pack_up, () => { const n = [...ids]; n.splice(pos, 1); n.splice(pos - 1, 0, p.id); setActive(n); }, "up") : null,
           iconBtn(ICON.import, t.pack_download, async () => {
             try { download(await this._call("pack_export", { pack_id: p.id }, false), `smartlists-pack-${p.id}.json`); } catch (err) { fail(err); }
@@ -2535,10 +2697,173 @@ class SmartListsCard extends HTMLElement {
     const sec = this._sec("🧠", t.packs, t.packs_help, [body,
       h("div", { class: "acts" }, status,
         h("button", { class: "btn2", type: "button", onclick: () => download(PACK_TEMPLATE, "smartlists-pack-template.json") }, "⬇ " + t.pack_template),
+        h("button", { class: "btn2", type: "button", onclick: async () => {
+          const name = await slDialog(this.shadowRoot, { title: t.pack_new, text: t.pack_new_help, input: true, placeholder: t.pack_new_placeholder, ok: t.create, cancel: t.cancel });
+          if (!name) return;
+          try {
+            const r = await this._call("pack_create", { name, language: "" }, false);
+            packs = r.packs; draw();
+            const p = packs.find((x) => x.id === r.pack_id);
+            if (p) this._packEditor(sec, p, () => this._call("packs", {}, false).then((x) => { packs = x.packs; draw(); }));
+          } catch (err) { fail(err); }
+        } }, "＋ " + t.pack_new),
         h("button", { class: "btn2 primary", type: "button", onclick: () => file.click() }, "⬆ " + t.pack_upload), file)]);
     sec.firstChild.append(count);
     return sec;
   }
+
+  // Stichwörter eines Packs bearbeiten (im Abschnitt, statt der Pack-Liste). Eingebaute Packs bleiben
+  // unverändert – Änderungen landen im Ergänzungs-Pack „<Name> +“ (siehe packs.py).
+  _packEditor(sec, pack, onClose) {
+    const t = this._t;
+    const body = sec.querySelector ? sec.querySelector(".sbody") : sec.childNodes[sec.childNodes.length - 1];
+    const saved = [...body.childNodes];
+    const cats = (this._cfg && this._cfg.categories) || categoryOptions(this._lang).map(([id, label]) => ({ id, label }));
+    const status = h("span", { class: "ok2" });
+    const listEl = h("div", { class: "learned2" });
+    const more = h("div", { class: "acts", style: "margin-top:6px" });
+    let query = "", offset = 0, rows = [], total = 0;
+    const catSelect = (value, onchange, label) => h("select", { "aria-label": label || t.category, onchange: (e) => onchange(e.target.value) },
+      cats.map((c) => h("option", { value: c.id, selected: c.id === value }, c.label)));
+    const save = async (changes) => {
+      try {
+        await this._call("pack_update", { pack_id: pack.id, terms: changes }, false);
+        status.textContent = "✓ " + t.saved;
+        this._cfg = await this._call("config", { language: this._lang }, false);
+        return true;
+      } catch (err) { status.textContent = (err && err.message) || t.error; return false; }
+    };
+    const load = async (append) => {
+      try {
+        const r = await this._call("pack_terms", { pack_id: pack.id, query, offset: append ? offset : 0, limit: 100 }, false);
+        rows = append ? [...rows, ...r.terms] : r.terms;
+        total = r.total; offset = rows.length;
+        draw();
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    const draw = () => {
+      if (!rows.length) fill(listEl, h("div", { class: "shelp", style: "padding:10px" }, query ? t.no_hits_short : t.pack_empty));
+      else fill(listEl, ...rows.map((r) => h("div", { class: "lrow2" },
+        h("span", { class: "w" }, r.term, r.changed ? h("span", { class: "manual" }, t.pack_changed) : null),
+        catSelect(r.category, async (v) => { if (await save({ [r.term]: v })) { r.category = v; r.changed = pack.builtin || r.changed; draw(); } }, r.term),
+        iconBtn(ICON.close, pack.builtin ? (r.changed ? t.pack_revert : t.pack_ignore) : t.delete, async () => {
+          // eingebaut: Ergänzung zurücknehmen bzw. Stichwort ignorieren (= Sonstiges); eigenes Pack: löschen
+          const v = pack.builtin ? (r.changed ? null : "sonstiges") : null;
+          if (await save({ [r.term]: v })) load(false);
+        }, "danger"))));
+      fill(more, rows.length < total ? h("button", { class: "btn2", type: "button", onclick: () => load(true) }, `${t.pack_more} (${rows.length}/${total})`)
+        : h("span", { class: "shelp" }, `${total} ${t.pack_terms}`));
+    };
+    const term = h("input", { class: "search2", placeholder: t.pack_term_placeholder, "aria-label": t.pack_term_placeholder, style: "flex:1;min-width:120px" });
+    let newCat = cats[0] ? cats[0].id : "sonstiges";
+    const add = async () => {
+      const v = term.value.trim();
+      if (!v) return;
+      // mehrere auf einmal: "dinkelmehl, roggenmehl"
+      const changes = Object.fromEntries(v.split(/[,;\n]/).map((x) => x.trim()).filter(Boolean).map((x) => [x, newCat]));
+      if (await save(changes)) { term.value = ""; query = ""; search.value = ""; load(false); }
+    };
+    term.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); add(); } });
+    const search = h("input", { type: "search", class: "search2", placeholder: t.search_learned, "aria-label": t.search,
+      oninput: debounce((e) => { query = e.target.value; load(false); }, 250) });
+    fill(body,
+      h("div", { class: "srow2", style: "border-top:none" },
+        iconBtn(ICON.back, t.p_back, () => { fill(body, ...saved); onClose && onClose(); }),
+        h("div", { class: "sl" }, h("b", {}, pack.name), h("small", {}, pack.builtin ? t.pack_builtin_edit_help : t.pack_edit_help))),
+      h("div", { class: "rule2", style: "flex-wrap:wrap" }, term, catSelect(newCat, (v) => { newCat = v; }),
+        h("button", { class: "btn2 primary", type: "button", onclick: add }, "＋ " + t.pack_add)),
+      search, listEl, more, h("div", { class: "acts" }, status));
+    load(false);
+  }
+
+  // Märkte & Zonen: Markt (@REWE) mit einer HA-Zone verknüpfen oder dafür direkt eine Zone anlegen.
+  // Im Einkaufsmodus zeigt die Karte dann automatisch nur den Markt, in dessen Zone man gerade ist.
+  _storesSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
+    const zones = () => Object.values(this._hass.states).filter((s) => s.entity_id.startsWith("zone."))
+      .map((s) => [s.entity_id, s.attributes.friendly_name || s.entity_id]).sort((a, b) => a[1].localeCompare(b[1]));
+    const link = async (store, zone) => {
+      try {
+        const r = await this._call("set_store_zone", { store, zone: zone || null }, false);
+        status.textContent = "✓ " + t.saved;
+        this._cfg = { ...this._cfg, store_zones: r.store_zones };
+        draw(r.stores);
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    const createZone = async (store) => {
+      const name = await slDialog(this.shadowRoot, { title: t.zone_new, text: t.zone_new_help, input: true, value: store || "", ok: t.create, cancel: t.cancel });
+      if (!name) return;
+      const pos = await new Promise((resolve) => {
+        const home = { latitude: this._hass.config && this._hass.config.latitude, longitude: this._hass.config && this._hass.config.longitude, here: false };
+        if (!navigator.geolocation) return resolve(home);
+        navigator.geolocation.getCurrentPosition((p) => resolve({ latitude: p.coords.latitude, longitude: p.coords.longitude, here: true }),
+          () => resolve(home), { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 });
+      });
+      try {
+        await this._hass.callWS({ type: "zone/create", name, icon: "mdi:cart", latitude: pos.latitude, longitude: pos.longitude, radius: 100, passive: false });
+        // auf die neue Zone warten (Entität erscheint kurz danach)
+        let zone = null;
+        for (let i = 0; i < 20 && !zone; i++) {
+          await new Promise((r) => setTimeout(r, 250));
+          const hit = Object.values(this._hass.states).find((s) => s.entity_id.startsWith("zone.") && s.attributes.friendly_name === name);
+          zone = hit && hit.entity_id;
+        }
+        if (!zone) { status.textContent = t.zone_wait; return; }
+        await link(store || name, zone);
+        status.textContent = `✓ ${zone} · ${pos.here ? t.zone_here : t.zone_home}`;
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    const draw = (stores) => {
+      const zs = zones();
+      fill(body, ...stores.map((st) => this._setRow(
+        h("span", {}, badge({ kind: "store", value: st.value, label: st.label, color: st.color })),
+        h("select", { "aria-label": `${st.label}: ${t.zone}`, onchange: (e) => (e.target.value === "__new" ? (e.target.value = st.zone || "", createZone(st.label)) : link(st.key, e.target.value)) },
+          h("option", { value: "" }, "— " + t.zone_none),
+          zs.map(([id, n]) => h("option", { value: id, selected: st.zone === id }, n)),
+          h("option", { value: "__new" }, "＋ " + t.zone_new + " …")),
+        st.zone && !this._hass.states[st.zone] ? "⚠️ " + st.zone : null)),
+        h("div", { class: "acts" }, status,
+          h("a", { class: "btn2", href: "/config/zone", target: "_top", style: "display:inline-flex;align-items:center;text-decoration:none" }, t.zone_manage),
+          h("button", { class: "btn2", type: "button", onclick: async () => {
+            const store = await slDialog(this.shadowRoot, { title: t.store_add, text: t.store_add_help, input: true, placeholder: "REWE", ok: t.create, cancel: t.cancel });
+            if (store) createZone(store);
+          } }, "＋ " + t.store_add)));
+    };
+    this._call("stores", {}, false).then((r) => draw(r.stores)).catch(() => fill(body, t.error));
+    return this._sec("📍", t.stores, t.stores_help, [body]);
+  }
+
+  // Notizlisten der App: aus SmartLists ausblenden (Standard) oder als eigener Bereich; an Konto gebunden
+  _notesSection() {
+    const t = this._t;
+    const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    const status = h("span", { class: "ok2" });
+    const set = async (patch) => {
+      try { const r = await this._call("set_notes", patch, false); status.textContent = "✓ " + t.saved; draw(r); this._refreshPanel(); }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    let users = [];
+    const draw = (info) => {
+      fill(body,
+        this._setRow(t.notes_show, this._switch(info.mode === "section", (on) => set({ mode: on ? "section" : "hidden" }), t.notes_show), t.notes_show_help),
+        this._setRow(t.notes_scope, h("select", { "aria-label": t.notes_scope, onchange: (e) => set({ scope: e.target.value }) },
+          [["owner", t.notes_scope_owner], ["household", t.notes_scope_household]].map(([v, l]) => h("option", { value: v, selected: info.scope === v }, l)))),
+        info.lists.length ? h("div", { class: "grp" }, t.notes_lists) : h("div", { class: "shelp", style: "padding:6px 0" }, t.notes_none),
+        ...info.lists.map((n) => this._setRow(n.name,
+          h("select", { "aria-label": `${n.name}: ${t.owner}`, onchange: (e) => set({ owners: { [n.entity_id]: e.target.value || null } }) },
+            h("option", { value: "" }, "— " + t.notes_no_owner),
+            users.map((u) => h("option", { value: u.id, selected: n.owner_id === u.id }, u.name))),
+          n.entity_id)),
+        h("div", { class: "acts" }, status));
+    };
+    Promise.all([this._call("notes", {}, false), this._call("users", {}, false).catch(() => ({ users: [] }))])
+      .then(([info, u]) => { users = u.users || []; draw(info); }).catch(() => fill(body, t.error));
+    return this._sec("📝", t.notes, t.notes_help, [body]);
+  }
+  // Seitenleisten-Seite neu laden lassen (Notizen ein/aus ändert die Listen-Auswahl)
+  _refreshPanel() { window.dispatchEvent(new CustomEvent("smartlists-lists-changed")); }
 
   _learnedSection() {
     const t = this._t;
@@ -2696,6 +3021,13 @@ class SmartListsCardEditor extends HTMLElement {
   get _advanced() { try { return localStorage.getItem("smartlists-editor-advanced") === "1"; } catch (e) { return false; } }
   set _advanced(v) { try { localStorage.setItem("smartlists-editor-advanced", v ? "1" : "0"); } catch (e) { /* */ } }
 
+  // Notizlisten der App sind keine Einkaufslisten – nur anbieten, wenn sie schon gewählt sind
+  _noNotes() {
+    const st = (this._hass && this._hass.states) || {};
+    const cur = [this._config && this._config.entity, ...((this._config && this._config.entities) || [])].map((e) => (typeof e === "string" ? e : e && e.entity));
+    const ex = Object.keys(st).filter((e) => e.startsWith("todo.") && isNotesEntity(e, st[e].attributes.friendly_name) && !cur.includes(e));
+    return ex.length ? { exclude_entities: ex } : {};
+  }
   _schema() {
     const t = this._t;
     const b = (name) => ({ name, selector: { boolean: {} } });
@@ -2703,7 +3035,7 @@ class SmartListsCardEditor extends HTMLElement {
     const sel = (name, options) => ({ name, selector: { select: { mode: "dropdown", options: options.map(([value, label]) => ({ value, label })) } } });
     const basic = [
       sel("preset", [["", t.e_preset_pick], ...Object.keys(PRESETS).map((k) => [k, t["e_pre_" + k]])]),
-      { name: "entity", selector: { entity: { domain: "todo" } } },
+      { name: "entity", selector: { entity: { domain: "todo", ...this._noNotes() } } },
       { name: "title", selector: { text: {} } },
       sel("view", [["list", t.e_view_list], ["tiles", t.e_view_tiles], ["mini", t.e_view_mini]]),
       sel("sort", [["category", t.e_sort_category], ["alpha", t.sort_alpha], ["added", t.e_sort_added], ["list", t.e_sort_list]]),
@@ -2713,7 +3045,7 @@ class SmartListsCardEditor extends HTMLElement {
     return [
       ...basic,
       section("multi", "mdi:view-column-outline", [
-        { name: "entities", selector: { entity: { domain: "todo", multiple: true } } },
+        { name: "entities", selector: { entity: { domain: "todo", multiple: true, ...this._noNotes() } } },
         sel("layout", [["tabs", t.e_layout_tabs], ["columns", t.e_layout_columns], ["stack", t.e_layout_stack]]),
       ]),
       section("filter", "mdi:filter-outline", [
@@ -2796,7 +3128,12 @@ const PANEL_STYLE = `
   .w-normal { max-width:760px; } .w-wide { max-width:none; }
   .cols-1 { grid-template-columns:minmax(0,1fr); }
   .cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  @media (max-width: 900px) { .cols-2, .cols-3 { grid-template-columns:minmax(0,1fr); } }
+  .cols-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  @media (max-width: 1300px) { .cols-4 { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width: 900px) { .cols-2, .cols-3, .cols-4 { grid-template-columns:minmax(0,1fr); } }
+  .chip.ordering { cursor:grab; } .chip.drop { outline:2px dashed var(--primary-color); outline-offset:2px; }
+  .chip .mv { padding:0 4px; opacity:.8; cursor:pointer; } .chip .mv:hover { opacity:1; }
+  .chips .sep { flex:none; width:1px; align-self:stretch; background:var(--divider-color,#ddd); margin:0 4px; }
   .empty { text-align:center; padding:48px 16px; color:var(--secondary-text-color); }
 `;
 const ICON_COLUMNS = "M3,3H11V21H3V3M13,3H21V21H13V3M5,5V19H9V5H5M15,5V19H19V5H15Z";
@@ -2813,7 +3150,9 @@ class SmartListsPanel extends HTMLElement {
     try { prefs = JSON.parse(localStorage.getItem(PANEL_PREFS) || "{}"); } catch (e) { prefs = {}; }
     let legacy = null;
     try { legacy = localStorage.getItem(PANEL_KEY); } catch (e) { /* */ }
-    this._prefs = { columns: false, wide: false, selected: legacy ? [legacy] : [], ...prefs };
+    this._prefs = { columns: false, wide: false, selected: legacy ? [legacy] : [], order: [], ...prefs };
+    // Einstellungen (z.B. Notizen ein/aus) ändern, welche Listen erscheinen
+    window.addEventListener("smartlists-lists-changed", () => { this._visibleKey = null; this._render(); });
   }
   set hass(hass) {
     this._hass = hass;
@@ -2831,7 +3170,7 @@ class SmartListsPanel extends HTMLElement {
     const key = Object.keys(st).filter((e) => e.startsWith("todo.")).sort().join(",");
     if (key === this._visibleKey) return;
     this._visibleKey = key;
-    this._hass.callWS({ type: "smartlists/lists" }).then((r) => { this._visible = new Set(r.lists.map((l) => l.entity_id)); this._render(); })
+    this._hass.callWS({ type: "smartlists/lists" }).then((r) => { this._visible = new Map(r.lists.map((l) => [l.entity_id, l.type])); this._render(); })
       .catch(() => { this._visible = null; });
   }
   get _t() { return TEXTS[((this._hass && this._hass.language) || "de").slice(0, 2)] || TEXTS.en; }
@@ -2850,10 +3189,16 @@ class SmartListsPanel extends HTMLElement {
   _lists() {
     const st = (this._hass && this._hass.states) || {};
     this._refreshVisible();
-    return Object.keys(st).filter((e) => e.startsWith("todo.") && st[e].state !== "unavailable" && (!this._visible || this._visible.has(e)))
+    // ohne Antwort der Integration: Notizlisten der App trotzdem ausblenden
+    const ok = (e) => (this._visible ? this._visible.has(e) : !isNotesEntity(e, st[e].attributes.friendly_name));
+    const order = this._prefs.order || [];
+    const rank = (e) => { const i = order.indexOf(e); return i < 0 ? 1e6 : i; };
+    return Object.keys(st).filter((e) => e.startsWith("todo.") && st[e].state !== "unavailable" && ok(e))
       .map((e) => ({ e, name: st[e].attributes.friendly_name || e, open: Number(st[e].state) || 0,
+        notes: this._visible ? this._visible.get(e) === "notes" : false,
         combined: !!st[e].attributes.smartlists_combined || Array.isArray(st[e].attributes.source_lists) }))
-      .sort((a, b) => (b.combined - a.combined) || a.name.localeCompare(b.name));
+      // eigene Reihenfolge (Ziehen bzw. ◀ ▶), sonst kombinierte zuerst und dann alphabetisch
+      .sort((a, b) => (rank(a.e) - rank(b.e)) || (b.combined - a.combined) || a.name.localeCompare(b.name));
   }
 
   _render() {
@@ -2861,10 +3206,12 @@ class SmartListsPanel extends HTMLElement {
     const lists = this._lists();
     if (this._pendingSelect) {
       const hit = lists.find((l) => l.name === this._pendingSelect);
-      if (hit) { this._pendingSelect = null; this._prefs.selected = this._prefs.columns ? [...this._prefs.selected, hit.e].slice(-3) : [hit.e]; this._save(); }
+      if (hit) { this._pendingSelect = null; this._prefs.selected = this._prefs.columns ? [...this._prefs.selected, hit.e] : [hit.e]; this._save(); }
     }
-    const max = this._prefs.columns ? 3 : 1;
-    let sel = this._prefs.selected.filter((e) => lists.some((l) => l.e === e)).slice(0, max);
+    // beliebig viele Listen; Reihenfolge der Spalten = Reihenfolge der Chips
+    const pos = new Map(lists.map((l, i) => [l.e, i]));
+    let sel = this._prefs.selected.filter((e) => pos.has(e)).sort((a, b) => pos.get(a) - pos.get(b));
+    if (!this._prefs.columns) sel = sel.slice(0, 1);
     if (!sel.length && lists.length) sel = [lists[0].e];
     this._prefs.selected = sel;
     if (!this._root) {
@@ -2878,18 +3225,22 @@ class SmartListsPanel extends HTMLElement {
         onclick: () => { this._prefs.columns = !this._prefs.columns; this._save(); this._render(); } }, svg(ICON_COLUMNS, 22));
       this._wideBtn = h("button", { type: "button", title: t.p_wide, "aria-label": t.p_wide,
         onclick: () => { this._prefs.wide = !this._prefs.wide; this._save(); this._render(); } }, svg(ICON_WIDE, 22));
+      this._orderBtn = h("button", { type: "button", title: t.p_order, "aria-label": t.p_order,
+        onclick: () => { this._ordering = !this._ordering; this._render(); } }, svg(ICON.sort, 22));
       this._newBtn = h("button", { type: "button", title: this._t.new_list, "aria-label": this._t.new_list, onclick: () => this._newList() }, svg(ICON.plus, 22));
       // Einstellungen: dieselbe Ansicht wie im Zahnrad der Karte, aber auf der ganzen Seite
       this._gearBtn = h("button", { type: "button", title: t.p_settings, "aria-label": t.p_settings,
         onclick: () => { this._settingsOpen = !this._settingsOpen; this._render(); } }, svg(ICON.gear, 22));
-      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._colBtn, this._wideBtn, this._gearBtn),
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._orderBtn, this._colBtn, this._wideBtn, this._gearBtn),
         this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }
     this._menuBtn.hidden = !this._narrow;
     this._gearBtn.classList.toggle("on", !!this._settingsOpen);
     this._gearBtn.setAttribute("aria-pressed", String(!!this._settingsOpen));
-    [this._newBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen; });
+    [this._newBtn, this._orderBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen; });
+    this._orderBtn.classList.toggle("on", !!this._ordering);
+    this._orderBtn.setAttribute("aria-pressed", String(!!this._ordering));
     if (this._settingsOpen) {
       // Karte im Nur-Einstellungen-Modus (Reiter Für mich / Haushalt / Diese Liste)
       if (!this._settingsCard || this._settingsCard._config.entity !== (sel[0] || lists[0]?.e)) {
@@ -2910,10 +3261,28 @@ class SmartListsPanel extends HTMLElement {
     this._wideBtn.setAttribute("aria-pressed", String(this._prefs.wide));
     const width = this._prefs.wide || this._prefs.columns ? "w-wide" : "w-normal";
     [this._chipsEl, this._hintEl].forEach((e) => { e.className = e.className.split(" ")[0] + " " + width; });
-    fill(this._chipsEl, lists.map((l) => h("button", { type: "button", role: "tab", class: `chip ${sel.includes(l.e) ? "on" : ""}`,
-      "aria-selected": String(sel.includes(l.e)), onclick: () => this._select(l.e) },
-      l.name, h("span", { class: "n" }, String(l.open)))));
-    fill(this._hintEl, this._prefs.columns ? this._t.p_hint : "");
+    const chip = (l, i, group) => {
+      const el = h("button", { type: "button", role: "tab", class: `chip ${sel.includes(l.e) ? "on" : ""} ${this._ordering ? "ordering" : ""}`,
+        "aria-selected": String(sel.includes(l.e)), draggable: "true", onclick: () => { if (!this._ordering) this._select(l.e); } },
+        this._ordering && i > 0 ? h("span", { class: "mv", role: "button", "aria-label": this._t.p_left, title: this._t.p_left,
+          onclick: (e) => { e.stopPropagation(); this._move(lists, l.e, group[i - 1].e, false); } }, "◀") : null,
+        l.notes ? "📝 " : "", l.name, h("span", { class: "n" }, String(l.open)),
+        this._ordering && i < group.length - 1 ? h("span", { class: "mv", role: "button", "aria-label": this._t.p_right, title: this._t.p_right,
+          onclick: (e) => { e.stopPropagation(); this._move(lists, l.e, group[i + 1].e, true); } }, "▶") : null);
+      // Ziehen & Ablegen mit der Maus: Chip auf einen anderen ziehen = davor einsortieren
+      el.addEventListener("dragstart", (e) => { this._dragChip = l.e; try { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", l.name); } catch (err) { /* */ } });
+      el.addEventListener("dragover", (e) => { if (this._dragChip && this._dragChip !== l.e) { e.preventDefault(); el.classList.add("drop"); } });
+      el.addEventListener("dragleave", () => el.classList.remove("drop"));
+      el.addEventListener("drop", (e) => { e.preventDefault(); el.classList.remove("drop"); if (this._dragChip) this._move(lists, this._dragChip, l.e, false); this._dragChip = null; });
+      el.addEventListener("dragend", () => { this._dragChip = null; });
+      return el;
+    };
+    const shop = lists.filter((l) => !l.notes);
+    const notes = lists.filter((l) => l.notes);
+    fill(this._chipsEl, shop.map((l, i) => chip(l, i, shop)),
+      notes.length ? h("span", { class: "sep", "aria-hidden": "true" }) : null,
+      notes.map((l, i) => chip(l, i, notes)));
+    fill(this._hintEl, this._ordering ? this._t.p_order_hint : this._prefs.columns ? this._t.p_hint : "");
     if (!sel.length) {
       this._cards.clear();
       this._contentEl.className = `content ${width}`;
@@ -2931,7 +3300,7 @@ class SmartListsPanel extends HTMLElement {
       }
       return this._cards.get(e);
     });
-    this._contentEl.className = `content ${width} cols-${cards.length}`;
+    this._contentEl.className = `content ${width} cols-${Math.min(cards.length, this._prefs.wide ? 4 : 3)}`;
     const current = [...this._contentEl.childNodes];
     if (current.length !== cards.length || current.some((n, i) => n !== cards[i])) fill(this._contentEl, ...cards);
   }
@@ -2939,7 +3308,16 @@ class SmartListsPanel extends HTMLElement {
     const sel = this._prefs.selected;
     if (!this._prefs.columns) this._prefs.selected = [entity];
     else if (sel.includes(entity)) { if (sel.length > 1) this._prefs.selected = sel.filter((e) => e !== entity); }
-    else this._prefs.selected = [...sel, entity].slice(-3);
+    else this._prefs.selected = [...sel, entity];
+    this._save();
+    this._render();
+  }
+  // Liste `entity` vor (bzw. nach) `target` einsortieren; gemerkt pro Browser
+  _move(lists, entity, target, after) {
+    const ids = lists.map((l) => l.e).filter((e) => e !== entity);
+    const i = ids.indexOf(target);
+    ids.splice(i < 0 ? ids.length : i + (after ? 1 : 0), 0, entity);
+    this._prefs.order = ids;
     this._save();
     this._render();
   }

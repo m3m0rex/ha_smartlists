@@ -31,7 +31,12 @@ packs in the card's gear menu (or the sidebar page's ⚙) → **Household → Ca
 - **switch** a pack on or off – several can be active, e.g. German + English in a bilingual household,
 - **▲** moves a pack up: on equal keywords the pack higher up wins. Otherwise the **longest matching
   keyword** wins across all packs ("oat milk" beats "milk"),
-- **⬇** downloads a pack – a good starting point for your own,
+- **✏️** edits a pack's keywords: search, change the category, delete, add (several at once,
+  separated by commas). Built-in packs stay untouched – your changes go into an add-on pack
+  "<name> +" right above it, so updates of the integration never overwrite them. On a built-in keyword
+  × means *ignore* (counts as Other); on a changed one it reverts your change,
+- **＋ New pack** creates an empty pack, e.g. for another language – then fill it with ✏️,
+- **⬇** downloads a pack (built-in ones including your additions) – a good starting point to share,
 - **Upload pack …** adds your own pack (JSON). It is activated at the top. The same name replaces an
   existing custom pack; up to 20 custom packs.
 

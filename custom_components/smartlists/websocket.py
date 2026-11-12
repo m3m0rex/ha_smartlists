@@ -33,7 +33,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -183,7 +183,8 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "version": str(integration.version),
             "api_version": API_VERSION,
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
-                         "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs"],
+                         "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
+                         "notes", "store_zones"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -203,6 +204,10 @@ def _list_command(schema: dict[Any, Any]):
             try:
                 # Benutzer für Freigaben eigener Listen (get_list/lists); Änderungen prüft die Entität selbst
                 msg = {**msg, "_user": connection.user}
+                # Notizlisten anderer Konten: weder lesen noch ändern (auch nicht als Ziel)
+                for key in ("entity_id", "target"):
+                    if msg.get(key) and not lists.notes_allowed(hass, msg[key], connection.user):
+                        raise lists.ListError("Diese Notizliste gehört zu einem anderen Konto.")
                 result = await func(hass, msg, connection.context(msg))
             except lists.ListError as err:
                 connection.send_error(msg["id"], "smartlists_error", str(err))
@@ -296,6 +301,7 @@ async def ws_move_item(hass, msg, context):
         vol.Optional("manufacturer"): str,
         vol.Optional("app_version"): str,
         vol.Optional("os_version"): str,
+        vol.Optional("notes_lists"): [str],
     }
 )
 @callback
@@ -308,6 +314,9 @@ def ws_register_device(hass: HomeAssistant, connection: websocket_api.ActiveConn
     except ValueError as err:
         connection.send_error(msg["id"], "invalid_device", str(err))
         return
+    if msg.get("notes_lists") and hass.data[DOMAIN].get("notes"):
+        # Notizlisten der App gehören dem Konto, mit dem die App angemeldet ist
+        hass.data[DOMAIN]["notes"].claim(msg["notes_lists"], connection.user.id)
     connection.send_result(msg["id"], {"device": device})
 
 
@@ -625,3 +634,104 @@ def ws_pack_export(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         connection.send_result(msg["id"], _packs(hass).export(msg["pack_id"]))
     except KeyError:
         connection.send_error(msg["id"], "not_found", "Pack nicht gefunden.")
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/notes"})
+@callback
+def ws_notes(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Notizlisten der App: Einstellung (mode, scope) und – für Admins – alle Notizlisten mit Besitzer."""
+    notes = hass.data[DOMAIN]["notes"]
+    info = notes.describe()
+    if not connection.user.is_admin:
+        info["lists"] = [n for n in info["lists"] if notes.can_see(n["entity_id"], connection.user)]
+    connection.send_result(msg["id"], info)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/set_notes",
+        vol.Optional("mode"): vol.In(["hidden", "section"]),
+        vol.Optional("scope"): vol.In(["owner", "household"]),
+        vol.Optional("owners"): {str: vol.Any(str, None)},
+    }
+)
+@callback
+def ws_set_notes(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    notes = hass.data[DOMAIN]["notes"]
+    notes.update(msg.get("mode"), msg.get("scope"), msg.get("owners"))
+    connection.send_result(msg["id"], notes.describe())
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/pack_create", vol.Required("name"): str, vol.Optional("language", default=""): str})
+@callback
+def ws_pack_create(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Neues, leeres eigenes Pack (z.B. für eine weitere Sprache)."""
+    try:
+        pid = _packs(hass).create(msg["name"], msg["language"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_pack", str(err))
+        return
+    connection.send_result(msg["id"], {"pack_id": pid, "packs": _packs(hass).describe()})
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/pack_terms",
+        vol.Required("pack_id"): str,
+        vol.Optional("query", default=""): str,
+        vol.Optional("offset", default=0): vol.All(int, vol.Range(min=0)),
+        vol.Optional("limit", default=100): vol.All(int, vol.Range(min=1, max=500)),
+    }
+)
+@callback
+def ws_pack_terms(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Stichwörter eines Packs durchsuchen (seitenweise)."""
+    try:
+        connection.send_result(msg["id"], _packs(hass).terms(msg["pack_id"], msg["query"], msg["offset"], msg["limit"]))
+    except ValueError as err:
+        connection.send_error(msg["id"], "not_found", str(err))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/pack_update",
+        vol.Required("pack_id"): str,
+        vol.Required("terms"): {str: vol.Any(str, None)},
+        vol.Optional("name"): str,
+    }
+)
+@callback
+def ws_pack_update(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Stichwörter hinzufügen/ändern (Kategorie-ID) oder löschen (null). Eingebaute Packs werden über ein
+    Ergänzungs-Pack „<Name> +“ erweitert, damit Updates der Integration nichts überschreiben."""
+    try:
+        result = _packs(hass).update_terms(msg["pack_id"], msg["terms"], msg.get("name"))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_pack", str(err))
+        return
+    connection.send_result(msg["id"], {**result, "packs": _packs(hass).describe()})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/stores"})
+@callback
+def ws_stores(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Märkte (benutzte + bekannte Ketten) mit verknüpfter Zone."""
+    connection.send_result(msg["id"], {"stores": _learning(hass).stores()})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "smartlists/set_store_zone", vol.Required("store"): str, vol.Optional("zone"): vol.Any(str, None)}
+)
+@callback
+def ws_set_store_zone(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Markt mit einer Zone verknüpfen (zone=None löst die Verknüpfung)."""
+    try:
+        zones = _learning(hass).set_store_zone(msg["store"], msg.get("zone"))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_store", str(err))
+        return
+    connection.send_result(msg["id"], {"store_zones": zones, "stores": _learning(hass).stores()})

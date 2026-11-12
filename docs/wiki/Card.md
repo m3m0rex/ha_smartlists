@@ -81,7 +81,18 @@ layout: columns
 - **Drag & drop** with the mouse: onto another SmartLists card to move (Ctrl/Alt = copy), onto an item in
   the same list to reorder (sort "added").
 - **Shopping mode** (cart icon): screen stays on, checked items are hidden, large rows, tap the whole
-  row; ↶ in the header undoes the last change.
+  row; ↶ in the header undoes the last change. A bar shows **All | REWE · 4 | Lidl · 2 …** – tap a store
+  to see only its items. If stores are linked to zones (*⚙ → Household → Stores & zones*), the store
+  whose zone you are in is selected automatically. *For me* → "Also show items without a store" adds
+  items without `@store`.
+
+## Stores & zones
+
+*⚙ → Household → Stores & zones* (admins) lists the stores you use (`@REWE`, `@Lidl`, …) and the known
+chains. For each, pick an existing Home Assistant **zone** or choose *＋ New zone …*: SmartLists creates a
+zone at this device's current location (or at home if location is not available) with a radius of
+100 m – fine-tune it under *Settings → Areas & zones*. *＋ Store with zone* adds a new store right away.
+Your person must be tracked (companion app) for the automatic selection.
 - **Gear menu** with three tabs: *For me* (your controls, optionally only on this device),
   *Household* (admins: naming convention, remembered categories, voice & automations, connected
   devices, backup, controls for everyone) and *This list* (sharing for own lists, details).

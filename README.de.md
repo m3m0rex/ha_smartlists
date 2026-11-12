@@ -57,7 +57,7 @@ Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird 
 
 Nach dem Einrichten gibt es links in HA den Eintrag **SmartLists**: alle To-do-Listen (kombinierte
 zuerst) als Reiter, jede wie in der Karte (Badges, Kategorien, Stepper, Suche, Einkaufsmodus) – ohne
-Dashboard. Oben rechts schaltest du zwischen **einer Liste** und **bis zu drei nebeneinander** sowie
+Dashboard. Oben rechts schaltest du zwischen **einer Liste** und **mehreren nebeneinander** (beliebig viele, mit Umbruch; Reihenfolge änderbar) sowie
 zwischen normaler und **breiter** Ansicht; bei mehreren Listen ziehst du Artikel mit der Maus in eine
 andere Liste (Strg = kopieren). Die eingebaute To-do-Seite von HA zeigt Artikel nur als Text.
 

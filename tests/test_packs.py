@@ -39,3 +39,42 @@ def test_normalize_pack_formats_and_errors():
         normalize_pack({"terms": {"a": "nope"}})
     with pytest.raises(ValueError):
         normalize_pack([1, 2])
+
+
+def _packs():
+    import asyncio
+
+    from smartlists.packs import Packs
+
+    class _Cfg:
+        language = "de"
+
+    class _H:
+        config = _Cfg()
+        data = {}
+
+        async def async_add_executor_job(self, f, *a):
+            return f(*a)
+
+    p = Packs(_H())
+    asyncio.run(p.async_load())
+    return p
+
+
+def test_pack_editor_custom_and_builtin_extension():
+    p = _packs()
+    assert p.active == ["de"]
+    pid = p.create("Schwäbisch", "de")
+    assert p.active[0] == pid
+    p.update_terms(pid, {"Weckle": "backwaren", "Gsälz": "grundnahrung"})
+    assert p.index.guess("4 Weckle") == "backwaren"
+    p.update_terms(pid, {"weckle": None})
+    assert p.terms(pid)["total"] == 1
+    # eingebautes Pack erweitern → Ergänzungs-Pack direkt darüber
+    r = p.update_terms("de", {"Hafermilch Barista": "getraenke"})
+    assert r["edited"] == "custom_de_plus" and p.active.index("custom_de_plus") < p.active.index("de")
+    assert p.index.guess("Hafermilch Barista") == "getraenke"
+    hits = p.terms("de", "hafermilch barista")
+    assert hits["terms"][0]["changed"] is True
+    assert p.export("de")["terms"]["hafermilch barista"] == "getraenke"
+    assert len(p.builtin["de"]["terms"]) > 6000 and "hafermilch barista" not in p.builtin["de"]["terms"]

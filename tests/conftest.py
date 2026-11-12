@@ -31,6 +31,7 @@ if "homeassistant" not in sys.modules:
     _mod("homeassistant.helpers")
     _mod("homeassistant.helpers.storage", Store=_Store)
     _mod("homeassistant.helpers.dispatcher", async_dispatcher_send=lambda *a: None)
+    _mod("homeassistant.const", ATTR_FRIENDLY_NAME="friendly_name")
 
 # Paket „smartlists“ direkt aus custom_components laden, ohne dessen __init__ (braucht echtes HA)
 _pkg = _mod("smartlists")

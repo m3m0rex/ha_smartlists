@@ -27,6 +27,24 @@ Global → Voice, backup, defaults → Run setup again*.
 
 The assistant is available in all six languages of the interface.
 
+### Run again or start from scratch
+
+Both are in *General settings → Global → Voice, backup, defaults* (admins):
+
+- **Run setup again** opens the assistant with your current data – nothing is reset, it only adds or
+  changes what you pick.
+- **Start from scratch …** first resets the parts you choose, then opens the assistant:
+  - *Reset settings* (on by default) – notation, badges and colours, stores and zones, aisle orders,
+    permissions, voice and automations, list display, keyword packs (back to the Home Assistant language).
+  - *Delete learned data* – remembered categories, history and statistics, prices and expenses,
+    templates and meal plan.
+  - *Revoke all share links* – shared links stop working immediately.
+  - *Remove combined lists* – only the combined views; the source lists stay unchanged.
+
+To-do lists and their items are **never** deleted, and users' personal settings (*For me*) stay.
+The same options are available without the card under *Settings → Devices & services → SmartLists →
+Configure → Run setup again / start from scratch*. Tip: export a backup first (*Voice, backup, defaults → Export*).
+
 ## Combined lists
 
 **Add combined list** merges several to-do lists into one new to-do entity (e.g. `todo.weekly_shop`).

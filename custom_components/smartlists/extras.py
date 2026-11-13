@@ -179,6 +179,22 @@ class Extras:
         return out
 
     @callback
+    def reset(self, settings: bool = True, data: bool = True) -> None:
+        """settings: Gang-Reihenfolgen, Darstellung je Liste. data: Preise, Ausgaben, Vorlagen, Wochenplan, Einkäufe.
+        Gemerkte Strichcodes bleiben (reiner Zwischenspeicher)."""
+        if settings:
+            self.store_order.clear()
+            self.list_settings.clear()
+        if data:
+            self.prices.clear()
+            self.expenses.clear()
+            self.templates.clear()
+            self.mealplan.clear()
+            self.checked_at.clear()
+            self.trips.clear()
+        self._save()
+
+    @callback
     def set_list_settings(self, entity_id: str, sort: str | None = None, show_prices: bool | None = None) -> dict[str, Any]:
         cur = dict(self.list_settings.get(entity_id) or {})
         if sort is not None:

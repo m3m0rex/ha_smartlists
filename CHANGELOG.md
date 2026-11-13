@@ -3,6 +3,17 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.1.0] – 2026-11-13
+
+### Added
+
+- **Start from scratch** (General settings → Global → Voice, backup, defaults, and Configure in the
+  integration): choose what to reset – settings (notation, badges, stores and zones, aisle orders,
+  permissions, voice, list display, keyword packs), learned data (categories, history, statistics,
+  prices, expenses, templates, meal plan), all share links and/or combined lists – then the setup
+  assistant opens. To-do lists and their items are never deleted; personal settings stay.
+- *Run setup again* now sits next to it and keeps all data.
+
 ## [3.0.0] – 2026-11-13
 
 ### Added

@@ -102,6 +102,13 @@ class Shares:
                 "expires": link["expires"], "created": link["created"], "opens": link.get("opens", 0),
                 "expired": bool(link["expires"] and link["expires"] < time.time())}
 
+    @callback
+    def revoke_all(self) -> int:
+        n = len(self.links)
+        self.links.clear()
+        self._save()
+        return n
+
     def all_links(self) -> list[dict[str, Any]]:
         return [self.describe(h) for h in self.links]
 

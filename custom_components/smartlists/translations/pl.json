@@ -128,7 +128,8 @@
           "automation": "Głos i automatyzacje (Assist, produkty do kupienia)",
           "app_lists": "Listy z aplikacji (przejmij listy połączone)",
           "packs": "Rozpoznawanie kategorii (pakiety słów kluczowych)",
-          "overview": "Wszystkie listy SmartLists"
+          "overview": "Wszystkie listy SmartLists",
+          "restart": "Uruchom konfigurację ponownie / zacznij od nowa"
         }
       },
       "naming": {
@@ -233,6 +234,21 @@
       "overview": {
         "title": "Wszystkie listy SmartLists",
         "description": "**Listy połączone**\n{combined}\n\n**Listy**\n{lists}\n\n**Notatki**\n{notes}\n\nListy utworzone przez aplikację technicznie należą do integracji „Local To-do” (Home Assistant nie może ich tu przenieść); SmartLists i tak je wszędzie pokazuje i używa. Liczba = produkty do kupienia."
+      },
+      "restart": {
+        "title": "Uruchom konfigurację ponownie",
+        "description": "Kreator pojawi się, gdy admin następnym razem otworzy stronę lub kartę SmartLists. Opcjonalnie zacznij od nowa – listy zadań i ich produkty nigdy nie są usuwane.",
+        "data": {
+          "settings": "Zresetuj ustawienia",
+          "data": "Usuń wyuczone dane",
+          "links": "Cofnij wszystkie linki",
+          "combined": "Usuń listy połączone"
+        },
+        "data_description": {
+          "settings": "Konwencja nazw, plakietki i kolory, sklepy i strefy, kolejność alejek, uprawnienia, głos i automatyzacje, wygląd list, sterowanie dla wszystkich, pakiety słów kluczowych.",
+          "data": "Zapamiętane kategorie, historia i statystyki, ceny i wydatki, szablony i plan tygodnia.",
+          "combined": "Tylko widok połączony – listy źródłowe pozostają bez zmian."
+        }
       }
     },
     "error": {

@@ -97,3 +97,19 @@ def test_barcode_parsers():
     assert _parse("upcitemdb", upc, "de")["name"] == "Nutella 450g"
     assert _parse("custom", {"data": {"items": [{"label": "Seife"}]}}, "de", "data.items.0.label")["name"] == "Seife"
     assert _path({"a": [1]}, "a.5") is None
+
+
+def test_reset_parts():
+    e = _extras()
+    e.set_price("Milch", 1.19, "REWE")
+    e.set_store_order("rewe", ["backwaren"])
+    e.save_template(None, "Pfannkuchen", ["Mehl 250 g"], "🥞", 4)
+    e.reset(settings=True, data=False)
+    assert not e.store_order and e.price_for("milch") and e.templates
+    e.reset(settings=False, data=True)
+    assert not e.templates and not e.price_for("milch")
+    s = Shares(types.SimpleNamespace(data={}))
+    asyncio.run(s.async_load())
+    token = s.create("todo.einkauf", "u1")["token"]
+    s.create("todo.anders", "u1")
+    assert s.revoke_all() == 2 and s.resolve(token) is None

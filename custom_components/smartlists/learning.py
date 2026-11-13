@@ -388,6 +388,25 @@ class Learning:
         return counts
 
     @callback
+    def reset(self, settings: bool = True, data: bool = True) -> None:
+        """Von vorn anfangen. settings: Namenskonvention, Badges, Märkte/Zonen, Rechte, Assist/Automationen,
+        Bedienung für alle. data: gemerkte Kategorien, Verlauf. Persönliche Einstellungen der Benutzer bleiben."""
+        if settings:
+            self.tag_rules = list(itemtext.DEFAULT_TAG_RULES)
+            self.appearance = {"kinds": {}, "values": {}}
+            self._apply_appearance()
+            self.ui_defaults = {}
+            self.automation = {}
+        if data:
+            self.manual.clear()
+            self.learned.clear()
+            self.history.clear()
+            self.tag_history.clear()
+        self.automation.pop("setup_done", None)
+        self._resort()
+        self._changed(categories=True)
+
+    @callback
     def clear_history(self) -> None:
         """Verlauf (Vorschläge, häufig gekauft, Tag-Verlauf) löschen – Kategorien bleiben."""
         self.history.clear()

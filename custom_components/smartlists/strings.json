@@ -128,7 +128,8 @@
           "automation": "Voice & automations (Assist, due items)",
           "app_lists": "Lists from the app (take over combined lists)",
           "packs": "Category detection (keyword packs)",
-          "overview": "All SmartLists lists"
+          "overview": "All SmartLists lists",
+          "restart": "Run setup again / start from scratch"
         }
       },
       "naming": {
@@ -233,6 +234,21 @@
       "overview": {
         "title": "All SmartLists lists",
         "description": "**Combined lists**\n{combined}\n\n**Lists**\n{lists}\n\n**Notes**\n{notes}\n\nLists created by the app technically belong to the “Local To-do” integration (Home Assistant cannot move them here); SmartLists still shows and uses them everywhere. Number = open items."
+      },
+      "restart": {
+        "title": "Run setup again",
+        "description": "The setup assistant appears the next time an admin opens the SmartLists page or card. Optionally start from scratch – to-do lists and their items are never deleted.",
+        "data": {
+          "settings": "Reset settings",
+          "data": "Delete learned data",
+          "links": "Revoke all share links",
+          "combined": "Remove combined lists"
+        },
+        "data_description": {
+          "settings": "Naming convention, badges and colours, stores and zones, aisle orders, permissions, voice and automations, list display, controls for everyone, keyword packs.",
+          "data": "Remembered categories, history and statistics, prices and expenses, templates and meal plan.",
+          "combined": "Only the combined view – the source lists stay unchanged."
+        }
       }
     },
     "error": {

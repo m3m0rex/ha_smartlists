@@ -1463,7 +1463,7 @@ def ws_migrate_candidates(hass: HomeAssistant, connection: websocket_api.ActiveC
     vol.Required("sources"): [str],
     vol.Optional("mode", default="each"): vol.In(["each", "one"]),
     vol.Optional("name"): vol.Any(str, None),
-    vol.Optional("old", default="keep"): vol.In(["keep", "clear", "delete"]),
+    vol.Optional("old", default="keep"): vol.In(["keep", "clear"]),
     vol.Optional("tag_kind"): vol.Any(None, vol.In(["person", "tag"])),
 })
 @websocket_api.async_response

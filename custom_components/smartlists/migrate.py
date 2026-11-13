@@ -2,7 +2,7 @@
 
 - je Liste eine eigene SmartLists-Liste (gleicher Name) oder alle zusammen in eine
 - Artikel mit Text, Notiz und Häkchen; beim Zusammenlegen optional die Herkunft als *Person bzw. #Tag
-- die alte Liste: behalten, leeren oder (nur Local To-do) ganz löschen
+- die alte Liste: behalten oder leeren – gelöscht wird nie, das macht der Benutzer selbst
 
 Die neuen Listen bekommen ihre Artikel, bevor sie entstehen (Speicher wird vorab geschrieben) – so
 erscheinen sie nach dem Neuladen der Integration sofort vollständig.
@@ -23,14 +23,8 @@ from homeassistant.helpers.storage import Store
 from . import lists
 from .const import DOMAIN, STORAGE_VERSION, SUBENTRY_OWN
 
-OLD_ACTIONS = ("keep", "clear", "delete")
+OLD_ACTIONS = ("keep", "clear")
 MAX_ITEMS = 2000
-
-
-def can_delete(hass: HomeAssistant, entity_id: str) -> bool:
-    """Ganz löschen geht nur bei Local To-do (eigene Integration je Liste)."""
-    entry = er.async_get(hass).async_get(entity_id)
-    return bool(entry and entry.platform == "local_todo" and entry.config_entry_id)
 
 
 def candidates(hass: HomeAssistant) -> list[dict[str, Any]]:
@@ -45,7 +39,7 @@ def candidates(hass: HomeAssistant) -> list[dict[str, Any]]:
         used_in = [e.name or k for k, e in combined.items() if eid in getattr(e, "_sources", [])]
         reg = er.async_get(hass).async_get(eid)
         out.append({"entity_id": eid, "name": st.attributes.get(ATTR_FRIENDLY_NAME, eid), "open": _int(st.state),
-                    "platform": reg.platform if reg else None, "can_delete": can_delete(hass, eid), "used_in": used_in})
+                    "platform": reg.platform if reg else None, "used_in": used_in})
     return sorted(out, key=lambda x: str(x["name"]).casefold())
 
 
@@ -62,7 +56,7 @@ def _tagged(text: str, tag: str | None) -> str:
 
 async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mode: str = "each", name: str | None = None,
                         old: str = "keep", tag_kind: str | None = None) -> dict[str, Any]:
-    """Liefert {"lists": [{"name", "subentry_id", "items"}], "old": {entity_id: "kept"|"cleared"|"deleted"|Fehler}}."""
+    """Liefert {"lists": [{"name", "subentry_id", "items"}], "old": {entity_id: "kept"|"cleared"|Fehler}}."""
     entries = hass.config_entries.async_entries(DOMAIN)
     if not entries:
         raise ValueError("SmartLists ist nicht eingerichtet.")
@@ -103,11 +97,8 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
         groups = [(str(allowed[s]["name"]), own_items([(s, i) for i in items_by_source[s]]), s) for s in sources]
 
     created = []
-    for title, items, src in groups:
-        data: dict[str, Any] = {"owner": owner, "shares": {}}
-        if src and old == "delete" and can_delete(hass, src):
-            data["entity_id"] = src  # wird frei, sobald die alte Liste gelöscht ist
-        sub = ConfigSubentry(data=MappingProxyType(data), subentry_type=SUBENTRY_OWN, title=title[:60], unique_id=None)
+    for title, items, _src in groups:
+        sub = ConfigSubentry(data=MappingProxyType({"owner": owner, "shares": {}}), subentry_type=SUBENTRY_OWN, title=title[:60], unique_id=None)
         await Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{sub.subentry_id}").async_save({"items": items})
         created.append((sub, len(items)))
 
@@ -118,15 +109,10 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
             result_old[s] = "kept"
             continue
         try:
-            if old == "delete" and can_delete(hass, s):
-                reg = er.async_get(hass).async_get(s)
-                await hass.config_entries.async_remove(reg.config_entry_id)
-                result_old[s] = "deleted"
-            else:
-                uids = [i["uid"] for i in items_by_source[s]]
-                if uids:
-                    await lists.remove_items(hass, s, uids)
-                result_old[s] = "cleared"
+            uids = [i["uid"] for i in items_by_source[s]]
+            if uids:
+                await lists.remove_items(hass, s, uids)
+            result_old[s] = "cleared"
         except Exception as err:  # noqa: BLE001 – die neue Liste ist schon da, Fehler nur melden
             result_old[s] = str(err) or "error"
 

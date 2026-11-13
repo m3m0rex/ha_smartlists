@@ -17,7 +17,7 @@ from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
 from . import lists
-from .const import DOMAIN
+from .const import DOMAIN, SUBENTRY_COMBINED
 from .learning import Learning
 
 # Version der Befehlsschnittstelle. Erhöhen, wenn sich Befehle/Antworten inkompatibel ändern –
@@ -34,7 +34,7 @@ def async_register(hass: HomeAssistant) -> None:
     for handler in (ws_info, ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
                     ws_user_settings, ws_set_user_settings,
                     ws_register_device, ws_devices, ws_remove_device,
-                    ws_users, ws_create_list, ws_share, ws_delete_list,
+                    ws_users, ws_create_list, ws_share, ws_set_owner, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
                     ws_subscribe, ws_reset, ws_migrate_candidates, ws_migrate, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_notify_test, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
@@ -431,10 +431,23 @@ def _main_entry(hass: HomeAssistant):
     return entries[0] if entries else None
 
 
+def _combined_subentry(hass: HomeAssistant, entity_id: str):
+    from .todo import list_key
+
+    entity = lists.combined_entity(hass, entity_id)
+    entry = _main_entry(hass)
+    if entity is None or entry is None:
+        return None
+    return next((s for s in entry.subentries.values() if s.subentry_type == SUBENTRY_COMBINED and list_key(s) == entity.unique_id), None)
+
+
 def _own_list(hass: HomeAssistant, entity_id: str) -> tuple[Any, dict[str, Any] | None]:
-    """(Entität, Daten der Liste inkl. owner/shares) einer eigenen Liste – gruppiert oder alte Form."""
+    """(Entität, Daten der Liste inkl. owner/shares) einer eigenen Liste – gruppiert oder alte Form –
+    bzw. einer kombinierten Liste (Besitzer optional)."""
     entity = lists.own_entity(hass, entity_id)
     entry = _main_entry(hass)
+    if entity is None and (sub := _combined_subentry(hass, entity_id)) is not None:
+        return lists.combined_entity(hass, entity_id), {"owner": sub.data.get("owner"), "shares": dict(sub.data.get("shares") or {})}
     if entity is None or entry is None:
         return None, None
     if getattr(entity, "grouped", False):
@@ -500,7 +513,12 @@ async def ws_share(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         shares.pop(msg["user_id"], None)
     else:
         shares[msg["user_id"]] = msg["role"]
-    if getattr(entity, "grouped", False):
+    if (csub := _combined_subentry(hass, msg["entity_id"])) is not None:
+        if not data.get("owner"):
+            connection.send_error(msg["id"], "invalid", "Erst einen Besitzer festlegen.")
+            return
+        hass.config_entries.async_update_subentry(_main_entry(hass), csub, data={**csub.data, "shares": shares})
+    elif getattr(entity, "grouped", False):
         from .own_groups import async_update_list
 
         await async_update_list(hass, entity.list_id, shares=shares)
@@ -509,6 +527,43 @@ async def ws_share(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         sub = entry.subentries[entity.subentry.subentry_id]
         hass.config_entries.async_update_subentry(entry, sub, data={**sub.data, "shares": shares})
     connection.send_result(msg["id"], {"shares": shares})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_owner", vol.Required("entity_id"): str,
+                                  vol.Required("owner"): vol.Any(str, None)})
+@websocket_api.async_response
+async def ws_set_owner(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Besitzer einer eigenen oder kombinierten Liste festlegen (Admins und der bisherige Besitzer).
+    Kombinierte Listen: owner = null → wieder für alle sichtbar und bearbeitbar."""
+    entity, data = _own_list(hass, msg["entity_id"])
+    if data is None:
+        connection.send_error(msg["id"], "not_found", "Keine eigene oder kombinierte SmartLists-Liste.")
+        return
+    user = connection.user
+    if not user.is_admin and data.get("owner") != user.id:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur Admins und der Besitzer können das ändern.")
+        return
+    owner = msg["owner"] or None
+    if owner and await hass.auth.async_get_user(owner) is None:
+        connection.send_error(msg["id"], "invalid", "Unbekannter Benutzer.")
+        return
+    shares = {u: r for u, r in (data.get("shares") or {}).items() if u != owner}
+    if (csub := _combined_subentry(hass, msg["entity_id"])) is not None:
+        new = {**csub.data, "owner": owner, "shares": shares if owner else {}}
+        if not owner:
+            new.pop("owner", None)
+        hass.config_entries.async_update_subentry(_main_entry(hass), csub, data=new)
+    elif getattr(entity, "grouped", False):
+        if not owner:
+            connection.send_error(msg["id"], "invalid", "Eigene Listen brauchen einen Besitzer.")
+            return
+        from .own_groups import async_update_list
+
+        await async_update_list(hass, entity.list_id, owner=owner)
+    else:
+        connection.send_error(msg["id"], "invalid", "Bitte die Integration einmal neu laden.")
+        return
+    connection.send_result(msg["id"], {"owner": owner})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_list", vol.Required("entity_id"): str})
@@ -521,7 +576,9 @@ def ws_delete_list(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
     if lists.own_role(hass, msg["entity_id"], connection.user) != "owner":
         connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur der Besitzer kann die Liste löschen.")
         return
-    if getattr(entity, "grouped", False):
+    if (csub := _combined_subentry(hass, msg["entity_id"])) is not None:
+        hass.config_entries.async_remove_subentry(_main_entry(hass), csub.subentry_id)  # Quell-Listen bleiben
+    elif getattr(entity, "grouped", False):
         from .own_groups import async_remove_list
 
         async_remove_list(hass, entity.list_id)

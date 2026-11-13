@@ -42,14 +42,19 @@
             "source_label": "Mostrar la lista de origen en el nombre del elemento",
             "sort": "Orden",
             "foreign_entities": "Listas ajenas (solo marcar, sin renombrar/eliminar)",
-            "source_as_person": "Mostrar la lista de origen como persona"
+            "source_as_person": "Mostrar la lista de origen como persona",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver"
           },
           "data_description": {
             "sources": "Cualquier lista de tareas, p. ej., las listas de la compra de varias personas.",
             "default_add_entity": "Los elementos añadidos a la lista combinada van aquí. Vacío = añadir desactivado.",
             "mode": "Bidireccional: marcar escribe en la lista de origen. Local: las marcas se quedan solo en la lista combinada.",
             "foreign_entities": "Listas de otras personas que solo puedes marcar.",
-            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra»."
+            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra».",
+            "owner": "«—» = visible y editable para todos (como antes). Con propietario, solo él, los admins y las personas elegidas aquí ven la lista."
           }
         },
         "reconfigure": {
@@ -62,14 +67,19 @@
             "source_label": "Mostrar la lista de origen en el nombre del elemento",
             "sort": "Orden",
             "foreign_entities": "Listas ajenas (solo marcar, sin renombrar/eliminar)",
-            "source_as_person": "Mostrar la lista de origen como persona"
+            "source_as_person": "Mostrar la lista de origen como persona",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver"
           },
           "data_description": {
             "sources": "Cualquier lista de tareas, p. ej., las listas de la compra de varias personas.",
             "default_add_entity": "Los elementos añadidos a la lista combinada van aquí. Vacío = añadir desactivado.",
             "mode": "Bidireccional: marcar escribe en la lista de origen. Local: las marcas se quedan solo en la lista combinada.",
             "foreign_entities": "Listas de otras personas que solo puedes marcar.",
-            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra»."
+            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra».",
+            "owner": "«—» = visible y editable para todos (como antes). Con propietario, solo él, los admins y las personas elegidas aquí ven la lista."
           }
         }
       },
@@ -373,6 +383,11 @@
         "edit": "Editar palabras clave de un paquete",
         "new": "Nuevo paquete (p. ej. otro idioma)",
         "import": "Pegar paquete como JSON"
+      }
+    },
+    "owner": {
+      "options": {
+        "__all__": "— todos (sin restricción)"
       }
     }
   },

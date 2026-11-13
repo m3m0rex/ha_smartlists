@@ -160,11 +160,51 @@ async def async_setup_entry(
         )
 
 
-class CombinedTodoListEntity(TodoListEntity):
+class _AccessMixin:
+    """Besitzer/Freigaben prüfen (eigene Listen immer, kombinierte Listen nur, wenn ein Besitzer gesetzt ist)."""
+
+    data: dict[str, Any]
+    _restrict_always = True
+
+    # -------- Rechte --------
+    async def role_of(self, user_id: str | None) -> str | None:
+        is_admin, _ = await async_user_info(self.hass, user_id)
+        return role_for(self.data, user_id, is_admin)
+
+    def _request_user(self) -> tuple[bool, str | None]:
+        """(bekannt, Benutzer-ID) der laufenden Anfrage.
+        HA setzt den Context bei jedem Dienstaufruf neu. Er bleibt danach aber am Objekt stehen – deshalb
+        nur verwenden, wenn er gerade erst gesetzt wurde, sonst würde eine spätere Anfrage ohne eigenen
+        Context die Rechte der vorherigen erben."""
+        ctx = self._context
+        set_at = getattr(self, "_context_set", None)
+        if ctx is None or set_at is None or _age_seconds(set_at) > 2:
+            return False, None
+        return True, ctx.user_id
+
+    async def _require(self, perm: str) -> None:
+        if not self._restrict_always and not self.data.get("owner"):
+            return  # kombinierte Liste ohne Besitzer: für alle wie bisher
+        known, user_id = self._request_user()
+        if not known:
+            # Kein frischer Context: nur bei harmlosem Umsortieren (HA-eigener WebSocket-Befehl ohne
+            # Context) zulassen, alles andere verweigern.
+            if perm == "reorder":
+                return
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
+                                         translation_placeholders={"list": self.name or ""})
+        if not permissions_for(await self.role_of(user_id))[perm]:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
+                                         translation_placeholders={"list": self.name or ""})
+
+
+
+class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
     """Fasst mehrere To-do-Listen zu einer zusammen."""
 
     _attr_should_poll = False
     _attr_icon = "mdi:format-list-checks"
+    _restrict_always = False
 
     def __init__(
         self,
@@ -186,6 +226,9 @@ class CombinedTodoListEntity(TodoListEntity):
         self._label: str = opts.get(CONF_SOURCE_LABEL, LABEL_SUFFIX)
         self._sort: str = opts.get(CONF_SORT, SORT_SOURCE)
         self._source_as_person: bool = bool(opts.get(CONF_SOURCE_AS_PERSON, True))
+        # Besitzer + Freigaben (optional; ohne Besitzer sehen/bearbeiten alle die Liste wie bisher)
+        self.data: dict[str, Any] = {"owner": opts.get("owner") or None, "shares": dict(opts.get("shares") or {})}
+        self._owner_name = ""
         # aus der App übernommen → Entität gehört zum Gerät (Gerät „App …“), die App blendet ihre eigene aus
         self._app_device: str | None = opts.get(CONF_APP_DEVICE) or None
         self._app_list: str | None = opts.get(CONF_APP_LIST) or None
@@ -233,6 +276,8 @@ class CombinedTodoListEntity(TodoListEntity):
         registry: dict[str, CombinedTodoListEntity] = self.hass.data[DOMAIN].setdefault("entities", {})
         registry[self.entity_id] = self
         self.async_on_remove(lambda: registry.pop(self.entity_id, None))
+        if self.data.get("owner"):
+            _, self._owner_name = await async_user_info(self.hass, self.data["owner"])
         if self._sources:
             self.async_on_remove(
                 async_track_state_change_event(self.hass, self._sources, self._async_source_changed)
@@ -502,6 +547,7 @@ class CombinedTodoListEntity(TodoListEntity):
 
     async def async_create_todo_item(self, item: TodoItem) -> None:
         """Neuer Artikel → Standard-Hinzufügeliste."""
+        await self._require("add")
         if not self._default_add:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="no_default_list")
         data: dict[str, Any] = {"entity_id": self._default_add, "item": item.summary or ""}
@@ -515,6 +561,9 @@ class CombinedTodoListEntity(TodoListEntity):
         """Abhaken / Umbenennen / Beschreibung ändern."""
         source, source_uid, original = self._lookup(item.uid)
         current = next((i for i in self._attr_todo_items or [] if i.uid == item.uid), None)
+        renamed = item.summary is not None and current is not None and item.summary != current.summary
+        redescribed = item.description is not None and current is not None and item.description != current.description
+        await self._require("rename" if renamed or redescribed else "toggle")
 
         data: dict[str, Any] = {"entity_id": source, "item": source_uid}
         new_summary = self._strip_label(item.summary or "", source) if item.summary is not None else original
@@ -547,6 +596,7 @@ class CombinedTodoListEntity(TodoListEntity):
 
     async def async_delete_todo_items(self, uids: list[str]) -> None:
         """Löschen – gruppiert je Quell-Liste. Fremde Listen sind geschützt."""
+        await self._require("delete")
         grouped: dict[str, list[str]] = {}
         for uid in uids:
             source, source_uid, _ = self._lookup(uid)
@@ -564,7 +614,7 @@ class CombinedTodoListEntity(TodoListEntity):
 # ----------------------------------------------------------------------
 # Eigene Listen
 # ----------------------------------------------------------------------
-class OwnTodoListEntity(TodoListEntity):
+class OwnTodoListEntity(_AccessMixin, TodoListEntity):
     """Liste, die SmartLists selbst speichert – mit Besitzer und Freigaben (own.py)."""
 
     _attr_should_poll = False
@@ -615,35 +665,6 @@ class OwnTodoListEntity(TodoListEntity):
             _, name = await async_user_info(self.hass, uid)
             self._share_names[name or uid] = role
         self.async_write_ha_state()
-
-    # -------- Rechte --------
-    async def role_of(self, user_id: str | None) -> str | None:
-        is_admin, _ = await async_user_info(self.hass, user_id)
-        return role_for(self.data, user_id, is_admin)
-
-    def _request_user(self) -> tuple[bool, str | None]:
-        """(bekannt, Benutzer-ID) der laufenden Anfrage.
-        HA setzt den Context bei jedem Dienstaufruf neu. Er bleibt danach aber am Objekt stehen – deshalb
-        nur verwenden, wenn er gerade erst gesetzt wurde, sonst würde eine spätere Anfrage ohne eigenen
-        Context die Rechte der vorherigen erben."""
-        ctx = self._context
-        set_at = getattr(self, "_context_set", None)
-        if ctx is None or set_at is None or _age_seconds(set_at) > 2:
-            return False, None
-        return True, ctx.user_id
-
-    async def _require(self, perm: str) -> None:
-        known, user_id = self._request_user()
-        if not known:
-            # Kein frischer Context: nur bei harmlosem Umsortieren (HA-eigener WebSocket-Befehl ohne
-            # Context) zulassen, alles andere verweigern.
-            if perm == "reorder":
-                return
-            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
-                                         translation_placeholders={"list": self.name or ""})
-        if not permissions_for(await self.role_of(user_id))[perm]:
-            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
-                                         translation_placeholders={"list": self.name or ""})
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

@@ -42,14 +42,19 @@
             "source_label": "Afficher la liste source dans le nom de l'élément",
             "sort": "Ordre de tri",
             "foreign_entities": "Listes étrangères (cocher uniquement, pas de renommage/suppression)",
-            "source_as_person": "Afficher la liste source comme personne"
+            "source_as_person": "Afficher la liste source comme personne",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir"
           },
           "data_description": {
             "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
             "default_add_entity": "Les éléments ajoutés à la liste combinée arrivent ici. Vide = ajout désactivé.",
             "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
             "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
-            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés."
+            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés.",
+            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste."
           }
         },
         "reconfigure": {
@@ -62,14 +67,19 @@
             "source_label": "Afficher la liste source dans le nom de l'élément",
             "sort": "Ordre de tri",
             "foreign_entities": "Listes étrangères (cocher uniquement, pas de renommage/suppression)",
-            "source_as_person": "Afficher la liste source comme personne"
+            "source_as_person": "Afficher la liste source comme personne",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir"
           },
           "data_description": {
             "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
             "default_add_entity": "Les éléments ajoutés à la liste combinée arrivent ici. Vide = ajout désactivé.",
             "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
             "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
-            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés."
+            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés.",
+            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste."
           }
         }
       },
@@ -373,6 +383,11 @@
         "edit": "Modifier les mots-clés d'un pack",
         "new": "Nouveau pack (p. ex. autre langue)",
         "import": "Coller un pack en JSON"
+      }
+    },
+    "owner": {
+      "options": {
+        "__all__": "— tous (sans restriction)"
       }
     }
   },

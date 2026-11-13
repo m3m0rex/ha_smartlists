@@ -36,6 +36,13 @@ with items, notes and checkmarks. You become the owner and can share them afterw
 
 SmartLists' own lists and combined lists are not offered.
 
+## Combined lists
+
+Combined lists can have an owner and sharing, too (*Configure* of the combined list, or in the card: gear →
+*Owner*). Without an owner ("— everyone") they stay visible and editable for everyone, as before. Note: the
+items still live in the source lists – sharing a combined list does not grant access to someone else's
+**own** source list.
+
 ## Roles
 
 <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Sharing with people and via link" width="620">

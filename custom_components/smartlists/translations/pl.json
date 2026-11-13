@@ -42,14 +42,19 @@
             "source_label": "Pokaż listę źródłową w nazwie produktu",
             "sort": "Sortowanie",
             "foreign_entities": "Cudze listy (tylko odhaczanie, bez zmiany nazwy/usuwania)",
-            "source_as_person": "Pokaż listę źródłową jako osobę"
+            "source_as_person": "Pokaż listę źródłową jako osobę",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko widzieć"
           },
           "data_description": {
             "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
             "default_add_entity": "Nowe produkty dodane do listy połączonej trafiają tutaj. Puste = dodawanie wyłączone.",
             "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
             "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
-            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane."
+            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane.",
+            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj."
           }
         },
         "reconfigure": {
@@ -62,14 +67,19 @@
             "source_label": "Pokaż listę źródłową w nazwie produktu",
             "sort": "Sortowanie",
             "foreign_entities": "Cudze listy (tylko odhaczanie, bez zmiany nazwy/usuwania)",
-            "source_as_person": "Pokaż listę źródłową jako osobę"
+            "source_as_person": "Pokaż listę źródłową jako osobę",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko widzieć"
           },
           "data_description": {
             "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
             "default_add_entity": "Nowe produkty dodane do listy połączonej trafiają tutaj. Puste = dodawanie wyłączone.",
             "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
             "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
-            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane."
+            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane.",
+            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj."
           }
         }
       },
@@ -373,6 +383,11 @@
         "edit": "Edytuj słowa kluczowe pakietu",
         "new": "Nowy pakiet (np. inny język)",
         "import": "Wklej pakiet jako JSON"
+      }
+    },
+    "owner": {
+      "options": {
+        "__all__": "— wszyscy (bez ograniczeń)"
       }
     }
   },

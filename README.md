@@ -132,6 +132,9 @@ Home Assistant.
 
 ## Setup
 
+On first opening, a **setup assistant** guides admins through lists, stores, notation, language,
+people and extras – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).
+
 *Settings → Devices & services → Integrations → Add integration → **SmartLists***
 
 SmartLists is set up once. The Lovelace card and the sidebar page are available right away, and the

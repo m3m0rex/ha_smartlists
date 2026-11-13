@@ -17,6 +17,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
   automations*): which lookup services in which order – Open Food Facts, Open Beauty Facts, Open Pet Food
   Facts, Open Products Facts, UPCitemdb, or your own service (URL with `{code}` + JSON field for the name).
 
+- **Setup assistant** on first opening (admins): lists (use existing, combine or create new), stores,
+  notation (`@` `*` `#` with live example), language (keyword packs), people (permissions for a new own
+  list) and extras (notifications, Assist, prices, barcode lookup, link sharing) – every step can be
+  skipped, all in six languages. Not shown to installations already in use; *Run setup again* under
+  Global. WebSocket `smartlists/setup`, `config.setup_needed`.
 - **New settings layout**: the general settings are organised in areas – *For me* (controls, shopping and
   scanning, notifications), *Global* for admins (badges and colours, stores & zones, categories, devices
   and notes, sharing and permissions, voice/backup/defaults) and *Insights*. Wide screens show the areas

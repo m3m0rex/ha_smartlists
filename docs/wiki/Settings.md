@@ -19,7 +19,7 @@ columns; on a narrow screen you first see the areas and open one. The search fie
 | Global (admins) | Categories | keyword packs, remembered categories |
 | Global (admins) | Devices and notes | connected devices, combined lists from the app, app notes |
 | Global (admins) | Sharing and permissions | who may share lists via link and how far; what users without admin rights may do |
-| Global (admins) | Voice, backup, defaults | Assist, due items, barcode lookup services, export/import, default controls for everyone |
+| Global (admins) | Voice, backup, defaults | Assist, due items, barcode lookup services, export/import, default controls for everyone, run setup again |
 | Insights | Statistics and expenses | bought most often, not bought for a while, expenses, bookings |
 
 *For me* applies to you only; a dot marks where you differ from the global default. *Global* applies to

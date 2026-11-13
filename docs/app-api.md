@@ -209,6 +209,9 @@ Every change is enforced by the list entity for the requesting user – also thr
 | `smartlists/share_links` / `share_create` / `share_revoke` | `entity_id`, … | links per list; `share_create {check: off\|soft\|on, add, hours \| null}` returns the token once |
 | `smartlists/notify` / `set_notify` | `settings` | own notification settings |
 | `smartlists/barcode` | `code` | product name (memory → Open Food Facts) |
+| `smartlists/setup` | `skip?, lists[], combine_name?, new_list?, shares{}, stores[], tag_rules[], packs[], notify_service?, voice, prices, barcode, share_links` | setup assistant: apply everything at once (admin); `config.setup_needed` tells whether to show it |
+| `smartlists/set_rights` / `share_links_all` | `rights` / – | permissions for non-admins; all active links (admin) |
+| `smartlists/set_list_settings` | `entity_id, name?, sort?, show_prices?` | per-list display settings (admin or owner) |
 | `smartlists/connect_app_list` | `device_id, list_id` | create a combined list from it (admin); attribute `smartlists_app_list: "<device_id>/<list_id>"` |
 | `smartlists/notes` | – | app notes: `mode` (`hidden`/`section`), `scope` (`owner`/`household`), lists with owner |
 | `smartlists/set_notes` | `mode?, scope?, owners?{entity: user_id \| null}` | (admin) |

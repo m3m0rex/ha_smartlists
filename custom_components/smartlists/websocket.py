@@ -35,7 +35,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_subscribe, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -192,7 +192,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -1160,3 +1160,101 @@ def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveCo
         registry.async_update_entity(entity_id, name=msg["name"].strip())
     settings = _extras(hass).set_list_settings(entity_id, msg.get("sort") if "sort" in msg else None, msg.get("show_prices"))
     connection.send_result(msg["id"], {"settings": settings})
+
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "smartlists/setup",
+        vol.Optional("skip", default=False): bool,
+        # Listen: vorhandene benutzen (optional zusammenfassen) oder eine neue eigene anlegen
+        vol.Optional("lists", default=[]): [str],
+        vol.Optional("combine_name"): vol.Any(str, None),
+        vol.Optional("new_list"): vol.Any(str, None),
+        vol.Optional("shares", default={}): {str: vol.In(["viewer", "checker", "editor"])},
+        vol.Optional("stores", default=[]): [str],
+        vol.Optional("tag_rules"): list,
+        vol.Optional("packs"): [str],
+        vol.Optional("notify_service"): vol.Any(str, None),
+        vol.Optional("voice", default=False): bool,
+        vol.Optional("prices", default=True): bool,
+        vol.Optional("barcode", default=True): bool,
+        vol.Optional("share_links", default=False): bool,
+    }
+)
+@websocket_api.async_response
+async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Einrichtungs-Assistent: alles auf einmal übernehmen. skip=True merkt nur „erledigt“."""
+    from types import MappingProxyType
+
+    from homeassistant.config_entries import ConfigSubentry
+    from homeassistant.util import slugify
+
+    from .const import CONF_DEFAULT_ADD, CONF_FOREIGN, CONF_MODE, CONF_SORT, CONF_SOURCE_AS_PERSON, CONF_SOURCE_LABEL, CONF_SOURCES, \
+        LABEL_SUFFIX, MODE_BIDIRECTIONAL, SORT_CATEGORY, SUBENTRY_COMBINED, SUBENTRY_OWN
+
+    learning = _learning(hass)
+    done: list[str] = []
+    if not msg["skip"]:
+        entry = _main_entry(hass)
+        if entry is None:
+            connection.send_error(msg["id"], "not_setup", "SmartLists ist nicht eingerichtet.")
+            return
+        user = connection.user
+        lists_sel = [e for e in msg["lists"] if hass.states.get(e) is not None and not lists.is_notes(hass, e)]
+        main_list: str | None = lists_sel[0] if lists_sel else None
+        if msg.get("new_list"):
+            name = msg["new_list"].strip()[:60]
+            sub = ConfigSubentry(data=MappingProxyType({"owner": user.id, "shares": dict(msg["shares"])}),
+                                 subentry_type=SUBENTRY_OWN, title=name, unique_id=None)
+            hass.config_entries.async_add_subentry(entry, sub)
+            main_list = f"todo.ha_smartlists_list_{slugify(name) or 'list'}"
+            done.append("own_list")
+        elif msg.get("combine_name") and len(lists_sel) >= 2:
+            name = msg["combine_name"].strip()[:60]
+            data = {CONF_SOURCES: lists_sel, CONF_MODE: MODE_BIDIRECTIONAL, CONF_SOURCE_LABEL: LABEL_SUFFIX,
+                    CONF_SORT: SORT_CATEGORY, CONF_FOREIGN: [], CONF_SOURCE_AS_PERSON: True, CONF_DEFAULT_ADD: lists_sel[0]}
+            sub = ConfigSubentry(data=MappingProxyType(data), subentry_type=SUBENTRY_COMBINED, title=name, unique_id=None)
+            hass.config_entries.async_add_subentry(entry, sub)
+            main_list = f"todo.ha_smartlists_list_merged_{slugify(name) or 'list'}"
+            done.append("combined_list")
+        if msg["stores"]:
+            learning.automation["favorite_stores"] = [s.strip().lstrip("@")[:30] for s in msg["stores"] if s.strip()][:30]
+            done.append("stores")
+        if msg.get("tag_rules") is not None:
+            try:
+                learning.set_tag_rules([r for r in msg["tag_rules"] if isinstance(r, dict) and r.get("prefix")])
+                done.append("naming")
+            except ValueError:
+                pass
+        if msg.get("packs"):
+            try:
+                hass.data[DOMAIN]["packs"].set_active(msg["packs"])
+                done.append("packs")
+            except ValueError:
+                pass
+        if msg.get("notify_service"):
+            notifier = hass.data[DOMAIN]["notifier"]
+            if msg["notify_service"] in notifier.services():
+                notifier.set(user.id, {**notifier.get(user.id), "service": msg["notify_service"], "added": True})
+                done.append("notify")
+        if msg["voice"] and main_list:
+            learning.automation["voice_default_list"] = main_list
+            try:
+                from .automation import async_install_sentences
+
+                await async_install_sentences(hass)
+            except Exception:  # noqa: BLE001 – Assist ist optional
+                pass
+            done.append("voice")
+        learning.automation["barcode_lookup"] = bool(msg["barcode"])
+        rights = learning.rights()
+        rights["share_who"] = "owners" if msg["share_links"] else "admins"
+        learning.automation["rights"] = rights
+        if not msg["prices"]:
+            for e in [*lists_sel, *([main_list] if main_list else [])]:
+                _extras(hass).set_list_settings(e, show_prices=False)
+    learning.automation["setup_done"] = True
+    learning._changed(categories=True)
+    connection.send_result(msg["id"], {"done": done})

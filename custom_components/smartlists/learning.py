@@ -255,7 +255,7 @@ class Learning:
 
     @callback
     def set_automation(self, settings: dict[str, Any]) -> None:
-        keep = {k: self.automation.get(k) for k in ("store_zones", "rights")}
+        keep = {k: self.automation.get(k) for k in ("store_zones", "rights", "favorite_stores", "setup_done")}
         self.automation = {k: v for k, v in settings.items() if v not in (None, "", [], {})}
         for k, v in keep.items():  # Markt-Zonen und Rechte nicht versehentlich mitlöschen
             if v and k not in settings:
@@ -321,6 +321,9 @@ class Learning:
             out.setdefault(key.lower(), {"value": label, "label": label, "color": color, "count": 0})
         for key in self.store_zones:
             out.setdefault(key, {"value": key, "label": key, "color": None, "count": 0})
+        for value in self.automation.get("favorite_stores") or []:  # in der Einrichtung gewählt
+            label, color = itemtext.store_display(str(value))
+            out.setdefault(str(value).lower(), {"value": value, "label": label, "color": color, "count": 0})
         zones = self.store_zones
         # "zone" (erste) bleibt für ältere Karten/App erhalten, "zones" = alle
         rows = [{**v, "key": k, "zones": zones.get(k, []), "zone": (zones.get(k) or [None])[0]} for k, v in out.items()]
@@ -511,6 +514,10 @@ class Learning:
             "store_zones": self.store_zones,
             "appearance": self.appearance,
             "rights": self.rights(),
+            "favorite_stores": list(self.automation.get("favorite_stores") or []),
+            # Einrichtungs-Assistent: nur, wenn er noch nie lief und noch nichts benutzt wurde (bestehende
+            # Installationen sehen ihn nach dem Update nicht ungefragt)
+            "setup_needed": not self.automation.get("setup_done") and not self.history and not self.manual,
         }
 
     # ------------------------------------------------------------------

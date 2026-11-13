@@ -29,7 +29,7 @@ MAX_TEMPLATES = 60
 MAX_BARCODES = 3000
 # Preis am Ende des Textes: "Milch 2 l 1,19€", "Butter 1.79 €", "Kaffee €6,49"
 # Preis als eigenes Wort irgendwo im Text ("Milch 2 l 1,19€ @REWE", "€6,49 Kaffee"), auch "EUR"
-_PRICE = re.compile(r"(?<!\S)(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?!\S)")
+_PRICE = re.compile(r"(?<!\S)(?:[-–—]\s+)?(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?!\S)")
 
 
 def split_price(text: str) -> tuple[str, float | None]:

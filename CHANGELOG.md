@@ -3,6 +3,16 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Items from other cards are recognised**: text such as `2x Butcher's Burger Buns (REWE) - 0,99 €` (written by
+  e.g. the offers card `custom:discounts-card`) now shows quantity (`2x`), a store badge (`(REWE)`, known stores
+  only) and the price (`- 0,99 €`, per piece) instead of plain text. The stored item text is not changed;
+  editing shows the cleaned-up text.
+- A price with a leading dash (`Cola - 1,5 €`) is recognised when typing, too.
+
 ## [3.8.2] – 2026-11-13
 
 ### Added

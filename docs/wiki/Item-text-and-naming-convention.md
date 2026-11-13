@@ -28,6 +28,15 @@ Items added from the app's offer overview carry a line like
 as store badge, price, old price, discount and "until 14.11." (red when expired). Editing the note keeps
 the line. HA's own to-do view of a regular list still shows the raw line.
 
+## Items from other cards and integrations
+
+Items that other tools add as plain text are recognised, too – e.g. the offers card
+(`custom:discounts-card`) writes `2x Butcher's Burger Buns (REWE) - 0,99 €`. SmartLists shows it like
+`Butcher's Burger Buns 2 @REWE`: **quantity** from a leading `2x`, a **store badge** from a trailing
+`(REWE)` (only known stores, e.g. REWE, Lidl, Aldi – or ones you added under *Badges and colours*) and the
+**price** from a trailing `- 0,99 €` (per piece; shown in the price line and booked when checked off). The item
+text itself is not changed; *Edit* shows the cleaned-up text. Unknown brackets like `Pizza (bio)` are left alone.
+
 ## Badges & colours
 
 *General settings → Global → Badges and colours* (admins) changes how badges look – for all users, without

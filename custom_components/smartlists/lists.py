@@ -246,6 +246,21 @@ async def all_lists(hass: HomeAssistant, user: Any | None = None) -> list[dict[s
     return sorted(out, key=lambda x: str(x["name"]).casefold())
 
 
+def _take_price(hass: HomeAssistant, entity_id: str, text: str) -> str:
+    """Preis im Text ("Milch 2 l 1,19€ @REWE") gehört nicht in den Namen – wird als Preis gemerkt."""
+    if is_notes(hass, entity_id) or (extras := _extras(hass)) is None:
+        return text
+    from .extras import split_price
+
+    text, price = split_price(text)
+    if price is not None and text:
+        item = _learning(hass).parse(text)
+        store = next((t["value"] for t in item.tags if t["kind"] == "store"), None)
+        # gespeichert wird der Preis je Einheit (2 l für 2,38 € → 1,19 €/l), damit andere Mengen stimmen
+        extras.set_price(item.name, price / ((item.quantity or 1) * (item.pack_count or 1)), store)
+    return text
+
+
 async def add_item(
     hass: HomeAssistant,
     entity_id: str,
@@ -258,17 +273,8 @@ async def add_item(
     """Hinzufügen; liefert die uid des neuen Artikels (für „Rückgängig“).
     HA meldet die uid beim Hinzufügen nicht zurück – sie wird über den Vorher/Nachher-Vergleich ermittelt."""
     text = text.strip()
-    # Preis am Ende ("Milch 2 l 1,19€") gehört nicht in den Namen – wird als Preis gemerkt
-    if not from_share and not is_notes(hass, entity_id) and (extras := _extras(hass)) is not None:
-        from .extras import split_price
-
-        text, price = split_price(text)
-        if price is not None:
-            learning = _learning(hass)
-            item = learning.parse(text)
-            store = next((t["value"] for t in item.tags if t["kind"] == "store"), None)
-            # gespeichert wird der Preis je Einheit (2 l für 2,38 € → 1,19 €/l), damit andere Mengen stimmen
-            extras.set_price(item.name, price / ((item.quantity or 1) * (item.pack_count or 1)), store)
+    if not from_share:
+        text = _take_price(hass, entity_id, text)
     if not text:
         raise ListError("Leerer Artikel")
     perms = list_permissions(hass, entity_id)
@@ -308,8 +314,9 @@ async def update_item(
         current = next((i for i in await raw_items(hass, entity_id) if i["uid"] == uid), None)
         if current is None:
             raise ListError("Artikel nicht gefunden – die Liste wird neu geladen")
-        if text.strip() != current["text"]:
-            data["rename"] = text.strip()
+        text = _take_price(hass, entity_id, text.strip()) or current["text"]
+        if text != current["text"]:
+            data["rename"] = text
         if note is not None and list_permissions(hass, entity_id)["note"]:
             # Karte/App kennen nur die Notiz ohne ⚙OFFER-Zeile → die Zeile beim Speichern erhalten
             old_clean, _, raw_line = split_offer(current.get("note", ""))

@@ -18,6 +18,10 @@ def test_split_price():
     assert split_price("Kaffee €6,49") == ("Kaffee", 6.49)
     assert split_price("Kaffee 500 g") == ("Kaffee 500 g", None)
     assert split_price("Euro-Paletten") == ("Euro-Paletten", None)
+    assert split_price("Milch 2 l 1,19€ @rewe") == ("Milch 2 l @rewe", 1.19)
+    assert split_price("Milch 1,19 € @REWE *Anna") == ("Milch @REWE *Anna", 1.19)
+    assert split_price("Käse 2,49 EUR") == ("Käse", 2.49)
+    assert split_price("Cola 1,5€uro") == ("Cola 1,5€uro", None)
 
 
 def test_scale_quantity():

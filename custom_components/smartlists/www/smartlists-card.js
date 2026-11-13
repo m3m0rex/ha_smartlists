@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.2.0";
+const CARD_VERSION = "3.3.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -342,6 +342,9 @@ const TEXTS = {
     rs_title: "Von vorn anfangen", rs_help: "Wähle, was zurückgesetzt wird. Danach startet der Einrichtungs-Assistent. To-do-Listen und ihre Artikel werden nie gelöscht, persönliche Einstellungen der Benutzer bleiben.", rs_settings: "Einstellungen zurücksetzen", rs_settings_sub: "Namenskonvention, Badges und Farben, Märkte und Zonen, Gang-Reihenfolgen, Rechte, Sprache und Automationen, Darstellung der Listen, Wortlisten.", rs_data: "Gelernte Daten löschen", rs_data_sub: "Gemerkte Kategorien, Verlauf und Statistik, Preise und Ausgaben, Vorlagen und Wochenplan.", rs_links: "Alle Teilen-Links zurückziehen", rs_links_sub: "Geteilte Links funktionieren danach nicht mehr.", rs_combined: "Kombinierte Listen entfernen", rs_combined_sub: "Nur die zusammengefasste Ansicht – die Quell-Listen bleiben unverändert.", rs_go: "Zurücksetzen und Assistent starten",
     mp_saved: "Plan gespeichert", mp_ask_add: "Zutaten dieser Woche jetzt auf die Liste setzen?", mp_not_now: "Nein, nur speichern",
     notify_own: "Auch bei eigenen Änderungen", notify_own_sub: "z. B. wenn du am PC etwas einträgst und es aufs Gerät willst – oder zum Ausprobieren.", notify_test: "Testnachricht senden", notify_test_sent: "Testnachricht gesendet – kommt sie nicht an, Companion-App und Benachrichtigungsrechte prüfen.",
+    m_select: "Auswählen", sel_mode: "Mehrere auswählen", sel_count: "{n} ausgewählt", sel_all: "Alle", sel_none: "Keine", sel_check: "Abhaken", sel_checked: "abgehakt", sel_reopened: "wieder offen", sel_delete_q: "{n} Artikel löschen?",
+    mp_target: "Zutaten auf:",
+    p_tab_lists: "Listen",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -571,6 +574,9 @@ const TEXTS = {
     rs_title: "Start from scratch", rs_help: "Choose what to reset. The setup assistant starts afterwards. To-do lists and their items are never deleted; users' personal settings stay.", rs_settings: "Reset settings", rs_settings_sub: "Naming convention, badges and colours, stores and zones, aisle orders, permissions, voice and automations, list display, keyword packs.", rs_data: "Delete learned data", rs_data_sub: "Remembered categories, history and statistics, prices and expenses, templates and meal plan.", rs_links: "Revoke all share links", rs_links_sub: "Shared links stop working.", rs_combined: "Remove combined lists", rs_combined_sub: "Only the combined view – the source lists stay unchanged.", rs_go: "Reset and start assistant",
     mp_saved: "Plan saved", mp_ask_add: "Add this week's ingredients to the list now?", mp_not_now: "No, just save",
     notify_own: "Also for my own changes", notify_own_sub: "e.g. when you add something on the PC and want it on your device – or to try it out.", notify_test: "Send test message", notify_test_sent: "Test message sent – if it doesn't arrive, check the companion app and its notification permission.",
+    m_select: "Select", sel_mode: "Select several", sel_count: "{n} selected", sel_all: "All", sel_none: "None", sel_check: "Check off", sel_checked: "checked off", sel_reopened: "reopened", sel_delete_q: "Delete {n} items?",
+    mp_target: "Ingredients to:",
+    p_tab_lists: "Lists",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -800,6 +806,9 @@ const TEXTS = {
     rs_title: "Repartir de zéro", rs_help: "Choisis ce qui est réinitialisé. L'assistant démarre ensuite. Les listes de tâches et leurs articles ne sont jamais supprimés ; les réglages personnels restent.", rs_settings: "Réinitialiser les réglages", rs_settings_sub: "Convention de nommage, badges et couleurs, magasins et zones, ordre des rayons, droits, voix et automatisations, affichage des listes, packs de mots-clés.", rs_data: "Supprimer les données apprises", rs_data_sub: "Catégories mémorisées, historique et statistiques, prix et dépenses, modèles et menu.", rs_links: "Révoquer tous les liens de partage", rs_links_sub: "Les liens partagés ne fonctionnent plus.", rs_combined: "Supprimer les listes combinées", rs_combined_sub: "Seulement la vue combinée – les listes sources restent inchangées.", rs_go: "Réinitialiser et lancer l'assistant",
     mp_saved: "Menu enregistré", mp_ask_add: "Mettre maintenant les ingrédients de la semaine sur la liste ?", mp_not_now: "Non, enregistrer seulement",
     notify_own: "Aussi pour mes propres modifications", notify_own_sub: "p. ex. quand tu ajoutes quelque chose sur le PC et le veux sur ton appareil – ou pour essayer.", notify_test: "Envoyer un message de test", notify_test_sent: "Message de test envoyé – s'il n'arrive pas, vérifie l'app Companion et l'autorisation des notifications.",
+    m_select: "Sélectionner", sel_mode: "Sélectionner plusieurs", sel_count: "{n} sélectionné(s)", sel_all: "Tous", sel_none: "Aucun", sel_check: "Cocher", sel_checked: "cochés", sel_reopened: "rouverts", sel_delete_q: "Supprimer {n} articles ?",
+    mp_target: "Ingrédients sur :",
+    p_tab_lists: "Listes",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1029,6 +1038,9 @@ const TEXTS = {
     rs_title: "Empezar de cero", rs_help: "Elige qué se restablece. Después se inicia el asistente. Las listas de tareas y sus artículos nunca se borran; los ajustes personales se mantienen.", rs_settings: "Restablecer ajustes", rs_settings_sub: "Convención de nombres, etiquetas y colores, tiendas y zonas, orden de pasillos, permisos, voz y automatizaciones, vista de las listas, paquetes de palabras clave.", rs_data: "Borrar datos aprendidos", rs_data_sub: "Categorías recordadas, historial y estadísticas, precios y gastos, plantillas y plan semanal.", rs_links: "Revocar todos los enlaces", rs_links_sub: "Los enlaces compartidos dejan de funcionar.", rs_combined: "Quitar listas combinadas", rs_combined_sub: "Solo la vista combinada – las listas de origen no cambian.", rs_go: "Restablecer e iniciar asistente",
     mp_saved: "Plan guardado", mp_ask_add: "¿Añadir ahora los ingredientes de esta semana a la lista?", mp_not_now: "No, solo guardar",
     notify_own: "También con mis propios cambios", notify_own_sub: "p. ej. cuando añades algo en el PC y lo quieres en tu dispositivo – o para probar.", notify_test: "Enviar mensaje de prueba", notify_test_sent: "Mensaje de prueba enviado – si no llega, revisa la app Companion y el permiso de notificaciones.",
+    m_select: "Seleccionar", sel_mode: "Seleccionar varios", sel_count: "{n} seleccionados", sel_all: "Todos", sel_none: "Ninguno", sel_check: "Marcar", sel_checked: "marcados", sel_reopened: "reabiertos", sel_delete_q: "¿Borrar {n} artículos?",
+    mp_target: "Ingredientes a:",
+    p_tab_lists: "Listas",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1258,6 +1270,9 @@ const TEXTS = {
     rs_title: "Ricomincia da zero", rs_help: "Scegli cosa ripristinare. Poi parte l'assistente. Le liste di attività e i loro articoli non vengono mai eliminati; le impostazioni personali restano.", rs_settings: "Ripristina le impostazioni", rs_settings_sub: "Convenzione dei nomi, badge e colori, negozi e zone, ordine delle corsie, permessi, voce e automazioni, visualizzazione delle liste, pacchetti di parole chiave.", rs_data: "Elimina i dati appresi", rs_data_sub: "Categorie memorizzate, cronologia e statistiche, prezzi e spese, modelli e piano settimanale.", rs_links: "Revoca tutti i link di condivisione", rs_links_sub: "I link condivisi smettono di funzionare.", rs_combined: "Rimuovi le liste combinate", rs_combined_sub: "Solo la vista combinata – le liste di origine restano invariate.", rs_go: "Ripristina e avvia l'assistente",
     mp_saved: "Piano salvato", mp_ask_add: "Mettere ora in lista gli ingredienti di questa settimana?", mp_not_now: "No, salva soltanto",
     notify_own: "Anche per le mie modifiche", notify_own_sub: "ad es. quando aggiungi qualcosa dal PC e lo vuoi sul dispositivo – o per provare.", notify_test: "Invia messaggio di prova", notify_test_sent: "Messaggio di prova inviato – se non arriva, controlla l'app Companion e il permesso per le notifiche.",
+    m_select: "Seleziona", sel_mode: "Seleziona più elementi", sel_count: "{n} selezionati", sel_all: "Tutti", sel_none: "Nessuno", sel_check: "Spunta", sel_checked: "spuntati", sel_reopened: "riaperti", sel_delete_q: "Eliminare {n} articoli?",
+    mp_target: "Ingredienti in:",
+    p_tab_lists: "Liste",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1487,6 +1502,9 @@ const TEXTS = {
     rs_title: "Zacznij od nowa", rs_help: "Wybierz, co zresetować. Potem uruchomi się kreator. Listy zadań i ich produkty nigdy nie są usuwane; ustawienia osobiste użytkowników zostają.", rs_settings: "Zresetuj ustawienia", rs_settings_sub: "Konwencja nazw, plakietki i kolory, sklepy i strefy, kolejność alejek, uprawnienia, głos i automatyzacje, wygląd list, pakiety słów kluczowych.", rs_data: "Usuń wyuczone dane", rs_data_sub: "Zapamiętane kategorie, historia i statystyki, ceny i wydatki, szablony i plan tygodnia.", rs_links: "Cofnij wszystkie linki", rs_links_sub: "Udostępnione linki przestaną działać.", rs_combined: "Usuń listy połączone", rs_combined_sub: "Tylko widok połączony – listy źródłowe pozostają bez zmian.", rs_go: "Zresetuj i uruchom kreator",
     mp_saved: "Plan zapisany", mp_ask_add: "Dodać teraz składniki z tego tygodnia do listy?", mp_not_now: "Nie, tylko zapisz",
     notify_own: "Także przy moich zmianach", notify_own_sub: "np. gdy dodajesz coś na komputerze i chcesz to na urządzeniu – albo żeby wypróbować.", notify_test: "Wyślij wiadomość testową", notify_test_sent: "Wysłano wiadomość testową – jeśli nie dotrze, sprawdź aplikację Companion i uprawnienia do powiadomień.",
+    m_select: "Zaznacz", sel_mode: "Zaznacz kilka", sel_count: "Zaznaczono: {n}", sel_all: "Wszystkie", sel_none: "Żadne", sel_check: "Odhacz", sel_checked: "odhaczono", sel_reopened: "ponownie otwarte", sel_delete_q: "Usunąć {n} produktów?",
+    mp_target: "Składniki na:",
+    p_tab_lists: "Listy",
   },
 };
 
@@ -1531,6 +1549,15 @@ function splitTags(text, rules, stores) {
     tags.push({ kind, value, prefix: m[2], ...info });
   }
   return [text.replace(re, " ").split(/\s+/).filter(Boolean).join(" "), tags];
+}
+// Preis im Text (wie extras.split_price): "Milch 2 l 1,19€ @REWE" → ["Milch 2 l @REWE", 1.19]
+const PRICE_RE = /(^|\s)(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?=\s|$)/g;
+function splitPrice(text) {
+  let last = null;
+  for (const m of String(text).matchAll(PRICE_RE)) last = m;
+  if (!last) return [text, null];
+  const start = last.index + last[1].length, end = last.index + last[0].length;
+  return [(text.slice(0, start) + " " + text.slice(end)).split(/\s+/).filter(Boolean).join(" "), Number((last[2] || last[3]).replace(",", "."))];
 }
 function parseText(text, rules, stores, typed = false) {
   const [rest, tags] = splitTags(text || "", rules, stores);
@@ -2167,6 +2194,12 @@ const STYLE = `
   .aisle { display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--divider-color,#ddd); border-radius:10px; margin:5px 0; background:var(--secondary-background-color,#f6f6f6); }
   .aisle .n { width:22px; height:22px; border-radius:50%; background:var(--sl-accent); color:var(--text-primary-color,#fff); display:grid; place-items:center; font-size:.72rem; font-weight:700; flex:none; }
   .aisle .grow { flex:1; }
+  .selbar { position:sticky; top:0; z-index:4; display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:8px 12px; margin:0 8px 6px;
+    border-radius:12px; background:color-mix(in srgb, var(--sl-accent) 14%, var(--card-background-color,#fff)); }
+  .selbar .grow { flex:1; min-width:90px; } .selbar .btn2 { height:32px; padding:0 12px; } .selbar .btn2:disabled { opacity:.45; cursor:default; }
+  .row.selmode { cursor:pointer; user-select:none; } .row.selmode.sel { background:color-mix(in srgb, var(--sl-accent) 12%, transparent); }
+  .row.selmode .selbox { display:grid; place-items:center; border-radius:6px; }
+  .row.selmode .selbox.on { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
   .xdel { background:none; border:none; color:var(--secondary-text-color); cursor:pointer; font-size:1rem; padding:0 6px; }
   .xdel:hover { color:var(--error-color,#db4437); }
   .sumbar .btn2 { margin-left:8px; }
@@ -2497,7 +2530,7 @@ const LIST_DIALOG_STYLE = `
 class SmartListsCard extends HTMLElement {
   setConfig(config) {
     const many = Array.isArray(config && config.entities) ? config.entities.filter(Boolean) : [];
-    if (!config || (!config.entity && !many.length)) throw new Error("Please set 'entity' (one list) or 'entities' (several).");
+    if (!config || (!config.entity && !many.length && config.view !== "mealplan")) throw new Error("Please set 'entity' (one list) or 'entities' (several).");
     if (many.length && !config.entity) return this._setupMulti(config, many);
     this._multi = null;
     this._rawConfig = config;
@@ -2534,6 +2567,7 @@ class SmartListsCard extends HTMLElement {
     }
     const first = !this._hass;
     this._hass = hass;
+    if (this._config.view === "mealplan") { this._renderMealPlanView(); return; }
     if (first || !this._cfg) this._loadConfig();
     if (first) this._loadUserUi();
     this._subscribe();
@@ -3288,6 +3322,7 @@ class SmartListsCard extends HTMLElement {
         else this._openMenu(it, m.row, a);
       }, a === "delete" ? "danger" : ""))];
       if (!actions.length) body.push(h("div", { class: "empty" }, t.readonly));
+      if (d.type !== "notes") body.push(item(ICON.check, t.m_select, () => this._startSelect(it)));
       if (d.type !== "notes") body.push(item(ICON.history, t.ih_title, () => this._openMenu(it, m.row, "history")));
     } else if (m.view === "move" || m.view === "copy") {
       const targets = (this._targets || []).filter((l) => l.entity_id !== this._config.entity && l.can_add
@@ -3461,7 +3496,9 @@ class SmartListsCard extends HTMLElement {
     const text = this._input.value;
     if (!text.trim()) { this._resetDraft(); this._renderPreview(); this._closeSugg(); this._renderFrequent(); return; }
     this._draft.text = text;
-    this._draft.parsed = this._cfg ? parseText(text, this._cfg.tag_rules, this._cfg.known_stores, true) : null;
+    const [noPrice, price] = splitPrice(text);
+    this._draft.price = price;
+    this._draft.parsed = this._cfg ? parseText(noPrice, this._cfg.tag_rules, this._cfg.known_stores, true) : null;
     this._renderPreview();
     this._renderFrequent();
     this._suggest();
@@ -3513,6 +3550,7 @@ class SmartListsCard extends HTMLElement {
         onmousedown: (e) => e.preventDefault(), onclick: () => this._togglePicker() },
         cat ? cat.label : "…", source ? h("span", { class: "src" }, "· " + t["src_" + source]) : null),
       p.quantity == null && info && info.unit_hint ? h("span", { class: "hint" }, `${t.unit_hint}: ${info.unit_hint}`) : null,
+      this._draft.price != null && this._config.show_prices !== false ? h("span", { class: "chip qty" }, fmtMoney(this._draft.price, this._hass.language)) : null,
       p.tags.map(badge)
     );
   }
@@ -3619,7 +3657,9 @@ class SmartListsCard extends HTMLElement {
         }
       }
     }
-    const text = encodeText(p, cfg.tag_rules);
+    // Preis aus dem Text mitschicken – die Integration merkt ihn sich (je Einheit) und nimmt ihn aus dem Namen
+    const price = textOverride ? null : this._draft.price;
+    const text = encodeText(p, cfg.tag_rules) + (price != null ? ` ${String(price).replace(".", ",")}€` : "");
     this._resetDraft();
     if (this._input) { this._input.value = ""; this._renderPreview(); this._closeSugg(); if (this._pickEl) this._pickEl.hidden = true; }
     if (picked) {
@@ -3713,6 +3753,7 @@ class SmartListsCard extends HTMLElement {
     const open = visible.filter((i) => !i.checked);
     const done = visible.filter((i) => i.checked);
     const out = [];
+    if (this._sel) out.push(this._selBar(d, visible));
     const mode = this._sortMode;
     const byName = (a, b) => a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
     const rows = [];
@@ -3790,6 +3831,7 @@ class SmartListsCard extends HTMLElement {
   }
 
   _row(it, d, showEmoji) {
+    if (this._sel) return this._selRow(it, d, showEmoji);
     if (this._editing === it.uid) return this._editRow(it, d);
     const t = this._t;
     const p = it.permissions;
@@ -3838,6 +3880,94 @@ class SmartListsCard extends HTMLElement {
     return row;
   }
 
+  // Mehrfachauswahl: Zeile antippen = markieren; Leiste oben mit Verschieben, Kopieren, Abhaken, Löschen
+  _selRow(it, d, showEmoji) {
+    const on = this._sel.has(it.uid);
+    const cat = d.categories.find((c) => c.id === it.category);
+    const tags = !this._config.show_tags ? [] : (it.tags || []).filter((x) => this._config.show_source || !x.implicit);
+    const toggle = () => { if (on) this._sel.delete(it.uid); else this._sel.add(it.uid); this._renderList(); };
+    return h("div", { class: `row selmode ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${on ? "sel" : ""}`, role: "checkbox", "aria-checked": String(on), tabindex: "0",
+      onclick: toggle, onkeydown: (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } } },
+      h("span", { class: `box selbox ${on ? "on" : ""}` }, on ? svg(ICON.check, 16) : null),
+      showEmoji ? h("span", { class: "catemoji" }, cat ? emojiOf(cat.label) : "") : null,
+      h("div", { class: "main" }, h("div", { class: "name-line" }, h("span", { class: "iname" }, it.name), tags.map(badge))),
+      h("span", { class: "qtycol" }, it.quantity != null ? `${it.pack_count > 1 ? it.pack_count + "× " : ""}${fmtQty(it.quantity)}` : ""),
+      h("span", { class: "unitcol" }, it.unit || ""));
+  }
+  _startSelect(it) {
+    this._sel = new Set(it ? [it.uid] : []);
+    this._closeMenu(); this._moreOpen = false; this._renderMore && this._renderMore();
+    this._editing = null; this._renderList();
+  }
+  _endSelect() { this._sel = null; this._renderList(); }
+  _selBar(d, visible) {
+    const t = this._t;
+    const items = d.items.filter((i) => this._sel.has(i.uid));
+    // nicht mehr vorhandene (von anderen gelöscht) aus der Auswahl nehmen
+    if (items.length !== this._sel.size) this._sel = new Set(items.map((i) => i.uid));
+    const n = items.length;
+    const all = visible.length && visible.every((i) => this._sel.has(i.uid));
+    const canDel = d.permissions.delete, canAdd = (this._targets || []).some((l) => l.entity_id !== this._config.entity && l.can_add);
+    const btn = (label, fn, cls = "", dis = !n) => h("button", { class: `btn2 ${cls}`, type: "button", disabled: dis, onclick: fn }, label);
+    return h("div", { class: "selbar" },
+      iconBtn(ICON.close, t.cancel, () => this._endSelect()),
+      h("b", { class: "grow" }, t.sel_count.replace("{n}", n)),
+      btn(all ? t.sel_none : t.sel_all, () => { this._sel = all ? new Set() : new Set(visible.map((i) => i.uid)); this._renderList(); }, "", !visible.length),
+      d.permissions.toggle ? btn("✓ " + t.sel_check, () => this._selCheck(items)) : null,
+      canDel && canAdd ? btn(t.m_move, () => this._selMove(items, false)) : null,
+      canAdd ? btn(t.m_copy, () => this._selMove(items, true)) : null,
+      canDel ? btn(t.delete, () => this._selDelete(items), "danger") : null);
+  }
+  async _selDelete(items) {
+    const t = this._t;
+    if (!items.length) return;
+    const yes = await slDialog(this.shadowRoot, { title: t.delete, danger: true, ok: t.delete, cancel: t.cancel, text: t.sel_delete_q.replace("{n}", items.length) });
+    if (!yes) return;
+    this._sel = null;
+    await this._change(`${items.length} ${t.removed}`, "remove_items", { uids: items.map((i) => i.uid) },
+      () => async () => { for (const i of items) await this._call("add_item", { text: i.text, note: i.note || "", checked: i.checked }); });
+  }
+  async _selCheck(items) {
+    const open = items.filter((i) => !i.checked);
+    const target = open.length ? open : items; // alles schon abgehakt → wieder öffnen
+    const checked = !!open.length;
+    this._sel = null;
+    const label = `${target.length} ${checked ? this._t.sel_checked : this._t.sel_reopened}`;
+    try { for (const i of target) await this._call("update_item", { uid: i.uid, checked }); this._error = null; } catch (e) { this._error = (e && e.message) || this._t.error; }
+    this._undo = { label, run: async () => { for (const i of target) await this._call("update_item", { uid: i.uid, checked: !checked }); } };
+    await this._load();
+    this._render();
+    this._showSnack(label, () => this._runUndo());
+  }
+  _selMove(items, copy) {
+    const t = this._t;
+    const d = this._data;
+    const targets = (this._targets || []).filter((l) => l.entity_id !== this._config.entity && l.can_add && (l.type === "notes") === (d.type === "notes"));
+    const dlg = this._dialog(`${copy ? t.m_copy : t.m_move} (${items.length})`, h("div", { class: "seltargets" },
+      h("style", {}, ".seltargets{display:flex;flex-direction:column;gap:6px}.seltargets button{justify-content:flex-start;text-align:left;width:100%}"),
+      targets.length ? targets.map((l) => h("button", { type: "button", onclick: async () => {
+        dlg.remove();
+        this._sel = null;
+        const source = this._config.entity;
+        const moved = [];
+        try {
+          for (const i of items) {
+            const r = await this._call("move_item", { uid: i.uid, target: l.entity_id, copy });
+            if (r && r.uid) moved.push(r.uid);
+          }
+          this._error = null;
+        } catch (e) { this._error = (e && e.message) || t.error; }
+        const label = `${moved.length} ${copy ? t.copied : t.moved} ${l.name}`;
+        this._undo = { label, run: async () => { for (const uid of moved) {
+          if (copy) await this._call("remove_items", { entity_id: l.entity_id, uids: [uid] }, false);
+          else await this._call("move_item", { entity_id: l.entity_id, uid, target: source, copy: false }, false);
+        } } };
+        await this._load();
+        this._render();
+        this._showSnack(label, () => this._runUndo());
+      } }, "📋 " + l.name)) : h("p", {}, t.no_targets)), [h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel)]);
+  }
+
   _editRow(it, d) {
     const t = this._t;
     const text = h("input", { class: "text", value: it.text || it.name, "aria-label": it.name });
@@ -3851,9 +3981,12 @@ class SmartListsCard extends HTMLElement {
       "aria-label": t.price, value: it.price && it.price.source !== "offer" && it.price.unit_price != null ? String(it.price.unit_price) : "" });
     const save = async () => {
       this._editing = null;
-      const parsed = parseText(text.value, this._cfg.tag_rules, this._cfg.known_stores, true);
+      // Preis im Text ("… 1,19€") gilt wie das Preisfeld (je Einheit umgerechnet wie beim Hinzufügen)
+      const [noPrice, typedPrice] = splitPrice(text.value);
+      const parsed = parseText(noPrice, this._cfg.tag_rules, this._cfg.known_stores, true);
       const before = it.price && it.price.source !== "offer" ? it.price.unit_price : null;
-      const nowP = priceIn.value === "" ? null : Number(priceIn.value);
+      const nowP = typedPrice != null ? Math.round(typedPrice / ((parsed.quantity || 1) * (parsed.pack_count || 1)) * 1000) / 1000
+        : priceIn.value === "" ? null : Number(priceIn.value.replace(",", "."));
       if (nowP !== before && !(nowP != null && Number.isNaN(nowP))) {
         try { await this._call("set_price", { name: parsed.name || it.name, price: nowP, store: (parsed.tags.find((x) => x.kind === "store") || {}).value || null }, false); } catch (e) { /* */ }
       }
@@ -4821,17 +4954,43 @@ class SmartListsCard extends HTMLElement {
     setTimeout(() => name.focus(), 30);
   }
   // Wochenplan: Gerichte (Vorlagen) je Tag, Zutaten auf die Liste, optional aus Mealie holen
+  // Wochenplan als Fenster (⋯ → Wochenplan) …
   async _mealPlanDialog() {
     const t = this._t;
+    let dlg = null;
+    const mp = await this._mealPlanBuild(() => dlg && dlg.remove(), () => dlg);
+    dlg = this._dialog(t.mp_title, mp.body, mp.actions, 640);
+    dlg.prepend(mp.style);
+    mp.load();
+  }
+  // … oder direkt in der Karte bzw. auf der Seite /smartlists (Tab „Wochenplan“, Karte mit view: mealplan)
+  async _renderMealPlanView() {
+    const t = this._t;
+    if (this._mpView && this._mpView.lang === this._lang) return;
+    this._mpView = { lang: this._lang };
+    const card = h("ha-card", {}, h("div", { class: "mpwrap" }, h("div", { class: "mph" }, "🗓️ " + t.mp_title), h("div", { class: "shelp" }, t.loading)));
+    fill(this.shadowRoot, h("style", {}, STYLE), card);
+    const mp = await this._mealPlanBuild(null, () => this._mpView);
+    fill(card, mp.style, h("div", { class: "mpwrap" }, h("div", { class: "mph" }, "🗓️ " + t.mp_title), mp.body, h("div", { class: "acts mpacts" }, mp.actions)));
+    mp.load();
+  }
+  // Gemeinsamer Aufbau. close: Fenster schließen (null = eingebettet), holder(): Objekt für _dirty
+  async _mealPlanBuild(close, holder) {
+    const t = this._t;
     const lang = this._hass.language || "de";
+    const inline = !close;
     const startOf = (off) => { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + off * 7); return d; };
-    let week = 0, tpls = [], days = [], mealie = false;
+    let week = 0, tpls = [], days = [], mealie = false, lists = [];
     try { tpls = (await this._call("templates", {}, false)).templates; } catch (e) { /* */ }
     try { mealie = (await this._call("mealie_status", {}, false)).available; } catch (e) { /* */ }
+    try { lists = (await this._call("lists", {}, false)).lists.filter((l) => l.can_add && l.type !== "notes"); } catch (e) { /* */ }
+    // Ziel-Liste für „Zutaten auf die Liste“: die Liste der Karte, sonst die erste passende
+    let target = (lists.find((l) => l.entity_id === this._config.entity) || lists[0] || { entity_id: this._config.entity }).entity_id;
     const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     const status = h("span", { class: "ok2" });
     const grid = h("div", { class: "mpgrid" });
     const title = h("b", {});
+    const setDirty = (v) => { const o = holder && holder(); if (o) o._dirty = v; };
     const load = async () => {
       const s0 = startOf(week);
       title.textContent = `${s0.toLocaleDateString(lang, { day: "numeric", month: "short" })} – ${new Date(s0.getTime() + 6 * 864e5).toLocaleDateString(lang, { day: "numeric", month: "short" })}`;
@@ -4840,12 +4999,13 @@ class SmartListsCard extends HTMLElement {
     };
     // Änderungen erst sammeln (auch über mehrere Wochen), gespeichert wird mit „Speichern“ bzw. „Zutaten auf die Liste“
     const pending = {};
-    const change = (date, ids) => { pending[date] = ids; dlg._dirty = true; draw(); };
+    const change = (date, ids) => { pending[date] = ids; setDirty(true); draw(); };
     const saveAll = async () => {
       for (const [date, ids] of Object.entries(pending)) { await this._call("set_meals", { date, template_ids: ids }, false); delete pending[date]; }
-      dlg._dirty = false;
+      setDirty(false);
     };
     const tplById = (id) => tpls.find((x) => x.id === id) || { id, name: id };
+    const today = iso(new Date());
     const draw = () => fill(grid, days.map((day) => {
       const ids = pending[day.date] || day.templates.map((x) => x.id);
       const shown = pending[day.date] ? ids.map(tplById) : day.templates;
@@ -4853,46 +5013,58 @@ class SmartListsCard extends HTMLElement {
         if (!e.target.value) return;
         change(day.date, [...ids, e.target.value]);
       } }, h("option", { value: "" }, "＋ " + t.mp_add), tpls.filter((x) => !ids.includes(x.id)).map((x) => h("option", { value: x.id }, `${x.emoji || ""} ${x.name}`.trim())));
-      return h("div", { class: "mpday" },
+      return h("div", { class: `mpday ${day.date === today ? "today" : ""} ${pending[day.date] ? "changed" : ""}` },
         h("div", { class: "mpd" }, new Date(day.date + "T12:00").toLocaleDateString(lang, { weekday: "short", day: "numeric", month: "numeric" })),
         h("div", { class: "mpm" }, shown.map((x) => h("span", { class: "chip2 on" }, `${x.emoji || ""} ${x.name}`.trim(),
           h("button", { type: "button", class: "xdel", "aria-label": t.delete, onclick: () => change(day.date, ids.filter((y) => y !== x.id)) }, "×"))),
           tpls.length ? sel : h("span", { class: "shelp" }, t.mp_no_tpl)));
     }));
-    const dlg = this._dialog(t.mp_title, h("div", {},
+    const finish = (msg) => { if (close) { close(); this._toast(msg); } else { load(); status.textContent = msg; } };
+    const addMeals = async () => {
+      const r = await this._call("add_meals", { entity_id: target, start: iso(startOf(week)), days: 7 }, false);
+      finish(`✓ ${r.added} ${t.added}${r.increased ? `, ${r.increased} ${t.tpl_increased}` : ""}`);
+      if (target === this._config.entity && this._data) this._load();
+    };
+    const body = h("div", {},
       h("div", { class: "mpnav" }, iconBtn(ICON.back, t.mp_prev, () => { week--; load(); }), title, h("button", { type: "button", class: "icon-btn mpnext", title: t.mp_next, "aria-label": t.mp_next, onclick: () => { week++; load(); } }, svg(ICON.back, 18))),
       h("p", { class: "shelp" }, t.mp_help), grid,
-      mealie ? h("div", { class: "acts", style: "justify-content:flex-start" }, h("button", { class: "btn2", type: "button", onclick: async () => {
-        status.textContent = t.loading;
-        try { const r = await this._call("mealie_import", { start: iso(startOf(week)), days: 7, plan: true }, false);
-          status.textContent = `✓ ${r.recipes} ${t.mp_recipes}`; tpls = (await this._call("templates", {}, false)).templates; this._tpls = null; load(); }
-        catch (err) { status.textContent = (err && err.message) || t.error; }
-      } }, "🍽️ " + t.mp_mealie)) : null, h("div", {}, status)), [
-      h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel),
-      h("button", { type: "button", onclick: async () => {
+      h("div", { class: "acts", style: "justify-content:flex-start;align-items:center;flex-wrap:wrap" },
+        lists.length > 1 ? h("label", { class: "mptarget" }, t.mp_target + " ", h("select", { "aria-label": t.mp_target, onchange: (e) => { target = e.target.value; } },
+          lists.map((l) => h("option", { value: l.entity_id, selected: l.entity_id === target }, l.name)))) : null,
+        mealie ? h("button", { class: "btn2", type: "button", onclick: async () => {
+          status.textContent = t.loading;
+          try { const r = await this._call("mealie_import", { start: iso(startOf(week)), days: 7, plan: true }, false);
+            status.textContent = `✓ ${r.recipes} ${t.mp_recipes}`; tpls = (await this._call("templates", {}, false)).templates; this._tpls = null; load(); }
+          catch (err) { status.textContent = (err && err.message) || t.error; }
+        } }, "🍽️ " + t.mp_mealie) : null),
+      h("div", {}, status));
+    const actions = [
+      close ? h("button", { type: "button", onclick: () => close() }, t.cancel) : null,
+      h("button", { type: "button", class: inline ? "btn2" : "", onclick: async () => {
         try {
           await saveAll();
           const yes = await slDialog(this.shadowRoot, { title: t.mp_saved, text: t.mp_ask_add, ok: t.mp_to_list, cancel: t.mp_not_now });
-          if (!yes) { dlg.remove(); this._toast("✓ " + t.mp_saved); return; }
-          const r = await this._call("add_meals", { start: iso(startOf(week)), days: 7 });
-          dlg.remove(); this._toast(`✓ ${r.added} ${t.added}${r.increased ? `, ${r.increased} ${t.tpl_increased}` : ""}`); this._load();
+          if (!yes) { finish("✓ " + t.mp_saved); return; }
+          await addMeals();
         } catch (err) { status.textContent = (err && err.message) || t.error; }
       } }, t.save),
-      h("button", { type: "button", class: "ok", onclick: async () => {
-        try { await saveAll(); const r = await this._call("add_meals", { start: iso(startOf(week)), days: 7 });
-          dlg.remove(); this._toast(`✓ ${r.added} ${t.added}${r.increased ? `, ${r.increased} ${t.tpl_increased}` : ""}`); this._load(); }
+      h("button", { type: "button", class: inline ? "btn2 primary" : "ok", onclick: async () => {
+        try { await saveAll(); await addMeals(); }
         catch (err) { status.textContent = (err && err.message) || t.error; }
-      } }, t.mp_to_list)], 640);
-    const styleEl = h("style", {}, `.mpgrid{display:grid;gap:0}.mpday{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--divider-color,#e0e0e0)}
-      .mpd{font-weight:600}.mpm{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mpm select{width:auto;height:auto;min-height:34px;line-height:1.4;padding:5px 30px 5px 10px;margin:0;box-sizing:border-box}
+      } }, t.mp_to_list)].filter(Boolean);
+    const style = h("style", {}, `.mpgrid{display:grid;gap:0}.mpday{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--divider-color,#e0e0e0)}
+      .mpday.today .mpd{color:var(--primary-color)}.mpday.changed .mpd::after{content:" •";color:var(--primary-color)}
+      .mpd{font-weight:600}.mpm{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mpm select,.mptarget select{width:auto;height:auto;min-height:34px;line-height:1.4;padding:5px 30px 5px 10px;margin:0;box-sizing:border-box}
+      .mptarget{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;color:var(--secondary-text-color)}
       .chip2{border:1px solid var(--divider-color,#ddd);border-radius:16px;padding:3px 4px 3px 10px;font-size:.85rem;display:inline-flex;align-items:center;gap:2px}
       .chip2.on{border-color:var(--primary-color);color:var(--primary-color)}.xdel{background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;padding:0 4px;height:auto}
       .mpnav{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:6px}.mpnav .icon-btn{background:none;border:none;color:inherit;cursor:pointer;height:32px;width:32px;padding:0}
       .mpnext svg{transform:rotate(180deg)}.btn2{height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--divider-color,#ddd);background:none;color:var(--primary-color);cursor:pointer}
+      .btn2.primary{background:var(--primary-color);color:var(--text-primary-color,#fff);border-color:var(--primary-color)}
       .shelp{color:var(--secondary-text-color);font-size:.82rem}.acts{display:flex;gap:8px;margin-top:10px}.ok2{font-size:.85rem;color:var(--secondary-text-color)}
+      .mpwrap{padding:16px}.mph{font-size:1.25rem;font-weight:500;margin-bottom:8px}.mpacts{justify-content:flex-end}
       @media(max-width:520px){.mpday{grid-template-columns:minmax(0,1fr)}}`);
-    dlg.prepend(styleEl);
-    load();
+    return { body, actions, style, load };
   }
 
   // Global → Sprache, Sichern, Standard: fertige Einkaufs-Ansicht (Dashboard) mit einem Klick
@@ -5473,6 +5645,7 @@ class SmartListsCard extends HTMLElement {
     const c = this._config;
     const out = [];
     const closeAll = () => { this._moreOpen = false; this._showSettings = false; this._showImport = false; this._showTpl = false; };
+    if (d.type !== "notes" && d.items.length) out.push([ICON.check, t.sel_mode, () => this._startSelect(null)]);
     if (d.permissions.add && c.show_import !== false && d.type !== "notes")
       out.push([ICON.importIcon, t.imp, () => { closeAll(); this._showImport = true; this._renderSettings(); this._renderImport(); this._render(); }]);
     if (d.type !== "notes" && d.permissions.add && c.show_templates !== false) {
@@ -5662,6 +5835,12 @@ const PANEL_STYLE = `
   .toolbar button { background:none; border:none; color:inherit; width:40px; height:40px; border-radius:50%; cursor:pointer;
     display:flex; align-items:center; justify-content:center; }
   .toolbar button:hover, .toolbar button.on { background:rgba(255,255,255,.18); }
+  .ptabs { display:flex; gap:4px; padding:0 12px; overflow-x:auto; scrollbar-width:none; position:sticky; top:56px; z-index:3;
+    background:var(--app-header-background-color, var(--primary-color)); }
+  .ptab { flex:none; background:none; border:none; border-bottom:2px solid transparent; padding:10px 14px; font:inherit; font-size:.95rem; cursor:pointer;
+    color:var(--app-header-text-color, var(--text-primary-color,#fff)); opacity:.75; }
+  .ptab.on { opacity:1; border-bottom-color:currentColor; font-weight:500; }
+  .ptabs:empty { display:none; }
   .chips { display:flex; gap:8px; overflow-x:auto; padding:12px 16px 4px; scrollbar-width:none; margin:0 auto; box-sizing:border-box; }
   .chip { flex:none; display:flex; align-items:center; gap:6px; border:1px solid var(--divider-color,#ddd); background:var(--card-background-color,#fff);
     border-radius:18px; padding:6px 12px; font:inherit; font-size:.9rem; cursor:pointer; color:var(--primary-text-color); white-space:nowrap; }
@@ -5791,15 +5970,21 @@ class SmartListsPanel extends HTMLElement {
         onclick: () => { this._settingsOpen = this._settingsOpen === "global" ? false : "global"; this._render(); } }, svg(ICON.gear, 22));
       this._statsBtn = h("button", { type: "button", title: t.stats, "aria-label": t.stats,
         onclick: () => { this._settingsOpen = this._settingsOpen === "stats" ? false : "stats"; this._render(); } }, svg(ICON.chart, 22));
+      // Tabs wie in Home Assistant: Listen | Wochenplan
+      this._tabsEl = h("div", { class: "ptabs", role: "tablist" });
       this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._orderBtn, this._colBtn, this._wideBtn, this._statsBtn, this._gearBtn),
-        this._chipsEl, this._hintEl, this._contentEl);
+        this._tabsEl, this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }
     this._menuBtn.hidden = !this._narrow;
+    const tab = this._settingsOpen ? null : (this._prefs.tab || "lists");
+    fill(this._tabsEl, this._settingsOpen ? null : [["lists", "📋 " + this._t.p_tab_lists], ["plan", "🗓️ " + this._t.mp_title]].map(([id, label]) =>
+      h("button", { type: "button", role: "tab", class: `ptab ${tab === id ? "on" : ""}`, "aria-selected": String(tab === id),
+        onclick: () => { this._prefs.tab = id; this._save(); this._render(); } }, label)));
     this._gearBtn.classList.toggle("on", this._settingsOpen === "global");
     this._gearBtn.setAttribute("aria-pressed", String(this._settingsOpen === "global"));
     this._statsBtn.classList.toggle("on", this._settingsOpen === "stats");
-    [this._newBtn, this._orderBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen; });
+    [this._newBtn, this._orderBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen || tab === "plan"; });
     this._orderBtn.classList.toggle("on", !!this._ordering);
     this._orderBtn.setAttribute("aria-pressed", String(!!this._ordering));
     if (this._settingsOpen) {
@@ -5816,6 +6001,18 @@ class SmartListsPanel extends HTMLElement {
       fill(this._chipsEl); fill(this._hintEl);
       this._contentEl.className = "content w-settings cols-1";
       if (this._contentEl.firstChild !== this._settingsCard) fill(this._contentEl, this._settingsCard);
+      return;
+    }
+    if (tab === "plan") {
+      // Wochenplan direkt auf der Seite; „Zutaten auf die Liste“ geht standardmäßig an die gewählte Liste
+      if (!this._planCard) {
+        this._planCard = document.createElement("smartlists-card");
+        this._planCard.setConfig({ view: "mealplan", entity: sel[0] || (lists[0] && lists[0].e) || "" });
+      }
+      this._planCard.hass = this._hass;
+      fill(this._chipsEl); fill(this._hintEl);
+      this._contentEl.className = "content w-normal cols-1";
+      if (this._contentEl.firstChild !== this._planCard) fill(this._contentEl, this._planCard);
       return;
     }
     this._colBtn.classList.toggle("on", this._prefs.columns);

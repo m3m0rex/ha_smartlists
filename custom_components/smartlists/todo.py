@@ -133,9 +133,11 @@ class CombinedTodoListEntity(TodoListEntity):
         self._app_device: str | None = opts.get(CONF_APP_DEVICE) or None
         self._app_list: str | None = opts.get(CONF_APP_LIST) or None
         if self._app_device:
-            from .sensor import device_identifier
+            from .sensor import app_device_info
 
-            self._attr_device_info = DeviceInfo(identifiers={device_identifier(self._app_device)})
+            # Gerät unbekannt (z. B. in HA entfernt) → Liste trotzdem anlegen, nur ohne Gerät
+            if (info := app_device_info(hass, self._app_device)) is not None:
+                self._attr_device_info = info
         # Nur im Modus "lokal": abweichender Status je kombinierter UID.
         self._overrides: dict[str, str] = dict(stored.get("overrides", {}))
         # Zuordnung kombinierte UID -> (Quell-Entität, Quell-UID, Original-Name)

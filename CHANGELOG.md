@@ -3,6 +3,22 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.3.0] – 2026-11-13
+
+### Added
+
+- **Select several items**: *Select* in the item menu or *⋯ → Select several*, then move, copy, check off
+  or delete all marked items at once (with undo).
+- **Meal plan on the sidebar page**: tabs *Lists* | *Meal plan* on `/smartlists`; the week plan is shown
+  right on the page with a choice of the list for the ingredients. Also available as a card (`view: mealplan`).
+
+### Fixed
+
+- A price in the item text (`Milch 2 l 1,19€ @REWE`) was not taken over when something followed it (e.g. a
+  store); it is now recognised anywhere in the text, shown in the preview and also when editing an item.
+- Combined lists taken over from the app are attached to the app's device with full device details, so
+  the list is created reliably and shows up on the device page and on `/smartlists`.
+
 ## [3.2.0] – 2026-11-13
 
 ### Added

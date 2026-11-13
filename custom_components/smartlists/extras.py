@@ -28,16 +28,19 @@ MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
 MAX_BARCODES = 3000
 # Preis am Ende des Textes: "Milch 2 l 1,19€", "Butter 1.79 €", "Kaffee €6,49"
-_PRICE = re.compile(r"\s+(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?€)\s*$")
+# Preis als eigenes Wort irgendwo im Text ("Milch 2 l 1,19€ @REWE", "€6,49 Kaffee"), auch "EUR"
+_PRICE = re.compile(r"(?<!\S)(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?!\S)")
 
 
 def split_price(text: str) -> tuple[str, float | None]:
     """Preis-Angabe am Ende des Textes abtrennen (kommt nicht in den Artikelnamen)."""
-    m = _PRICE.search(" " + text)
+    m = None
+    for m in _PRICE.finditer(text):
+        pass  # bei mehreren Angaben zählt die letzte
     if not m:
         return text, None
     value = float((m.group(1) or m.group(2)).replace(",", "."))
-    return (" " + text)[: m.start()].strip(), value
+    return " ".join((text[: m.start()] + " " + text[m.end():]).split()), value
 
 
 class Extras:

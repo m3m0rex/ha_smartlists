@@ -328,6 +328,7 @@ const TEXTS = {
     aisle_sort: "Sortieren", aisle_drag: "Ziehen zum Verschieben", emoji_pick: "Symbol wählen", emoji_free: "eigenes", emoji_food: "Essen", emoji_occasion: "Anlässe & Haushalt", emoji_people: "Personen", emoji_symbols: "Zeichen", emoji_none: "ohne",
     trip_done: "Einkauf beendet", trip_help: "Die Summe „im Wagen“ beginnt wieder bei 0. Ausgaben bleiben gebucht. Für Listen, die du immer wieder nutzt, kannst du alles Abgehakte gleich wieder öffnen.", trip_reopen: "Alles wieder offen", trip_finish: "Beenden", stats_forget: "Aus dem Verlauf löschen", stats_forget_help: "wird aus Statistik, Vorschlägen und Kaufrhythmus entfernt (z. B. versehentlich hinzugefügt).", exp_entries: "Buchungen", notes_create: "Notizliste anlegen", notes_create_help: "Name der Notizliste. Sie gehört dir; angelegt als todo.ha_smartlists_notes_<name>.",
     p_lists_all: "Alle Listen", p_lists_less: "Weniger",
+    scan_native_help: "Den Strichcode auf der Verpackung ins Bild halten.", scan_type: "Nummer eintippen", scan_not_product: "Das ist kein Produkt-Strichcode (EAN).",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -549,6 +550,7 @@ const TEXTS = {
     aisle_sort: "Sort", aisle_drag: "Drag to move", emoji_pick: "Choose symbol", emoji_free: "custom", emoji_food: "Food", emoji_occasion: "Occasions & home", emoji_people: "People", emoji_symbols: "Symbols", emoji_none: "none",
     trip_done: "Shopping done", trip_help: "The “in cart” total starts at 0 again. Expenses stay booked. For lists you reuse, you can reopen everything checked right away.", trip_reopen: "Reopen all", trip_finish: "Finish", stats_forget: "Delete from history", stats_forget_help: "is removed from statistics, suggestions and buying rhythm (e.g. added by mistake).", exp_entries: "Bookings", notes_create: "Create note list", notes_create_help: "Name of the note list. It belongs to you; created as todo.ha_smartlists_notes_<name>.",
     p_lists_all: "All lists", p_lists_less: "Less",
+    scan_native_help: "Point the camera at the barcode on the package.", scan_type: "Type the number", scan_not_product: "This is not a product barcode (EAN).",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -770,6 +772,7 @@ const TEXTS = {
     aisle_sort: "Trier", aisle_drag: "Glisser pour déplacer", emoji_pick: "Choisir un symbole", emoji_free: "personnalisé", emoji_food: "Nourriture", emoji_occasion: "Occasions & maison", emoji_people: "Personnes", emoji_symbols: "Symboles", emoji_none: "aucun",
     trip_done: "Courses terminées", trip_help: "Le total « dans le chariot » repart de 0. Les dépenses restent enregistrées. Pour les listes réutilisées, tu peux rouvrir tout ce qui est coché.", trip_reopen: "Tout rouvrir", trip_finish: "Terminer", stats_forget: "Supprimer de l'historique", stats_forget_help: "sera retiré des statistiques, suggestions et du rythme d'achat (p. ex. ajouté par erreur).", exp_entries: "Opérations", notes_create: "Créer une liste de notes", notes_create_help: "Nom de la liste de notes. Elle t'appartient ; créée en tant que todo.ha_smartlists_notes_<nom>.",
     p_lists_all: "Toutes les listes", p_lists_less: "Moins",
+    scan_native_help: "Vise le code-barres sur l'emballage.", scan_type: "Saisir le numéro", scan_not_product: "Ce n'est pas un code-barres de produit (EAN).",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -991,6 +994,7 @@ const TEXTS = {
     aisle_sort: "Ordenar", aisle_drag: "Arrastrar para mover", emoji_pick: "Elegir símbolo", emoji_free: "propio", emoji_food: "Comida", emoji_occasion: "Ocasiones y hogar", emoji_people: "Personas", emoji_symbols: "Símbolos", emoji_none: "ninguno",
     trip_done: "Compra terminada", trip_help: "El total «en el carro» vuelve a 0. Los gastos siguen registrados. Para listas que reutilizas, puedes reabrir todo lo marcado.", trip_reopen: "Reabrir todo", trip_finish: "Terminar", stats_forget: "Borrar del historial", stats_forget_help: "se quita de estadísticas, sugerencias y ritmo de compra (p. ej. añadido por error).", exp_entries: "Movimientos", notes_create: "Crear lista de notas", notes_create_help: "Nombre de la lista de notas. Es tuya; se crea como todo.ha_smartlists_notes_<nombre>.",
     p_lists_all: "Todas las listas", p_lists_less: "Menos",
+    scan_native_help: "Apunta al código de barras del envase.", scan_type: "Escribir el número", scan_not_product: "No es un código de barras de producto (EAN).",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1212,6 +1216,7 @@ const TEXTS = {
     aisle_sort: "Ordina", aisle_drag: "Trascina per spostare", emoji_pick: "Scegli simbolo", emoji_free: "personale", emoji_food: "Cibo", emoji_occasion: "Occasioni e casa", emoji_people: "Persone", emoji_symbols: "Simboli", emoji_none: "nessuno",
     trip_done: "Spesa finita", trip_help: "Il totale «nel carrello» riparte da 0. Le spese restano registrate. Per le liste che riusi puoi riaprire subito tutto ciò che è spuntato.", trip_reopen: "Riapri tutto", trip_finish: "Termina", stats_forget: "Elimina dalla cronologia", stats_forget_help: "viene rimosso da statistiche, suggerimenti e ritmo d'acquisto (es. aggiunto per errore).", exp_entries: "Movimenti", notes_create: "Crea lista di note", notes_create_help: "Nome della lista di note. È tua; creata come todo.ha_smartlists_notes_<nome>.",
     p_lists_all: "Tutte le liste", p_lists_less: "Meno",
+    scan_native_help: "Inquadra il codice a barre sulla confezione.", scan_type: "Digita il numero", scan_not_product: "Non è un codice a barre di prodotto (EAN).",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1433,6 +1438,7 @@ const TEXTS = {
     aisle_sort: "Sortuj", aisle_drag: "Przeciągnij, aby przenieść", emoji_pick: "Wybierz symbol", emoji_free: "własny", emoji_food: "Jedzenie", emoji_occasion: "Okazje i dom", emoji_people: "Osoby", emoji_symbols: "Symbole", emoji_none: "brak",
     trip_done: "Zakupy zakończone", trip_help: "Suma „w koszyku” znów zaczyna od 0. Wydatki zostają zapisane. Dla list używanych ponownie możesz od razu przywrócić wszystko, co odhaczone.", trip_reopen: "Przywróć wszystko", trip_finish: "Zakończ", stats_forget: "Usuń z historii", stats_forget_help: "zostanie usunięte ze statystyk, podpowiedzi i rytmu zakupów (np. dodane przez pomyłkę).", exp_entries: "Wpisy", notes_create: "Utwórz listę notatek", notes_create_help: "Nazwa listy notatek. Należy do ciebie; tworzona jako todo.ha_smartlists_notes_<nazwa>.",
     p_lists_all: "Wszystkie listy", p_lists_less: "Mniej",
+    scan_native_help: "Skieruj aparat na kod kreskowy na opakowaniu.", scan_type: "Wpisz numer", scan_not_product: "To nie jest kod kreskowy produktu (EAN).",
   },
 };
 
@@ -4340,8 +4346,50 @@ class SmartListsCard extends HTMLElement {
     this._toastT = setTimeout(() => { if (this._msgEl.firstChild === el) fill(this._msgEl); }, 4000);
   }
 
+  // In der Companion-App (Android/iOS): deren eigenen Scanner nutzen (External Bus „bar_code/scan“) –
+  // zuverlässiger als die Kamera im WebView. Ergebnis kommt als Befehl „bar_code/scan_result“ zurück.
+  _nativeScanner() {
+    const ext = this._hass && this._hass.auth && this._hass.auth.external;
+    return ext && ext.config && Number(ext.config.hasBarCodeScanner) > 0 && typeof window.externalBus === "function" ? ext : null;
+  }
+  _scanNative(ext) {
+    const t = this._t;
+    const orig = window.externalBus;
+    let finished = false;
+    const restore = () => { if (window.externalBus === hook) window.externalBus = orig; };
+    const finish = () => { finished = true; restore(); try { ext.fireMessage({ type: "bar_code/close" }); } catch (e) { /* */ } };
+    const hook = (raw) => {
+      let msg = raw;
+      try { if (typeof raw === "string") msg = JSON.parse(raw); } catch (e) { /* */ }
+      if (!finished && msg && msg.type === "command" && msg.command === "bar_code/scan_result") {
+        const code = String((msg.payload && (msg.payload.rawValue || msg.payload.code)) || "").trim();
+        if (/^\d{6,14}$/.test(code)) { finish(); this._barcodeLookup(code); }
+        else { try { ext.fireMessage({ type: "bar_code/notify", payload: { message: t.scan_not_product } }); } catch (e) { /* */ } }
+      } else if (!finished && msg && msg.type === "command" && msg.command === "bar_code/aborted") {
+        finished = true; restore();
+        if (msg.payload && msg.payload.reason === "alternative_options") this._scanDialog(true);
+      }
+      return orig(raw); // HA beantwortet den Befehl wie gewohnt
+    };
+    window.externalBus = hook;
+    try {
+      ext.fireMessage({ type: "bar_code/scan", payload: { title: t.scan, description: t.scan_native_help, alternative_option_label: t.scan_type } });
+    } catch (e) { restore(); this._scanDialog(true); }
+  }
+  // Strichcode → Produkt (Speicher der Integration, sonst Open Food Facts) → Name ins Eingabefeld
+  async _barcodeLookup(code) {
+    const t = this._t;
+    try {
+      const r = await this._call("barcode", { code }, false);
+      if (!r.found) { this._toast(`${code}: ${t.scan_unknown}`); return; }
+      const text = [r.name, r.brand && !r.name.toLowerCase().includes(r.brand.toLowerCase()) ? `(${r.brand})` : ""].filter(Boolean).join(" ");
+      if (this._input) { this._input.value = text; this._input.dispatchEvent(new Event("input")); this._input.focus(); }
+    } catch (err) { this._toast((err && err.message) || t.error); }
+  }
   // Strichcode scannen (Kamera, BarcodeDetector) oder eintippen → Name über SmartLists/Open Food Facts ins Eingabefeld
-  async _scanDialog() {
+  async _scanDialog(manualOnly = false) {
+    const ext = !manualOnly && this._nativeScanner();
+    if (ext) { this._scanNative(ext); return; }
     const t = this._t;
     const video = h("video", { autoplay: "", playsinline: "", muted: "" });
     // Android-WebView (Companion-App) spielt nur stumm + inline und erst nach play() ab

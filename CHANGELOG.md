@@ -9,6 +9,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 - Sidebar page: the list overview at the top is **collapsed by default** – one line with the selected
   lists and *All lists ▾*; expand to see all groups (remembered per browser, always open while sorting).
+- **Barcode scan uses the companion app's own scanner** (Android/iOS) when available – much more reliable
+  than the camera in the app's web view. Non-product codes (QR etc.) are rejected with a hint, *Type the
+  number* opens manual entry. In browsers the camera/number dialog stays.
 
 ### Fixed
 

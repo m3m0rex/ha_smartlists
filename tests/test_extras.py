@@ -85,3 +85,15 @@ def test_delete_expense_and_trip():
     start = e.finish_trip("todo.x")
     assert e.trips["todo.x"] == start and "todo.x" not in e.checked_at
     assert a["id"]
+
+
+def test_barcode_parsers():
+    from smartlists.barcode import _parse, _path
+
+    off = {"product": {"product_name": "Oat Drink", "product_name_de": "Haferdrink", "brands": "Oatly, X", "quantity": "1 l"}}
+    assert _parse("off", off, "de") == {"name": "Haferdrink", "brand": "Oatly", "quantity": "1 l"}
+    assert _parse("off", {"status": 0}, "de") is None
+    upc = {"items": [{"title": "Nutella 450g", "brand": "Ferrero"}]}
+    assert _parse("upcitemdb", upc, "de")["name"] == "Nutella 450g"
+    assert _parse("custom", {"data": {"items": [{"label": "Seife"}]}}, "de", "data.items.0.label")["name"] == "Seife"
+    assert _path({"a": [1]}, "a.5") is None

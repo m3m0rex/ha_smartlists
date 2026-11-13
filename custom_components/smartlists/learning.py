@@ -47,6 +47,9 @@ USER_SETTINGS: dict[str, Any] = {
     "shop_tap_row": bool,
     "shop_untagged": bool,
     "shop_auto_store": bool,
+    # Strichcode: in welche Liste ("" = die Liste der Karte) und ob direkt hinzufügen oder ins Eingabefeld
+    "scan_target": "entity",
+    "scan_mode": ("input", "add"),
 }
 
 
@@ -571,6 +574,9 @@ def validate_ui(settings: dict[str, Any]) -> dict[str, Any]:
         if allowed is bool:
             if not isinstance(value, bool):
                 raise ValueError(f"{key} muss an/aus sein")
+        elif allowed == "entity":
+            if not isinstance(value, str) or (value and not value.startswith("todo.")):
+                raise ValueError(f"{key}: keine To-do-Liste")
         elif allowed == "actions":
             if not isinstance(value, list) or any(v not in MENU_ACTIONS for v in value):
                 raise ValueError(f"{key}: ungültige Menü-Einträge")

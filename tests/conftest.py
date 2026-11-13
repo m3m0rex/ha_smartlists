@@ -34,6 +34,7 @@ if "homeassistant" not in sys.modules:
     _mod("homeassistant.const", ATTR_FRIENDLY_NAME="friendly_name")
     _mod("homeassistant.components")
     _mod("homeassistant.components.http", HomeAssistantView=object)
+    _mod("homeassistant.helpers.aiohttp_client", async_get_clientsession=lambda hass: None)
 if "aiohttp" not in sys.modules:
     _mod("aiohttp", web=types.SimpleNamespace(Request=object, Response=object, json_response=None))
 

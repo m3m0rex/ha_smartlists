@@ -12,6 +12,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 - **Barcode scan uses the companion app's own scanner** (Android/iOS) when available – much more reliable
   than the camera in the app's web view. Non-product codes (QR etc.) are rejected with a hint, *Type the
   number* opens manual entry. In browsers the camera/number dialog stays.
+- **Scanner settings** – per user (*For me → Scanner*): target list (this card's list or any other) and
+  whether scanned products go into the input field or are added directly. Per household (*Voice &
+  automations*): which lookup services in which order – Open Food Facts, Open Beauty Facts, Open Pet Food
+  Facts, Open Products Facts, UPCitemdb, or your own service (URL with `{code}` + JSON field for the name).
 
 ### Fixed
 

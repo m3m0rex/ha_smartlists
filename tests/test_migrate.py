@@ -79,6 +79,8 @@ def test_migrate_each_and_one():
     first = saved[f"smartlists.own.{added[0].subentry_id}"]["items"]
     assert [(i["summary"], i["status"], i["description"]) for i in first] == [("Milch 2 l", "needs_action", ""), ("Brot", "completed", "Vollkorn")]
     assert added[0].data["owner"] == "u1"
+    # gelöschte Local-To-do-Liste: neue Liste übernimmt deren Entitäts-ID; geleerte nicht
+    assert added[1].data["entity_id"] == "todo.anna" and "entity_id" not in added[0].data
     # Einkaufsliste (shopping_list) lässt sich nicht löschen → geleert; Local To-do „Anna“ → gelöscht
     assert r["old"] == {"todo.einkaufsliste": "cleared", "todo.anna": "deleted"}
     assert removed == [("todo.einkaufsliste", ["a", "b"])] and removed_entries == ["e2"]

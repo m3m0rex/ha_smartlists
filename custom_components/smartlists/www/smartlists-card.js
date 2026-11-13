@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.5.0";
+const CARD_VERSION = "3.5.1";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -6046,7 +6046,9 @@ class SmartListsPanel extends HTMLElement {
   // Menge der To-do-Entitäten ändert
   _refreshVisible() {
     const st = (this._hass && this._hass.states) || {};
-    const key = Object.keys(st).filter((e) => e.startsWith("todo.")).sort().join(",");
+    // auch „nicht verfügbar → verfügbar“ zählt: beim Neuladen der Integration (neue Liste angelegt/übernommen) sind die
+    // Listen kurz nicht verfügbar – ohne das blieb eine in diesem Moment geholte Auswahl bis zum Neuladen der Seite veraltet
+    const key = Object.keys(st).filter((e) => e.startsWith("todo.")).sort().map((e) => (st[e].state === "unavailable" ? "!" : "") + e).join(",");
     if (key === this._visibleKey) return;
     this._visibleKey = key;
     this._hass.callWS({ type: "smartlists/lists" }).then((r) => { this._visible = new Map(r.lists.map((l) => [l.entity_id, l.type])); this._render(); })

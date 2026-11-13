@@ -94,17 +94,20 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
                         "description": i.get("note") or ""})
         return out
 
-    groups: list[tuple[str, list[dict[str, Any]]]]
+    # (Titel, Artikel, Quelle bei „je Liste“)
+    groups: list[tuple[str, list[dict[str, Any]], str | None]]
     if mode == "one":
         title = (name or "").strip() or str(allowed[sources[0]]["name"])
-        groups = [(title, own_items([(s, i) for s in sources for i in items_by_source[s]])[:MAX_ITEMS])]
+        groups = [(title, own_items([(s, i) for s in sources for i in items_by_source[s]])[:MAX_ITEMS], None)]
     else:
-        groups = [(str(allowed[s]["name"]), own_items([(s, i) for i in items_by_source[s]])) for s in sources]
+        groups = [(str(allowed[s]["name"]), own_items([(s, i) for i in items_by_source[s]]), s) for s in sources]
 
     created = []
-    for title, items in groups:
-        sub = ConfigSubentry(data=MappingProxyType({"owner": owner, "shares": {}}), subentry_type=SUBENTRY_OWN,
-                             title=title[:60], unique_id=None)
+    for title, items, src in groups:
+        data: dict[str, Any] = {"owner": owner, "shares": {}}
+        if src and old == "delete" and can_delete(hass, src):
+            data["entity_id"] = src  # wird frei, sobald die alte Liste gelöscht ist
+        sub = ConfigSubentry(data=MappingProxyType(data), subentry_type=SUBENTRY_OWN, title=title[:60], unique_id=None)
         await Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{sub.subentry_id}").async_save({"items": items})
         created.append((sub, len(items)))
 

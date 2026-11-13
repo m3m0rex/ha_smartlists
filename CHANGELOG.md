@@ -3,7 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [3.5.1] – 2026-11-13
+
+### Fixed
+
+- Lists that were just created or taken over did not appear on `/smartlists` until the page was reloaded
+  (the list overview was fetched while the integration was reloading and not refreshed afterwards).
+- *Take over lists* with *delete completely*: the new list keeps the **entity ID of the deleted Local
+  To-do list** (e.g. `todo.ha_smartlists_list_barcodes`), so automations, dashboards and the app keep working.
 
 ### Changed
 

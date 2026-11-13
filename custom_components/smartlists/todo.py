@@ -512,8 +512,9 @@ class OwnTodoListEntity(TodoListEntity):
         self._items: list[dict[str, Any]] = [i for i in stored.get("items", []) if i.get("uid")]
         self._attr_unique_id = f"own_{subentry.subentry_id}"
         self._attr_name = subentry.title
-        # Neue eigene Listen: todo.ha_smartlists_list_<name> (gleiches Schema wie in der App)
-        self.entity_id = f"todo.ha_smartlists_list_{slugify(subentry.title) or 'list'}"
+        # Neue eigene Listen: todo.ha_smartlists_list_<name> (gleiches Schema wie in der App). Aus einer gelöschten
+        # Liste übernommen → deren Entitäts-ID weiterverwenden (Automationen, Dashboards und die App passen weiter)
+        self.entity_id = self.data.get("entity_id") or f"todo.ha_smartlists_list_{slugify(subentry.title) or 'list'}"
         self._owner_name = ""
         self._share_names: dict[str, str] = {}
 

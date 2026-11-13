@@ -568,12 +568,13 @@ async def ws_set_owner(hass: HomeAssistant, connection: websocket_api.ActiveConn
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/set_labels", vol.Required("entity_id"): str,
                                   vol.Required("show"): vol.In(["list", "owner", "owner_list"]),
-                                  vol.Optional("sources", default=[]): [str]})
+                                  vol.Optional("sources", default=[]): [str],
+                                  vol.Optional("colors", default={}): {str: vol.Any("", vol.Match(r"^#[0-9a-fA-F]{6}$"))}})
 @websocket_api.async_response
 async def ws_set_labels(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Herkunfts-Badges einer kombinierten Liste: was sie zeigen (Liste / Besitzer / Besitzer Liste) und von welchen
     Quell-Listen es überhaupt Badges gibt (leer = alle). Admins und der Besitzer der kombinierten Liste."""
-    from .const import CONF_LABEL_SHOW, CONF_LABEL_SOURCES, CONF_SOURCES
+    from .const import CONF_LABEL_COLORS, CONF_LABEL_SHOW, CONF_LABEL_SOURCES, CONF_SOURCES
 
     sub = _combined_subentry(hass, msg["entity_id"])
     if sub is None:
@@ -584,8 +585,10 @@ async def ws_set_labels(hass: HomeAssistant, connection: websocket_api.ActiveCon
         connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur Admins und der Besitzer können das ändern.")
         return
     sources = [s for s in dict.fromkeys(msg["sources"]) if s in (sub.data.get(CONF_SOURCES) or [])]
-    hass.config_entries.async_update_subentry(_main_entry(hass), sub, data={**sub.data, CONF_LABEL_SHOW: msg["show"], CONF_LABEL_SOURCES: sources})
-    connection.send_result(msg["id"], {"show": msg["show"], "sources": sources})
+    colors = {s: c.lower() for s, c in msg["colors"].items() if c and s in (sub.data.get(CONF_SOURCES) or [])}
+    hass.config_entries.async_update_subentry(_main_entry(hass), sub, data={
+        **sub.data, CONF_LABEL_SHOW: msg["show"], CONF_LABEL_SOURCES: sources, CONF_LABEL_COLORS: colors})
+    connection.send_result(msg["id"], {"show": msg["show"], "sources": sources, "colors": colors})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_list", vol.Required("entity_id"): str})

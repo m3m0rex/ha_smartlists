@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.8.2";
+const CARD_VERSION = "3.8.3";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -352,6 +352,7 @@ const TEXTS = {
     mg_pf_notes: "Notizen", mg_as: "Übernehmen als", mg_as_list: "Liste", mg_as_list_sub: "Eigene SmartLists-Liste mit Kategorien, Mengen und Einkaufsfunktionen.", mg_as_notes: "Notizen", mg_as_notes_sub: "Neue Notizliste (nur für dich sichtbar), Notizen mit Titel und Text – auch verschlüsselte bleiben erhalten.",
     owner_everyone: "— alle (keine Einschränkung)", owner_combined_help: "Mit Besitzer sehen die Liste nur er, Admins und die Freigegebenen.",
     lb_title: "Herkunfts-Badges", lb_help: "Zeigt bei jedem Artikel, aus welcher Liste er kommt.", lb_show: "Badge zeigt", lb_list: "Listenname", lb_owner: "Besitzer der Quell-Liste", lb_both: "Besitzer und Listenname", lb_show_help: "Quell-Listen ohne Besitzer (Local To-do …) zeigen immer den Listennamen.", lb_only: "Nur von diesen Listen", lb_all: "alle",
+    lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
@@ -591,6 +592,7 @@ const TEXTS = {
     mg_pf_notes: "Notes", mg_as: "Take over as", mg_as_list: "List", mg_as_list_sub: "Own SmartLists list with categories, quantities and shopping features.", mg_as_notes: "Notes", mg_as_notes_sub: "New note list (visible only to you), notes with title and text – encrypted ones are kept as they are.",
     owner_everyone: "— everyone (no restriction)", owner_combined_help: "With an owner, only they, admins and the people shared with see the list.",
     lb_title: "Origin badges", lb_help: "Shows on each item which list it comes from.", lb_show: "Badge shows", lb_list: "List name", lb_owner: "Owner of the source list", lb_both: "Owner and list name", lb_show_help: "Source lists without an owner (Local To-do …) always show the list name.", lb_only: "Only from these lists", lb_all: "all",
+    lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -830,6 +832,7 @@ const TEXTS = {
     mg_pf_notes: "Notes", mg_as: "Reprendre comme", mg_as_list: "Liste", mg_as_list_sub: "Liste SmartLists propre avec catégories, quantités et fonctions de courses.", mg_as_notes: "Notes", mg_as_notes_sub: "Nouvelle liste de notes (visible seulement par toi), notes avec titre et texte – les chiffrées restent intactes.",
     owner_everyone: "— tous (sans restriction)", owner_combined_help: "Avec un propriétaire, seuls lui, les admins et les personnes partagées voient la liste.",
     lb_title: "Badges d'origine", lb_help: "Indique sur chaque article de quelle liste il vient.", lb_show: "Le badge affiche", lb_list: "Nom de la liste", lb_owner: "Propriétaire de la liste source", lb_both: "Propriétaire et nom de la liste", lb_show_help: "Les listes sans propriétaire (Local To-do …) affichent toujours le nom.", lb_only: "Seulement de ces listes", lb_all: "toutes",
+    lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1069,6 +1072,7 @@ const TEXTS = {
     mg_pf_notes: "Notas", mg_as: "Traspasar como", mg_as_list: "Lista", mg_as_list_sub: "Lista propia de SmartLists con categorías, cantidades y funciones de compra.", mg_as_notes: "Notas", mg_as_notes_sub: "Nueva lista de notas (solo visible para ti), notas con título y texto – las cifradas se conservan.",
     owner_everyone: "— todos (sin restricción)", owner_combined_help: "Con propietario, solo él, los admins y las personas compartidas ven la lista.",
     lb_title: "Etiquetas de origen", lb_help: "Muestra en cada artículo de qué lista viene.", lb_show: "La etiqueta muestra", lb_list: "Nombre de la lista", lb_owner: "Propietario de la lista de origen", lb_both: "Propietario y nombre de la lista", lb_show_help: "Las listas sin propietario (Local To-do …) muestran siempre el nombre.", lb_only: "Solo de estas listas", lb_all: "todas",
+    lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1308,6 +1312,7 @@ const TEXTS = {
     mg_pf_notes: "Note", mg_as: "Trasferisci come", mg_as_list: "Lista", mg_as_list_sub: "Lista SmartLists propria con categorie, quantità e funzioni per la spesa.", mg_as_notes: "Note", mg_as_notes_sub: "Nuova lista di note (visibile solo a te), note con titolo e testo – quelle cifrate restano invariate.",
     owner_everyone: "— tutti (nessuna restrizione)", owner_combined_help: "Con un proprietario, solo lui, gli admin e le persone condivise vedono la lista.",
     lb_title: "Badge di origine", lb_help: "Mostra su ogni articolo da quale lista proviene.", lb_show: "Il badge mostra", lb_list: "Nome della lista", lb_owner: "Proprietario della lista di origine", lb_both: "Proprietario e nome della lista", lb_show_help: "Le liste senza proprietario (Local To-do …) mostrano sempre il nome.", lb_only: "Solo da queste liste", lb_all: "tutte",
+    lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1547,6 +1552,7 @@ const TEXTS = {
     mg_pf_notes: "Notatki", mg_as: "Przejmij jako", mg_as_list: "Lista", mg_as_list_sub: "Własna lista SmartLists z kategoriami, ilościami i funkcjami zakupów.", mg_as_notes: "Notatki", mg_as_notes_sub: "Nowa lista notatek (widoczna tylko dla ciebie), notatki z tytułem i treścią – zaszyfrowane pozostają bez zmian.",
     owner_everyone: "— wszyscy (bez ograniczeń)", owner_combined_help: "Z właścicielem listę widzą tylko on, admini i osoby, którym ją udostępniono.",
     lb_title: "Plakietki pochodzenia", lb_help: "Pokazują przy każdym produkcie, z której listy pochodzi.", lb_show: "Plakietka pokazuje", lb_list: "Nazwa listy", lb_owner: "Właściciel listy źródłowej", lb_both: "Właściciel i nazwa listy", lb_show_help: "Listy bez właściciela (Local To-do …) zawsze pokazują nazwę.", lb_only: "Tylko z tych list", lb_all: "wszystkie",
+    lb_colors: "Kolor dla listy źródłowej (domyślnie: automatycznie, inny dla każdej listy)",
   },
 };
 
@@ -2097,13 +2103,14 @@ function badge(tag, look = SL_LOOK) {
   const k = { ...BADGE_DEFAULTS[kind], ...((look.kinds || {})[kind] || {}) };
   const v = (look.values || {})[`${kind}:${String(tag.value).toLowerCase()}`] || {};
   const label = (kind === "store" && v.label) || tag.label || tag.value;
-  const color = v.color || (kind === "store" ? tag.color || k.color || hashColor(String(tag.value)) : k.color);
+  const color = v.color || (kind === "store" ? tag.color || k.color || hashColor(String(tag.value)) : tag.color || k.color);
   const text = v.text || k.text; // eigene Schriftfarbe (optional)
   const css = !color ? (text ? `color:${text}` : "") : k.style === "filled" ? `background:${color};color:${text || textOn(color)}`
     : k.style === "soft" ? `background:color-mix(in srgb, ${color} 18%, transparent);color:${text || color}`
     : `color:${text || color}`;
   const cls = { store: "store", person: "person", tag: "hash" }[kind];
-  const icon = k.icon ? (kind === "person" ? `${k.icon} ` : k.icon) : "";
+  // Herkunfts-Badge (implizit, aus dem Listennamen): ohne Symbol – nur der Name in der Farbe der Quell-Liste
+  const icon = k.icon && !tag.implicit ? (kind === "person" ? `${k.icon} ` : k.icon) : "";
   return h("span", { class: `tag ${cls} s-${k.style}`, style: css, title: label }, icon, label);
 }
 
@@ -5765,24 +5772,35 @@ class SmartListsCard extends HTMLElement {
     const status = h("span", { class: "ok2" });
     let show = (d.label && d.label.show) || "list";
     let only = new Set((d.label && d.label.sources) || []);
-    const save = async () => {
+    let colors = { ...((d.label && d.label.colors) || {}) };
+    const auto = (d.label && d.label.auto_colors) || {};
+    let dirty = false;
+    const saveBtn = h("button", { class: "btn2 primary", type: "button", disabled: true, onclick: async () => {
+      status.textContent = t.loading; saveBtn.disabled = true;
       try {
-        await this._call("set_labels", { show, sources: [...only] });
-        status.textContent = "✓ " + t.saved;
+        await this._call("set_labels", { show, sources: [...only], colors });
+        dirty = false; status.textContent = "✓ " + t.saved;
         this._listSettingsApplied = null;
         await this._load();
-      } catch (err) { status.textContent = (err && err.message) || t.error; }
-    };
+      } catch (err) { status.textContent = (err && err.message) || t.error; saveBtn.disabled = false; }
+    } }, t.save);
+    const touch = () => { dirty = true; saveBtn.disabled = false; status.textContent = ""; };
     const box = h("div", {});
     const draw = () => fill(box,
-      this._setRow(t.lb_show, h("select", { "aria-label": t.lb_show, onchange: (e) => { show = e.target.value; save(); } },
+      this._setRow(t.lb_show, h("select", { "aria-label": t.lb_show, onchange: (e) => { show = e.target.value; touch(); } },
         [["list", t.lb_list], ["owner", t.lb_owner], ["owner_list", t.lb_both]].map(([v, l]) => h("option", { value: v, selected: show === v }, l))), t.lb_show_help),
       h("div", { class: "grp" }, t.lb_only),
       h("div", { class: "chips" }, h("button", { type: "button", class: `chip2 ${only.size ? "" : "on"}`, "aria-pressed": String(!only.size),
-        onclick: () => { only = new Set(); draw(); save(); } }, t.lb_all),
+        onclick: () => { only = new Set(); touch(); draw(); } }, t.lb_all),
         d.sources.map((src) => h("button", { type: "button", class: `chip2 ${only.has(src.entity_id) ? "on" : ""}`, "aria-pressed": String(only.has(src.entity_id)),
-          onclick: () => { if (only.has(src.entity_id)) only.delete(src.entity_id); else only.add(src.entity_id); draw(); save(); } }, src.name))),
-      h("div", { class: "acts" }, status));
+          onclick: () => { if (only.has(src.entity_id)) only.delete(src.entity_id); else only.add(src.entity_id); touch(); draw(); } }, src.name))),
+      h("div", { class: "grp" }, t.lb_colors),
+      d.sources.map((src) => this._setRow(src.name, h("span", { class: "look-row" },
+        h("input", { type: "color", value: colors[src.entity_id] || auto[src.entity_id] || "#888888", "aria-label": `${src.name}: ${t.look_color}`, title: t.look_color,
+          onchange: (e) => { colors[src.entity_id] = e.target.value; touch(); draw(); } }),
+        colors[src.entity_id] ? h("button", { class: "btn2", type: "button", style: "height:30px;padding:0 10px", title: t.reset_default, "aria-label": t.reset_default,
+          onclick: () => { delete colors[src.entity_id]; touch(); draw(); } }, "↺") : null))),
+      h("div", { class: "acts" }, status, saveBtn));
     draw();
     return this._sec("🏷️", t.lb_title, t.lb_help, [box]);
   }

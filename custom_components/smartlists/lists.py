@@ -182,7 +182,10 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         # steht schon eine Person (*Anna) oder Personen-Tags sind abgeschaltet
         person = raw.get("person")
         if person and person_prefix and not any(t["kind"] == "person" for t in info["tags"]):
-            info["tags"] = [*info["tags"], {"kind": "person", "value": person, "prefix": person_prefix, "label": person, "implicit": True}]
+            tag = {"kind": "person", "value": person, "prefix": person_prefix, "label": person, "implicit": True}
+            if raw.get("person_color"):
+                tag["color"] = raw["person_color"]  # je Quell-Liste eine eigene Farbe
+            info["tags"] = [*info["tags"], tag]
         foreign = bool(raw.get("foreign"))
         # Preis: Angebot der App > von Hand/zuletzt bezahlt (Integration)
         # total = für die Menge auf der Liste, unit_price = je Einheit (bzw. Stück)

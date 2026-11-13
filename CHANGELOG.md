@@ -3,15 +3,24 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [3.8.3] – 2026-11-13
 
 ### Added
 
+- **Each origin badge has its own colour**: every source list of a combined list gets a different colour
+  automatically; change it per source list in the card (list window → *Origin badges*).
 - **Items from other cards are recognised**: text such as `2x Butcher's Burger Buns (REWE) - 0,99 €` (written by
   e.g. the offers card `custom:discounts-card`) now shows quantity (`2x`), a store badge (`(REWE)`, known stores
   only) and the price (`- 0,99 €`, per piece) instead of plain text. The stored item text is not changed;
   editing shows the cleaned-up text.
 - A price with a leading dash (`Cola - 1,5 €`) is recognised when typing, too.
+
+### Changed
+
+- *Origin badges* in the card's list window: changes are collected and saved with **Save** (before, every click
+  saved and reloaded the list at once, so several source lists could not be picked in a row).
+- The origin badge no longer shows a symbol (it looked like a "-") and leading/trailing separators in list names
+  are dropped.
 
 ## [3.8.2] – 2026-11-13
 

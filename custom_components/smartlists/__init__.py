@@ -12,6 +12,7 @@ Tag-Regeln (@REWE …) – siehe learning.py – und die Lovelace-Karte unter /s
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from pathlib import Path
 from types import MappingProxyType
@@ -147,8 +148,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
+_RELOAD_PENDING = f"{DOMAIN}_reload_pending"
+
+
 async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Liste hinzugefügt/geändert/entfernt → neu laden."""
+    """Liste hinzugefügt/geändert/entfernt → neu laden.
+    Mehrere Änderungen kurz hintereinander (z. B. mehrere Listen übernommen) ergeben genau EIN Neuladen:
+    sonst liefen mehrere Neuladevorgänge ineinander und nur die erste neue Liste bekam ihre Entität."""
+    pending: set[str] = hass.data.setdefault(_RELOAD_PENDING, set())
+    if entry.entry_id in pending:
+        return
+    pending.add(entry.entry_id)
+    try:
+        await asyncio.sleep(0.5)
+    finally:
+        pending.discard(entry.entry_id)
     await hass.config_entries.async_reload(entry.entry_id)
 
 

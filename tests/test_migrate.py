@@ -94,3 +94,11 @@ def test_migrate_each_and_one():
     assert r["lists"] == [{"name": "Wocheneinkauf", "subentry_id": added[0].subentry_id, "items": 3}] and r["old"]["todo.anna"] == "kept"
     texts = [i["summary"] for i in saved[f"smartlists.own.{added[0].subentry_id}"]["items"]]
     assert texts == ["Milch 2 l *Einkaufsliste", "Brot *Einkaufsliste", "Seife *Anna"]
+
+
+def test_nice_title():
+    m, _ = _setup()
+    assert m.nice_title("ha_smartlists_list_barcodes", "todo.ha_smartlists_list_barcodes") == "Barcodes"
+    assert m.nice_title("HA Smartlists Angebote", "todo.ha_smartlists_list_angebote") == "Angebote"
+    assert m.nice_title("Einkaufsliste", "todo.einkaufsliste") == "Einkaufsliste"
+    assert m.nice_title("HA Smartlists", "todo.x") == "HA Smartlists"

@@ -48,6 +48,7 @@ from .const import (
     SORT_STATUS,
     SUBENTRY_COMBINED,
     SUBENTRY_OWN,
+    SUBENTRY_OWN_GROUP,
 )
 from .learning import MENU_ACTIONS, Learning
 
@@ -165,7 +166,8 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
     @classmethod
     @callback
     def async_get_supported_subentry_types(cls, config_entry: ConfigEntry) -> dict[str, type[ConfigSubentryFlow]]:
-        return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN: OwnListSubentryFlow}
+        # eigene Listen: ein Unter-Eintrag je Besitzer („Eigene Listen · Julian“), siehe own_groups.py
+        return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow}
 
     @staticmethod
     @callback
@@ -300,6 +302,55 @@ class OwnListSubentryFlow(ConfigSubentryFlow):
             title, data = self._data(user_input)
             return self.async_update_and_abort(self._get_entry(), subentry, title=title, data=data)
         return self.async_show_form(step_id="reconfigure", data_schema=await self._schema({**subentry.data, CONF_NAME: subentry.title}))
+
+
+class OwnListsSubentryFlow(OwnListSubentryFlow):
+    """Eigene Listen je Besitzer. „Eigene Liste hinzufügen“ trägt die Liste beim gewählten Besitzer ein (dessen
+    Unter-Eintrag wird bei Bedarf angelegt); ⚙ am Besitzer-Eintrag: Liste wählen → umbenennen, Freigaben,
+    Besitzer wechseln oder löschen."""
+
+    _list_id: str | None = None
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        if user_input is not None and user_input.get(CONF_NAME, "").strip():
+            from .own_groups import async_add_list
+
+            title, data = self._data(user_input)
+            await async_add_list(self.hass, data["owner"], title, data["shares"])
+            return self.async_abort(reason="list_added")
+        return self.async_show_form(step_id="user", data_schema=await self._schema({}))
+
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        group = self._get_reconfigure_subentry()
+        lists_ = group.data.get("lists") or {}
+        if user_input is not None and user_input.get("list") in lists_:
+            self._list_id = user_input["list"]
+            return await self.async_step_edit()
+        if len(lists_) == 1:
+            self._list_id = next(iter(lists_))
+            return await self.async_step_edit()
+        options = [selector.SelectOptionDict(value=k, label=v.get("title") or k) for k, v in lists_.items()]
+        return self.async_show_form(step_id="reconfigure", data_schema=vol.Schema({
+            vol.Required("list"): selector.SelectSelector(selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.LIST)),
+        }))
+
+    async def async_step_edit(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        from .own_groups import async_remove_list, async_update_list
+
+        group = self._get_reconfigure_subentry()
+        current = (group.data.get("lists") or {}).get(self._list_id or "")
+        if current is None:
+            return self.async_abort(reason="reconfigure_successful")
+        if user_input is not None:
+            if user_input.get("delete"):
+                async_remove_list(self.hass, self._list_id)
+            elif user_input.get(CONF_NAME, "").strip():
+                title, data = self._data(user_input)
+                await async_update_list(self.hass, self._list_id, title=title, shares=data["shares"], owner=data["owner"])
+            return self.async_abort(reason="reconfigure_successful")
+        schema = await self._schema({CONF_NAME: current.get("title", ""), "owner": group.data.get("owner"), "shares": current.get("shares") or {}})
+        schema = schema.extend({vol.Optional("delete", default=False): selector.BooleanSelector()})
+        return self.async_show_form(step_id="edit", data_schema=schema, description_placeholders={"list": current.get("title", "")})
 
 
 # ----------------------------------------------------------------------

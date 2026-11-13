@@ -1,6 +1,6 @@
 """Eigene Listen: in SmartLists gespeichert, mit Besitzer und Freigaben.
 
-Jede eigene Liste ist ein Unter-Eintrag (Typ „own_list“) mit
+Eigene Listen stehen je Besitzer in einem Unter-Eintrag (Typ „own_lists“, siehe own_groups.py); je Liste
     owner:  HA-Benutzer-ID des Besitzers
     shares: {benutzer_id: rolle}
 

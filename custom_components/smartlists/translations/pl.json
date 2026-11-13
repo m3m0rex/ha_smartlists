@@ -116,6 +116,51 @@
       "abort": {
         "reconfigure_successful": "Zapisano."
       }
+    },
+    "own_lists": {
+      "initiate_flow": {
+        "user": "Dodaj własną listę"
+      },
+      "entry_type": "Własne listy",
+      "step": {
+        "user": {
+          "title": "Własna lista",
+          "description": "Lista przechowywana bezpośrednio przez SmartLists. Właściciel i administratorzy mogą wszystko; edycja = dodawanie/zmiana/usuwanie produktów, odhaczanie = tylko odhaczanie, podgląd = tylko wyświetlanie. Uwaga: wbudowany widok list zadań w Home Assistant pokazuje każdą listę wszystkim – w karcie, na stronie i w aplikacji SmartLists jest ona ukryta.",
+          "data": {
+            "name": "Nazwa",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko przeglądać"
+          }
+        },
+        "reconfigure": {
+          "title": "Edytuj własne listy",
+          "description": "Którą listę chcesz edytować?",
+          "data": {
+            "list": "Lista"
+          }
+        },
+        "edit": {
+          "title": "Edytuj listę „{list}”",
+          "description": "Lista przechowywana bezpośrednio przez SmartLists. Właściciel i administratorzy mogą wszystko; edycja = dodawanie/zmiana/usuwanie produktów, odhaczanie = tylko odhaczanie, podgląd = tylko wyświetlanie. Uwaga: wbudowany widok list zadań w Home Assistant pokazuje każdą listę wszystkim – w karcie, na stronie i w aplikacji SmartLists jest ona ukryta.",
+          "data": {
+            "name": "Nazwa",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko przeglądać",
+            "delete": "Usuń listę"
+          },
+          "data_description": {
+            "delete": "Jej produkty zostaną usunięte. Lista zniknie ze wszystkich kart, automatyzacji i aplikacji."
+          }
+        }
+      },
+      "abort": {
+        "list_added": "Lista utworzona – jest w „Własne listy” jej właściciela.",
+        "reconfigure_successful": "Zapisano."
+      }
     }
   },
   "options": {

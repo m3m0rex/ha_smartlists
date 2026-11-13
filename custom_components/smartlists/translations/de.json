@@ -116,6 +116,51 @@
       "abort": {
         "reconfigure_successful": "Gespeichert."
       }
+    },
+    "own_lists": {
+      "initiate_flow": {
+        "user": "Eigene Liste hinzufügen"
+      },
+      "entry_type": "Eigene Listen",
+      "step": {
+        "user": {
+          "title": "Eigene Liste",
+          "description": "Eine Liste, die SmartLists selbst speichert. Der Besitzer und Admins dürfen alles; Bearbeiten = Artikel hinzufügen/ändern/löschen, Abhaken = nur abhaken, Sehen = nur ansehen. Hinweis: Die eingebaute To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie in der SmartLists-Karte, -Seite und -App.",
+          "data": {
+            "name": "Name",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen"
+          }
+        },
+        "reconfigure": {
+          "title": "Eigene Listen bearbeiten",
+          "description": "Welche Liste möchtest du bearbeiten?",
+          "data": {
+            "list": "Liste"
+          }
+        },
+        "edit": {
+          "title": "Liste „{list}“ bearbeiten",
+          "description": "Eine Liste, die SmartLists selbst speichert. Der Besitzer und Admins dürfen alles; Bearbeiten = Artikel hinzufügen/ändern/löschen, Abhaken = nur abhaken, Sehen = nur ansehen. Hinweis: Die eingebaute To-do-Ansicht von HA zeigt jede Liste allen – ausgeblendet wird sie in der SmartLists-Karte, -Seite und -App.",
+          "data": {
+            "name": "Name",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen",
+            "delete": "Liste löschen"
+          },
+          "data_description": {
+            "delete": "Die Artikel werden entfernt. Die Liste verschwindet aus allen Karten, Automationen und der App."
+          }
+        }
+      },
+      "abort": {
+        "list_added": "Liste angelegt – sie steht unter „Eigene Listen“ ihres Besitzers.",
+        "reconfigure_successful": "Gespeichert."
+      }
     }
   },
   "options": {

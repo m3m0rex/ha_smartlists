@@ -55,6 +55,7 @@ from .const import (
     SIGNAL_LEARNING_CHANGED,
     SUBENTRY_COMBINED,
     SUBENTRY_OWN,
+    SUBENTRY_OWN_GROUP,
     STORAGE_VERSION,
     UID_SEPARATOR,
 )
@@ -131,8 +132,19 @@ async def async_setup_entry(
     """Je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     learning: Learning = hass.data[DOMAIN]["learning"]
     for subentry in entry.subentries.values():
+        if subentry.subentry_type == SUBENTRY_OWN_GROUP:
+            # je Besitzer ein Unter-Eintrag, darin seine Listen (own_groups.py)
+            owner = subentry.data.get("owner")
+            for list_id, ldata in (subentry.data.get("lists") or {}).items():
+                own_store = Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{list_id}")
+                own_stored = await own_store.async_load() or {}
+                async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning, list_id=list_id,
+                                                      list_data={**ldata, "owner": owner})],
+                                   config_subentry_id=subentry.subentry_id)
+            continue
         if subentry.subentry_type == SUBENTRY_OWN:
-            own_store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{subentry.subentry_id}")
+            # alte Form (je Liste ein Unter-Eintrag) – nur, falls der Umzug nicht möglich war
+            own_store = Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{subentry.subentry_id}")
             own_stored = await own_store.async_load() or {}
             async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning)],
                                config_subentry_id=subentry.subentry_id)
@@ -566,19 +578,30 @@ class OwnTodoListEntity(TodoListEntity):
     )
 
     def __init__(self, hass: HomeAssistant, subentry: ConfigSubentry, store: Store[dict[str, Any]],
-                 stored: dict[str, Any], learning: Learning) -> None:
+                 stored: dict[str, Any], learning: Learning, list_id: str | None = None,
+                 list_data: dict[str, Any] | None = None) -> None:
         self.hass = hass
         self.subentry = subentry
-        self.data: dict[str, Any] = dict(subentry.data)
+        # ab 3.7: Liste innerhalb der Besitzer-Gruppe (list_id/list_data); vorher: der Unter-Eintrag selbst
+        self.list_id: str = list_id or subentry.subentry_id
+        self.grouped = list_id is not None
+        self.data: dict[str, Any] = dict(list_data) if list_data is not None else dict(subentry.data)
+        title = (list_data or {}).get("title") or subentry.title
         self._store = store
         self._learning = learning
         self._items: list[dict[str, Any]] = [i for i in stored.get("items", []) if i.get("uid")]
-        self._attr_unique_id = f"own_{subentry.subentry_id}"
-        self._attr_name = subentry.title
+        self._attr_unique_id = f"own_{self.list_id}"
+        self._attr_name = title
         # Neue eigene Listen: todo.ha_smartlists_list_<name> (gleiches Schema wie in der App). Aus einer gelöschten
         # Liste übernommen → deren Entitäts-ID weiterverwenden (Automationen, Dashboards und die App passen weiter)
-        self.entity_id = self.data.get("entity_id") or f"todo.ha_smartlists_list_{slugify(subentry.title) or 'list'}"
-        self._attr_device_info = list_device(hass, f"own_{subentry.subentry_id}", subentry.title, self.entity_id)
+        self.entity_id = self.data.get("entity_id") or f"todo.ha_smartlists_list_{slugify(title) or 'list'}"
+        if self.grouped:
+            # ein Gerät je Besitzer („Eigene Listen – Julian“) mit allen seinen Listen
+            self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, f"owner_{subentry.subentry_id}")}, name=subentry.title,
+                                                manufacturer="SmartLists", model=_MODEL.get((hass.config.language or "en").split("-")[0], _MODEL["en"])[0],
+                                                configuration_url="homeassistant://smartlists")
+        else:
+            self._attr_device_info = list_device(hass, f"own_{subentry.subentry_id}", title, self.entity_id)
         self._owner_name = ""
         self._share_names: dict[str, str] = {}
 

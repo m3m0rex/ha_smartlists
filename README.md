@@ -220,6 +220,7 @@ custom_components/smartlists/
   itemtext.py        parse item text: quantity, unit, tags (@REWE …)
   learning.py        memory: categories, history, suggestions, tag rules, controls
   own.py             own lists: roles and permissions
+  own_groups.py      own lists grouped per owner (one entry per owner), move of old entries
   automation.py      shopping event, get_items, Assist intents, due items
   lists.py           read/change lists (combined and regular to-do lists)
   websocket.py       commands for card and app (see docs/app-api.md)

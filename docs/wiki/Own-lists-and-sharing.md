@@ -8,6 +8,12 @@ Besides combining existing to-do lists, SmartLists can store lists itself – wi
 - Sidebar page **SmartLists** → **+** (you become the owner), or
 - *Settings → Devices & services → SmartLists → Add own list* (choose the owner and who may do what).
 
+On the integration page, own lists are grouped **per owner**: one entry "Own lists · Julia" with a device
+"Own lists · Julia" that holds all her lists as entities. ⚙ on that entry → pick a list → rename, change
+sharing, hand it over to another owner (it moves to that owner's entry) or delete it. Until 3.6 every own list
+was an entry of its own; they are moved automatically on update – entity IDs, items, sharing, automations and
+dashboards stay the same.
+
 Own lists are regular to-do entities: they work in the card, the sidebar page, the app, Assist and
 automations, and can be part of a combined list.
 

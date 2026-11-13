@@ -3,6 +3,16 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.5.2] – 2026-11-13
+
+### Fixed
+
+- **Taking over several lists at once**: only the first new list got its entity – the integration was reloaded
+  once per new list and the reloads overlapped. Several changes in quick succession now cause a single reload.
+  Lists already affected get their entities after reloading the integration (⋮ → *Reload*) or restarting HA.
+- New lists taken over from the app get readable names ("HA Smartlists Angebote" → "Angebote",
+  "ha_smartlists_list_barcodes" → "Barcodes").
+
 ## [3.5.1] – 2026-11-13
 
 ### Added
@@ -13,11 +23,6 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 ### Fixed
 
-- **Taking over several lists at once**: only the first new list got its entity – the integration was reloaded
-  once per new list and the reloads overlapped. Several changes in quick succession now cause a single reload.
-  Lists already affected get their entities after reloading the integration (⋮ → *Reload*) or restarting HA.
-- New lists taken over from the app get readable names ("HA Smartlists Angebote" → "Angebote",
-  "ha_smartlists_list_barcodes" → "Barcodes").
 - Lists that were just created or taken over did not appear on `/smartlists` until the page was reloaded
   (the list overview was fetched while the integration was reloading and not refreshed afterwards).
 

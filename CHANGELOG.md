@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] – unreleased
+
+### Added
+
+- Sidebar page: the list overview at the top is **collapsed by default** – one line with the selected
+  lists and *All lists ▾*; expand to see all groups (remembered per browser, always open while sorting).
+
 ## [2.9.1] – 2026-11-12
 
 ### Fixed

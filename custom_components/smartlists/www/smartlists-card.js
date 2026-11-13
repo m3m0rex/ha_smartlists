@@ -327,6 +327,7 @@ const TEXTS = {
     p_group_combined: "Kombinierte Listen", p_group_lists: "Listen", p_group_notes: "Notizen", app_list_pending: "Kombinierte Liste aus der App – noch nicht in Home Assistant verbunden", app_list_admin: "Verbinden kann ein Home-Assistant-Admin (hier antippen oder unter Verbundene Geräte).", share_combined: "Achtung: Eine kombinierte Liste teilt die Artikel aller ihrer Quell-Listen.",
     aisle_sort: "Sortieren", aisle_drag: "Ziehen zum Verschieben", emoji_pick: "Symbol wählen", emoji_free: "eigenes", emoji_food: "Essen", emoji_occasion: "Anlässe & Haushalt", emoji_people: "Personen", emoji_symbols: "Zeichen", emoji_none: "ohne",
     trip_done: "Einkauf beendet", trip_help: "Die Summe „im Wagen“ beginnt wieder bei 0. Ausgaben bleiben gebucht. Für Listen, die du immer wieder nutzt, kannst du alles Abgehakte gleich wieder öffnen.", trip_reopen: "Alles wieder offen", trip_finish: "Beenden", stats_forget: "Aus dem Verlauf löschen", stats_forget_help: "wird aus Statistik, Vorschlägen und Kaufrhythmus entfernt (z. B. versehentlich hinzugefügt).", exp_entries: "Buchungen", notes_create: "Notizliste anlegen", notes_create_help: "Name der Notizliste. Sie gehört dir; angelegt als todo.ha_smartlists_notes_<name>.",
+    p_lists_all: "Alle Listen", p_lists_less: "Weniger",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -547,6 +548,7 @@ const TEXTS = {
     p_group_combined: "Combined lists", p_group_lists: "Lists", p_group_notes: "Notes", app_list_pending: "Combined list from the app – not connected in Home Assistant yet", app_list_admin: "A Home Assistant admin can connect it (tap here or under Connected devices).", share_combined: "Note: a combined list shares the items of all its source lists.",
     aisle_sort: "Sort", aisle_drag: "Drag to move", emoji_pick: "Choose symbol", emoji_free: "custom", emoji_food: "Food", emoji_occasion: "Occasions & home", emoji_people: "People", emoji_symbols: "Symbols", emoji_none: "none",
     trip_done: "Shopping done", trip_help: "The “in cart” total starts at 0 again. Expenses stay booked. For lists you reuse, you can reopen everything checked right away.", trip_reopen: "Reopen all", trip_finish: "Finish", stats_forget: "Delete from history", stats_forget_help: "is removed from statistics, suggestions and buying rhythm (e.g. added by mistake).", exp_entries: "Bookings", notes_create: "Create note list", notes_create_help: "Name of the note list. It belongs to you; created as todo.ha_smartlists_notes_<name>.",
+    p_lists_all: "All lists", p_lists_less: "Less",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -767,6 +769,7 @@ const TEXTS = {
     p_group_combined: "Listes combinées", p_group_lists: "Listes", p_group_notes: "Notes", app_list_pending: "Liste combinée de l'app – pas encore associée dans Home Assistant", app_list_admin: "Un admin Home Assistant peut l'associer (touche ici ou sous Appareils connectés).", share_combined: "Attention : une liste combinée partage les articles de toutes ses listes sources.",
     aisle_sort: "Trier", aisle_drag: "Glisser pour déplacer", emoji_pick: "Choisir un symbole", emoji_free: "personnalisé", emoji_food: "Nourriture", emoji_occasion: "Occasions & maison", emoji_people: "Personnes", emoji_symbols: "Symboles", emoji_none: "aucun",
     trip_done: "Courses terminées", trip_help: "Le total « dans le chariot » repart de 0. Les dépenses restent enregistrées. Pour les listes réutilisées, tu peux rouvrir tout ce qui est coché.", trip_reopen: "Tout rouvrir", trip_finish: "Terminer", stats_forget: "Supprimer de l'historique", stats_forget_help: "sera retiré des statistiques, suggestions et du rythme d'achat (p. ex. ajouté par erreur).", exp_entries: "Opérations", notes_create: "Créer une liste de notes", notes_create_help: "Nom de la liste de notes. Elle t'appartient ; créée en tant que todo.ha_smartlists_notes_<nom>.",
+    p_lists_all: "Toutes les listes", p_lists_less: "Moins",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -987,6 +990,7 @@ const TEXTS = {
     p_group_combined: "Listas combinadas", p_group_lists: "Listas", p_group_notes: "Notas", app_list_pending: "Lista combinada de la app – aún no vinculada en Home Assistant", app_list_admin: "Un admin de Home Assistant puede vincularla (toca aquí o en Dispositivos conectados).", share_combined: "Atención: una lista combinada comparte los artículos de todas sus listas de origen.",
     aisle_sort: "Ordenar", aisle_drag: "Arrastrar para mover", emoji_pick: "Elegir símbolo", emoji_free: "propio", emoji_food: "Comida", emoji_occasion: "Ocasiones y hogar", emoji_people: "Personas", emoji_symbols: "Símbolos", emoji_none: "ninguno",
     trip_done: "Compra terminada", trip_help: "El total «en el carro» vuelve a 0. Los gastos siguen registrados. Para listas que reutilizas, puedes reabrir todo lo marcado.", trip_reopen: "Reabrir todo", trip_finish: "Terminar", stats_forget: "Borrar del historial", stats_forget_help: "se quita de estadísticas, sugerencias y ritmo de compra (p. ej. añadido por error).", exp_entries: "Movimientos", notes_create: "Crear lista de notas", notes_create_help: "Nombre de la lista de notas. Es tuya; se crea como todo.ha_smartlists_notes_<nombre>.",
+    p_lists_all: "Todas las listas", p_lists_less: "Menos",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1207,6 +1211,7 @@ const TEXTS = {
     p_group_combined: "Liste combinate", p_group_lists: "Liste", p_group_notes: "Note", app_list_pending: "Lista combinata dall'app – non ancora collegata in Home Assistant", app_list_admin: "Un admin di Home Assistant può collegarla (tocca qui o in Dispositivi collegati).", share_combined: "Attenzione: una lista combinata condivide gli articoli di tutte le sue liste di origine.",
     aisle_sort: "Ordina", aisle_drag: "Trascina per spostare", emoji_pick: "Scegli simbolo", emoji_free: "personale", emoji_food: "Cibo", emoji_occasion: "Occasioni e casa", emoji_people: "Persone", emoji_symbols: "Simboli", emoji_none: "nessuno",
     trip_done: "Spesa finita", trip_help: "Il totale «nel carrello» riparte da 0. Le spese restano registrate. Per le liste che riusi puoi riaprire subito tutto ciò che è spuntato.", trip_reopen: "Riapri tutto", trip_finish: "Termina", stats_forget: "Elimina dalla cronologia", stats_forget_help: "viene rimosso da statistiche, suggerimenti e ritmo d'acquisto (es. aggiunto per errore).", exp_entries: "Movimenti", notes_create: "Crea lista di note", notes_create_help: "Nome della lista di note. È tua; creata come todo.ha_smartlists_notes_<nome>.",
+    p_lists_all: "Tutte le liste", p_lists_less: "Meno",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1427,6 +1432,7 @@ const TEXTS = {
     p_group_combined: "Listy połączone", p_group_lists: "Listy", p_group_notes: "Notatki", app_list_pending: "Lista połączona z aplikacji – jeszcze niepołączona w Home Assistant", app_list_admin: "Admin Home Assistant może ją połączyć (dotknij tutaj lub w Połączonych urządzeniach).", share_combined: "Uwaga: lista połączona udostępnia produkty wszystkich swoich list źródłowych.",
     aisle_sort: "Sortuj", aisle_drag: "Przeciągnij, aby przenieść", emoji_pick: "Wybierz symbol", emoji_free: "własny", emoji_food: "Jedzenie", emoji_occasion: "Okazje i dom", emoji_people: "Osoby", emoji_symbols: "Symbole", emoji_none: "brak",
     trip_done: "Zakupy zakończone", trip_help: "Suma „w koszyku” znów zaczyna od 0. Wydatki zostają zapisane. Dla list używanych ponownie możesz od razu przywrócić wszystko, co odhaczone.", trip_reopen: "Przywróć wszystko", trip_finish: "Zakończ", stats_forget: "Usuń z historii", stats_forget_help: "zostanie usunięte ze statystyk, podpowiedzi i rytmu zakupów (np. dodane przez pomyłkę).", exp_entries: "Wpisy", notes_create: "Utwórz listę notatek", notes_create_help: "Nazwa listy notatek. Należy do ciebie; tworzona jako todo.ha_smartlists_notes_<nazwa>.",
+    p_lists_all: "Wszystkie listy", p_lists_less: "Mniej",
   },
 };
 
@@ -4886,6 +4892,7 @@ const PANEL_STYLE = `
   .cgroup { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
   .cgroup .glabel { flex:0 0 100%; font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--secondary-text-color); margin-top:4px; }
   .chip.pending { border-style:dashed; color:var(--secondary-text-color); }
+  .chip.toggle { background:none; color:var(--primary-color); border-color:transparent; font-weight:500; }
   .empty { text-align:center; padding:48px 16px; color:var(--secondary-text-color); }
 `;
 const ICON_COLUMNS = "M3,3H11V21H3V3M13,3H21V21H13V3M5,5V19H9V5H5M15,5V19H19V5H15Z";
@@ -4902,7 +4909,8 @@ class SmartListsPanel extends HTMLElement {
     try { prefs = JSON.parse(localStorage.getItem(PANEL_PREFS) || "{}"); } catch (e) { prefs = {}; }
     let legacy = null;
     try { legacy = localStorage.getItem(PANEL_KEY); } catch (e) { /* */ }
-    this._prefs = { columns: false, wide: false, selected: legacy ? [legacy] : [], order: [], ...prefs };
+    // listsOpen: Listen-Übersicht oben aufgeklappt (Standard: zu – mehr Platz für die Listen, v. a. am Handy)
+    this._prefs = { columns: false, wide: false, selected: legacy ? [legacy] : [], order: [], listsOpen: false, ...prefs };
     // Einstellungen (z.B. Notizen ein/aus) ändern, welche Listen erscheinen
     window.addEventListener("smartlists-lists-changed", () => { this._visibleKey = null; this._render(); });
   }
@@ -5064,7 +5072,18 @@ class SmartListsPanel extends HTMLElement {
       try { await this._hass.callWS({ type: "smartlists/create_notes", name }); this._visibleKey = null; }
       catch (err) { await slDialog(this.shadowRoot, { title: this._t.error, text: (err && err.message) || this._t.error, ok: "OK", cancel: this._t.cancel }); }
     } }, "＋ 📝") : null;
-    fill(this._chipsEl, group(this._t.p_group_combined, combined, pendingChips), group(this._t.p_group_lists, normal), group(this._t.p_group_notes, notes, newNotes ? [newNotes] : null));
+    // eingeklappt: eine Zeile mit den gewählten Listen und „Alle Listen ▾“; im Sortiermodus immer offen
+    const open = this._prefs.listsOpen || this._ordering;
+    const toggle = h("button", { type: "button", class: "chip toggle", "aria-expanded": String(open),
+      onclick: () => { this._prefs.listsOpen = !this._prefs.listsOpen; this._save(); this._render(); } },
+      open ? `▴ ${this._t.p_lists_less}` : `▾ ${this._t.p_lists_all} (${lists.length + pending.length})`);
+    if (!open) {
+      const chosen = lists.filter((l) => sel.includes(l.e));
+      fill(this._chipsEl, h("div", { class: "cgroup collapsed" }, chosen.map((l, i) => chip(l, i, chosen)), toggle));
+    } else {
+      fill(this._chipsEl, group(this._t.p_group_combined, combined, pendingChips), group(this._t.p_group_lists, normal),
+        group(this._t.p_group_notes, notes, newNotes ? [newNotes] : null), h("div", { class: "cgroup" }, toggle));
+    }
     fill(this._hintEl, this._ordering ? this._t.p_order_hint : this._prefs.columns ? this._t.p_hint : "");
     if (!sel.length) {
       this._cards.clear();

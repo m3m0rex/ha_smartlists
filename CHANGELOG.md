@@ -9,14 +9,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 - Lists that were just created or taken over did not appear on `/smartlists` until the page was reloaded
   (the list overview was fetched while the integration was reloading and not refreshed afterwards).
-- *Take over lists* with *delete completely*: the new list keeps the **entity ID of the deleted Local
-  To-do list** (e.g. `todo.ha_smartlists_list_barcodes`), so automations, dashboards and the app keep working.
 
 ### Changed
 
 - Input field example is generic and per language ("e.g. 2 kg apples @Store", "z. B. 2 kg Äpfel @Markt" …)
   and uses the store character of your naming convention instead of a store brand.
 - *Take over lists*: each list shows where it comes from (Local To-do, Shopping list, Google Tasks, …).
+- *Take over lists* never deletes the old list any more (option *delete completely* removed) – keep or empty
+  it, and delete it yourself when you no longer need it.
 
 ## [3.5.0] – 2026-11-13
 

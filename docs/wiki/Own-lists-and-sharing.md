@@ -20,9 +20,9 @@ with items, notes and checkmarks. You become the owner and can share them afterw
 
 - **Several lists**: one own list each (same name) **or all into one list**; optionally the origin is
   added as `*Person` or `#tag` (characters from your naming convention), e.g. "Soap *Anna".
-- **Old list afterwards**: *keep* (unchanged), *empty* (the items taken over are removed there) or
-  *delete completely* – only for Local To-do lists; the new list then keeps the old entity ID (one list each). If the old list is a source of a combined list, the
-  dialog warns you; replace it there with the new list.
+- **Old list afterwards**: *keep* (unchanged) or *empty* (the items taken over are removed there). The old
+  list is **never deleted** – remove it yourself when you no longer need it (*Settings → Devices & services*,
+  e.g. Local To-do). If it is a source of a combined list, the dialog warns you; add the new list there first.
 
 SmartLists' own lists, combined lists and app notes are not offered.
 

@@ -11,6 +11,20 @@ Besides combining existing to-do lists, SmartLists can store lists itself – wi
 Own lists are regular to-do entities: they work in the card, the sidebar page, the app, Assist and
 automations, and can be part of a combined list.
 
+## Take over existing lists
+
+*General settings → Global → Voice, backup, defaults → Take over lists …* (admins) turns existing to-do
+lists – the HA shopping list, Local To-do lists, lists of other integrations – into own SmartLists lists,
+with items, notes and checkmarks. You become the owner and can share them afterwards.
+
+- **Several lists**: one own list each (same name) **or all into one list**; optionally the origin is
+  added as `*Person` or `#tag` (characters from your naming convention), e.g. "Soap *Anna".
+- **Old list afterwards**: *keep* (unchanged), *empty* (the items taken over are removed there) or
+  *delete completely* – only for Local To-do lists. If the old list is a source of a combined list, the
+  dialog warns you; replace it there with the new list.
+
+SmartLists' own lists, combined lists and app notes are not offered.
+
 ## Roles
 
 | Role | See | Check off | Add / edit / delete / reorder | Change sharing, delete list |

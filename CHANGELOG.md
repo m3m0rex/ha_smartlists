@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- Input field example is generic and per language ("e.g. 2 kg apples @Store", "z. B. 2 kg Äpfel @Markt" …)
+  and uses the store character of your naming convention instead of a store brand.
+
 ## [3.5.0] – 2026-11-13
 
 ### Added

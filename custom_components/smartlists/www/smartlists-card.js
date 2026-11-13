@@ -347,6 +347,7 @@ const TEXTS = {
     p_tab_lists: "Listen",
     nt_add: "Ziel hinzufügen", nt_none: "Noch kein Ziel – dann kommt keine Nachricht.", nt_service: "Benachrichtigungsdienst", nt_entity: "Benachrichtigungs-Entität", nt_custom: "Eigener Dienst", nt_no_services: "Keine notify-Dienste gefunden.", nt_no_entities: "Keine notify-Entitäten gefunden.", nt_custom_help: "Beliebiger Dienst (nur Admins), z. B. telegram_bot.send_message oder script.meine_nachricht. Daten als JSON; {title} und {message} werden ersetzt – ohne Platzhalter kommen title und message dazu.", nt_help: "Mehrere Ziele sind möglich: Companion-App, Telegram, E-Mail, Signal, Lautsprecher … – alles, was Home Assistant als Benachrichtigung kennt.", nt_bad_service: "Dienst im Format domain.dienst angeben.",
     mg_title: "Listen übernehmen", mg_sub: "Vorhandene To-do-Listen (Einkaufsliste, Local To-do …) in eigene SmartLists-Listen übernehmen – mit Artikeln, Notizen und Häkchen.", mg_help: "Die neuen Listen gehören dir und lassen sich danach teilen. Wähle eine oder mehrere Listen.", mg_lists: "Listen", mg_none: "Keine passenden Listen gefunden.", mg_how: "Mehrere Listen", mg_each: "Je Liste eine eigene", mg_each_sub: "Gleicher Name wie vorher.", mg_one: "Alle in eine Liste", mg_one_sub: "Alle Artikel zusammen in einer neuen Liste.", mg_name: "Name der neuen Liste", mg_tag: "Herkunft markieren als", mg_tag_none: "nicht markieren", mg_old: "Alte Liste danach", mg_keep: "Behalten", mg_keep_sub: "Bleibt unverändert – du räumst selbst auf.", mg_clear: "Leeren", mg_clear_sub: "Die übernommenen Artikel werden dort entfernt, die Liste bleibt.", mg_delete: "Ganz löschen", mg_delete_sub: "Die Local-To-do-Liste wird entfernt.", mg_delete_no: "Nur bei Local-To-do-Listen möglich.", mg_used: "Wird in kombinierten Listen verwendet: {lists}. Dort fehlt sie danach als Quelle.", mg_pick: "Bitte mindestens eine Liste wählen.", mg_go: "Übernehmen", mg_items: "Artikel",
+    mg_pf_local: "Lokale To-do", mg_pf_shopping: "Einkaufsliste", mg_pf_other: "Andere",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
@@ -581,6 +582,7 @@ const TEXTS = {
     p_tab_lists: "Lists",
     nt_add: "Add target", nt_none: "No target yet – no messages will be sent.", nt_service: "Notification service", nt_entity: "Notification entity", nt_custom: "Custom service", nt_no_services: "No notify services found.", nt_no_entities: "No notify entities found.", nt_custom_help: "Any service (admins only), e.g. telegram_bot.send_message or script.my_message. Data as JSON; {title} and {message} are replaced – without placeholders, title and message are added.", nt_help: "Several targets are possible: companion app, Telegram, e-mail, Signal, speakers … – anything Home Assistant knows as a notification.", nt_bad_service: "Enter the service as domain.service.",
     mg_title: "Take over lists", mg_sub: "Take existing to-do lists (shopping list, Local To-do …) over into own SmartLists lists – with items, notes and checkmarks.", mg_help: "The new lists belong to you and can be shared afterwards. Pick one or more lists.", mg_lists: "Lists", mg_none: "No suitable lists found.", mg_how: "Several lists", mg_each: "One own list each", mg_each_sub: "Same name as before.", mg_one: "All into one list", mg_one_sub: "All items together in one new list.", mg_name: "Name of the new list", mg_tag: "Mark origin as", mg_tag_none: "don't mark", mg_old: "Old list afterwards", mg_keep: "Keep", mg_keep_sub: "Stays unchanged – you clean up yourself.", mg_clear: "Empty", mg_clear_sub: "The items taken over are removed there; the list stays.", mg_delete: "Delete completely", mg_delete_sub: "The Local To-do list is removed.", mg_delete_no: "Only possible for Local To-do lists.", mg_used: "Used in combined lists: {lists}. It will be missing there as a source.", mg_pick: "Please pick at least one list.", mg_go: "Take over", mg_items: "items",
+    mg_pf_local: "Local To-do", mg_pf_shopping: "Shopping list", mg_pf_other: "Other",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -815,6 +817,7 @@ const TEXTS = {
     p_tab_lists: "Listes",
     nt_add: "Ajouter une cible", nt_none: "Aucune cible – aucun message ne sera envoyé.", nt_service: "Service de notification", nt_entity: "Entité de notification", nt_custom: "Service personnalisé", nt_no_services: "Aucun service notify trouvé.", nt_no_entities: "Aucune entité notify trouvée.", nt_custom_help: "N'importe quel service (admins seulement), p. ex. telegram_bot.send_message ou script.mon_message. Données en JSON ; {title} et {message} sont remplacés – sans espaces réservés, title et message sont ajoutés.", nt_help: "Plusieurs cibles possibles : app Companion, Telegram, e-mail, Signal, haut-parleurs … – tout ce que Home Assistant connaît comme notification.", nt_bad_service: "Indique le service sous la forme domaine.service.",
     mg_title: "Reprendre des listes", mg_sub: "Reprendre des listes de tâches existantes (liste de courses, Local To-do …) dans des listes SmartLists propres – avec articles, notes et coches.", mg_help: "Les nouvelles listes t'appartiennent et peuvent être partagées ensuite. Choisis une ou plusieurs listes.", mg_lists: "Listes", mg_none: "Aucune liste adaptée trouvée.", mg_how: "Plusieurs listes", mg_each: "Une liste propre chacune", mg_each_sub: "Même nom qu'avant.", mg_one: "Toutes dans une liste", mg_one_sub: "Tous les articles ensemble dans une nouvelle liste.", mg_name: "Nom de la nouvelle liste", mg_tag: "Marquer l'origine comme", mg_tag_none: "ne pas marquer", mg_old: "Ancienne liste ensuite", mg_keep: "Garder", mg_keep_sub: "Reste inchangée – tu ranges toi-même.", mg_clear: "Vider", mg_clear_sub: "Les articles repris y sont supprimés ; la liste reste.", mg_delete: "Supprimer entièrement", mg_delete_sub: "La liste Local To-do est supprimée.", mg_delete_no: "Possible seulement pour les listes Local To-do.", mg_used: "Utilisée dans des listes combinées : {lists}. Elle y manquera comme source.", mg_pick: "Choisis au moins une liste.", mg_go: "Reprendre", mg_items: "articles",
+    mg_pf_local: "To-do local", mg_pf_shopping: "Liste de courses", mg_pf_other: "Autre",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1049,6 +1052,7 @@ const TEXTS = {
     p_tab_lists: "Listas",
     nt_add: "Añadir destino", nt_none: "Aún no hay destino – no se enviarán mensajes.", nt_service: "Servicio de notificación", nt_entity: "Entidad de notificación", nt_custom: "Servicio propio", nt_no_services: "No se encontraron servicios notify.", nt_no_entities: "No se encontraron entidades notify.", nt_custom_help: "Cualquier servicio (solo admins), p. ej. telegram_bot.send_message o script.mi_mensaje. Datos en JSON; {title} y {message} se sustituyen – sin marcadores se añaden title y message.", nt_help: "Se pueden varios destinos: app Companion, Telegram, correo, Signal, altavoces … – todo lo que Home Assistant conoce como notificación.", nt_bad_service: "Indica el servicio como dominio.servicio.",
     mg_title: "Traspasar listas", mg_sub: "Traspasar listas de tareas existentes (lista de la compra, Local To-do …) a listas propias de SmartLists – con artículos, notas y marcas.", mg_help: "Las nuevas listas son tuyas y se pueden compartir después. Elige una o varias listas.", mg_lists: "Listas", mg_none: "No se encontraron listas adecuadas.", mg_how: "Varias listas", mg_each: "Una propia por lista", mg_each_sub: "Mismo nombre que antes.", mg_one: "Todas en una lista", mg_one_sub: "Todos los artículos juntos en una lista nueva.", mg_name: "Nombre de la nueva lista", mg_tag: "Marcar el origen como", mg_tag_none: "no marcar", mg_old: "Lista antigua después", mg_keep: "Conservar", mg_keep_sub: "Queda sin cambios – tú la ordenas.", mg_clear: "Vaciar", mg_clear_sub: "Se quitan allí los artículos traspasados; la lista queda.", mg_delete: "Borrar por completo", mg_delete_sub: "Se elimina la lista Local To-do.", mg_delete_no: "Solo posible con listas Local To-do.", mg_used: "Se usa en listas combinadas: {lists}. Faltará allí como fuente.", mg_pick: "Elige al menos una lista.", mg_go: "Traspasar", mg_items: "artículos",
+    mg_pf_local: "To-do local", mg_pf_shopping: "Lista de la compra", mg_pf_other: "Otra",
   },
   it: {
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1283,6 +1287,7 @@ const TEXTS = {
     p_tab_lists: "Liste",
     nt_add: "Aggiungi destinazione", nt_none: "Nessuna destinazione – non verranno inviati messaggi.", nt_service: "Servizio di notifica", nt_entity: "Entità di notifica", nt_custom: "Servizio personalizzato", nt_no_services: "Nessun servizio notify trovato.", nt_no_entities: "Nessuna entità notify trovata.", nt_custom_help: "Qualsiasi servizio (solo admin), ad es. telegram_bot.send_message o script.mio_messaggio. Dati in JSON; {title} e {message} vengono sostituiti – senza segnaposto vengono aggiunti title e message.", nt_help: "Sono possibili più destinazioni: app Companion, Telegram, e-mail, Signal, altoparlanti … – tutto ciò che Home Assistant conosce come notifica.", nt_bad_service: "Indica il servizio come dominio.servizio.",
     mg_title: "Trasferisci liste", mg_sub: "Trasferisci liste di attività esistenti (lista della spesa, Local To-do …) in liste SmartLists proprie – con articoli, note e spunte.", mg_help: "Le nuove liste appartengono a te e si possono condividere in seguito. Scegli una o più liste.", mg_lists: "Liste", mg_none: "Nessuna lista adatta trovata.", mg_how: "Più liste", mg_each: "Una propria per ciascuna", mg_each_sub: "Stesso nome di prima.", mg_one: "Tutte in una lista", mg_one_sub: "Tutti gli articoli insieme in una nuova lista.", mg_name: "Nome della nuova lista", mg_tag: "Segna l'origine come", mg_tag_none: "non segnare", mg_old: "Vecchia lista dopo", mg_keep: "Mantieni", mg_keep_sub: "Resta invariata – la sistemi tu.", mg_clear: "Svuota", mg_clear_sub: "Gli articoli trasferiti vengono rimossi lì; la lista resta.", mg_delete: "Elimina del tutto", mg_delete_sub: "La lista Local To-do viene rimossa.", mg_delete_no: "Possibile solo per le liste Local To-do.", mg_used: "Usata in liste combinate: {lists}. Lì mancherà come fonte.", mg_pick: "Scegli almeno una lista.", mg_go: "Trasferisci", mg_items: "articoli",
+    mg_pf_local: "To-do locale", mg_pf_shopping: "Lista della spesa", mg_pf_other: "Altro",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1517,6 +1522,7 @@ const TEXTS = {
     p_tab_lists: "Listy",
     nt_add: "Dodaj cel", nt_none: "Brak celu – wiadomości nie będą wysyłane.", nt_service: "Usługa powiadomień", nt_entity: "Encja powiadomień", nt_custom: "Własna usługa", nt_no_services: "Nie znaleziono usług notify.", nt_no_entities: "Nie znaleziono encji notify.", nt_custom_help: "Dowolna usługa (tylko admini), np. telegram_bot.send_message lub script.moja_wiadomosc. Dane jako JSON; {title} i {message} są podmieniane – bez symboli zastępczych dodawane są title i message.", nt_help: "Możliwych jest kilka celów: aplikacja Companion, Telegram, e-mail, Signal, głośniki … – wszystko, co Home Assistant zna jako powiadomienie.", nt_bad_service: "Podaj usługę jako domena.usługa.",
     mg_title: "Przejmij listy", mg_sub: "Przejmij istniejące listy zadań (lista zakupów, Local To-do …) do własnych list SmartLists – z produktami, notatkami i odhaczeniami.", mg_help: "Nowe listy należą do ciebie i można je potem udostępnić. Wybierz jedną lub kilka list.", mg_lists: "Listy", mg_none: "Nie znaleziono odpowiednich list.", mg_how: "Kilka list", mg_each: "Każda jako własna lista", mg_each_sub: "Taka sama nazwa jak wcześniej.", mg_one: "Wszystkie w jedną listę", mg_one_sub: "Wszystkie produkty razem w nowej liście.", mg_name: "Nazwa nowej listy", mg_tag: "Oznacz pochodzenie jako", mg_tag_none: "nie oznaczaj", mg_old: "Stara lista potem", mg_keep: "Zachowaj", mg_keep_sub: "Pozostaje bez zmian – sprzątasz sam(a).", mg_clear: "Opróżnij", mg_clear_sub: "Przejęte produkty są tam usuwane; lista zostaje.", mg_delete: "Usuń całkowicie", mg_delete_sub: "Lista Local To-do zostanie usunięta.", mg_delete_no: "Możliwe tylko dla list Local To-do.", mg_used: "Używana w listach połączonych: {lists}. Zabraknie jej tam jako źródła.", mg_pick: "Wybierz co najmniej jedną listę.", mg_go: "Przejmij", mg_items: "produktów",
+    mg_pf_local: "Lokalne To-do", mg_pf_shopping: "Lista zakupów", mg_pf_other: "Inne",
   },
 };
 
@@ -5147,6 +5153,12 @@ class SmartListsCard extends HTMLElement {
     let cands = [];
     try { cands = (await this._call("migrate_candidates", {}, false)).lists; } catch (err) { this._toast((err && err.message) || t.error); return; }
     const S = { sel: new Set(), mode: "each", name: "", old: "keep", tag: "" };
+    // Herkunft vor dem Namen: Lokale To-do, Einkaufsliste oder die Integration (Google Tasks, Todoist, CalDAV …)
+    const platformChip = (pf) => {
+      const known = { local_todo: t.mg_pf_local, shopping_list: t.mg_pf_shopping };
+      const label = known[pf] || (pf ? pf.replace(/_/g, " ").replace(/\b\w/g, (x) => x.toUpperCase()) : t.mg_pf_other);
+      return h("span", { class: `pfchip ${pf === "local_todo" ? "local" : ""}` }, label);
+    };
     const box = h("div", { class: "mgbox" });
     const status = h("span", { class: "ok2" });
     const draw = () => {
@@ -5162,12 +5174,15 @@ class SmartListsCard extends HTMLElement {
           .mgbox input[type=checkbox],.mgbox input[type=radio]{width:18px!important;height:18px!important;margin:2px 0 0!important;flex:none}
           .mgbox small{display:block;color:var(--secondary-text-color);font-size:.8rem}.mgbox .mgopt.dis{opacity:.45;cursor:default}
           .mgbox h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--secondary-text-color);margin:14px 0 2px}
-          .mgbox .warn{color:var(--warning-color,#f57c00);font-size:.85rem}`),
+          .mgbox .warn{color:var(--warning-color,#f57c00);font-size:.85rem}
+          .mgbox .pfchip{display:inline-block;font-size:.7rem;font-weight:600;padding:1px 7px;border-radius:9px;margin-right:6px;vertical-align:1px;
+            background:var(--secondary-background-color,#eee);color:var(--secondary-text-color)}
+          .mgbox .pfchip.local{background:color-mix(in srgb, var(--primary-color) 18%, transparent);color:var(--primary-color)}`),
         h("p", { class: "shelp" }, t.mg_help),
         h("h3", {}, t.mg_lists),
         cands.length ? cands.map((c) => h("label", { class: "mgl" },
           h("input", { type: "checkbox", checked: S.sel.has(c.entity_id), onchange: (e) => { if (e.target.checked) S.sel.add(c.entity_id); else S.sel.delete(c.entity_id); draw(); } }),
-          h("span", {}, h("b", {}, c.name), h("small", {}, `${c.entity_id} · ${c.open} ${t.open}`)))) : h("p", {}, t.mg_none),
+          h("span", {}, platformChip(c.platform), h("b", {}, c.name), h("small", {}, `${c.entity_id} · ${c.open} ${t.open}`)))) : h("p", {}, t.mg_none),
         chosen.length > 1 ? [h("h3", {}, t.mg_how),
           radio("mode", "each", t.mg_each, t.mg_each_sub),
           radio("mode", "one", t.mg_one, t.mg_one_sub),

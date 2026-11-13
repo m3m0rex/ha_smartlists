@@ -15,7 +15,8 @@ automations, and can be part of a combined list.
 
 *General settings → Global → Voice, backup, defaults → Take over lists …* (admins) turns existing to-do
 lists – the HA shopping list, Local To-do lists, lists of other integrations – into own SmartLists lists,
-with items, notes and checkmarks. You become the owner and can share them afterwards.
+with items, notes and checkmarks. You become the owner and can share them afterwards. Each list shows its origin
+(*Local To-do*, *Shopping list* or the integration, e.g. *Google Tasks*).
 
 - **Several lists**: one own list each (same name) **or all into one list**; optionally the origin is
   added as `*Person` or `#tag` (characters from your naming convention), e.g. "Soap *Anna".

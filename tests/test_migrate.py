@@ -74,19 +74,20 @@ def test_migrate_each_and_one():
     cands = m.candidates(hass)
     assert [c["entity_id"] for c in cands] == ["todo.anna", "todo.einkaufsliste"]  # eigene SmartLists-Liste nicht
     assert [c["platform"] for c in cands] == ["local_todo", "shopping_list"]
-    try:
-        asyncio.run(m.async_migrate(hass, "u1", ["todo.anna"], "each", old="delete"))
-        raise AssertionError("Löschen darf es nicht geben")
-    except ValueError:
-        pass
-    r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna"], "each", old="clear"))
+    for bad in ("delete", "clear"):  # alte Listen werden weder gelöscht noch geleert
+        try:
+            asyncio.run(m.async_migrate(hass, "u1", ["todo.anna"], "each", old=bad))
+            raise AssertionError(bad)
+        except ValueError:
+            pass
+    r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna"], "each"))
     assert [x["name"] for x in r["lists"]] == ["Einkaufsliste", "Anna"] and [x["items"] for x in r["lists"]] == [2, 1]
     first = saved[f"smartlists.own.{added[0].subentry_id}"]["items"]
     assert [(i["summary"], i["status"], i["description"]) for i in first] == [("Milch 2 l", "needs_action", ""), ("Brot", "completed", "Vollkorn")]
     assert added[0].data["owner"] == "u1"
-    # alte Listen werden nur geleert, nie gelöscht
-    assert r["old"] == {"todo.einkaufsliste": "cleared", "todo.anna": "cleared"}
-    assert removed == [("todo.einkaufsliste", ["a", "b"]), ("todo.anna", ["c"])] and removed_entries == []
+    # alte Listen bleiben unverändert
+    assert r["old"] == {"todo.einkaufsliste": "kept", "todo.anna": "kept"}
+    assert removed == [] and removed_entries == []
 
     hass, added, _ = _hass(m)
     r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna", "todo.ha_smartlists_list_x"], "one", "Wocheneinkauf", "keep", "person"))

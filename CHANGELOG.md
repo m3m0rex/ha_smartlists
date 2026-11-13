@@ -15,8 +15,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 - Input field example is generic and per language ("e.g. 2 kg apples @Store", "z. B. 2 kg Äpfel @Markt" …)
   and uses the store character of your naming convention instead of a store brand.
 - *Take over lists*: each list shows where it comes from (Local To-do, Shopping list, Google Tasks, …).
-- *Take over lists* never deletes the old list any more (option *delete completely* removed) – keep or empty
-  it, and delete it yourself when you no longer need it.
+- *Take over lists* never changes the old lists any more: they are always kept (options *empty* and
+  *delete completely* removed). Afterwards a message lists them and asks you to delete them yourself once
+  the new list is fine (and to add the new list to combined lists first).
 
 ## [3.5.0] – 2026-11-13
 

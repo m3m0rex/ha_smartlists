@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 - Input field example is generic and per language ("e.g. 2 kg apples @Store", "z. B. 2 kg Äpfel @Markt" …)
   and uses the store character of your naming convention instead of a store brand.
+- *Take over lists*: each list shows where it comes from (Local To-do, Shopping list, Google Tasks, …).
 
 ## [3.5.0] – 2026-11-13
 

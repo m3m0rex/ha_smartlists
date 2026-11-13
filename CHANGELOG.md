@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.3.1] – 2026-11-13
+
+### Fixed
+
+- **Notifications about other people's changes never arrived** (only the test message did): the delayed,
+  batched send ran outside Home Assistant's event loop and was dropped. It now runs in the event loop.
+- Notifications limited to a **combined list** now also fire for changes in its source lists.
+- The hourly check for *Repairs* hints ran the same way and now runs in the event loop as well.
+
 ## [3.3.0] – 2026-11-13
 
 ### Added

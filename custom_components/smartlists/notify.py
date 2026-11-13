@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import datetime as dt
 import logging
+from functools import partial
 from typing import Any
 
 from homeassistant.const import ATTR_FRIENDLY_NAME, EVENT_CALL_SERVICE
@@ -130,7 +131,8 @@ class Notifier:
         for user_id, s in self.users.items():
             if not s["service"] or not s[kind] or (user_id == actor and not s["own"]) or (actor and actor in s["muted"]):
                 continue
-            if s["lists"] and entity_id not in s["lists"]:
+            # gewählt werden kann auch eine kombinierte Liste – Änderungen kommen aber an ihren Quell-Listen an
+            if s["lists"] and entity_id not in s["lists"] and not any(entity_id in self._sources_of(c) for c in s["lists"]):
                 continue
             user = await self.hass.auth.async_get_user(user_id)
             if user is None or lists.own_role(self.hass, entity_id, user) is None:
@@ -139,10 +141,19 @@ class Notifier:
             pend = self._pending.get(key)
             if pend is None:
                 pend = self._pending[key] = {"who": [], "items": []}
-                pend["cancel"] = async_call_later(self.hass, BATCH_SECONDS, lambda _now, k=key: self.hass.async_create_task(self._send(k)))
+                # Koroutinen-Funktion: HA startet sie als Task in der Ereignisschleife. (Früher eine lambda –
+                # die lief in einem Thread, dort scheiterte async_create_task → es kam nie eine Nachricht an.)
+                pend["cancel"] = async_call_later(self.hass, BATCH_SECONDS, partial(self._send_later, key))
             if actor not in pend["who"]:
                 pend["who"].append(actor)
             pend["items"].append(item)
+
+    async def _send_later(self, key: tuple[str, str, str], _now: Any) -> None:
+        await self._send(key)
+
+    def _sources_of(self, entity_id: str) -> list[str]:
+        ent = self.hass.data.get(DOMAIN, {}).get("entities", {}).get(entity_id)
+        return list(getattr(ent, "_sources", []) or [])
 
     def _quiet(self, s: dict[str, Any]) -> bool:
         if not s.get("quiet"):

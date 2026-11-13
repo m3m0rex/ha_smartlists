@@ -59,7 +59,8 @@ active links of all lists.
 on new items and/or when something is checked off, which lists, from whom (per person), quiet hours.
 Your own changes only notify you if *Also for my own changes* is on (handy to try it out, or when you add
 something on the PC and want it on your phone). Several changes within a minute arrive as one message ("Anna
-added milk 2 l, bread to Shopping"). Changes from the card, the app, HA itself and shared links count.
+added milk 2 l, bread to Shopping"). Changes from the card, the app, HA itself and shared links count. Messages are sent about a minute after the first change (several changes are combined). If you pick a
+combined list, changes in its source lists count too.
 *Send test message* checks the device right away – if nothing arrives, check the companion app and its
 notification permission; failed messages are logged in *Settings → System → Logs*.
 

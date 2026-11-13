@@ -71,6 +71,8 @@ UI_BUILTIN: dict[str, Any] = {
     "shop_tap_row": True,
     "shop_untagged": False,
     "shop_auto_store": True,
+    "scan_target": "",
+    "scan_mode": "input",
 }
 OFF = "off"
 TAG_FIELDS = {"store": "prefix_store", "person": "prefix_person", "tag": "prefix_tag"}

@@ -100,7 +100,11 @@ const UI_DEFAULTS = {
   press_gesture: "long", press_target: "row", press_result: "menu", menu_actions: MENU_ACTIONS, row_buttons: true,
   shop_hide_checked: true, shop_keep_awake: true, shop_large: true, shop_tap_row: true,
   shop_auto_store: true, shop_untagged: false,
+  scan_target: "", scan_mode: "input",
 };
+// Dienste zum Nachschlagen von Strichcodes (gleiche IDs wie barcode.py)
+const BARCODE_PROVIDERS = [["off", "Open Food Facts"], ["obf", "Open Beauty Facts"], ["opff", "Open Pet Food Facts"],
+  ["opf", "Open Products Facts"], ["upcitemdb", "UPCitemdb"], ["custom", null]];
 // Notizlisten der App: keine Kategorien/Einkaufsfunktionen (nur wenn in der Karte nicht anders eingestellt)
 const NOTES_DEFAULTS = { sort: "added", show_category_titles: false, show_frequent: false, show_shopping: false, show_stepper: false, show_import: false, show_filter_chips: false, show_sort: false };
 // Erkennung wie notes.py (für Auswahlfelder, ohne Rückfrage bei der Integration)
@@ -329,6 +333,7 @@ const TEXTS = {
     trip_done: "Einkauf beendet", trip_help: "Die Summe „im Wagen“ beginnt wieder bei 0. Ausgaben bleiben gebucht. Für Listen, die du immer wieder nutzt, kannst du alles Abgehakte gleich wieder öffnen.", trip_reopen: "Alles wieder offen", trip_finish: "Beenden", stats_forget: "Aus dem Verlauf löschen", stats_forget_help: "wird aus Statistik, Vorschlägen und Kaufrhythmus entfernt (z. B. versehentlich hinzugefügt).", exp_entries: "Buchungen", notes_create: "Notizliste anlegen", notes_create_help: "Name der Notizliste. Sie gehört dir; angelegt als todo.ha_smartlists_notes_<name>.",
     p_lists_all: "Alle Listen", p_lists_less: "Weniger",
     scan_native_help: "Den Strichcode auf der Verpackung ins Bild halten.", scan_type: "Nummer eintippen", scan_not_product: "Das ist kein Produkt-Strichcode (EAN).",
+    scan_target: "Ziel-Liste", scan_target_this: "diese Liste (der Karte)", scan_mode: "Gescanntes", scan_mode_input: "ins Eingabefeld (prüfen, dann hinzufügen)", scan_mode_add: "direkt hinzufügen", barcode_providers: "Dienste zum Nachschlagen", barcode_providers_help: "Antippen schaltet ein/aus, die Zahl ist die Reihenfolge – der erste Treffer zählt. Gefundene Codes merkt sich SmartLists.", barcode_custom: "eigener Dienst", barcode_custom_url: "Adresse mit {code}", barcode_custom_field: "Feld für den Namen",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -551,6 +556,7 @@ const TEXTS = {
     trip_done: "Shopping done", trip_help: "The “in cart” total starts at 0 again. Expenses stay booked. For lists you reuse, you can reopen everything checked right away.", trip_reopen: "Reopen all", trip_finish: "Finish", stats_forget: "Delete from history", stats_forget_help: "is removed from statistics, suggestions and buying rhythm (e.g. added by mistake).", exp_entries: "Bookings", notes_create: "Create note list", notes_create_help: "Name of the note list. It belongs to you; created as todo.ha_smartlists_notes_<name>.",
     p_lists_all: "All lists", p_lists_less: "Less",
     scan_native_help: "Point the camera at the barcode on the package.", scan_type: "Type the number", scan_not_product: "This is not a product barcode (EAN).",
+    scan_target: "Target list", scan_target_this: "this list (of the card)", scan_mode: "Scanned items", scan_mode_input: "into the input field (check, then add)", scan_mode_add: "add directly", barcode_providers: "Lookup services", barcode_providers_help: "Tap to turn on/off, the number is the order – the first hit counts. SmartLists remembers found codes.", barcode_custom: "custom service", barcode_custom_url: "URL with {code}", barcode_custom_field: "Field with the name",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -773,6 +779,7 @@ const TEXTS = {
     trip_done: "Courses terminées", trip_help: "Le total « dans le chariot » repart de 0. Les dépenses restent enregistrées. Pour les listes réutilisées, tu peux rouvrir tout ce qui est coché.", trip_reopen: "Tout rouvrir", trip_finish: "Terminer", stats_forget: "Supprimer de l'historique", stats_forget_help: "sera retiré des statistiques, suggestions et du rythme d'achat (p. ex. ajouté par erreur).", exp_entries: "Opérations", notes_create: "Créer une liste de notes", notes_create_help: "Nom de la liste de notes. Elle t'appartient ; créée en tant que todo.ha_smartlists_notes_<nom>.",
     p_lists_all: "Toutes les listes", p_lists_less: "Moins",
     scan_native_help: "Vise le code-barres sur l'emballage.", scan_type: "Saisir le numéro", scan_not_product: "Ce n'est pas un code-barres de produit (EAN).",
+    scan_target: "Liste cible", scan_target_this: "cette liste (de la carte)", scan_mode: "Articles scannés", scan_mode_input: "dans le champ de saisie (vérifier, puis ajouter)", scan_mode_add: "ajouter directement", barcode_providers: "Services de recherche", barcode_providers_help: "Touche pour activer/désactiver, le numéro est l'ordre – le premier résultat compte. SmartLists mémorise les codes trouvés.", barcode_custom: "service personnalisé", barcode_custom_url: "URL avec {code}", barcode_custom_field: "Champ du nom",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -995,6 +1002,7 @@ const TEXTS = {
     trip_done: "Compra terminada", trip_help: "El total «en el carro» vuelve a 0. Los gastos siguen registrados. Para listas que reutilizas, puedes reabrir todo lo marcado.", trip_reopen: "Reabrir todo", trip_finish: "Terminar", stats_forget: "Borrar del historial", stats_forget_help: "se quita de estadísticas, sugerencias y ritmo de compra (p. ej. añadido por error).", exp_entries: "Movimientos", notes_create: "Crear lista de notas", notes_create_help: "Nombre de la lista de notas. Es tuya; se crea como todo.ha_smartlists_notes_<nombre>.",
     p_lists_all: "Todas las listas", p_lists_less: "Menos",
     scan_native_help: "Apunta al código de barras del envase.", scan_type: "Escribir el número", scan_not_product: "No es un código de barras de producto (EAN).",
+    scan_target: "Lista de destino", scan_target_this: "esta lista (de la tarjeta)", scan_mode: "Artículos escaneados", scan_mode_input: "al campo de entrada (revisar y añadir)", scan_mode_add: "añadir directamente", barcode_providers: "Servicios de búsqueda", barcode_providers_help: "Toca para activar/desactivar, el número es el orden – cuenta el primer resultado. SmartLists recuerda los códigos encontrados.", barcode_custom: "servicio propio", barcode_custom_url: "URL con {code}", barcode_custom_field: "Campo con el nombre",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1217,6 +1225,7 @@ const TEXTS = {
     trip_done: "Spesa finita", trip_help: "Il totale «nel carrello» riparte da 0. Le spese restano registrate. Per le liste che riusi puoi riaprire subito tutto ciò che è spuntato.", trip_reopen: "Riapri tutto", trip_finish: "Termina", stats_forget: "Elimina dalla cronologia", stats_forget_help: "viene rimosso da statistiche, suggerimenti e ritmo d'acquisto (es. aggiunto per errore).", exp_entries: "Movimenti", notes_create: "Crea lista di note", notes_create_help: "Nome della lista di note. È tua; creata come todo.ha_smartlists_notes_<nome>.",
     p_lists_all: "Tutte le liste", p_lists_less: "Meno",
     scan_native_help: "Inquadra il codice a barre sulla confezione.", scan_type: "Digita il numero", scan_not_product: "Non è un codice a barre di prodotto (EAN).",
+    scan_target: "Lista di destinazione", scan_target_this: "questa lista (della scheda)", scan_mode: "Articoli scansionati", scan_mode_input: "nel campo di inserimento (controlla, poi aggiungi)", scan_mode_add: "aggiungi subito", barcode_providers: "Servizi di ricerca", barcode_providers_help: "Tocca per attivare/disattivare, il numero è l'ordine – vale il primo risultato. SmartLists ricorda i codici trovati.", barcode_custom: "servizio personale", barcode_custom_url: "URL con {code}", barcode_custom_field: "Campo con il nome",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1439,6 +1448,7 @@ const TEXTS = {
     trip_done: "Zakupy zakończone", trip_help: "Suma „w koszyku” znów zaczyna od 0. Wydatki zostają zapisane. Dla list używanych ponownie możesz od razu przywrócić wszystko, co odhaczone.", trip_reopen: "Przywróć wszystko", trip_finish: "Zakończ", stats_forget: "Usuń z historii", stats_forget_help: "zostanie usunięte ze statystyk, podpowiedzi i rytmu zakupów (np. dodane przez pomyłkę).", exp_entries: "Wpisy", notes_create: "Utwórz listę notatek", notes_create_help: "Nazwa listy notatek. Należy do ciebie; tworzona jako todo.ha_smartlists_notes_<nazwa>.",
     p_lists_all: "Wszystkie listy", p_lists_less: "Mniej",
     scan_native_help: "Skieruj aparat na kod kreskowy na opakowaniu.", scan_type: "Wpisz numer", scan_not_product: "To nie jest kod kreskowy produktu (EAN).",
+    scan_target: "Lista docelowa", scan_target_this: "ta lista (karty)", scan_mode: "Zeskanowane produkty", scan_mode_input: "do pola wpisywania (sprawdź, potem dodaj)", scan_mode_add: "dodaj od razu", barcode_providers: "Usługi wyszukiwania", barcode_providers_help: "Dotknij, aby włączyć/wyłączyć, liczba to kolejność – liczy się pierwszy wynik. SmartLists zapamiętuje znalezione kody.", barcode_custom: "własna usługa", barcode_custom_url: "Adres z {code}", barcode_custom_field: "Pole z nazwą",
   },
 };
 
@@ -3791,6 +3801,12 @@ class SmartListsCard extends HTMLElement {
       h("div", { class: "grp" }, t.shop),
       sw("shop_hide_checked"), sw("shop_keep_awake"), sw("shop_large", t.shop_large_help), sw("shop_tap_row"),
       sw("shop_auto_store", t.shop_auto_store_help), sw("shop_untagged", t.shop_untagged_help),
+      h("div", { class: "grp" }, t.scan),
+      this._setRow(t.scan_target, h("select", { "aria-label": t.scan_target, onchange: (e) => save({ scan_target: e.target.value }) },
+        h("option", { value: "", selected: !ui.scan_target }, t.scan_target_this),
+        Object.keys(this._hass.states).filter((e) => e.startsWith("todo.") && !isNotesEntity(e, this._hass.states[e].attributes.friendly_name))
+          .map((e) => h("option", { value: e, selected: ui.scan_target === e }, this._hass.states[e].attributes.friendly_name || e))), null, differs("scan_target")),
+      this._setRow(t.scan_mode, sel("scan_mode", [["input", "scan_mode_input"], ["add", "scan_mode_add"]]), null, differs("scan_mode")),
     ];
   }
 
@@ -4383,6 +4399,16 @@ class SmartListsCard extends HTMLElement {
       const r = await this._call("barcode", { code }, false);
       if (!r.found) { this._toast(`${code}: ${t.scan_unknown}`); return; }
       const text = [r.name, r.brand && !r.name.toLowerCase().includes(r.brand.toLowerCase()) ? `(${r.brand})` : ""].filter(Boolean).join(" ");
+      // Einstellung „Für mich → Scanner“: Ziel-Liste und ob direkt hinzufügen oder erst ins Eingabefeld
+      const target = (this._ui && this._ui.scan_target) || this._config.entity;
+      const direct = (this._ui && this._ui.scan_mode === "add") || target !== this._config.entity;
+      if (direct) {
+        await this._hass.callWS({ type: "smartlists/add_item", entity_id: target, text });
+        const name = (this._hass.states[target] && this._hass.states[target].attributes.friendly_name) || target;
+        this._toast(`✓ ${text} → ${name}`);
+        if (target === this._config.entity) this._load();
+        return;
+      }
       if (this._input) { this._input.value = text; this._input.dispatchEvent(new Event("input")); this._input.focus(); }
     } catch (err) { this._toast((err && err.message) || t.error); }
   }
@@ -4709,12 +4735,42 @@ class SmartListsCard extends HTMLElement {
           try { await this._call("set_automation", { settings: { ...cur, barcode_lookup: on } }, false); cur.barcode_lookup = on; status.textContent = "✓ " + t.saved; }
           catch (err) { status.textContent = (err && err.message) || t.error; }
         }, t.barcode_lookup), t.barcode_lookup_help),
+        this._barcodeProviders(cur, status),
         h("div", { class: "acts" }, status, h("button", { class: "btn2", type: "button", onclick: async () => {
           try { const res = await this._call("install_sentences", {}, false); status.textContent = `✓ ${t.sentences_installed}: ${res.languages.join(", ")}`; }
           catch (err) { status.textContent = (err && err.message) || t.error; }
         } }, t.install_sentences)));
     }).catch(() => fill(body, t.error));
     return this._sec("🎙️", t.automation, t.automation_help, [body]);
+  }
+
+  // Dienste fürs Nachschlagen: antippen = an/aus, Zahl = Reihenfolge (der erste Treffer zählt); eigener Dienst per URL
+  _barcodeProviders(cur, status) {
+    const t = this._t;
+    const box = h("div");
+    const save = async (patch) => {
+      Object.assign(cur, patch);
+      try { await this._call("set_automation", { settings: { ...cur } }, false); status.textContent = "✓ " + t.saved; } catch (err) { status.textContent = (err && err.message) || t.error; }
+      draw();
+    };
+    const draw = () => {
+      const order = cur.barcode_providers && cur.barcode_providers.length ? cur.barcode_providers : ["off"];
+      fill(box, h("div", { class: "grp" }, t.barcode_providers),
+        h("div", { class: "chips" }, BARCODE_PROVIDERS.map(([id, name]) => {
+          const pos = order.indexOf(id);
+          return h("button", { type: "button", class: `chip2 ${pos >= 0 ? "on" : ""}`, "aria-pressed": String(pos >= 0),
+            onclick: () => save({ barcode_providers: pos >= 0 ? order.filter((x) => x !== id) : [...order, id] }) },
+            pos >= 0 ? `${pos + 1}. ` : "", name || t.barcode_custom);
+        })),
+        h("div", { class: "shelp", style: "padding:2px 0 6px" }, t.barcode_providers_help),
+        order.includes("custom") ? h("div", { class: "rule2", style: "grid-template-columns:minmax(0,1fr) 140px;margin-top:4px" },
+          h("input", { value: cur.barcode_custom_url || "", placeholder: "https://example.org/api/{code}", "aria-label": t.barcode_custom_url,
+            onchange: (e) => save({ barcode_custom_url: e.target.value.trim() }) }),
+          h("input", { value: cur.barcode_custom_field || "", placeholder: "product.name", "aria-label": t.barcode_custom_field,
+            onchange: (e) => save({ barcode_custom_field: e.target.value.trim() }) })) : null);
+    };
+    draw();
+    return box;
   }
 
   _devicesSection() {

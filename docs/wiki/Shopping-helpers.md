@@ -33,6 +33,8 @@ action `smartlists.add_template` does the same in automations.
 
 ## Share via link / QR code
 
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Share window with QR code" width="620">
+
 *Gear of the list (settings of this list) → Share via link*. Who may create links is decided by an admin
 under *General settings → Global → Sharing and permissions*: admins only, admins and the list's owner
 (default), everyone who may edit the list, or nobody (sharing off). There the admin also sets what a link
@@ -95,6 +97,8 @@ It uses the existing history – nothing new is collected. Admins can remove wro
 history, and single expense bookings can be deleted under *Bookings* (admins all, others their own).
 
 ## Meal plan
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/mealplan.svg" alt="Meal plan">
 
 *⋯ → Meal plan* shows a week (← → for other weeks). Put dishes – i.e. templates – on days. Changes are
 kept until you press **Save** (then you are asked whether the ingredients should go on the list) or **Add

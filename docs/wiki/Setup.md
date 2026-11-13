@@ -9,6 +9,8 @@ away, or leave it empty.
 
 ## Setup assistant
 
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup-assistant.svg" alt="Setup assistant – notation step" width="460">
+
 When an admin opens SmartLists for the first time (sidebar page or card), a short assistant appears.
 Right after adding the integration, the success message also has a link **Open the setup assistant**, and
 *Settings → Devices & services → SmartLists → Configure → Setup assistant* links to it any time

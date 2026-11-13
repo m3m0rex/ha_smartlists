@@ -50,6 +50,99 @@ Category ids: `obst_gemuese`, `fleisch`, `kuehlung`, `grundnahrung`, `backwaren`
 
 ## Examples
 
+### Standard list · default
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-list.svg" alt="Standard list · default" width="440">
+
+```yaml
+type: custom:smartlists-card
+entity: todo.weekly_shop
+```
+
+### Tiles · kitchen tablet
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-tiles.svg" alt="Tiles · kitchen tablet" width="440">
+
+```yaml
+type: custom:smartlists-card
+entity: todo.weekly_shop
+view: tiles
+font_scale: 1.2
+```
+
+### Mini · compact dashboard tile
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-mini.svg" alt="Mini · compact dashboard tile" width="440">
+
+```yaml
+type: custom:smartlists-card
+entity: todo.weekly_shop
+view: mini
+density: compact
+```
+
+### Store card · only one store, starts in shopping mode
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-store.svg" alt="Store card · only one store, starts in shopping mode" width="440">
+
+```yaml
+type: custom:smartlists-card
+entity: todo.weekly_shop
+filter_store: Market A
+start_shopping: true
+show_add: false
+```
+
+### Several lists · side by side or as tabs
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-columns.svg" alt="Several lists · side by side or as tabs" width="440">
+
+```yaml
+type: custom:smartlists-card
+entities:
+  - todo.anna
+  - entity: todo.max
+    title: Max (drugstore)
+    filter_category: [drogerie]
+layout: columns   # or tabs / stack
+```
+
+### Meal plan · week plan only
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-mealplan.svg" alt="Meal plan · week plan only" width="440">
+
+```yaml
+type: custom:smartlists-card
+view: mealplan
+entity: todo.weekly_shop   # list for the ingredients
+```
+
+### Statistics · expenses and most bought
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-stats.svg" alt="Statistics · expenses and most bought" width="440">
+
+```yaml
+type: custom:smartlists-card
+entity: todo.weekly_shop
+settings_only: true
+settings_scope: stats
+```
+
+### View only · e.g. a wall display
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-readonly.svg" alt="View only · e.g. a wall display" width="440">
+
+```yaml
+type: custom:smartlists-card
+entity: todo.weekly_shop
+show_add: false
+show_settings: false
+show_shopping: false
+show_stepper: false
+```
+
+More examples:
+
 Store card that only shows REWE items; new items get `@REWE`:
 
 ```yaml
@@ -74,6 +167,8 @@ layout: columns
 
 ## Using the card
 
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/input.svg" alt="Input with preview and suggestions" width="460"> <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/shopping-mode.svg" alt="Shopping mode" width="240">
+
 - **Input**: type `2 kg Äpfel @REWE` – quantity, unit, store and category are recognised. ↑/↓, Tab
   and Enter pick suggestions; tap the category chip to change it (remembered for similar items).
 - **Long press** (or right click / double click, see the gear menu) opens the item menu: edit, move,
@@ -95,14 +190,6 @@ layout: columns
   page the general settings are the ⚙ at the top right. See [[Settings]].
 - **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
 - Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
-
-Meal plan as its own card:
-
-```yaml
-type: custom:smartlists-card
-view: mealplan
-entity: todo.weekly_shop
-```
 
 ## Stores & zones
 

@@ -1,5 +1,7 @@
 # Settings
 
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/settings.svg" alt="General settings with areas and two columns">
+
 There are two places, so that nothing is mixed up.
 
 ## General settings

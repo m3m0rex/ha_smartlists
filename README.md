@@ -11,6 +11,15 @@ shared list** – e.g. Anna's and Max's shopping lists into one list "Weekly sho
 A combined list is a regular to-do entity (`todo.weekly_shop`). It works in the to-do view, on
 dashboards, with voice assistants, in automations and in the HA SmartLists app.
 
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/hero.svg" alt="SmartLists sidebar page with a combined list, categories, badges and prices"></p>
+
+<table>
+<tr>
+<td width="62%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/input.svg" alt="Input with live preview and suggestions"><br><sub>One input field: quantity, unit, price, store and category are recognised while typing.</sub></td>
+<td width="38%" valign="top" align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/shopping-mode.svg" alt="Shopping mode on the phone" width="240"><br><sub>Shopping mode: large rows, store bar.</sub></td>
+</tr>
+</table>
+
 ## Features
 
 - Combine any to-do lists: Shopping List, Local To-do, Google Tasks, Bring!, CalDAV and others.
@@ -56,8 +65,15 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
   text (`Milk 2 l 1,19€ @REWE`) are recognised.
 - **Meal plan** (also as a tab on the sidebar page) with a calendar entity and optional **Mealie** import, **history per item**, a one-click
   **shopping dashboard**, **diagnostics** download and hints under **Repairs**.
+- **Sharing:** with people in Home Assistant (view, check off, edit) or **via link / QR code** – only this list,
+  limited in time, revocable:
+
+  <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Share window with QR code, permissions and expiry" width="620">
+
 - **Settings in one place:** general settings with areas (*For me*, *Global* for admins, *Insights*) and a
   separate settings window per list – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Settings).
+
+  <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/settings.svg" alt="General settings with areas and two columns">
 
 Quantities are stored in the name, as in the app ("Milch 2 l @REWE"). "2 kg apples" is recognised
 while typing, too.
@@ -72,9 +88,25 @@ normal and **wide** layout; with several lists you can **drag items** from one l
 mouse (Ctrl = copy). Home Assistant's built-in to-do page shows items as plain text only
 ("Milch 2 l @REWE"). Hide the entry like any other via *Edit sidebar*.
 
+<table>
+<tr>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/mealplan.svg" alt="Meal plan tab"><br><sub>Tab <b>Meal plan</b>: dishes per day, ingredients to the list in one go.</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/notes.svg" alt="Notes of the app as note cards"><br><sub><b>Notes</b> of the app as note cards – only for their owner.</sub></td>
+</tr>
+</table>
+
 ## Lovelace card `custom:smartlists-card`
 
 Loaded automatically by the integration (no dashboard resource needed).
+
+<table>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-list.svg" alt="Standard list"><br><b>Standard list</b> · default</td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-tiles.svg" alt="Tiles"><br><b>Tiles</b> · <code>view: tiles</code></td></tr>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-mini.svg" alt="Mini tile"><br><b>Mini tile</b> · <code>view: mini</code></td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-store.svg" alt="Store card"><br><b>Store card</b> · <code>filter_store</code> + <code>start_shopping</code></td></tr>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-columns.svg" alt="Several lists"><br><b>Several lists</b> · <code>entities</code> + <code>layout: columns</code></td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-mealplan.svg" alt="Meal plan"><br><b>Meal plan</b> · <code>view: mealplan</code></td></tr>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-stats.svg" alt="Statistics"><br><b>Statistics</b> · <code>settings_only</code> + <code>settings_scope: stats</code></td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-readonly.svg" alt="View only"><br><b>View only</b> · <code>show_add: false</code> …</td></tr>
+</table>
+
+The YAML for each example is in the [wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card#examples).
 
 ```yaml
 type: custom:smartlists-card
@@ -135,6 +167,8 @@ Copy the folder `custom_components/smartlists` to `/config/custom_components/sma
 Home Assistant.
 
 ## Setup
+
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup-assistant.svg" alt="Setup assistant – notation step" width="460"></p>
 
 On first opening, a **setup assistant** guides admins through lists, stores, notation, language,
 people and extras – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).

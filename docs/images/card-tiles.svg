@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="243" viewBox="0 0 440 243">
+<title>SmartLists – card-tiles</title>
+<foreignObject x="0" y="0" width="440" height="243">
+<div xmlns="http://www.w3.org/1999/xhtml" style="width:440px;font-family:Roboto,'Segoe UI',Helvetica,Arial,sans-serif">
+<style>/* ---- gezeichnete "Screenshots" (HA dunkel) ---- */
+  .shot { background:#111318; border-radius:10px; padding:14px; box-shadow:0 2px 10px #0003; color:#e3e3e3; font-size:13px; font-family: Roboto, "Segoe UI", sans-serif; overflow:hidden; }
+  .bar { background:#1c1f26; margin:-14px -14px 10px; padding:12px 14px; display:flex; align-items:center; gap:10px; font-size:17px; }
+  .bar .sp { flex:1; } .ic { opacity:.8; }
+  .tabs { display:flex; gap:18px; margin:-10px -14px 12px; padding:0 14px; background:#1c1f26; font-size:13px; }
+  .tabs span { padding:8px 0; opacity:.7; } .tabs .on { opacity:1; border-bottom:2px solid #8ab4f8; }
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .chip { border:1px solid #3a3f4a; border-radius:14px; padding:3px 10px; font-size:12px; background:#1c1f26; }
+  .chip.on { background:#8ab4f8; color:#111; border-color:#8ab4f8; }
+  .card { background:#1c1f26; border-radius:12px; padding:12px; }
+  .card h3 { margin:0 0 8px; font-size:16px; font-weight:500; display:flex; align-items:center; gap:8px; }
+  .card h3 .sp { flex:1; } .small { font-size:12px; opacity:.65; }
+  .input { display:flex; gap:8px; margin-bottom:8px; }
+  .input div { flex:1; background:#2a2e37; border-radius:8px; padding:8px 10px; opacity:.85; }
+  .input .go { flex:none; width:34px; background:#5b7fc7; border-radius:8px; text-align:center; padding:8px 0; }
+  .cat { font-size:11px; text-transform:uppercase; letter-spacing:.05em; opacity:.6; margin:10px 0 4px; }
+  .it { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid #2a2e37; }
+  .box { width:16px; height:16px; border:2px solid #8a8f99; border-radius:4px; flex:none; }
+  .box.on { background:#8ab4f8; border-color:#8ab4f8; }
+  .it .n { flex:1; } .it.done .n { opacity:.45; text-decoration:line-through; }
+  .q { width:44px; text-align:right; opacity:.8; } .u { width:22px; opacity:.6; }
+  .b { font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; margin-left:4px; }
+  .b.s { background:#c62828; color:#fff; } .b.s2 { background:#1565c0; color:#fff; }
+  .b.p { background:#7b61ff33; color:#b4a6ff; border-radius:9px; } .b.t { background:#2e7d3233; color:#81c784; border-radius:9px; }
+  .price { font-size:11px; opacity:.6; }
+  .sum { display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid #2a2e37; }
+  .preview { display:flex; gap:6px; flex-wrap:wrap; align-items:center; font-size:12px; margin:-2px 0 6px; }
+  .pv { background:#2a2e37; border-radius:10px; padding:2px 8px; }
+  .sugg { background:#232731; border-radius:8px; overflow:hidden; }
+  .sugg div { padding:7px 10px; display:flex; gap:8px; } .sugg .act { background:#8ab4f833; box-shadow:inset 3px 0 0 #8ab4f8; }
+  .phone { width:240px; margin:0 auto; border:8px solid #000; border-radius:28px; background:#111318; padding:12px 10px; color:#e3e3e3; font-size:14px; box-shadow:0 2px 10px #0004; }
+  .phone .it { padding:11px 0; font-size:15px; } .phone .box { width:22px; height:22px; }
+  .settings { display:grid; grid-template-columns:170px 1fr 1fr; gap:10px; }
+  .nav div { padding:7px 10px; border-radius:8px; font-size:12px; opacity:.8; } .nav .on { background:#8ab4f833; opacity:1; }
+  .sec { background:#1c1f26; border-radius:10px; padding:10px; } .sec b { display:block; margin-bottom:6px; }
+  .srow { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #2a2e37; font-size:12px; }
+  .sw { width:30px; height:16px; border-radius:8px; background:#8ab4f8; position:relative; } .sw::after { content:""; position:absolute; right:2px; top:2px; width:12px; height:12px; border-radius:50%; background:#fff; }
+  .sq { display:inline-block; width:18px; height:14px; border-radius:3px; vertical-align:middle; margin-left:4px; border:1px solid #555; }
+  .mp .d { display:grid; grid-template-columns:80px 1fr; gap:8px; padding:7px 0; border-bottom:1px solid #2a2e37; align-items:center; }
+  .mp .today b { color:#8ab4f8; } .dish { border:1px solid #8ab4f8; color:#8ab4f8; border-radius:12px; padding:2px 9px; font-size:12px; margin-right:4px; }
+  .add { border:1px dashed #555; border-radius:12px; padding:2px 9px; font-size:12px; opacity:.7; }
+  .btn { display:inline-block; border:1px solid #3a3f4a; border-radius:16px; padding:4px 12px; font-size:12px; color:#8ab4f8; margin-left:6px; }
+  .btn.pr { background:#8ab4f8; color:#111; border-color:#8ab4f8; }
+  .wiz { max-width:430px; margin:0 auto; background:#1c1f26; border-radius:14px; padding:16px; }
+  .dots { display:flex; gap:5px; margin-bottom:12px; } .dots i { width:22px; height:4px; border-radius:2px; background:#3a3f4a; } .dots .on { background:#8ab4f8; }
+  .kv { display:flex; gap:8px; margin:6px 0; align-items:center; } .kv input { width:34px; background:#2a2e37; border:1px solid #3a3f4a; color:#eee; border-radius:6px; padding:4px; text-align:center; }
+  .eg { background:#111318; border-radius:8px; padding:10px; margin-top:10px; }
+  .cards { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; }
+  .ex { border:1px solid #d0d7de; border-radius:8px; padding:12px; background:#fff; }
+  .ex h4 { margin:0 0 8px; font-size:15px; } .ex h4 small { font-weight:400; color:#59636e; }
+  pre { background:#f6f8fa; border-radius:6px; padding:8px 10px; font-size:12px; line-height:1.45; margin:8px 0 0; overflow:auto; }
+  .tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .tile { background:#2a2e37; border-radius:10px; padding:10px 6px; text-align:center; font-size:12px; }
+  .tile .e { font-size:22px; display:block; } .tile.done { opacity:.4; }
+  .mini { display:flex; align-items:center; gap:10px; }
+  .mini .big { font-size:26px; font-weight:600; color:#8ab4f8; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .cols .card { padding:8px; } .cols h3 { font-size:13px; }
+  .stat { display:flex; align-items:flex-end; gap:5px; height:60px; margin:6px 0; } .stat i { flex:1; background:#8ab4f8; border-radius:3px 3px 0 0; }
+  .notes { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .nc { background:#2a2e37; border-radius:10px; padding:10px; font-size:12px; min-height:70px; } .nc b { display:block; margin-bottom:4px; font-size:13px; }
+  .nc.lock { opacity:.7; } .nc.new { border:1px dashed #555; background:none; display:grid; place-items:center; opacity:.7; }
+  .share { display:grid; grid-template-columns:130px 1fr; gap:14px; align-items:start; }
+  .qr { width:130px; height:130px; background:#fff; border-radius:8px; padding:8px; box-sizing:border-box;
+    background-image:linear-gradient(90deg,#000 50%,transparent 0),linear-gradient(#000 50%,transparent 0); background-size:12px 12px,12px 12px; background-blend-mode:difference; }
+  .seg { display:inline-flex; border:1px solid #3a3f4a; border-radius:14px; overflow:hidden; font-size:11px; } .seg span { padding:3px 9px; } .seg .on { background:#8ab4f8; color:#111; }
+  .link { background:#2a2e37; border-radius:6px; padding:5px 8px; font-family:monospace; font-size:11px; margin:6px 0; word-break:break-all; }
+  table { border-collapse:collapse; font-size:14px; margin:12px 0; } td, th { border:1px solid #d0d7de; padding:6px 10px; text-align:left; } th { background:#f6f8fa; }
+
+.shot{margin:0} .phone{margin:0 auto}</style>
+<div class="shot"><div class="card">
+<h3>Weekly shop</h3>
+<div class="tiles"><div class="tile"><span class="e">🍎</span>Apples<br/><span class="small">2 kg</span></div><div class="tile"><span class="e">🥛</span>Milk<br/><span class="small">2 l</span></div><div class="tile"><span class="e">🥖</span>Rolls<br/><span class="small">6</span></div>
+<div class="tile"><span class="e">🧀</span>Cheese</div><div class="tile"><span class="e">🧻</span>Tissues</div><div class="tile done"><span class="e">☕</span>Coffee</div></div>
+</div></div>
+</div>
+</foreignObject>
+</svg>

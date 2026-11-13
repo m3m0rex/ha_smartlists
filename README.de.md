@@ -11,6 +11,15 @@ gemeinsamen Liste zusammenführen** – z.B. die Einkaufslisten von Anna und Max
 Die kombinierte Liste ist eine ganz normale To-do-Entität (`todo.grosseinkauf`). Sie funktioniert in der
 To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch in der HA-SmartLists-App.
 
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/hero.svg" alt="SmartLists-Seite mit kombinierter Liste, Kategorien, Badges und Preisen"></p>
+
+<table>
+<tr>
+<td width="62%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/input.svg" alt="Eingabe mit Vorschau und Vorschlägen"><br><sub>Ein Eingabefeld: Menge, Einheit, Preis, Markt und Kategorie werden beim Tippen erkannt.</sub></td>
+<td width="38%" valign="top" align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/shopping-mode.svg" alt="Einkaufsmodus am Gerät" width="240"><br><sub>Einkaufsmodus: große Zeilen, Markt-Leiste.</sub></td>
+</tr>
+</table>
+
 ## Funktionen
 
 - Beliebige To-do-Listen kombinieren: Shopping List, Local To-do, Google Tasks, Bring!, CalDAV und andere.
@@ -59,6 +68,14 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
 - **Eigene Listen mit Freigaben:** Listen mit Besitzer, pro Person freigegeben zum Sehen, Abhaken oder Bearbeiten – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
 - **Verbundene Geräte:** jedes Gerät mit der App erscheint unter *Konfigurieren → Verbundene Geräte* und als HA-Gerät mit den Sensoren *Zuletzt gesehen* und *App-Version*.
 - **Bedienung:** Standard für alle (Admin) → je Benutzer abweichend → optional je Gerät abweichend.
+- **Teilen:** mit Personen in Home Assistant (sehen, abhaken, bearbeiten) oder **per Link / QR-Code** – nur diese Liste,
+  befristet, jederzeit zurückziehbar:
+
+  <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Teilen-Fenster mit QR-Code, Rechten und Gültigkeit" width="620">
+
+- **Einstellungen an einem Ort:** Bereiche *Für mich*, *Global* (Admins) und *Auswertung*, dazu ein Fenster je Liste:
+
+  <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/settings.svg" alt="Allgemeine Einstellungen mit Bereichen und zwei Spalten">
 
 Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird auch „2 kg Äpfel“ erkannt.
 
@@ -70,9 +87,25 @@ Dashboard. Oben rechts schaltest du zwischen **einer Liste** und **mehreren nebe
 zwischen normaler und **breiter** Ansicht; bei mehreren Listen ziehst du Artikel mit der Maus in eine
 andere Liste (Strg = kopieren). Die eingebaute To-do-Seite von HA zeigt Artikel nur als Text.
 
+<table>
+<tr>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/mealplan.svg" alt="Reiter Wochenplan"><br><sub>Reiter <b>Wochenplan</b>: Gerichte je Tag, Zutaten mit einem Klick auf die Liste.</sub></td>
+<td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/notes.svg" alt="Notizen der App als Notizkarten"><br><sub><b>Notizen</b> der App als Notizkarten – nur für ihren Besitzer.</sub></td>
+</tr>
+</table>
+
 ## Lovelace-Karte `custom:smartlists-card`
 
 Wird von der Integration automatisch geladen.
+
+<table>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-list.svg" alt="Standard-Liste"><br><b>Standard-Liste</b> · Standard</td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-tiles.svg" alt="Kacheln"><br><b>Kacheln</b> · <code>view: tiles</code></td></tr>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-mini.svg" alt="Mini-Kachel"><br><b>Mini-Kachel</b> · <code>view: mini</code></td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-store.svg" alt="Markt-Karte"><br><b>Markt-Karte</b> · <code>filter_store</code> + <code>start_shopping</code></td></tr>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-columns.svg" alt="Mehrere Listen"><br><b>Mehrere Listen</b> · <code>entities</code> + <code>layout: columns</code></td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-mealplan.svg" alt="Wochenplan"><br><b>Wochenplan</b> · <code>view: mealplan</code></td></tr>
+<tr><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-stats.svg" alt="Statistik"><br><b>Statistik</b> · <code>settings_only</code> + <code>settings_scope: stats</code></td><td width="50%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/card-readonly.svg" alt="Nur ansehen"><br><b>Nur ansehen</b> · <code>show_add: false</code> …</td></tr>
+</table>
+
+Das YAML zu jedem Beispiel steht im [Wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card#examples) (Bilder auf Englisch).
 
 ```yaml
 type: custom:smartlists-card
@@ -128,6 +161,8 @@ Das Kategorie-Paket wird aus dem der App erzeugt: `python scripts/build_categori
 Ordner `custom_components/smartlists` nach `/config/custom_components/smartlists` kopieren und Home Assistant neu starten.
 
 ## Einrichtung
+
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup-assistant.svg" alt="Einrichtungs-Assistent – Schritt Schreibweise" width="460"></p>
 
 Beim ersten Öffnen führt ein **Einrichtungs-Assistent** Admins durch Listen, Märkte, Schreibweise,
 Sprache, Personen und Extras – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).

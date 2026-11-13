@@ -128,7 +128,8 @@
           "automation": "Voce e automazioni (Assist, articoli in scadenza)",
           "app_lists": "Liste dall'app (adotta liste combinate)",
           "packs": "Riconoscimento categorie (pacchetti di parole chiave)",
-          "overview": "Tutte le liste SmartLists"
+          "overview": "Tutte le liste SmartLists",
+          "restart": "Ripeti la configurazione / ricomincia da zero"
         }
       },
       "naming": {
@@ -233,6 +234,21 @@
       "overview": {
         "title": "Tutte le liste SmartLists",
         "description": "**Liste combinate**\n{combined}\n\n**Liste**\n{lists}\n\n**Note**\n{notes}\n\nLe liste create dall'app appartengono tecnicamente all'integrazione «Local To-do» (Home Assistant non può spostarle qui); SmartLists le mostra e le usa comunque ovunque. Numero = articoli da fare."
+      },
+      "restart": {
+        "title": "Ripeti la configurazione",
+        "description": "L'assistente compare la prossima volta che un admin apre la pagina o la scheda SmartLists. Se vuoi, ricomincia da zero – le liste di attività e i loro articoli non vengono mai eliminati.",
+        "data": {
+          "settings": "Ripristina le impostazioni",
+          "data": "Elimina i dati appresi",
+          "links": "Revoca tutti i link di condivisione",
+          "combined": "Rimuovi le liste combinate"
+        },
+        "data_description": {
+          "settings": "Convenzione dei nomi, badge e colori, negozi e zone, ordine delle corsie, permessi, voce e automazioni, visualizzazione delle liste, comandi per tutti, pacchetti di parole chiave.",
+          "data": "Categorie memorizzate, cronologia e statistiche, prezzi e spese, modelli e piano settimanale.",
+          "combined": "Solo la vista combinata – le liste di origine restano invariate."
+        }
       }
     },
     "error": {

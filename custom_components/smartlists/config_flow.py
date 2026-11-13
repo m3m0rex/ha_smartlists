@@ -299,7 +299,7 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["overview", "naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
+        return self.async_show_menu(step_id="init", menu_options=["overview", "restart", "naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
 
     # ---- Kategorie-Erkennung: Keyword-Packs (dasselbe wie in der Karte → Haushalt) ----------------
     def _packs(self):
@@ -416,6 +416,22 @@ class SmartListsOptionsFlow(OptionsFlow):
         return self.async_show_form(step_id="pack_edit", data_schema=vol.Schema(fields), description_placeholders={
             "name": info["name"], "count": str(info["terms"]), "sample": sample or "—",
             "hint": "⭐" if info["builtin"] else "✏️"})
+
+    async def async_step_restart(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Einrichtung erneut starten – wahlweise von vorn (Teile zurücksetzen). Der Assistent erscheint beim
+        nächsten Öffnen der SmartLists-Seite bzw. -Karte."""
+        if user_input is not None:
+            from .websocket import async_reset
+
+            await async_reset(self.hass, bool(user_input.get("settings")), bool(user_input.get("data")),
+                              bool(user_input.get("links")), bool(user_input.get("combined")))
+            return self._done()
+        return self.async_show_form(step_id="restart", data_schema=vol.Schema({
+            vol.Optional("settings", default=False): selector.BooleanSelector(),
+            vol.Optional("data", default=False): selector.BooleanSelector(),
+            vol.Optional("links", default=False): selector.BooleanSelector(),
+            vol.Optional("combined", default=False): selector.BooleanSelector(),
+        }))
 
     async def async_step_overview(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Alle SmartLists-Listen (todo.ha_smartlists_… der App und der Integration) auf einen Blick.

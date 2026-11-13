@@ -128,7 +128,8 @@
           "automation": "Voz y automatizaciones (Assist, elementos pendientes)",
           "app_lists": "Listas de la app (adoptar listas combinadas)",
           "packs": "Detección de categorías (paquetes de palabras clave)",
-          "overview": "Todas las listas de SmartLists"
+          "overview": "Todas las listas de SmartLists",
+          "restart": "Volver a configurar / empezar de cero"
         }
       },
       "naming": {
@@ -233,6 +234,21 @@
       "overview": {
         "title": "Todas las listas de SmartLists",
         "description": "**Listas combinadas**\n{combined}\n\n**Listas**\n{lists}\n\n**Notas**\n{notes}\n\nLas listas que crea la app pertenecen técnicamente a la integración «Local To-do» (Home Assistant no puede moverlas aquí); SmartLists las muestra y usa igualmente en todas partes. Número = artículos pendientes."
+      },
+      "restart": {
+        "title": "Volver a configurar",
+        "description": "El asistente aparece la próxima vez que un admin abra la página o la tarjeta de SmartLists. Opcionalmente empezar de cero – las listas de tareas y sus artículos nunca se borran.",
+        "data": {
+          "settings": "Restablecer ajustes",
+          "data": "Borrar datos aprendidos",
+          "links": "Revocar todos los enlaces",
+          "combined": "Quitar listas combinadas"
+        },
+        "data_description": {
+          "settings": "Convención de nombres, etiquetas y colores, tiendas y zonas, orden de pasillos, permisos, voz y automatizaciones, vista de las listas, controles para todos, paquetes de palabras clave.",
+          "data": "Categorías recordadas, historial y estadísticas, precios y gastos, plantillas y plan semanal.",
+          "combined": "Solo la vista combinada – las listas de origen no cambian."
+        }
       }
     },
     "error": {

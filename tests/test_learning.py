@@ -90,3 +90,17 @@ def test_store_zones_multiple_and_legacy():
     assert learning.store_zones["rewe"] == ["zone.rewe_nord"]
     learning.set_store_zone("rewe", None)
     assert "rewe" not in learning.store_zones
+
+
+def test_reset_settings_and_data():
+    learning = _learning()
+    learning.set_category("Hafermilch", "getraenke")
+    _history(learning, "Milch", [1, 8])
+    learning.automation["setup_done"] = True
+    learning.automation["voice"] = True
+    learning.reset(settings=True, data=False)
+    assert learning.resolve("Hafermilch")[1] == "manual" and "milch" in learning.history
+    assert not learning.automation and not learning.config()["setup_needed"]  # Daten noch da
+    learning.reset(settings=False, data=True)
+    assert learning.resolve("Hafermilch")[1] != "manual" and not learning.history
+    assert learning.config()["setup_needed"]  # alles leer → Assistent erscheint wieder von selbst

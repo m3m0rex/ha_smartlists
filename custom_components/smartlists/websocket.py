@@ -35,7 +35,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_subscribe, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_reset, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -1389,3 +1389,40 @@ async def ws_item_history(hass: HomeAssistant, connection: websocket_api.ActiveC
             user = await hass.auth.async_get_user(uid)
             names[uid] = (user.name if user else "") or "?"
     connection.send_result(msg["id"], {"entries": [{**r, "user_name": names.get(r.get("user") or "", None)} for r in rows]})
+
+
+
+async def async_reset(hass: HomeAssistant, settings: bool, data: bool, links: bool, combined: bool) -> dict[str, Any]:
+    """SmartLists von vorn: Teile zurücksetzen und den Einrichtungs-Assistenten wieder anbieten.
+    To-do-Listen selbst (Local To-do, Einkaufsliste, eigene SmartLists-Listen) werden nie gelöscht."""
+    from .const import SUBENTRY_COMBINED
+
+    out: dict[str, Any] = {}
+    _learning(hass).reset(settings, data)
+    _extras(hass).reset(settings, data)
+    if settings:
+        packs = hass.data[DOMAIN]["packs"]
+        lang = (hass.config.language or "de").split("-")[0]
+        try:
+            packs.set_active([lang if lang in packs.builtin else "de"])
+        except ValueError:
+            pass
+    if links:
+        out["links"] = hass.data[DOMAIN]["shares"].revoke_all()
+    if combined:
+        entry = _main_entry(hass)
+        if entry is not None:
+            subs = [s.subentry_id for s in entry.subentries.values() if s.subentry_type == SUBENTRY_COMBINED]
+            for sid in subs:
+                hass.config_entries.async_remove_subentry(entry, sid)
+            out["combined"] = len(subs)
+    return out
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/reset", vol.Optional("settings", default=True): bool,
+                                  vol.Optional("data", default=False): bool, vol.Optional("links", default=False): bool,
+                                  vol.Optional("combined", default=False): bool})
+@websocket_api.async_response
+async def ws_reset(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], await async_reset(hass, msg["settings"], msg["data"], msg["links"], msg["combined"]))

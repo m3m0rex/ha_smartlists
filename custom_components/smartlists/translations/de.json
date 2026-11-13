@@ -128,7 +128,8 @@
           "automation": "Sprache & Automationen (Assist, fällige Artikel)",
           "app_lists": "Listen aus der App (kombinierte Listen übernehmen)",
           "packs": "Kategorie-Erkennung (Keyword-Packs)",
-          "overview": "Alle SmartLists-Listen"
+          "overview": "Alle SmartLists-Listen",
+          "restart": "Einrichtung erneut starten / von vorn"
         }
       },
       "naming": {
@@ -233,6 +234,21 @@
       "overview": {
         "title": "Alle SmartLists-Listen",
         "description": "**Kombinierte Listen**\n{combined}\n\n**Listen**\n{lists}\n\n**Notizen**\n{notes}\n\nListen, die die App anlegt, gehören technisch zur Integration „Local To-do“ (Home Assistant kann sie nicht hierher verschieben); SmartLists zeigt und nutzt sie trotzdem überall. Zahl = offene Artikel."
+      },
+      "restart": {
+        "title": "Einrichtung erneut starten",
+        "description": "Der Einrichtungs-Assistent erscheint, wenn ein Admin das nächste Mal die SmartLists-Seite oder -Karte öffnet. Wahlweise von vorn anfangen – To-do-Listen und ihre Artikel werden nie gelöscht.",
+        "data": {
+          "settings": "Einstellungen zurücksetzen",
+          "data": "Gelernte Daten löschen",
+          "links": "Alle Teilen-Links zurückziehen",
+          "combined": "Kombinierte Listen entfernen"
+        },
+        "data_description": {
+          "settings": "Namenskonvention, Badges und Farben, Märkte und Zonen, Gang-Reihenfolgen, Rechte, Sprache und Automationen, Darstellung der Listen, Bedienung für alle, Wortlisten.",
+          "data": "Gemerkte Kategorien, Verlauf und Statistik, Preise und Ausgaben, Vorlagen und Wochenplan.",
+          "combined": "Nur die zusammengefasste Ansicht – die Quell-Listen bleiben unverändert."
+        }
       }
     },
     "error": {

@@ -136,6 +136,8 @@ Home Assistant.
 
 On first opening, a **setup assistant** guides admins through lists, stores, notation, language,
 people and extras – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).
+It can be run again any time, optionally **starting from scratch** (reset settings, learned data, share
+links or combined lists – to-do lists are never deleted).
 
 *Settings → Devices & services → Integrations → Add integration → **SmartLists***
 

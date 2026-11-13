@@ -2,7 +2,7 @@
 
 - je Liste eine eigene SmartLists-Liste (gleicher Name) oder alle zusammen in eine
 - Artikel mit Text, Notiz und Häkchen; beim Zusammenlegen optional die Herkunft als *Person bzw. #Tag
-- die alte Liste: behalten oder leeren – gelöscht wird nie, das macht der Benutzer selbst
+- die alte Liste bleibt immer unverändert – aufräumen (löschen) macht der Benutzer selbst
 
 Die neuen Listen bekommen ihre Artikel, bevor sie entstehen (Speicher wird vorab geschrieben) – so
 erscheinen sie nach dem Neuladen der Integration sofort vollständig.
@@ -23,7 +23,7 @@ from homeassistant.helpers.storage import Store
 from . import lists
 from .const import DOMAIN, STORAGE_VERSION, SUBENTRY_OWN
 
-OLD_ACTIONS = ("keep", "clear")
+OLD_ACTIONS = ("keep",)
 MAX_ITEMS = 2000
 
 
@@ -56,7 +56,7 @@ def _tagged(text: str, tag: str | None) -> str:
 
 async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mode: str = "each", name: str | None = None,
                         old: str = "keep", tag_kind: str | None = None) -> dict[str, Any]:
-    """Liefert {"lists": [{"name", "subentry_id", "items"}], "old": {entity_id: "kept"|"cleared"|Fehler}}."""
+    """Liefert {"lists": [{"name", "subentry_id", "items"}], "old": {entity_id: "kept"}}. Alte Listen werden nie verändert."""
     entries = hass.config_entries.async_entries(DOMAIN)
     if not entries:
         raise ValueError("SmartLists ist nicht eingerichtet.")
@@ -102,19 +102,7 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
         await Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{sub.subentry_id}").async_save({"items": items})
         created.append((sub, len(items)))
 
-    # alte Listen erst behandeln, wenn die neuen Daten sicher gespeichert sind
-    result_old: dict[str, str] = {}
-    for s in sources:
-        if old == "keep":
-            result_old[s] = "kept"
-            continue
-        try:
-            uids = [i["uid"] for i in items_by_source[s]]
-            if uids:
-                await lists.remove_items(hass, s, uids)
-            result_old[s] = "cleared"
-        except Exception as err:  # noqa: BLE001 – die neue Liste ist schon da, Fehler nur melden
-            result_old[s] = str(err) or "error"
+    result_old = {s: "kept" for s in sources}
 
     # zum Schluss anlegen (jede neue Unter-Liste lädt die Integration neu)
     for sub, _ in created:

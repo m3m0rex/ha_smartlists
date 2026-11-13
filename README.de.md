@@ -35,7 +35,7 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
 
 ## Gemeinsames Gedächtnis
 
-Neu in 3.5: vorhandene To-do-Listen (Einkaufsliste, Local To-do …) mit allen Artikeln in eigene SmartLists-Listen übernehmen – einzeln oder zusammen, alte Liste behalten oder leeren (gelöscht wird sie nie automatisch).
+Neu in 3.5: vorhandene To-do-Listen (Einkaufsliste, Local To-do …) mit allen Artikeln in eigene SmartLists-Listen übernehmen – einzeln oder zusammen; die alten Listen bleiben unverändert, löschen kannst du sie danach selbst.
 
 Neu in 3.4: Benachrichtigungen an mehrere Ziele – jeder notify-Dienst (Companion-App, Telegram, E-Mail …), notify-Entitäten und für Admins eigene Dienste.
 

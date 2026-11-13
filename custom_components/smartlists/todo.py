@@ -6,6 +6,7 @@ import asyncio
 from datetime import timedelta
 import datetime
 import logging
+import re
 from typing import Any
 
 from homeassistant.components.todo import (
@@ -37,6 +38,7 @@ from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
     CONF_MODE,
+    CONF_LABEL_COLORS,
     CONF_LABEL_SHOW,
     CONF_LABEL_SOURCES,
     CONF_SOURCE_AS_PERSON,
@@ -65,6 +67,13 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 SUFFIX_SEPARATOR = " · "
+# Automatische Farben der Herkunfts-Badges (je Quell-Liste eine andere)
+LABEL_PALETTE = ["#1e88e5", "#e53935", "#43a047", "#fb8c00", "#8e24aa", "#00acc1", "#6d4c41", "#d81b60", "#7cb342", "#3949ab"]
+
+
+def _tidy_label(text: str) -> str:
+    """Trennzeichen am Rand entfernen („- Admin Angebote“ → „Admin Angebote“)."""
+    return re.sub(r"^[\s\-–—·:|]+|[\s\-–—·:|]+$", "", text) or text
 PREFIX_TEMPLATE = "[{}] "
 # Fallback für Integrationen, die Änderungen ohne Zustandswechsel melden (z.B. reine Umbenennungen).
 FALLBACK_REFRESH = timedelta(minutes=5)
@@ -230,6 +239,8 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
         self._source_as_person: bool = bool(opts.get(CONF_SOURCE_AS_PERSON, True))
         self._label_show: str = opts.get(CONF_LABEL_SHOW) if opts.get(CONF_LABEL_SHOW) in ("list", "owner", "owner_list") else "list"
         self._label_sources: set[str] = set(opts.get(CONF_LABEL_SOURCES) or [])
+        self._label_colors: dict[str, str] = {k: v for k, v in (opts.get(CONF_LABEL_COLORS) or {}).items()
+                                              if isinstance(v, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", v)}
         # Besitzer + Freigaben (optional; ohne Besitzer sehen/bearbeiten alle die Liste wie bisher)
         self.data: dict[str, Any] = {"owner": opts.get("owner") or None, "shares": dict(opts.get("shares") or {})}
         self._owner_name = ""
@@ -343,6 +354,7 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
                     "source": self._source_label(source) if len(self._sources) > 1 else None,
                     "person": (person_from_list_name(label, source) if (label := self._source_label(source)) else None)
                     if self._source_as_person else None,
+                    "person_color": self.source_color(source) if len(self._sources) > 1 else None,
                     "foreign": source in self._foreign,
                 }
             )
@@ -359,7 +371,8 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
 
     @property
     def label_settings(self) -> dict[str, Any]:
-        return {"show": self._label_show, "sources": sorted(self._label_sources)}
+        return {"show": self._label_show, "sources": sorted(self._label_sources), "colors": dict(self._label_colors),
+                "auto_colors": {s: self.source_color(s) for s in self._sources if s not in self._label_colors}}
 
     @property
     def all_foreign(self) -> bool:
@@ -441,16 +454,26 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
             return None
         name = self._source_name(source)
         if self._label_show == "list":
-            return name
+            return _tidy_label(name)
         own = self.hass.data.get(DOMAIN, {}).get("own", {}).get(source)
         owner = (getattr(own, "_owner_name", "") or "").strip()
         if not owner:
-            return name
+            return _tidy_label(name)
         if self._label_show == "owner":
             return owner
         clean = person_from_list_name(name, source) or name
         # steckt der Besitzer schon im Listennamen („Admin Angebote“), nicht doppelt nennen
-        return clean if clean.casefold().startswith(owner.casefold()) else f"{owner} {clean}"
+        return _tidy_label(clean if clean.casefold().startswith(owner.casefold()) else f"{owner} {clean}")
+
+    def source_color(self, source: str) -> str:
+        """Farbe des Herkunfts-Badges: eigene Wahl, sonst automatisch je Quell-Liste (jede Liste ihre eigene)."""
+        if source in self._label_colors:
+            return self._label_colors[source]
+        try:
+            index = self._sources.index(source)
+        except ValueError:
+            index = 0
+        return LABEL_PALETTE[index % len(LABEL_PALETTE)]
 
     def _display_summary(self, summary: str, source: str) -> str:
         if self._label == LABEL_NONE or len(self._sources) < 2:

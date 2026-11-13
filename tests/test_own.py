@@ -69,10 +69,15 @@ def test_source_label_modes():
 
     src = (Path(__file__).resolve().parent.parent / "custom_components" / "smartlists" / "todo.py").read_text(encoding="utf-8")
     cls = next(n for n in ast.parse(src).body if isinstance(n, ast.ClassDef) and n.name == "CombinedTodoListEntity")
-    fn = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "_source_label")
-    ns = {"person_from_list_name": person_from_list_name, "DOMAIN": "smartlists"}
-    exec(compile(ast.Module(body=[fn], type_ignores=[]), "todo.py", "exec"), ns)
+    fns = [n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name in ("_source_label", "source_color")]
+    tidy = next(n for n in ast.parse(src).body if isinstance(n, ast.FunctionDef) and n.name == "_tidy_label")
+    pal = next(n for n in ast.parse(src).body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "LABEL_PALETTE")
+    import re as _re
+    ns = {"person_from_list_name": person_from_list_name, "DOMAIN": "smartlists", "re": _re}
+    exec(compile(ast.Module(body=[pal, tidy, *fns], type_ignores=[]), "todo.py", "exec"), ns)
     label = ns["_source_label"]
+    color = ns["source_color"]
+    assert ns["_tidy_label"]("- Admin Angebote") == "Admin Angebote" and ns["_tidy_label"]("Admin – ") == "Admin"
 
     names = {"todo.angebote": "HA Smartlists Angebote", "todo.admin_liste": "Admin Angebote", "todo.local": "Einkaufsliste Peter"}
     own = {"todo.angebote": types.SimpleNamespace(_owner_name="Admin"), "todo.admin_liste": types.SimpleNamespace(_owner_name="Admin")}
@@ -89,3 +94,9 @@ def test_source_label_modes():
     assert label(make("owner"), "todo.local") == "Einkaufsliste Peter"                 # ohne Besitzer: Listenname
     assert label(make("owner_list", ["todo.angebote"]), "todo.local") is None          # nicht ausgewählt → kein Badge
     assert label(make("owner_list", ["todo.angebote"]), "todo.angebote") == "Admin Angebote"
+    # je Quell-Liste eine andere Farbe (automatisch), eigene Wahl hat Vorrang
+    e = types.SimpleNamespace(_sources=["todo.a", "todo.b", "todo.c"], _label_colors={"todo.b": "#123456"})
+    assert color(e, "todo.a") != color(e, "todo.c") and color(e, "todo.b") == "#123456"
+    assert label(make("list"), "todo.angebote") == "HA Smartlists Angebote"
+    names["todo.dash"] = "- Admin Julian"
+    assert label(make("list"), "todo.dash") == "Admin Julian"          # führendes Minus weg

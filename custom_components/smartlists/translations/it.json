@@ -46,7 +46,9 @@
             "owner": "Proprietario",
             "editors": "Possono modificare",
             "checkers": "Possono spuntare",
-            "viewers": "Possono solo vedere"
+            "viewers": "Possono solo vedere",
+            "label_show": "Il badge di origine mostra",
+            "label_sources": "Solo queste liste di origine mostrano un badge"
           },
           "data_description": {
             "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
@@ -54,7 +56,9 @@
             "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
             "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
             "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse.",
-            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista."
+            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista.",
+            "label_show": "Lista: nome della lista di origine. Proprietario: proprietario della lista di origine. Proprietario + lista: «Proprietario Lista». Le liste senza proprietario (Local To-do, lista della spesa …) mostrano sempre il nome.",
+            "label_sources": "Vuoto = tutte le liste di origine."
           }
         },
         "reconfigure": {
@@ -71,7 +75,9 @@
             "owner": "Proprietario",
             "editors": "Possono modificare",
             "checkers": "Possono spuntare",
-            "viewers": "Possono solo vedere"
+            "viewers": "Possono solo vedere",
+            "label_show": "Il badge di origine mostra",
+            "label_sources": "Solo queste liste di origine mostrano un badge"
           },
           "data_description": {
             "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
@@ -79,7 +85,9 @@
             "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
             "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
             "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse.",
-            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista."
+            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista.",
+            "label_show": "Lista: nome della lista di origine. Proprietario: proprietario della lista di origine. Proprietario + lista: «Proprietario Lista». Le liste senza proprietario (Local To-do, lista della spesa …) mostrano sempre il nome.",
+            "label_sources": "Vuoto = tutte le liste di origine."
           }
         }
       },
@@ -88,7 +96,8 @@
         "nested_combined_list": "Le liste combinate non possono essere annidate.",
         "default_not_in_sources": "La lista predefinita deve essere una delle liste selezionate.",
         "foreign_not_in_sources": "Le liste altrui devono essere selezionate anche sopra.",
-        "default_is_foreign": "Una lista altrui non può essere la lista predefinita."
+        "default_is_foreign": "Una lista altrui non può essere la lista predefinita.",
+        "labels_not_in_sources": "Scegli solo liste selezionate come origine sopra."
       },
       "abort": {
         "reconfigure_successful": "Salvato."
@@ -388,6 +397,13 @@
     "owner": {
       "options": {
         "everyone": "— tutti (nessuna restrizione)"
+      }
+    },
+    "label_show": {
+      "options": {
+        "list": "Nome della lista",
+        "owner": "Proprietario della lista di origine",
+        "owner_list": "Proprietario e nome della lista"
       }
     }
   },

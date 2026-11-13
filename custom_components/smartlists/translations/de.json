@@ -46,7 +46,9 @@
             "owner": "Besitzer",
             "editors": "Dürfen bearbeiten",
             "checkers": "Dürfen abhaken",
-            "viewers": "Dürfen nur sehen"
+            "viewers": "Dürfen nur sehen",
+            "label_show": "Herkunfts-Badge zeigt",
+            "label_sources": "Nur diese Quell-Listen zeigen ein Badge"
           },
           "data_description": {
             "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
@@ -54,7 +56,9 @@
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
             "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
             "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen.",
-            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist."
+            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist.",
+            "label_show": "Liste: Name der Quell-Liste. Besitzer: der Besitzer der Quell-Liste. Besitzer + Liste: „Besitzer Liste“. Quell-Listen ohne Besitzer (Local To-do, Einkaufsliste …) zeigen immer den Listennamen.",
+            "label_sources": "Leer = alle Quell-Listen."
           }
         },
         "reconfigure": {
@@ -71,7 +75,9 @@
             "owner": "Besitzer",
             "editors": "Dürfen bearbeiten",
             "checkers": "Dürfen abhaken",
-            "viewers": "Dürfen nur sehen"
+            "viewers": "Dürfen nur sehen",
+            "label_show": "Herkunfts-Badge zeigt",
+            "label_sources": "Nur diese Quell-Listen zeigen ein Badge"
           },
           "data_description": {
             "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
@@ -79,7 +85,9 @@
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
             "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
             "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen.",
-            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist."
+            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist.",
+            "label_show": "Liste: Name der Quell-Liste. Besitzer: der Besitzer der Quell-Liste. Besitzer + Liste: „Besitzer Liste“. Quell-Listen ohne Besitzer (Local To-do, Einkaufsliste …) zeigen immer den Listennamen.",
+            "label_sources": "Leer = alle Quell-Listen."
           }
         }
       },
@@ -88,7 +96,8 @@
         "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
         "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
         "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
-        "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein."
+        "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein.",
+        "labels_not_in_sources": "Nur Listen auswählen, die oben als Quelle gewählt sind."
       },
       "abort": {
         "reconfigure_successful": "Gespeichert."
@@ -388,6 +397,13 @@
     "owner": {
       "options": {
         "everyone": "— alle (keine Einschränkung)"
+      }
+    },
+    "label_show": {
+      "options": {
+        "list": "Listenname",
+        "owner": "Besitzer der Quell-Liste",
+        "owner_list": "Besitzer und Listenname"
       }
     }
   },

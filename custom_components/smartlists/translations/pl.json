@@ -46,7 +46,9 @@
             "owner": "Właściciel",
             "editors": "Mogą edytować",
             "checkers": "Mogą odhaczać",
-            "viewers": "Mogą tylko widzieć"
+            "viewers": "Mogą tylko widzieć",
+            "label_show": "Plakietka pochodzenia pokazuje",
+            "label_sources": "Tylko te listy źródłowe pokazują plakietkę"
           },
           "data_description": {
             "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
@@ -54,7 +56,9 @@
             "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
             "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
             "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane.",
-            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj."
+            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj.",
+            "label_show": "Lista: nazwa listy źródłowej. Właściciel: właściciel listy źródłowej. Właściciel + lista: „Właściciel Lista”. Listy bez właściciela (Local To-do, lista zakupów …) zawsze pokazują nazwę.",
+            "label_sources": "Puste = wszystkie listy źródłowe."
           }
         },
         "reconfigure": {
@@ -71,7 +75,9 @@
             "owner": "Właściciel",
             "editors": "Mogą edytować",
             "checkers": "Mogą odhaczać",
-            "viewers": "Mogą tylko widzieć"
+            "viewers": "Mogą tylko widzieć",
+            "label_show": "Plakietka pochodzenia pokazuje",
+            "label_sources": "Tylko te listy źródłowe pokazują plakietkę"
           },
           "data_description": {
             "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
@@ -79,7 +85,9 @@
             "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
             "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
             "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane.",
-            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj."
+            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj.",
+            "label_show": "Lista: nazwa listy źródłowej. Właściciel: właściciel listy źródłowej. Właściciel + lista: „Właściciel Lista”. Listy bez właściciela (Local To-do, lista zakupów …) zawsze pokazują nazwę.",
+            "label_sources": "Puste = wszystkie listy źródłowe."
           }
         }
       },
@@ -88,7 +96,8 @@
         "nested_combined_list": "Listy połączone nie mogą być zagnieżdżane.",
         "default_not_in_sources": "Lista domyślna musi być jedną z wybranych list.",
         "foreign_not_in_sources": "Cudze listy muszą być również wybrane powyżej.",
-        "default_is_foreign": "Cudza lista nie może być listą domyślną."
+        "default_is_foreign": "Cudza lista nie może być listą domyślną.",
+        "labels_not_in_sources": "Wybierz tylko listy wybrane powyżej jako źródła."
       },
       "abort": {
         "reconfigure_successful": "Zapisano."
@@ -388,6 +397,13 @@
     "owner": {
       "options": {
         "everyone": "— wszyscy (bez ograniczeń)"
+      }
+    },
+    "label_show": {
+      "options": {
+        "list": "Nazwa listy",
+        "owner": "Właściciel listy źródłowej",
+        "owner_list": "Właściciel i nazwa listy"
       }
     }
   },

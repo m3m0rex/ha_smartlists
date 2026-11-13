@@ -32,6 +32,8 @@ from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
     CONF_MODE,
+    CONF_LABEL_SHOW,
+    CONF_LABEL_SOURCES,
     CONF_SOURCE_AS_PERSON,
     CONF_SORT,
     CONF_SOURCE_LABEL,
@@ -58,6 +60,8 @@ DEFAULTS: dict[str, Any] = {
     CONF_SORT: SORT_SOURCE,
     CONF_FOREIGN: [],
     CONF_SOURCE_AS_PERSON: True,
+    CONF_LABEL_SHOW: "list",
+    CONF_LABEL_SOURCES: [],
 }
 # Bedienung: eingebaute Werte (gleich wie UI_DEFAULTS in der Karte)
 UI_BUILTIN: dict[str, Any] = {
@@ -191,6 +195,8 @@ def combined_schema(exclude: list[str] | None = None) -> dict[Any, Any]:
         ),
         vol.Optional(CONF_FOREIGN, default=[]): _todo_selector(True, exclude),
         vol.Optional(CONF_SOURCE_AS_PERSON, default=True): selector.BooleanSelector(),
+        vol.Required(CONF_LABEL_SHOW, default="list"): _select(["list", "owner", "owner_list"], "label_show"),
+        vol.Optional(CONF_LABEL_SOURCES, default=[]): _todo_selector(True, exclude),
     }
 
 
@@ -208,6 +214,8 @@ def validate_combined(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, st
     default_add = data.get(CONF_DEFAULT_ADD)
     if default_add and default_add not in sources:
         errors[CONF_DEFAULT_ADD] = "default_not_in_sources"
+    if any(f not in sources for f in data.get(CONF_LABEL_SOURCES) or []):
+        errors[CONF_LABEL_SOURCES] = "labels_not_in_sources"
     foreign = data.get(CONF_FOREIGN) or []
     if any(f not in sources for f in foreign):
         errors[CONF_FOREIGN] = "foreign_not_in_sources"

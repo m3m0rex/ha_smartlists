@@ -20,6 +20,11 @@ CONF_SORT = "sort"
 CONF_FOREIGN = "foreign_entities"
 # Herkunft als Person werten: Artikel aus todo.peter bekommen das Badge 👤 Peter (wie *Peter)
 CONF_SOURCE_AS_PERSON = "source_as_person"
+# Was das Herkunfts-Badge zeigt: "list" (Listenname), "owner" (Besitzer der Quell-Liste), "owner_list" („Besitzer Liste“)
+CONF_LABEL_SHOW = "label_show"
+LABEL_SHOW_VALUES = ("list", "owner", "owner_list")
+# Nur diese Quell-Listen bekommen ein Herkunfts-Badge (leer = alle)
+CONF_LABEL_SOURCES = "label_sources"
 # Kombinierte Liste, die aus der App übernommen wurde: Gerät + Listen-Id der App (Entität hängt am Gerät der App)
 CONF_APP_DEVICE = "app_device"
 CONF_APP_LIST = "app_list"

@@ -34,7 +34,7 @@ def async_register(hass: HomeAssistant) -> None:
     for handler in (ws_info, ws_config, ws_suggest, ws_describe, ws_set_category, ws_learned, ws_forget, ws_set_tag_rules,
                     ws_user_settings, ws_set_user_settings,
                     ws_register_device, ws_devices, ws_remove_device,
-                    ws_users, ws_create_list, ws_share, ws_set_owner, ws_delete_list,
+                    ws_users, ws_create_list, ws_share, ws_set_owner, ws_set_labels, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
                     ws_subscribe, ws_reset, ws_migrate_candidates, ws_migrate, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_notify_test, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
@@ -564,6 +564,28 @@ async def ws_set_owner(hass: HomeAssistant, connection: websocket_api.ActiveConn
         connection.send_error(msg["id"], "invalid", "Bitte die Integration einmal neu laden.")
         return
     connection.send_result(msg["id"], {"owner": owner})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_labels", vol.Required("entity_id"): str,
+                                  vol.Required("show"): vol.In(["list", "owner", "owner_list"]),
+                                  vol.Optional("sources", default=[]): [str]})
+@websocket_api.async_response
+async def ws_set_labels(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Herkunfts-Badges einer kombinierten Liste: was sie zeigen (Liste / Besitzer / Besitzer Liste) und von welchen
+    Quell-Listen es überhaupt Badges gibt (leer = alle). Admins und der Besitzer der kombinierten Liste."""
+    from .const import CONF_LABEL_SHOW, CONF_LABEL_SOURCES, CONF_SOURCES
+
+    sub = _combined_subentry(hass, msg["entity_id"])
+    if sub is None:
+        connection.send_error(msg["id"], "not_found", "Keine kombinierte SmartLists-Liste.")
+        return
+    user = connection.user
+    if not user.is_admin and sub.data.get("owner") != user.id:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur Admins und der Besitzer können das ändern.")
+        return
+    sources = [s for s in dict.fromkeys(msg["sources"]) if s in (sub.data.get(CONF_SOURCES) or [])]
+    hass.config_entries.async_update_subentry(_main_entry(hass), sub, data={**sub.data, CONF_LABEL_SHOW: msg["show"], CONF_LABEL_SOURCES: sources})
+    connection.send_result(msg["id"], {"show": msg["show"], "sources": sources})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_list", vol.Required("entity_id"): str})

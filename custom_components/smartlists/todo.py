@@ -37,6 +37,8 @@ from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
     CONF_MODE,
+    CONF_LABEL_SHOW,
+    CONF_LABEL_SOURCES,
     CONF_SOURCE_AS_PERSON,
     CONF_SORT,
     CONF_SOURCE_LABEL,
@@ -226,6 +228,8 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
         self._label: str = opts.get(CONF_SOURCE_LABEL, LABEL_SUFFIX)
         self._sort: str = opts.get(CONF_SORT, SORT_SOURCE)
         self._source_as_person: bool = bool(opts.get(CONF_SOURCE_AS_PERSON, True))
+        self._label_show: str = opts.get(CONF_LABEL_SHOW) if opts.get(CONF_LABEL_SHOW) in ("list", "owner", "owner_list") else "list"
+        self._label_sources: set[str] = set(opts.get(CONF_LABEL_SOURCES) or [])
         # Besitzer + Freigaben (optional; ohne Besitzer sehen/bearbeiten alle die Liste wie bisher)
         self.data: dict[str, Any] = {"owner": opts.get("owner") or None, "shares": dict(opts.get("shares") or {})}
         self._owner_name = ""
@@ -336,8 +340,9 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
                     "text": original,
                     "note": self._raw_desc.get(item.uid, item.description or ""),
                     "checked": item.status == TodoItemStatus.COMPLETED,
-                    "source": self._source_name(source) if len(self._sources) > 1 else None,
-                    "person": person_from_list_name(self._source_name(source), source) if self._source_as_person else None,
+                    "source": self._source_label(source) if len(self._sources) > 1 else None,
+                    "person": (person_from_list_name(label, source) if (label := self._source_label(source)) else None)
+                    if self._source_as_person else None,
                     "foreign": source in self._foreign,
                 }
             )
@@ -346,6 +351,15 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
     @property
     def source_names(self) -> list[str]:
         return [self._source_name(s) for s in self._sources]
+
+    @property
+    def source_info(self) -> list[dict[str, str]]:
+        """Quell-Listen mit Entitäts-ID und Namen (für die Einstellungen der Herkunfts-Badges)."""
+        return [{"entity_id": s, "name": self._source_name(s)} for s in self._sources]
+
+    @property
+    def label_settings(self) -> dict[str, Any]:
+        return {"show": self._label_show, "sources": sorted(self._label_sources)}
 
     @property
     def all_foreign(self) -> bool:
@@ -418,10 +432,32 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
         pretty = offer_summary(offer) if offer else ""
         return "\n".join(p for p in (clean, pretty) if p) or None
 
+    def _source_label(self, source: str) -> str | None:
+        """Text des Herkunfts-Badges einer Quell-Liste (None = dafür kein Badge).
+        Anzeige (label_show): Listenname · Besitzer der Quell-Liste · „Besitzer Liste“. Nur Quell-Listen, die in
+        label_sources stehen (leer = alle), bekommen ein Badge. Quell-Listen ohne Besitzer (Local To-do, Einkaufsliste …)
+        zeigen immer den Listennamen."""
+        if self._label_sources and source not in self._label_sources:
+            return None
+        name = self._source_name(source)
+        if self._label_show == "list":
+            return name
+        own = self.hass.data.get(DOMAIN, {}).get("own", {}).get(source)
+        owner = (getattr(own, "_owner_name", "") or "").strip()
+        if not owner:
+            return name
+        if self._label_show == "owner":
+            return owner
+        clean = person_from_list_name(name, source) or name
+        # steckt der Besitzer schon im Listennamen („Admin Angebote“), nicht doppelt nennen
+        return clean if clean.casefold().startswith(owner.casefold()) else f"{owner} {clean}"
+
     def _display_summary(self, summary: str, source: str) -> str:
         if self._label == LABEL_NONE or len(self._sources) < 2:
             return summary
-        name = self._source_name(source)
+        name = self._source_label(source)
+        if name is None:
+            return summary
         if self._label == LABEL_PREFIX:
             return PREFIX_TEMPLATE.format(name) + summary
         return f"{summary}{SUFFIX_SEPARATOR}{name}"
@@ -527,7 +563,9 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
     def _strip_label(self, summary: str, source: str) -> str:
         if self._label == LABEL_NONE or len(self._sources) < 2:
             return summary
-        name = self._source_name(source)
+        name = self._source_label(source)
+        if name is None:
+            return summary
         if self._label == LABEL_SUFFIX:
             suffix = f"{SUFFIX_SEPARATOR}{name}"
             if summary.endswith(suffix):

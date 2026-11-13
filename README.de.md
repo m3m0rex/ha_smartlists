@@ -27,13 +27,13 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
   Die Kategorie-Erkennung nutzt **Keyword-Packs**: eingebaut sind Deutsch (das Paket der App mit
   6.500 Begriffen und 1.049 Produkten) sowie Start-Packs für Englisch, Französisch, Spanisch,
   Italienisch und Polnisch (je ca. 400 Begriffe). Mehrere Packs können gleichzeitig aktiv sein, und
-  Admins können im Zahnrad der Karte → *Haushalt* → *Kategorie-Erkennung* **eigene Packs** (JSON) hochladen.
+  Admins können im Zahnrad der Karte → *Global* → *Kategorien* **eigene Packs** (JSON) hochladen.
 - Attribute für Dashboards und Automationen: `open_items`, `completed_items`, `open_by_category`,
   `source_lists`, `unavailable_sources`.
 - „Erledigte entfernen" (`todo.remove_completed_items`) funktioniert über alle Quell-Listen hinweg.
 - Aktualisiert sich automatisch, sobald sich eine Quell-Liste ändert.
 
-## Gedächtnis für den ganzen Haushalt (neu in 1.1)
+## Gemeinsames Gedächtnis
 
 Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.learning`:
 
@@ -48,7 +48,7 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
   Die Tags bleiben im Artikelnamen stehen – andere Oberflächen sehen sie also weiter als Text.
 - **Automationen & Sprache:** „Bin im Laden“-Benachrichtigung, Markt-Erinnerung, wiederkehrende Artikel, Assist-Sätze – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Automations-and-voice).
 - **Eigene Listen mit Freigaben:** Listen mit Besitzer, pro Person freigegeben zum Sehen, Abhaken oder Bearbeiten – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
-- **Verbundene Geräte:** jedes Handy mit der App erscheint unter *Konfigurieren → Verbundene Geräte* und als HA-Gerät mit den Sensoren *Zuletzt gesehen* und *App-Version*.
+- **Verbundene Geräte:** jedes Gerät mit der App erscheint unter *Konfigurieren → Verbundene Geräte* und als HA-Gerät mit den Sensoren *Zuletzt gesehen* und *App-Version*.
 - **Bedienung:** Standard für alle (Admin) → je Benutzer abweichend → optional je Gerät abweichend.
 
 Mengen stehen wie in der App im Namen („Milch 2 l @REWE“). Beim Tippen wird auch „2 kg Äpfel“ erkannt.
@@ -127,13 +127,13 @@ Integration gibt es:
 
 - **„Kombinierte Liste hinzufügen“** – Name, Listen, Standard-Liste, Modus, Herkunftsanzeige, Sortierung,
   fremde Listen. Jede Liste lässt sich später über ⋮ → *Neu konfigurieren* ändern oder löschen.
-- **„Konfigurieren“** – Einstellungen für den ganzen Haushalt:
+- **„Konfigurieren“** – globale Einstellungen für alle Benutzer:
   - *Namenskonvention:* welches Zeichen Markt, Person bzw. Schlagwort einleitet (oder aus)
   - *Bedienung – Standard für alle:* Geste fürs Artikel-Menü, Menü-Einträge, Einkaufsmodus
   - *Gemerkte Kategorien & Verlauf:* einzelne Zuordnungen vergessen, Verlauf löschen
 
 Persönliche Abweichungen (pro Benutzer oder nur auf einem Gerät) stellt jeder selbst im Zahnrad der
-Karte ein; dort können Admins auch die Haushalts-Einstellungen ändern – beides zeigt dieselben Werte.
+Karte ein; dort können Admins auch die globalen Einstellungen ändern – beides zeigt dieselben Werte.
 
 **Update von 1.1:** Bisherige SmartLists-Helfer werden beim ersten Start automatisch zu Listen unter
 dem einen Eintrag „SmartLists“ umgezogen. entity_id, Dashboards, Automationen und lokale Häkchen

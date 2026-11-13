@@ -8,7 +8,8 @@ Every item gets a shopping category (🥬 fruit & veg, 🥛 chilled, …) in thi
 4. **other**
 
 Change the category in the card (tap the chip while typing, or long press → *Change category*). It
-applies to the whole household and is synced with the app.
+applies to all users and is synced with the app. Remembered categories can be changed afterwards in
+*Global → Categories*.
 
 **Suggestions** while typing come from the history (frequent and recent items), the list itself and
 the products of the active packs (about 1,050 in the German pack), including the usual or last used unit. An empty input shows
@@ -26,7 +27,7 @@ A pack maps keywords to the 12 fixed categories. Built in:
 | English / French / Spanish / Italian / Polish – starter packs | ~360–410 each | ~200 each |
 
 By default the pack in Home Assistant's language is active (German if there is none). Admins manage
-packs in the card's gear menu (or the sidebar page's ⚙) → **Household → Category detection** – or
+packs in the general settings → **Global → Categories** – or
 under *Settings → Devices & services → SmartLists → Configure → Category detection* (activate packs, add
 or remove keywords, create a pack, paste a pack as JSON):
 

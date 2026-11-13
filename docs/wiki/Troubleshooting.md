@@ -10,7 +10,7 @@ An older copy of the card is loaded as a dashboard resource. Remove `smartlists`
 browser console (F12) shows `SmartLists <version>`; the card's gear menu shows the versions and warns
 when the card is outdated.
 
-**My phone does not appear under "Connected devices"**
+**My device does not appear under "Connected devices"**
 - The integration must be 1.7.0 or newer (*Settings → Devices & services → SmartLists*).
 - The app must be a build that includes device registration, and paired: *App → Settings →
   Connection → SmartLists integration* must say "Paired". Tap *Sync*.

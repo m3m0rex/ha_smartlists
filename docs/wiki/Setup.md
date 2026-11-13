@@ -23,7 +23,7 @@ away, or leave it empty.
 
 Change or delete a list via ⋮ → *Reconfigure*.
 
-## Configure (household settings, admins)
+## Configure (global settings, admins)
 
 - **Naming convention** – which character starts a store, person or tag (or off). See
   [[Item text and naming convention]].
@@ -33,7 +33,7 @@ Change or delete a list via ⋮ → *Reconfigure*.
 - **Remembered categories & history** – forget single assignments, clear history.
 - **Voice & automations** – default list for Assist, automatically add due items, install the Assist
   sentences. See [[Automations and voice]].
-- **Connected devices** – phones with the HA SmartLists app. See [[App pairing and devices]].
+- **Connected devices** – devices with the HA SmartLists app. See [[App pairing and devices]].
 
 ## Entity IDs
 

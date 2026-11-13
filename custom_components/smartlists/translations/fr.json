@@ -165,7 +165,7 @@
       },
       "devices": {
         "title": "Appareils connectés",
-        "description": "{count} téléphones avec l'application HA SmartLists :\n\n{devices}\n\n⚠️ = non synchronisé depuis plus de 7 jours. Les appareils sélectionnés sont retirés de la liste ; un téléphone qui se reconnecte réapparaît. Pour révoquer l'accès, supprimez son jeton sous Profil → Jetons d'accès longue durée.",
+        "description": "{count} appareils avec l'application HA SmartLists :\n\n{devices}\n\n⚠️ = non synchronisé depuis plus de 7 jours. Les appareils sélectionnés sont retirés de la liste ; un appareil qui se reconnecte réapparaît. Pour révoquer l'accès, supprimez son jeton sous Profil → Jetons d'accès longue durée.",
         "data": {
           "remove": "Retirer de la liste"
         }
@@ -186,7 +186,7 @@
       },
       "app_lists": {
         "title": "Listes de l'app",
-        "description": "{count} listes combinées provenant de téléphones avec l'app HA SmartLists :\n\n{lists}\n\n➕ = pas encore associée, ✅ = associée. Les listes associées sont créées ici comme listes combinées et appartiennent au téléphone concerné (appareils). L'app affiche alors la liste de Home Assistant au lieu de la sienne. Une liste manque ? Touche une fois « Synchroniser SmartLists » dans l'app.",
+        "description": "{count} listes combinées provenant d'appareils avec l'app HA SmartLists :\n\n{lists}\n\n➕ = pas encore associée, ✅ = associée. Les listes associées sont créées ici comme listes combinées et appartiennent à l'appareil concerné. L'app affiche alors la liste de Home Assistant au lieu de la sienne. Une liste manque ? Touche une fois « Synchroniser SmartLists » dans l'app.",
         "data": {
           "connect": "Associer"
         }

@@ -213,6 +213,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         "own": own_info,
         "categories": [] if notes else learning.categories.as_list(language),
         "trip_start": extras.trips.get(entity_id) if extras else None,
+        "settings": dict(extras.list_settings.get(entity_id) or {}) if extras else {},
         "items": items,
     }
 

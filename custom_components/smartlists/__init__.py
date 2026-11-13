@@ -148,7 +148,7 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 
 async def async_remove_config_entry_device(hass: HomeAssistant, entry: ConfigEntry, device_entry) -> bool:
-    """Gerät über die HA-Oberfläche löschen (⋮ → Löschen) – nur verbundene Handys, nicht die Listen."""
+    """Gerät über die HA-Oberfläche löschen (⋮ → Löschen) – nur verbundene Geräte, nicht die Listen."""
     for domain, ident in device_entry.identifiers:
         if domain == DOMAIN and ident.startswith("app_"):
             hass.data[DOMAIN]["devices"].remove(ident.removeprefix("app_"))

@@ -54,6 +54,8 @@ class Extras:
         self.templates: dict[str, dict[str, Any]] = {}
         self.barcodes: dict[str, dict[str, Any]] = {}
         # Einkauf: wann wurde ein Artikel abgehakt, wann wurde der letzte Einkauf beendet (je Liste)
+        # Darstellung je Liste (für alle Geräte): {"sort": "category"|…, "show_prices": bool}
+        self.list_settings: dict[str, dict[str, Any]] = {}
         self.checked_at: dict[str, dict[str, int]] = {}
         self.trips: dict[str, int] = {}
 
@@ -66,10 +68,12 @@ class Extras:
         self.barcodes = dict(data.get("barcodes") or {})
         self.checked_at = {k: dict(v) for k, v in (data.get("checked_at") or {}).items()}
         self.trips = dict(data.get("trips") or {})
+        self.list_settings = dict(data.get("list_settings") or {})
 
     def _data(self) -> dict[str, Any]:
         return {"store_order": self.store_order, "prices": self.prices, "expenses": self.expenses,
-                "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips}
+                "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips,
+                "list_settings": self.list_settings}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
@@ -137,6 +141,23 @@ class Extras:
                 self.expenses.pop(i)
                 self._save()
                 return
+
+    @callback
+    def set_list_settings(self, entity_id: str, sort: str | None = None, show_prices: bool | None = None) -> dict[str, Any]:
+        cur = dict(self.list_settings.get(entity_id) or {})
+        if sort is not None:
+            if sort in ("category", "alpha", "added", "list"):
+                cur["sort"] = sort
+            else:
+                cur.pop("sort", None)
+        if show_prices is not None:
+            cur["show_prices"] = bool(show_prices)
+        if cur:
+            self.list_settings[entity_id] = cur
+        else:
+            self.list_settings.pop(entity_id, None)
+        self._save()
+        return cur
 
     @callback
     def mark_checked(self, entity_id: str, uid: str, checked: bool) -> None:

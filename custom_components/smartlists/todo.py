@@ -129,7 +129,7 @@ class CombinedTodoListEntity(TodoListEntity):
         self._label: str = opts.get(CONF_SOURCE_LABEL, LABEL_SUFFIX)
         self._sort: str = opts.get(CONF_SORT, SORT_SOURCE)
         self._source_as_person: bool = bool(opts.get(CONF_SOURCE_AS_PERSON, True))
-        # aus der App übernommen → Entität gehört zum Handy (Gerät „App …“), die App blendet ihre eigene aus
+        # aus der App übernommen → Entität gehört zum Gerät (Gerät „App …“), die App blendet ihre eigene aus
         self._app_device: str | None = opts.get(CONF_APP_DEVICE) or None
         self._app_list: str | None = opts.get(CONF_APP_LIST) or None
         if self._app_device:

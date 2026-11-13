@@ -19,7 +19,7 @@ CONF_SORT = "sort"
 CONF_FOREIGN = "foreign_entities"
 # Herkunft als Person werten: Artikel aus todo.peter bekommen das Badge 👤 Peter (wie *Peter)
 CONF_SOURCE_AS_PERSON = "source_as_person"
-# Kombinierte Liste, die aus der App übernommen wurde: Gerät + Listen-Id der App (Entität hängt am Handy-Gerät)
+# Kombinierte Liste, die aus der App übernommen wurde: Gerät + Listen-Id der App (Entität hängt am Gerät der App)
 CONF_APP_DEVICE = "app_device"
 CONF_APP_LIST = "app_list"
 

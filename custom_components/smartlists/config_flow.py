@@ -224,7 +224,7 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
             if not errors:
                 name = user_input.pop(CONF_NAME)
                 # interne Felder (z.B. legacy_unique_id aus der Migration) behalten
-                # … und die Verknüpfung mit der App (Liste gehört zum Handy)
+                # … und die Verknüpfung mit der App (Liste gehört zum Gerät)
                 keep = {k: v for k, v in subentry.data.items() if k.startswith("legacy_") or k in ("app_device", "app_list")}
                 return self.async_update_and_abort(
                     self._get_entry(), subentry, title=name, data={**keep, **user_input}
@@ -441,7 +441,7 @@ class SmartListsOptionsFlow(OptionsFlow):
                                     description_placeholders=text)
 
     async def async_step_app_lists(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Kombinierte Listen aus der App übernehmen – sie gehören dann zum jeweiligen Handy-Gerät."""
+        """Kombinierte Listen aus der App übernehmen – sie gehören dann zum jeweiligen Gerät der App."""
         from . import app_lists
 
         rows = app_lists.describe(self.hass)

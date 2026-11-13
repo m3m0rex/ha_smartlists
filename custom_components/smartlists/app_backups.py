@@ -53,7 +53,7 @@ class AppBackups:
             encrypted = False
         self.backups[device_id] = {
             "encrypted": encrypted,
-            "profile_name": profile_name.strip()[:60] or "Handy",
+            "profile_name": profile_name.strip()[:60] or "Gerät",
             "data": data,
             "updated_at": int(time.time() * 1000),
             "user_id": user_id,

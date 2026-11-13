@@ -2,8 +2,8 @@
 
 Die App meldet beim Abgleich (smartlists/register_device, Feld app_lists) ihre eigenen kombinierten
 Listen, soweit sie nur aus Home-Assistant-Listen bestehen. Hier lassen sie sich „verbinden“: Dann legt
-die Integration daraus eine echte kombinierte Liste an (Unter-Eintrag), deren Entität zum Handy-Gerät
-gehört (Einstellungen → Geräte → „<Handy>“). Die App erkennt das am Attribut smartlists_app_list und
+die Integration daraus eine echte kombinierte Liste an (Unter-Eintrag), deren Entität zum Gerät der App
+gehört (Einstellungen → Geräte → „<Gerät>“). Die App erkennt das am Attribut smartlists_app_list und
 zeigt ab dann die Liste aus Home Assistant statt ihrer eigenen.
 """
 

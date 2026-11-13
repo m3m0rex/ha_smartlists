@@ -165,7 +165,7 @@
       },
       "devices": {
         "title": "Verbundene Geräte",
-        "description": "{count} Handys mit der HA-SmartLists-App:\n\n{devices}\n\n⚠️ = länger als 7 Tage nicht abgeglichen. Ausgewählte Geräte werden aus der Liste genommen; meldet sich ein Handy wieder, erscheint es erneut. Den Zugang sperrst du im Profil unter „Langlebige Zugangstoken“.",
+        "description": "{count} Geräte mit der HA-SmartLists-App:\n\n{devices}\n\n⚠️ = länger als 7 Tage nicht abgeglichen. Ausgewählte Geräte werden aus der Liste genommen; meldet sich ein Gerät wieder, erscheint es erneut. Den Zugang sperrst du im Profil unter „Langlebige Zugangstoken“.",
         "data": {
           "remove": "Aus der Liste nehmen"
         }
@@ -186,7 +186,7 @@
       },
       "app_lists": {
         "title": "Listen aus der App",
-        "description": "{count} kombinierte Listen von Handys mit der HA-SmartLists-App:\n\n{lists}\n\n➕ = noch nicht verbunden, ✅ = verbunden. Verbundene Listen werden hier als kombinierte Liste angelegt und gehören zum jeweiligen Handy (Geräte). Die App zeigt dann die Liste aus Home Assistant statt ihrer eigenen. Fehlt eine Liste: in der App einmal „SmartLists abgleichen“ tippen.",
+        "description": "{count} kombinierte Listen von Geräten mit der HA-SmartLists-App:\n\n{lists}\n\n➕ = noch nicht verbunden, ✅ = verbunden. Verbundene Listen werden hier als kombinierte Liste angelegt und gehören zum jeweiligen Gerät. Die App zeigt dann die Liste aus Home Assistant statt ihrer eigenen. Fehlt eine Liste: in der App einmal „SmartLists abgleichen“ tippen.",
         "data": {
           "connect": "Verbinden"
         }

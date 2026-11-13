@@ -26,13 +26,13 @@ dashboards, with voice assistants, in automations and in the HA SmartLists app.
   **keyword packs**: built in are German (the app's pack, 6,500 terms, 1,049 products) plus starter
   packs for English, French, Spanish, Italian and Polish (about 400 terms each). Several packs can be
   active at once, and admins can **upload their own packs** (JSON) in the card's gear menu →
-  *Household* → *Category detection*.
+  *Global* → *Categories*.
 - Attributes for dashboards and automations: `open_items`, `completed_items`, `open_by_category`,
   `source_lists`, `unavailable_sources`.
 - "Remove completed" (`todo.remove_completed_items`) works across all source lists.
 - Updates automatically whenever a source list changes.
 
-## Household memory
+## Shared memory
 
 Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 
@@ -46,12 +46,14 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
   so other interfaces still show them as text.
 - **Automations & voice:** "I'm at the store" notification, store reminder, recurring items, Assist sentences – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Automations-and-voice).
 - **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
-- **Connected devices:** every phone with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
+- **Connected devices:** every device with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 - **Shopping helpers:** aisle order per store/branch, prices & monthly expenses, templates/recipes with
   servings, barcode scan (Open Food Facts), statistics, notifications when others add items, and
   **sharing a list via link or QR code** for people without an HA account – see the
   [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers).
+- **Settings in one place:** general settings with areas (*For me*, *Global* for admins, *Insights*) and a
+  separate settings window per list – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Settings).
 
 Quantities are stored in the name, as in the app ("Milch 2 l @REWE"). "2 kg apples" is recognised
 while typing, too.
@@ -137,13 +139,13 @@ integration offers:
 
 - **"Add combined list"** – name, lists, default list, mode, source display, sorting, foreign lists,
   source as person. Each list can be changed or deleted later via ⋮ → *Reconfigure*.
-- **"Configure"** – settings for the whole household:
+- **"Configure"** – global settings for all users:
   - *Naming convention:* which character starts a store, person or tag (or off)
   - *Controls – default for everyone:* gesture for the item menu, menu entries, shopping mode
   - *Remembered categories & history:* forget single assignments, clear history
 
 Personal differences (per user, or on one device only) are set by everyone themselves via the gear
-icon in the card; admins can change the household settings there as well – both show the same values.
+icon in the card; admins can change the global settings there as well – both show the same values.
 
 **Updating from 1.1:** existing SmartLists helpers are moved automatically to lists under the single
 "SmartLists" entry on first start. entity_id, dashboards, automations and local checkmarks are kept.

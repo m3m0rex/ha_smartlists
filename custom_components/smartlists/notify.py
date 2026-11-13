@@ -1,7 +1,7 @@
 """Benachrichtigungen: „Anna hat Milch 2 l @REWE auf Einkauf gesetzt“.
 
 Jeder Benutzer stellt für sich ein (Karte → allgemeine Einstellungen → Für mich → Benachrichtigungen):
-an welches Handy (notify.mobile_app_…), bei neuen Artikeln und/oder beim Abhaken, welche Listen, von wem
+an welches Gerät (notify.mobile_app_…), bei neuen Artikeln und/oder beim Abhaken, welche Listen, von wem
 nicht, Ruhezeit. Grundlage sind die todo-Dienstaufrufe in Home Assistant – damit zählen Änderungen aus der
 Karte, der App, HA selbst und über geteilte Links. Eigene Änderungen lösen nie eine Nachricht aus.
 Mehrere Änderungen kurz hintereinander (60 s) werden zu einer Nachricht zusammengefasst.
@@ -102,7 +102,7 @@ class Notifier:
             # kombinierte Listen schreiben in ihre Quellen – dort kommt die Änderung ein zweites Mal an
             if entity_id in combined:
                 continue
-            # über einen geteilten Link: keinen fremden Text aufs Handy schicken
+            # über einen geteilten Link: keinen fremden Text aufs Gerät schicken
             name = _text(self.hass)["via_link"] if via_link else await self._item_name(entity_id, sd, kind)
             if name:
                 await self._queue(entity_id, kind, name, actor)

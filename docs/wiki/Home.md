@@ -7,7 +7,8 @@ and use a shopping mode – in a Lovelace card, on its own sidebar page and in t
 ## Pages
 
 - [[Installation]]
-- [[Setup]] – combined lists and household settings
+- [[Setup]] – combined lists and global settings
+- [[Settings]] – general settings, settings per list, permissions
 - [[Own lists and sharing]] – lists with owner and per-person rights
 - [[Card]] – `custom:smartlists-card`, all options and presets
 - [[Sidebar page]]

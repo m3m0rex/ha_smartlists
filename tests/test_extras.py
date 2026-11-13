@@ -21,6 +21,7 @@ def test_split_price():
     assert split_price("Milch 2 l 1,19€ @rewe") == ("Milch 2 l @rewe", 1.19)
     assert split_price("Milch 1,19 € @REWE *Anna") == ("Milch @REWE *Anna", 1.19)
     assert split_price("Käse 2,49 EUR") == ("Käse", 2.49)
+    assert split_price("Cola - 1,5 €") == ("Cola", 1.5)
     assert split_price("Cola 1,5€uro") == ("Cola 1,5€uro", None)
 
 

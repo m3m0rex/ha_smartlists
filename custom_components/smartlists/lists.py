@@ -190,6 +190,9 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         qty = (info.get("quantity") or 1) * (info.get("pack_count") or 1)
         if offer and offer.get("price") is not None:
             price = {"total": round(float(offer["price"]), 2), "unit_price": round(float(offer["price"]) / qty, 2), "source": "offer"}
+        elif info.get("text_price") is not None:
+            # Preis steht im Text einer anderen Quelle ("… (REWE) - 0,99 €") – gilt je Stück
+            price = {"total": round(float(info["text_price"]) * qty, 2), "unit_price": round(float(info["text_price"]), 2), "source": "text"}
         elif extras and (p := extras.price_for(info["name"])):
             price = {"total": round(float(p["price"]) * qty, 2), "unit_price": p["price"], "source": p.get("source", "manual"), "at": p.get("at")}
         items.append(
@@ -200,6 +203,8 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
                 "checked_at": (extras.checked_at.get(entity_id) or {}).get(raw["uid"]) if extras else None,
                 "uid": raw["uid"],
                 "text": raw["text"],
+                # umgeformter Text ("Butcher's Burger Buns 2 @REWE") zum Bearbeiten, wenn der Text aus einer anderen Quelle kam
+                "clean_text": learning.encode(learning.parse(raw["text"])) if info.get("imported") else None,
                 "note": note,
                 "offer": offer,
                 "checked": raw["checked"],
@@ -355,7 +360,7 @@ async def _book(hass: HomeAssistant, entity_id: str, uid: str, checked: bool, co
         qty = (item.quantity or 1) * (item.pack_count or 1)
         # Angebotspreis gilt für den ganzen Artikel → als Preis je Einheit umrechnen
         extras.book(item.name, qty, store, context.user_id if context else None, entity_id,
-                    price=offer_price / qty if offer_price else None)
+                    price=offer_price / qty if offer_price else item.price)
         if (shares := _shares(hass)) is not None:
             shares.clear_soft(entity_id, uid)
     else:

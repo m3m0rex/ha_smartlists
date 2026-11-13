@@ -4020,7 +4020,7 @@ class SmartListsCard extends HTMLElement {
 
   _editRow(it, d) {
     const t = this._t;
-    const text = h("input", { class: "text", value: it.text || it.name, "aria-label": it.name });
+    const text = h("input", { class: "text", value: it.clean_text || it.text || it.name, "aria-label": it.name });
     const cat = h("select", { class: "cat", "aria-label": t.category },
       d.categories.map((c) => h("option", { value: c.id, selected: c.id === it.category }, c.label)));
     // Notizen nur, wenn die Liste sie speichern kann (z.B. nicht bei der einfachen HA-Einkaufsliste)

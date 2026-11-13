@@ -62,6 +62,10 @@ class ParsedItem:
     unit: str | None = None
     pack_count: int | None = None
     tags: list[dict[str, str]] = field(default_factory=list)
+    # Preis je Stück aus Fremdtext ("… - 0,99 €"), siehe _split_import
+    price: float | None = None
+    # Text stammt aus einer anderen Quelle (z. B. Angebote-Karte) und wurde dafür umgeformt
+    imported: bool = False
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -70,6 +74,8 @@ class ParsedItem:
             "unit": self.unit,
             "pack_count": self.pack_count,
             "tags": self.tags,
+            "text_price": self.price,
+            "imported": self.imported,
         }
 
 
@@ -148,8 +154,49 @@ def _num(raw: str) -> float:
     return float(raw.replace(",", "."))
 
 
+# Texte anderer Quellen (z. B. die Angebote-Karte `custom:discounts-card`): "2x Butcher's Burger Buns (REWE) - 0,99 €"
+#   Menge vorn "2x", Markt in Klammern am Ende (nur bekannte Märkte), Preis hinten nach einem Strich.
+_IMPORT_PRICE = re.compile(rf"\s+[-–—]\s+({_NUM})\s?(?:€|EUR|eur)\s*$")
+_IMPORT_COUNT = re.compile(r"^\s*([0-9]+)\s?[x×X]\s+(\S.*)$")
+_IMPORT_STORE = re.compile(r"\s*\(([^()]{2,30})\)\s*$")
+
+
+def _split_import(text: str) -> tuple[str, dict[str, Any]]:
+    """Fremdtext zerlegen → (Rest, {"price", "store", "count"}); ohne Treffer bleibt der Text unverändert."""
+    extra: dict[str, Any] = {}
+    rest = text
+    if m := _IMPORT_PRICE.search(rest):
+        extra["price"] = _num(m.group(1))
+        rest = rest[: m.start()]
+    if m := _IMPORT_STORE.search(rest):
+        key = m.group(1).strip().lower()
+        if key in KNOWN_STORES or key in STORE_OVERRIDES:
+            extra["store"] = m.group(1).strip()
+            rest = rest[: m.start()]
+    if m := _IMPORT_COUNT.match(rest):
+        extra["count"] = int(m.group(1))
+        rest = m.group(2)
+    return (rest.strip() if extra else text), extra
+
+
 def parse(text: str, rules: list[dict[str, str]], *, allow_prefix_quantity: bool = False) -> ParsedItem:
-    """Gespeicherten Namen (oder Eingabe mit allow_prefix_quantity=True) zerlegen."""
+    """Gespeicherten Namen (oder Eingabe mit allow_prefix_quantity=True) zerlegen.
+    Texte anderer Quellen ("2x Brötchen (REWE) - 0,99 €") werden dabei erkannt: Menge, Markt-Badge und Preis."""
+    text, extra = _split_import(text)
+    item = _parse_core(text, rules, allow_prefix_quantity=allow_prefix_quantity)
+    if extra:
+        item.imported = True
+        if "store" in extra and not any(t["kind"] == "store" for t in item.tags):
+            label, color = store_display(extra["store"])
+            prefix = next((r["prefix"] for r in rules if r["kind"] == "store"), "@")
+            item.tags.append({"kind": "store", "value": extra["store"], "prefix": prefix, "label": label, **({"color": color} if color else {})})
+        if "count" in extra and item.quantity is None:
+            item.quantity = float(extra["count"])
+        item.price = extra.get("price")
+    return item
+
+
+def _parse_core(text: str, rules: list[dict[str, str]], *, allow_prefix_quantity: bool = False) -> ParsedItem:
     rest, tags = split_tags(text, rules)
     if m := _SUFFIX_UNIT.match(rest):
         return ParsedItem(m.group(1).strip(), _num(m.group(3)), m.group(4), int(m.group(2)) if m.group(2) else None, tags)

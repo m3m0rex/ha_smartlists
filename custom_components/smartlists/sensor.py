@@ -27,6 +27,21 @@ def device_identifier(device_id: str) -> tuple[str, str]:
     return (DOMAIN, f"app_{device_id}")
 
 
+def app_device_info(hass: HomeAssistant, device_id: str) -> DeviceInfo | None:
+    """Vollständige Geräte-Angaben des App-Geräts (nicht nur ein Verweis) – so hängt auch eine kombinierte
+    Liste der App sicher an diesem Gerät, egal in welcher Reihenfolge die Plattformen starten."""
+    d = (hass.data.get(DOMAIN, {}).get("devices").devices if hass.data.get(DOMAIN, {}).get("devices") else {}).get(device_id)
+    if d is None:
+        return None
+    return DeviceInfo(
+        identifiers={device_identifier(device_id)},
+        name=d.get("name") or "Gerät",
+        manufacturer=d.get("manufacturer") or MANUFACTURER_FALLBACK,
+        model=d.get("model"),
+        sw_version=d.get("app_version"),
+    )
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     devices: Devices = hass.data[DOMAIN]["devices"]
     known: set[str] = set()

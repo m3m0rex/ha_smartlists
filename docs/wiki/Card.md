@@ -26,7 +26,7 @@ The visual editor starts with the essentials (preset, list, title, view, sort). 
 | `entities` | – | several lists; `- todo.a` or `- entity: todo.b` with own `title` / filters |
 | `layout` | `tabs` | `tabs`, `columns`, `stack` (several lists) |
 | `title` | list name | text |
-| `view` | `list` | `list`, `tiles`, `mini` |
+| `view` | `list` | `list`, `tiles`, `mini`, `mealplan` (only the week plan; `entity` = default list for the ingredients, optional) |
 | `sort` | `category` | `category`, `alpha`, `added`, `list` (combined lists) |
 | `filter_store` / `filter_person` / `filter_tag` | – | e.g. `REWE`, `Anna`, `bio`; several with commas |
 | `filter_category` | – | list of category ids, e.g. `[kuehlung, tiefkuehl]` |
@@ -77,7 +77,12 @@ layout: columns
 - **Input**: type `2 kg Äpfel @REWE` – quantity, unit, store and category are recognised. ↑/↓, Tab
   and Enter pick suggestions; tap the category chip to change it (remembered for similar items).
 - **Long press** (or right click / double click, see the gear menu) opens the item menu: edit, move,
-  copy, change category, delete.
+  copy, change category, delete, **select**.
+- **Select several**: *Select* in the item menu or *⋯ → Select several*. Tap rows to mark them; the bar at the
+  top moves, copies, checks off or deletes all marked items at once (*All* / *None*, ✕ ends it). ↶ undoes it.
+- **Price in the text**: `Milk 2 l 1,19€ @REWE` – the price (anywhere in the text, also `€1.19` or
+  `1.19 EUR`) is shown in the preview, saved as price (per unit) and not kept in the item name. Works
+  when adding and when editing.
 - **Drag & drop** with the mouse: onto another SmartLists card to move (Ctrl/Alt = copy), onto an item in
   the same list to reorder (sort "added").
 - **Shopping mode** (cart icon): screen stays on, checked items are hidden, large rows, tap the whole
@@ -90,6 +95,14 @@ layout: columns
   page the general settings are the ⚙ at the top right. See [[Settings]].
 - **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
 - Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
+
+Meal plan as its own card:
+
+```yaml
+type: custom:smartlists-card
+view: mealplan
+entity: todo.weekly_shop
+```
 
 ## Stores & zones
 

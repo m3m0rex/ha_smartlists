@@ -5,6 +5,10 @@ three groups – **Combined lists**, **Lists** and **Notes** – each rendered l
 collapsed by default (the selected lists and *All lists ▾*). Combined lists
 created in the app that are not connected yet appear dashed with 📱; tap to connect (admins).
 
+Two tabs below the toolbar: **📋 Lists** and **🗓️ Meal plan**. The meal plan tab shows the week right on
+the page (same as *⋯ → Meal plan* in the card); *Ingredients to:* picks the list the ingredients go to. The
+plan is also the calendar **SmartLists Meal plan** in Home Assistant.
+
 Toolbar buttons:
 
 - **+** – create an own list (you are the owner, see [[Own lists and sharing]]). Lists that are not

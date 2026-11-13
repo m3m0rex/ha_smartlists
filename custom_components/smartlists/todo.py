@@ -67,6 +67,20 @@ PREFIX_TEMPLATE = "[{}] "
 FALLBACK_REFRESH = timedelta(minutes=5)
 
 
+def _age_seconds(set_at: Any) -> float:
+    """Alter des Entity-Context in Sekunden. Home Assistant speichert den Zeitpunkt je nach Version als
+    datetime (älter) oder als time.time()-Zahl (neuer) – beides muss gehen, sonst schlägt jedes Abhaken,
+    Hinzufügen und Löschen in eigenen Listen fehl."""
+    import time
+
+    if isinstance(set_at, (int, float)):
+        return time.time() - float(set_at)
+    if isinstance(set_at, datetime.datetime):
+        now = dt_util.utcnow() if set_at.tzinfo else datetime.datetime.utcnow()
+        return (now - set_at).total_seconds()
+    return float("inf")
+
+
 def _status_text(status: Any) -> str | None:
     """TodoItemStatus oder str → "needs_action"/"completed" (None bleibt None)."""
     if status is None:
@@ -591,7 +605,7 @@ class OwnTodoListEntity(TodoListEntity):
         Context die Rechte der vorherigen erben."""
         ctx = self._context
         set_at = getattr(self, "_context_set", None)
-        if ctx is None or set_at is None or (dt_util.utcnow() - set_at).total_seconds() > 2:
+        if ctx is None or set_at is None or _age_seconds(set_at) > 2:
             return False, None
         return True, ctx.user_id
 

@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **Own lists (incl. lists taken over): checking off, adding, renaming and deleting did nothing** on newer
+  Home Assistant versions. HA now stores the time of the current request as a number instead of a date;
+  the permission check failed on that. Both formats work now.
+
 ## [3.6.0] – 2026-11-13
 
 ### Added

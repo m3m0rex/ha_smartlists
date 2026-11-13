@@ -21,3 +21,23 @@ def test_permissions_are_cumulative():
     e = permissions_for("editor")
     assert e["add"] and e["delete"] and e["reorder"] and not e["share"]
     assert permissions_for("owner")["share"]
+
+
+def test_context_age_float_and_datetime():
+    """HA speichert _context_set je nach Version als time.time()-Zahl oder datetime – beides muss gehen."""
+    import ast
+    import datetime
+    import time
+    import types
+    from pathlib import Path
+
+    src = (Path(__file__).resolve().parent.parent / "custom_components" / "smartlists" / "todo.py").read_text(encoding="utf-8")
+    fn = next(n for n in ast.parse(src).body if isinstance(n, ast.FunctionDef) and n.name == "_age_seconds")
+    ns = {"datetime": datetime, "Any": object,
+          "dt_util": types.SimpleNamespace(utcnow=lambda: datetime.datetime.now(datetime.timezone.utc))}
+    exec(compile(ast.Module(body=[fn], type_ignores=[]), "todo.py", "exec"), ns)
+    age = ns["_age_seconds"]
+    assert age(time.time()) < 1
+    assert age(time.time() - 10) > 5
+    assert age(datetime.datetime.now(datetime.timezone.utc)) < 1
+    assert age(None) == float("inf")

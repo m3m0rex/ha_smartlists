@@ -24,7 +24,9 @@ class _Store:
 
 
 def _setup():
-    sys.modules.setdefault("homeassistant.config_entries", types.ModuleType("homeassistant.config_entries")).ConfigSubentry = _Sub
+    ce = sys.modules.setdefault("homeassistant.config_entries", types.ModuleType("homeassistant.config_entries"))
+    ce.ConfigSubentry, ce.ConfigEntry = _Sub, object
+    sys.modules.pop("smartlists.own_groups", None)
     regs = {"todo.einkaufsliste": types.SimpleNamespace(platform="shopping_list", config_entry_id="e1"),
             "todo.anna": types.SimpleNamespace(platform="local_todo", config_entry_id="e2")}
     er = types.ModuleType("homeassistant.helpers.entity_registry")
@@ -83,11 +85,24 @@ def _hass(m):
               for e, s, n in [("todo.einkaufsliste", "1", "Einkaufsliste"), ("todo.anna", "1", "Anna"), ("todo.ha_smartlists_list_x", "0", "X"),
                               ("todo.ha_smartlists_note_julia", "2", "HA Smartlists Notes Julia")]]
     learning = types.SimpleNamespace(tag_rules=[{"kind": "person", "prefix": "*"}, {"kind": "tag", "prefix": "#"}])
+    entry = types.SimpleNamespace(entry_id="main", subentries={})
+
+    def add_sub(e, sub):
+        added.append(sub)
+        e.subentries[sub.subentry_id] = sub
+
+    def update_sub(e, sub, data=None, title=None):
+        sub.data = data if data is not None else sub.data
+
+    async def get_user(uid):
+        return types.SimpleNamespace(name={"u1": "Julia"}.get(uid, "?"))
+
     hass = types.SimpleNamespace(
         data={"smartlists": {"entities": {}, "own": {"todo.ha_smartlists_list_x": object()}, "learning": learning}},
         states=types.SimpleNamespace(async_all=lambda domain: states),
-        config_entries=types.SimpleNamespace(async_entries=lambda d: [types.SimpleNamespace(entry_id="main")],
-                                             async_add_subentry=lambda entry, sub: added.append(sub), async_remove=async_remove))
+        config=types.SimpleNamespace(language="de"), auth=types.SimpleNamespace(async_get_user=get_user),
+        config_entries=types.SimpleNamespace(async_entries=lambda d: [entry], async_add_subentry=add_sub,
+                                             async_update_subentry=update_sub, async_remove=async_remove))
     return hass, added, removed_entries
 
 
@@ -105,17 +120,20 @@ def test_migrate_each_and_one():
             pass
     r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna"], "each"))
     assert [x["name"] for x in r["lists"]] == ["Einkaufsliste", "Anna"] and [x["items"] for x in r["lists"]] == [2, 1]
-    first = saved[f"smartlists.own.{added[0].subentry_id}"]["items"]
+    first = saved[f"smartlists.own.{r['lists'][0]['list_id']}"]["items"]
     assert [(i["summary"], i["status"], i["description"]) for i in first] == [("Milch 2 l", "needs_action", ""), ("Brot", "completed", "Vollkorn")]
-    assert added[0].data["owner"] == "u1"
+    # beide Listen in EINEM Unter-Eintrag des Besitzers
+    assert len(added) == 1 and added[0].subentry_type == "own_lists" and added[0].title == "Eigene Listen · Julia"
+    assert added[0].data["owner"] == "u1" and [v["title"] for v in added[0].data["lists"].values()] == ["Einkaufsliste", "Anna"]
     # alte Listen bleiben unverändert
     assert r["old"] == {"todo.einkaufsliste": "kept", "todo.anna": "kept"}
     assert removed == [] and removed_entries == []
 
     hass, added, _ = _hass(m)
     r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna", "todo.ha_smartlists_list_x"], "one", "Wocheneinkauf", "keep", "person"))
-    assert r["lists"] == [{"name": "Wocheneinkauf", "subentry_id": added[0].subentry_id, "items": 3}] and r["old"]["todo.anna"] == "kept"
-    texts = [i["summary"] for i in saved[f"smartlists.own.{added[0].subentry_id}"]["items"]]
+    lid = r["lists"][0]["list_id"]
+    assert r["lists"] == [{"name": "Wocheneinkauf", "list_id": lid, "items": 3}] and r["old"]["todo.anna"] == "kept"
+    texts = [i["summary"] for i in saved[f"smartlists.own.{lid}"]["items"]]
     assert texts == ["Milch 2 l *Einkaufsliste", "Brot *Einkaufsliste", "Seife *Anna"]
 
 

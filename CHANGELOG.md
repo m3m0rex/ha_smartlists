@@ -3,6 +3,18 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.7.0] – 2026-11-13
+
+### Changed
+
+- **Own lists are grouped per owner** on the integration page: one entry "Own lists · Julia" with one device
+  holding all her lists, instead of one entry per list. ⚙ on the entry → pick a list → rename, sharing, new
+  owner (the list moves to that owner's entry) or delete. *Add own list*, the sidebar ＋, the setup assistant
+  and *Take over lists* put new lists into the owner's entry automatically.
+- Existing own lists are **moved automatically** on update – entity IDs, items, sharing, automations and
+  dashboards stay the same. (If the Home Assistant version cannot move entities between entries, the lists
+  stay as they are and keep working.)
+
 ## [3.6.1] – 2026-11-13
 
 ### Fixed

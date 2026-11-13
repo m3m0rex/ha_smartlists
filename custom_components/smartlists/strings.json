@@ -116,6 +116,51 @@
       "abort": {
         "reconfigure_successful": "Saved."
       }
+    },
+    "own_lists": {
+      "initiate_flow": {
+        "user": "Add own list"
+      },
+      "entry_type": "Own lists",
+      "step": {
+        "user": {
+          "title": "Own list",
+          "description": "A list stored by SmartLists itself. The owner and admins may do everything; edit = add/change/delete items, check = check off only, view = view only. Note: Home Assistant's built-in to-do view shows every list to everyone – it is hidden in the SmartLists card, page and app.",
+          "data": {
+            "name": "Name",
+            "owner": "Owner",
+            "editors": "May edit",
+            "checkers": "May check off",
+            "viewers": "May only view"
+          }
+        },
+        "reconfigure": {
+          "title": "Edit own lists",
+          "description": "Which list do you want to edit?",
+          "data": {
+            "list": "List"
+          }
+        },
+        "edit": {
+          "title": "Edit list “{list}”",
+          "description": "A list stored by SmartLists itself. The owner and admins may do everything; edit = add/change/delete items, check = check off only, view = view only. Note: Home Assistant's built-in to-do view shows every list to everyone – it is hidden in the SmartLists card, page and app.",
+          "data": {
+            "name": "Name",
+            "owner": "Owner",
+            "editors": "May edit",
+            "checkers": "May check off",
+            "viewers": "May only view",
+            "delete": "Delete list"
+          },
+          "data_description": {
+            "delete": "Its items are removed. The list disappears from all cards, automations and the app."
+          }
+        }
+      },
+      "abort": {
+        "list_added": "List created – it is listed under its owner's “Own lists”.",
+        "reconfigure_successful": "Saved."
+      }
     }
   },
   "options": {

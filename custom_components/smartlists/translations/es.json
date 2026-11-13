@@ -116,6 +116,51 @@
       "abort": {
         "reconfigure_successful": "Guardado."
       }
+    },
+    "own_lists": {
+      "initiate_flow": {
+        "user": "Añadir lista propia"
+      },
+      "entry_type": "Listas propias",
+      "step": {
+        "user": {
+          "title": "Lista propia",
+          "description": "Una lista guardada por el propio SmartLists. El propietario y los administradores pueden hacerlo todo; editar = añadir/cambiar/eliminar elementos, marcar = solo marcar, ver = solo ver. Nota: la vista de tareas integrada de Home Assistant muestra todas las listas a todo el mundo – está oculta en la tarjeta, la página y la app de SmartLists.",
+          "data": {
+            "name": "Nombre",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver"
+          }
+        },
+        "reconfigure": {
+          "title": "Editar listas propias",
+          "description": "¿Qué lista quieres editar?",
+          "data": {
+            "list": "Lista"
+          }
+        },
+        "edit": {
+          "title": "Editar lista «{list}»",
+          "description": "Una lista guardada por el propio SmartLists. El propietario y los administradores pueden hacerlo todo; editar = añadir/cambiar/eliminar elementos, marcar = solo marcar, ver = solo ver. Nota: la vista de tareas integrada de Home Assistant muestra todas las listas a todo el mundo – está oculta en la tarjeta, la página y la app de SmartLists.",
+          "data": {
+            "name": "Nombre",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver",
+            "delete": "Borrar lista"
+          },
+          "data_description": {
+            "delete": "Se eliminan sus artículos. La lista desaparece de todas las tarjetas, automatizaciones y la app."
+          }
+        }
+      },
+      "abort": {
+        "list_added": "Lista creada – aparece en «Listas propias» de su propietario.",
+        "reconfigure_successful": "Guardado."
+      }
     }
   },
   "options": {

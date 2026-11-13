@@ -139,6 +139,10 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Integration einrichten: je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     await _async_register_panel(hass)
+    # bis 3.6 war jede eigene Liste ein Unter-Eintrag → einmalig in Gruppen je Besitzer umziehen
+    from .own_groups import async_migrate_legacy
+
+    await async_migrate_legacy(hass, entry)
     # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
     entry.async_on_unload(automation.async_setup_due_timer(hass))
     # Hinweise unter Einstellungen → Reparaturen (fehlende Quell-Listen, lange nicht gesehene Geräte)

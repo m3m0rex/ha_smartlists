@@ -11,17 +11,15 @@ erscheinen sie nach dem Neuladen der Integration sofort vollständig.
 from __future__ import annotations
 
 import uuid
-from types import MappingProxyType
 from typing import Any
 
-from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import ATTR_FRIENDLY_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
 
 from . import lists
-from .const import DOMAIN, STORAGE_VERSION, SUBENTRY_OWN
+from .const import DOMAIN, STORAGE_VERSION
 
 OLD_ACTIONS = ("keep",)
 MAX_ITEMS = 2000
@@ -123,18 +121,19 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
     if target == "notes":
         return await _as_notes(hass, user, groups, sources)
 
+    from .own_groups import async_add_list
+
+    # Artikel zuerst speichern, dann die Listen beim Besitzer eintragen (Gruppe „Eigene Listen · …“) –
+    # das Neuladen der Integration fasst mehrere neue Listen zu einem zusammen (__init__.py)
     created = []
     for title, items, _src in groups:
-        sub = ConfigSubentry(data=MappingProxyType({"owner": owner, "shares": {}}), subentry_type=SUBENTRY_OWN, title=title[:60], unique_id=None)
-        await Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{sub.subentry_id}").async_save({"items": items})
-        created.append((sub, len(items)))
-
-    result_old = {s: "kept" for s in sources}
-
-    # zum Schluss anlegen – das Neuladen der Integration fasst mehrere neue Listen zu einem zusammen (__init__.py)
-    for sub, _ in created:
-        hass.config_entries.async_add_subentry(entry, sub)
-    return {"lists": [{"name": sub.title, "subentry_id": sub.subentry_id, "items": n} for sub, n in created], "old": result_old}
+        list_id = uuid.uuid4().hex
+        await Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{list_id}").async_save({"items": items})
+        created.append((list_id, title[:60], len(items)))
+    for list_id, title, _ in created:
+        await async_add_list(hass, owner, title, {}, list_id=list_id)
+    return {"lists": [{"name": t, "list_id": lid, "items": n} for lid, t, n in created],
+            "old": {s: "kept" for s in sources}}
 
 
 async def _as_notes(hass: HomeAssistant, user: Any, groups: list[tuple[str, list[dict[str, Any]], str | None]],

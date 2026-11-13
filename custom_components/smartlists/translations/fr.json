@@ -116,6 +116,51 @@
       "abort": {
         "reconfigure_successful": "Enregistré."
       }
+    },
+    "own_lists": {
+      "initiate_flow": {
+        "user": "Ajouter une liste propre"
+      },
+      "entry_type": "Listes propres",
+      "step": {
+        "user": {
+          "title": "Liste propre",
+          "description": "Une liste stockée par SmartLists lui-même. Le propriétaire et les administrateurs peuvent tout faire ; modifier = ajouter/changer/supprimer des éléments, cocher = cocher uniquement, voir = consulter uniquement. Remarque : la vue des listes de tâches intégrée à Home Assistant montre toutes les listes à tout le monde – elle est masquée dans la carte, la page et l'application SmartLists.",
+          "data": {
+            "name": "Nom",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir"
+          }
+        },
+        "reconfigure": {
+          "title": "Modifier les listes propres",
+          "description": "Quelle liste veux-tu modifier ?",
+          "data": {
+            "list": "Liste"
+          }
+        },
+        "edit": {
+          "title": "Modifier la liste « {list} »",
+          "description": "Une liste stockée par SmartLists lui-même. Le propriétaire et les administrateurs peuvent tout faire ; modifier = ajouter/changer/supprimer des éléments, cocher = cocher uniquement, voir = consulter uniquement. Remarque : la vue des listes de tâches intégrée à Home Assistant montre toutes les listes à tout le monde – elle est masquée dans la carte, la page et l'application SmartLists.",
+          "data": {
+            "name": "Nom",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir",
+            "delete": "Supprimer la liste"
+          },
+          "data_description": {
+            "delete": "Ses articles sont supprimés. La liste disparaît de toutes les cartes, automatisations et de l'app."
+          }
+        }
+      },
+      "abort": {
+        "list_added": "Liste créée – elle figure sous « Listes propres » de son propriétaire.",
+        "reconfigure_successful": "Enregistré."
+      }
     }
   },
   "options": {

@@ -116,6 +116,51 @@
       "abort": {
         "reconfigure_successful": "Salvato."
       }
+    },
+    "own_lists": {
+      "initiate_flow": {
+        "user": "Aggiungi lista propria"
+      },
+      "entry_type": "Liste proprie",
+      "step": {
+        "user": {
+          "title": "Lista propria",
+          "description": "Una lista salvata direttamente da SmartLists. Il proprietario e gli amministratori possono fare tutto; modificare = aggiungere/cambiare/eliminare articoli, spuntare = solo spuntare, visualizzare = solo vedere. Nota: la vista integrata delle cose da fare di Home Assistant mostra ogni lista a tutti – nella scheda, nella pagina e nell'app SmartLists viene nascosta.",
+          "data": {
+            "name": "Nome",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo visualizzare"
+          }
+        },
+        "reconfigure": {
+          "title": "Modifica liste proprie",
+          "description": "Quale lista vuoi modificare?",
+          "data": {
+            "list": "Lista"
+          }
+        },
+        "edit": {
+          "title": "Modifica la lista «{list}»",
+          "description": "Una lista salvata direttamente da SmartLists. Il proprietario e gli amministratori possono fare tutto; modificare = aggiungere/cambiare/eliminare articoli, spuntare = solo spuntare, visualizzare = solo vedere. Nota: la vista integrata delle cose da fare di Home Assistant mostra ogni lista a tutti – nella scheda, nella pagina e nell'app SmartLists viene nascosta.",
+          "data": {
+            "name": "Nome",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo visualizzare",
+            "delete": "Elimina lista"
+          },
+          "data_description": {
+            "delete": "I suoi articoli vengono rimossi. La lista scompare da tutte le schede, automazioni e dall'app."
+          }
+        }
+      },
+      "abort": {
+        "list_added": "Lista creata – compare sotto «Liste proprie» del proprietario.",
+        "reconfigure_successful": "Salvato."
+      }
     }
   },
   "options": {

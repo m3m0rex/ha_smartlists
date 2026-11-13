@@ -69,7 +69,7 @@ UI_BUILTIN: dict[str, Any] = {
     "shop_keep_awake": True,
     "shop_large": True,
     "shop_tap_row": True,
-    "shop_untagged": False,
+    "shop_untagged": True,
     "shop_auto_store": True,
     "scan_target": "",
     "scan_mode": "input",
@@ -111,6 +111,9 @@ def _learning(hass: HomeAssistant) -> Learning:
 # ----------------------------------------------------------------------
 # Integration selbst
 # ----------------------------------------------------------------------
+# Seite mit Einrichtungs-Assistent (Karte öffnet ihn bei ?setup=1)
+SETUP_URL = "/smartlists?setup=1"
+
 class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
     """SmartLists einmal einrichten."""
 
@@ -136,7 +139,9 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
                 subentries.append({"subentry_type": SUBENTRY_COMBINED, "title": user_input.get(CONF_NAME) or "Einkauf",
                                    "data": data, "unique_id": None})
             if not errors:
-                return self.async_create_entry(title="SmartLists", data={}, subentries=subentries)
+                # Erfolgsmeldung mit Link direkt zum Einrichtungs-Assistenten (/smartlists?setup=1)
+                return self.async_create_entry(title="SmartLists", data={}, subentries=subentries, description="setup",
+                                              description_placeholders={"url": SETUP_URL})
         schema = vol.Schema(
             {
                 vol.Optional("combine", default=todo_ids if 2 <= len(todo_ids) <= 4 else []): _todo_selector(True, notes),
@@ -299,7 +304,7 @@ class SmartListsOptionsFlow(OptionsFlow):
     Karte ändern können) – nicht in den Optionen des Eintrags, damit beide Wege dasselbe zeigen."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        return self.async_show_menu(step_id="init", menu_options=["overview", "restart", "naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
+        return self.async_show_menu(step_id="init", menu_options=["assistant", "overview", "restart", "naming", "packs", "controls", "learned", "automation", "devices", "app_lists"])
 
     # ---- Kategorie-Erkennung: Keyword-Packs (dasselbe wie in der Karte → Haushalt) ----------------
     def _packs(self):
@@ -425,13 +430,22 @@ class SmartListsOptionsFlow(OptionsFlow):
 
             await async_reset(self.hass, bool(user_input.get("settings")), bool(user_input.get("data")),
                               bool(user_input.get("links")), bool(user_input.get("combined")))
-            return self._done()
+            return self.async_show_form(step_id="restart_done", data_schema=vol.Schema({}), description_placeholders={"url": SETUP_URL})
         return self.async_show_form(step_id="restart", data_schema=vol.Schema({
             vol.Optional("settings", default=False): selector.BooleanSelector(),
             vol.Optional("data", default=False): selector.BooleanSelector(),
             vol.Optional("links", default=False): selector.BooleanSelector(),
             vol.Optional("combined", default=False): selector.BooleanSelector(),
         }))
+
+    async def async_step_restart_done(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        return self._done()
+
+    async def async_step_assistant(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Nur ein Link zum Einrichtungs-Assistenten (läuft in der Seite /smartlists, nicht im Dialog)."""
+        if user_input is not None:
+            return self._done()
+        return self.async_show_form(step_id="assistant", data_schema=vol.Schema({}), description_placeholders={"url": SETUP_URL})
 
     async def async_step_overview(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Alle SmartLists-Listen (todo.ha_smartlists_… der App und der Integration) auf einen Blick.

@@ -3,6 +3,32 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.2.0] – 2026-11-13
+
+### Added
+
+- **Setup assistant from the integration**: the success message after adding SmartLists and
+  *Configure → Setup assistant* link straight to it (`/smartlists?setup=1`). After *start from scratch*
+  in Configure, a link opens it as well, and it appears the next time an admin opens SmartLists.
+- **Badge colours**: besides the colour (background), an optional **text colour** per kind and per badge.
+- **Notifications**: *Also for my own changes* and a *Send test message* button; failed messages are logged.
+- **Meal plan**: changes are kept until **Save** (asks whether to add the ingredients to the list) or
+  *Add ingredients to list*.
+- Autocomplete: ↓ reopens the suggestions, the selected entry is clearly highlighted and scrolled into view.
+
+### Changed
+
+- Shopping mode for one store shows items without `@store` too – now on by default.
+- Aisle order: rows can always be dragged by the handle ⠿, no extra sort mode; ▲ shows the right arrow.
+- Clicking next to a window only closes it if nothing was typed or changed in it (no more lost templates).
+
+### Fixed
+
+- Badges in the list ignored the symbol and colour set under *Badges and colours* (e.g. `#test`, people).
+- ⋯ menu opened far below the button on short lists; sort row had a duplicate icon and a misplaced arrow.
+- Symbols in the icon picker were not centred; *＋ Dish* in the meal plan was cut off.
+- Changes made through a combined list are attributed to the right person (notifications, history).
+
 ## [3.1.0] – 2026-11-13
 
 ### Added

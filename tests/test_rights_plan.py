@@ -55,3 +55,11 @@ def test_mealie_ingredient_text():
     assert ingredient_text({"food": {"name": "Eier"}, "quantity": 3, "unit": None}) == "Eier 3"
     assert ingredient_text({"food": {"name": "Milch"}, "quantity": 0.5, "unit": {"abbreviation": "l"}}) == "Milch 0.5 l"
     assert ingredient_text({"note": ""}) == ""
+
+
+def test_notify_settings_own_changes():
+    from smartlists.notify import validate
+
+    assert validate({})["own"] is False
+    s = validate({"service": "notify.mobile_app_pixel", "own": True, "quiet": [22, 7]})
+    assert s["service"] == "mobile_app_pixel" and s["own"] is True and s["quiet"] == [22, 7]

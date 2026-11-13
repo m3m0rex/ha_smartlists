@@ -19,6 +19,9 @@
     },
     "error": {
       "combine_two": "Wybierz co najmniej dwie listy – albo żadnej."
+    },
+    "create_entry": {
+      "setup": "SmartLists jest gotowy. [Otwórz kreator konfiguracji]({url}) – przeprowadzi cię przez listy, sklepy, zapis, język i dodatki. Możesz go też uruchomić później w Konfiguruj."
     }
   },
   "config_subentries": {
@@ -121,6 +124,7 @@
         "title": "SmartLists – ustawienia dla wszystkich",
         "description": "Każdy użytkownik może ustawić własne odstępstwa za pomocą ikony koła zębatego w karcie.",
         "menu_options": {
+          "assistant": "Kreator konfiguracji",
           "naming": "Konwencja nazw (@sklep, *osoba, #tag)",
           "controls": "Sterowanie (domyślne dla wszystkich)",
           "learned": "Zapamiętane kategorie i historia",
@@ -237,7 +241,7 @@
       },
       "restart": {
         "title": "Uruchom konfigurację ponownie",
-        "description": "Kreator pojawi się, gdy admin następnym razem otworzy stronę lub kartę SmartLists. Opcjonalnie zacznij od nowa – listy zadań i ich produkty nigdy nie są usuwane.",
+        "description": "Wybierz, co najpierw zresetować – listy zadań i ich produkty nigdy nie są usuwane. Potem kreator otworzysz przez link (pojawi się też przy następnym otwarciu SmartLists przez admina).",
         "data": {
           "settings": "Zresetuj ustawienia",
           "data": "Usuń wyuczone dane",
@@ -249,6 +253,14 @@
           "data": "Zapamiętane kategorie, historia i statystyki, ceny i wydatki, szablony i plan tygodnia.",
           "combined": "Tylko widok połączony – listy źródłowe pozostają bez zmian."
         }
+      },
+      "assistant": {
+        "title": "Kreator konfiguracji",
+        "description": "[➜ Otwórz kreator konfiguracji]({url})\n\nOtwiera się na stronie SmartLists i przeprowadza przez listy, sklepy, zapis, język, osoby i dodatki. Nic nie jest resetowane. Aby najpierw coś zresetować: „Uruchom konfigurację ponownie / zacznij od nowa”."
+      },
+      "restart_done": {
+        "title": "Zresetowano",
+        "description": "Gotowe. [➜ Otwórz kreator teraz]({url}) – pojawi się też, gdy admin następnym razem otworzy SmartLists."
       }
     },
     "error": {

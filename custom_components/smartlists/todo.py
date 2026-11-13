@@ -420,7 +420,8 @@ class CombinedTodoListEntity(TodoListEntity):
         self._store.async_delay_save(lambda: {"overrides": self._overrides}, 1.0)
 
     async def _call(self, service: str, data: dict[str, Any]) -> None:
-        await self.hass.services.async_call(TODO_DOMAIN, service, data, blocking=True)
+        # Kontext weitergeben: so wissen Benachrichtigungen und Verlauf, wer die Änderung gemacht hat
+        await self.hass.services.async_call(TODO_DOMAIN, service, data, blocking=True, context=self._context)
 
     async def async_create_todo_item(self, item: TodoItem) -> None:
         """Neuer Artikel → Standard-Hinzufügeliste."""

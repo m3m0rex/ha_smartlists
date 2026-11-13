@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.1.0";
+const CARD_VERSION = "3.2.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -101,7 +101,7 @@ const PACK_TEMPLATE = {
 const UI_DEFAULTS = {
   press_gesture: "long", press_target: "row", press_result: "menu", menu_actions: MENU_ACTIONS, row_buttons: true,
   shop_hide_checked: true, shop_keep_awake: true, shop_large: true, shop_tap_row: true,
-  shop_auto_store: true, shop_untagged: false,
+  shop_auto_store: true, shop_untagged: true,
   scan_target: "", scan_mode: "input",
 };
 // Dienste zum Nachschlagen von Strichcodes (gleiche IDs wie barcode.py)
@@ -228,7 +228,7 @@ const TEXTS = {
     p_left: "Nach links", p_right: "Nach rechts",
     look: "Badges & Farben", look_help: "Aussehen der Badges für alle Benutzer. Farben und Namen der Märkte gelten auch in der App. Leer bzw. ↺ = Standard.",
     look_style: "Stil", look_filled: "gefüllt", look_soft: "dezent", look_outline: "Rahmen", look_text: "nur Text",
-    look_color: "Farbe", look_icon: "Symbol davor", look_label: "Anzeigename", look_kinds: "Je Art", look_values: "Einzelne Badges",
+    look_color: "Farbe / Hintergrund", look_text: "Schriftfarbe", look_icon: "Symbol davor", look_label: "Anzeigename", look_kinds: "Je Art", look_values: "Einzelne Badges",
     look_search: "Badge suchen … (z. B. rewe)", look_more: "Weitere über die Suche finden.", look_add: "Badge einfärben",
     look_add_help: "Mit Zeichen davor, z. B. @Kaufland, *Max oder #vegan – auch wenn es noch nicht benutzt wurde.",
     zone_count: "Zonen", zone_unlink: "Zone lösen", zone_add: "Zone",
@@ -265,7 +265,7 @@ const TEXTS = {
     scan_find: "Suchen",
     scan_no_camera: "Kamera-Scan wird hier nicht unterstützt (z. B. iPhone-Safari, Firefox) – Nummer eintippen.",
     aisle_down: "Nach unten",
-    aisle_help: "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist.",
+    aisle_help: "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist. Am Griff ⠿ ziehen oder mit den Pfeilen verschieben.",
     aisle_all_branches: "alle Filialen",
     aisle_reset: "Standard",
     notify_to: "An mein Gerät",
@@ -278,7 +278,7 @@ const TEXTS = {
     notify_quiet: "Ruhezeit",
     notify_quiet_none: "keine",
     notify: "Benachrichtigungen",
-    notify_help: "Wenn jemand anderes etwas ändert – nie bei eigenen Änderungen. Mehrere Änderungen innerhalb einer Minute kommen als eine Nachricht.",
+    notify_help: "Wenn jemand anderes etwas ändert (eigene Änderungen nur, wenn unten eingeschaltet). Mehrere Änderungen innerhalb einer Minute kommen als eine Nachricht.",
     stats_90: "90 Tage",
     stats_year: "Jahr",
     stats_all: "alles",
@@ -340,6 +340,8 @@ const TEXTS = {
     w_title: "SmartLists einrichten", w_time: "Dauert etwa zwei Minuten.", w_step: "Schritt {n} von {m}", w_s_lists: "Listen", w_s_stores: "Märkte", w_s_naming: "Schreibweise", w_s_lang: "Sprache", w_s_people: "Personen und App", w_s_extras: "Extras", w_s_done: "Fertig", w_lists_h: "Womit möchtest du anfangen?", w_lists_found: "SmartLists hat {n} To-do-Listen in Home Assistant gefunden.", w_lists_none: "In Home Assistant gibt es noch keine To-do-Liste.", w_use: "Vorhandene Listen benutzen", w_use_sub: "Sie bleiben, wie sie sind. SmartLists zeigt sie mit Kategorien, Mengen und Märkten.", w_combine: "Zu einer gemeinsamen Liste zusammenfassen", w_combine_sub: "Jeder behält seine Liste, die gemeinsame zeigt alle.", w_combine_name: "Name der gemeinsamen Liste", w_combine_default: "Einkauf", w_new: "Eine neue Liste anlegen", w_new_sub: "Nur in SmartLists, du bist Besitzer und kannst sie freigeben.", w_new_name: "Name der Liste", w_open: "offen", w_stores_h: "Wo kaufst du ein?", w_stores_lead: "Die Märkte stehen dann beim Eintippen zur Auswahl, und im Einkaufsmodus siehst du nur, was du im jeweiligen Markt brauchst.", w_store_other: "Anderer Markt", w_store_add: "Hinzufügen", w_chosen: "Ausgewählt: {list}", w_chosen_none: "Noch kein Markt ausgewählt", w_becomes: "wird zu", w_stores_later: "Standorte der Märkte kannst du später hinzufügen. Dann wählt SmartLists den Markt von selbst, wenn du dort bist.", w_naming_h: "Wie markierst du Markt, Person und Schlagwort?", w_naming_lead: "Ein Zeichen direkt vor einem Wort macht daraus ein Badge. Es bleibt im Artikeltext stehen, deshalb sehen es auch Home Assistant und die App.", w_eg_store: "zum Beispiel @REWE", w_eg_person: "zum Beispiel *Anna", w_eg_tag: "zum Beispiel #bio", w_naming_bad: "„{c}“ ist nicht erlaubt.", w_naming_dup: "Jedes Zeichen nur einmal verwenden.", w_naming_hint: "Erlaubt sind {chars}. Leer lassen schaltet eine Art aus. Die HA-SmartLists-App übernimmt diese Zeichen beim Koppeln.", w_eg_item: "Milch", w_eg_qty: "2 l", w_lang_h: "In welcher Sprache schreibt ihr Artikel?", w_lang_lead: "Daran erkennt SmartLists die Kategorie, zum Beispiel Milch in der Kühlung. Mehrere Sprachen gehen zusammen.", w_words: "Wörter", w_people_h: "Wer macht mit?", w_people_lead: "Rechte für die neue Liste. Alle sehen SmartLists in ihrer Seitenleiste.", w_people_combined: "Kombinierte Listen sehen alle, die die Quell-Listen sehen. Rechte pro Person gibt es für eigene SmartLists-Listen.", w_you: "du, Admin", w_all: "darf alles", w_app: "HA-SmartLists-App auf dem Gerät", w_app_sub: "In der App unter Einstellungen → Verbindung auf „Koppeln“ tippen. Verbundene Geräte stehen danach unter Global → Geräte und Notizen.", w_extras_h: "Was soll SmartLists noch können?", w_extras_lead: "Alles lässt sich später ein- und ausschalten.", w_x_notify: "Bescheid geben, wenn jemand etwas einträgt", w_x_notify_sub: "An dein Gerät mit der Home-Assistant-App", w_x_notify_none: "Kein Gerät mit Home-Assistant-App gefunden", w_x_voice: "Per Sprache eintragen", w_x_voice_sub: "„Setz Milch auf die Einkaufsliste“ mit Assist", w_x_prices: "Preise und Ausgaben", w_x_prices_sub: "Summe der Liste und Übersicht pro Monat", w_x_barcode: "Strichcodes online nachschlagen", w_x_barcode_sub: "Bei Open Food Facts, es wird nur die Nummer gesendet", w_x_share: "Besitzer dürfen Listen per Link teilen", w_x_share_sub: "Für Personen ohne Home-Assistant-Konto, zum Beispiel Nachbarn oder Gäste", w_done_h: "Alles eingerichtet", w_done_lead: "Das wird angelegt. Ändern kannst du alles jederzeit in den Einstellungen.", w_sum_combined: "Gemeinsame Liste „{name}“ aus {lists}", w_sum_new: "Neue Liste „{name}“", w_sum_lists: "Listen: {lists}", w_sum_stores: "Märkte: {list}", w_sum_naming: "Schreibweise: {list}", w_sum_lang: "Kategorien: {list}", w_sum_people: "Freigaben: {list}", w_sum_extras: "An: {list}", w_off: "aus", w_tip: "Tipp: Im Eingabefeld einfach lostippen, zum Beispiel „2 kg Äpfel @REWE“.", w_back: "Zurück", w_next: "Weiter", w_skip: "Überspringen", w_finish: "Einrichten", w_start: "Los geht's", w_later: "Später in den Einstellungen änderbar", w_close: "Einrichtung schließen", w_restart: "Einrichtung erneut starten", w_restart_sub: "Der Assistent vom ersten Start, z. B. um weitere Listen zusammenzufassen.",
     more: "Mehr", ih_title: "Verlauf", ih_none: "Noch keine Einträge.", ih_add: "hinzugefügt", ih_check: "abgehakt", ih_uncheck: "wieder offen", ih_rename: "umbenannt", ih_remove: "gelöscht", ih_link: "über geteilten Link", ih_auto: "Automation", mp_title: "Wochenplan", mp_add: "Gericht", mp_help: "Gerichte sind Vorlagen. „Zutaten auf die Liste“ setzt alles dieser Woche auf die Liste, gleiche Artikel werden zusammengezählt. Der Plan erscheint auch als Kalender in Home Assistant.", mp_no_tpl: "Erst eine Vorlage anlegen (⋯ → Vorlagen).", mp_prev: "Vorige Woche", mp_next: "Nächste Woche", mp_mealie: "Aus Mealie holen", mp_recipes: "Rezepte übernommen", mp_to_list: "Zutaten auf die Liste", db_title: "Einkaufs-Dashboard", db_help: "Legt eine eigene Ansicht in der Seitenleiste an: alle Listen, Wochenplan und Statistik. Lässt sich danach wie jedes Dashboard bearbeiten.", db_create: "Dashboard anlegen", db_open: "Dashboard öffnen", db_lists: "Listen", db_plan: "Wochenplan", db_stats: "Statistik",
     rs_title: "Von vorn anfangen", rs_help: "Wähle, was zurückgesetzt wird. Danach startet der Einrichtungs-Assistent. To-do-Listen und ihre Artikel werden nie gelöscht, persönliche Einstellungen der Benutzer bleiben.", rs_settings: "Einstellungen zurücksetzen", rs_settings_sub: "Namenskonvention, Badges und Farben, Märkte und Zonen, Gang-Reihenfolgen, Rechte, Sprache und Automationen, Darstellung der Listen, Wortlisten.", rs_data: "Gelernte Daten löschen", rs_data_sub: "Gemerkte Kategorien, Verlauf und Statistik, Preise und Ausgaben, Vorlagen und Wochenplan.", rs_links: "Alle Teilen-Links zurückziehen", rs_links_sub: "Geteilte Links funktionieren danach nicht mehr.", rs_combined: "Kombinierte Listen entfernen", rs_combined_sub: "Nur die zusammengefasste Ansicht – die Quell-Listen bleiben unverändert.", rs_go: "Zurücksetzen und Assistent starten",
+    mp_saved: "Plan gespeichert", mp_ask_add: "Zutaten dieser Woche jetzt auf die Liste setzen?", mp_not_now: "Nein, nur speichern",
+    notify_own: "Auch bei eigenen Änderungen", notify_own_sub: "z. B. wenn du am PC etwas einträgst und es aufs Gerät willst – oder zum Ausprobieren.", notify_test: "Testnachricht senden", notify_test_sent: "Testnachricht gesendet – kommt sie nicht an, Companion-App und Benachrichtigungsrechte prüfen.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -455,7 +457,7 @@ const TEXTS = {
     p_left: "Move left", p_right: "Move right",
     look: "Badges & colours", look_help: "How badges look for all users. Store colours and names also apply in the app. Empty or ↺ = default.",
     look_style: "Style", look_filled: "filled", look_soft: "subtle", look_outline: "outline", look_text: "text only",
-    look_color: "Colour", look_icon: "Symbol in front", look_label: "Display name", look_kinds: "Per kind", look_values: "Individual badges",
+    look_color: "Colour / background", look_text: "Text colour", look_icon: "Symbol in front", look_label: "Display name", look_kinds: "Per kind", look_values: "Individual badges",
     look_search: "Search badge … (e.g. rewe)", look_more: "Find more via search.", look_add: "Colour a badge",
     look_add_help: "With its character, e.g. @Kaufland, *Max or #vegan – even if not used yet.",
     zone_count: "zones", zone_unlink: "Unlink zone", zone_add: "Zone",
@@ -492,7 +494,7 @@ const TEXTS = {
     scan_find: "Look up",
     scan_no_camera: "Camera scanning is not supported here (e.g. iPhone Safari, Firefox) – type the number.",
     aisle_down: "Move down",
-    aisle_help: "This is how shopping mode sorts when this store is selected.",
+    aisle_help: "This is how shopping mode sorts when this store is selected. Drag the handle ⠿ or use the arrows.",
     aisle_all_branches: "all branches",
     aisle_reset: "Default",
     notify_to: "To my device",
@@ -505,7 +507,7 @@ const TEXTS = {
     notify_quiet: "Quiet hours",
     notify_quiet_none: "none",
     notify: "Notifications",
-    notify_help: "When someone else changes something – never for your own changes. Several changes within a minute arrive as one message.",
+    notify_help: "When someone else changes something (your own changes only if switched on below). Several changes within a minute arrive as one message.",
     stats_90: "90 days",
     stats_year: "Year",
     stats_all: "all",
@@ -567,6 +569,8 @@ const TEXTS = {
     w_title: "Set up SmartLists", w_time: "Takes about two minutes.", w_step: "Step {n} of {m}", w_s_lists: "Lists", w_s_stores: "Stores", w_s_naming: "Notation", w_s_lang: "Language", w_s_people: "People and app", w_s_extras: "Extras", w_s_done: "Done", w_lists_h: "What would you like to start with?", w_lists_found: "SmartLists found {n} to-do lists in Home Assistant.", w_lists_none: "There is no to-do list in Home Assistant yet.", w_use: "Use existing lists", w_use_sub: "They stay as they are. SmartLists shows them with categories, quantities and stores.", w_combine: "Combine into one shared list", w_combine_sub: "Everyone keeps their list, the shared one shows all of them.", w_combine_name: "Name of the shared list", w_combine_default: "Shopping", w_new: "Create a new list", w_new_sub: "Only in SmartLists; you are the owner and can share it.", w_new_name: "Name of the list", w_open: "open", w_stores_h: "Where do you shop?", w_stores_lead: "The stores are offered while typing, and shopping mode shows only what you need in that store.", w_store_other: "Other store", w_store_add: "Add", w_chosen: "Selected: {list}", w_chosen_none: "No store selected yet", w_becomes: "becomes", w_stores_later: "You can add the stores' locations later. Then SmartLists picks the store by itself when you are there.", w_naming_h: "How do you mark store, person and tag?", w_naming_lead: "A character right before a word turns it into a badge. It stays in the item text, so Home Assistant and the app see it too.", w_eg_store: "for example @REWE", w_eg_person: "for example *Anna", w_eg_tag: "for example #organic", w_naming_bad: "“{c}” is not allowed.", w_naming_dup: "Use each character only once.", w_naming_hint: "Allowed are {chars}. Leave empty to turn a kind off. The HA SmartLists app takes these characters when pairing.", w_eg_item: "Milk", w_eg_qty: "2 l", w_lang_h: "In which language do you write items?", w_lang_lead: "This is how SmartLists recognises the category, for example milk in chilled. Several languages work together.", w_words: "words", w_people_h: "Who joins in?", w_people_lead: "Permissions for the new list. Everyone sees SmartLists in their sidebar.", w_people_combined: "Combined lists are visible to everyone who sees the source lists. Per-person permissions exist for own SmartLists lists.", w_you: "you, admin", w_all: "may do everything", w_app: "HA SmartLists app on a device", w_app_sub: "In the app, tap “Pair” under Settings → Connection. Connected devices then appear under Global → Devices and notes.", w_extras_h: "What else should SmartLists do?", w_extras_lead: "Everything can be turned on and off later.", w_x_notify: "Tell me when someone adds something", w_x_notify_sub: "To your device with the Home Assistant app", w_x_notify_none: "No device with the Home Assistant app found", w_x_voice: "Add items by voice", w_x_voice_sub: "“Put milk on the shopping list” with Assist", w_x_prices: "Prices and expenses", w_x_prices_sub: "Total of the list and a monthly overview", w_x_barcode: "Look up barcodes online", w_x_barcode_sub: "At Open Food Facts, only the number is sent", w_x_share: "Owners may share lists via link", w_x_share_sub: "For people without a Home Assistant account, for example neighbours or guests", w_done_h: "All set", w_done_lead: "This will be set up. You can change everything any time in the settings.", w_sum_combined: "Shared list “{name}” from {lists}", w_sum_new: "New list “{name}”", w_sum_lists: "Lists: {lists}", w_sum_stores: "Stores: {list}", w_sum_naming: "Notation: {list}", w_sum_lang: "Categories: {list}", w_sum_people: "Sharing: {list}", w_sum_extras: "On: {list}", w_off: "off", w_tip: "Tip: just start typing in the input field, for example “2 kg apples @REWE”.", w_back: "Back", w_next: "Next", w_skip: "Skip", w_finish: "Set up", w_start: "Let's go", w_later: "Can be changed later in the settings", w_close: "Close setup", w_restart: "Run setup again", w_restart_sub: "The first-start assistant, e.g. to combine more lists.",
     more: "More", ih_title: "History", ih_none: "No entries yet.", ih_add: "added", ih_check: "checked off", ih_uncheck: "reopened", ih_rename: "renamed", ih_remove: "deleted", ih_link: "via shared link", ih_auto: "automation", mp_title: "Meal plan", mp_add: "Dish", mp_help: "Dishes are templates. “Add ingredients to list” puts everything of this week on the list; equal items are added up. The plan also appears as a calendar in Home Assistant.", mp_no_tpl: "Create a template first (⋯ → Templates).", mp_prev: "Previous week", mp_next: "Next week", mp_mealie: "Get from Mealie", mp_recipes: "recipes imported", mp_to_list: "Add ingredients to list", db_title: "Shopping dashboard", db_help: "Creates its own view in the sidebar: all lists, meal plan and statistics. Edit it afterwards like any dashboard.", db_create: "Create dashboard", db_open: "Open dashboard", db_lists: "Lists", db_plan: "Meal plan", db_stats: "Statistics",
     rs_title: "Start from scratch", rs_help: "Choose what to reset. The setup assistant starts afterwards. To-do lists and their items are never deleted; users' personal settings stay.", rs_settings: "Reset settings", rs_settings_sub: "Naming convention, badges and colours, stores and zones, aisle orders, permissions, voice and automations, list display, keyword packs.", rs_data: "Delete learned data", rs_data_sub: "Remembered categories, history and statistics, prices and expenses, templates and meal plan.", rs_links: "Revoke all share links", rs_links_sub: "Shared links stop working.", rs_combined: "Remove combined lists", rs_combined_sub: "Only the combined view – the source lists stay unchanged.", rs_go: "Reset and start assistant",
+    mp_saved: "Plan saved", mp_ask_add: "Add this week's ingredients to the list now?", mp_not_now: "No, just save",
+    notify_own: "Also for my own changes", notify_own_sub: "e.g. when you add something on the PC and want it on your device – or to try it out.", notify_test: "Send test message", notify_test_sent: "Test message sent – if it doesn't arrive, check the companion app and its notification permission.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -682,7 +686,7 @@ const TEXTS = {
     p_left: "Vers la gauche", p_right: "Vers la droite",
     look: "Badges & couleurs", look_help: "Apparence des badges pour tous les utilisateurs. Les couleurs et noms des magasins s'appliquent aussi dans l'app. Vide ou ↺ = par défaut.",
     look_style: "Style", look_filled: "plein", look_soft: "discret", look_outline: "contour", look_text: "texte seul",
-    look_color: "Couleur", look_icon: "Symbole devant", look_label: "Nom affiché", look_kinds: "Par type", look_values: "Badges individuels",
+    look_color: "Couleur / fond", look_text: "Couleur du texte", look_icon: "Symbole devant", look_label: "Nom affiché", look_kinds: "Par type", look_values: "Badges individuels",
     look_search: "Chercher un badge … (p. ex. carrefour)", look_more: "Trouve les autres via la recherche.", look_add: "Colorer un badge",
     look_add_help: "Avec son caractère, p. ex. @Kaufland, *Max ou #vegan – même s'il n'est pas encore utilisé.",
     zone_count: "zones", zone_unlink: "Dissocier la zone", zone_add: "Zone",
@@ -719,7 +723,7 @@ const TEXTS = {
     scan_find: "Rechercher",
     scan_no_camera: "Le scan par caméra n'est pas pris en charge ici (ex. Safari sur iPhone, Firefox) – tape le numéro.",
     aisle_down: "Descendre",
-    aisle_help: "C'est l'ordre du mode courses quand ce magasin est sélectionné.",
+    aisle_help: "C'est l'ordre du mode courses quand ce magasin est sélectionné. Fais glisser la poignée ⠿ ou utilise les flèches.",
     aisle_all_branches: "toutes les succursales",
     aisle_reset: "Par défaut",
     notify_to: "Sur mon appareil",
@@ -732,7 +736,7 @@ const TEXTS = {
     notify_quiet: "Heures calmes",
     notify_quiet_none: "aucune",
     notify: "Notifications",
-    notify_help: "Quand quelqu'un d'autre modifie quelque chose – jamais pour tes propres modifications. Plusieurs modifications en une minute arrivent en un seul message.",
+    notify_help: "Quand quelqu'un d'autre modifie quelque chose (tes propres modifications seulement si activé ci-dessous). Plusieurs modifications en une minute arrivent en un seul message.",
     stats_90: "90 jours",
     stats_year: "Année",
     stats_all: "tout",
@@ -794,6 +798,8 @@ const TEXTS = {
     w_title: "Configurer SmartLists", w_time: "Cela prend environ deux minutes.", w_step: "Étape {n} sur {m}", w_s_lists: "Listes", w_s_stores: "Magasins", w_s_naming: "Notation", w_s_lang: "Langue", w_s_people: "Personnes et application", w_s_extras: "Extras", w_s_done: "Terminé", w_lists_h: "Par quoi veux-tu commencer ?", w_lists_found: "SmartLists a trouvé {n} listes de tâches dans Home Assistant.", w_lists_none: "Il n’y a encore aucune liste de tâches dans Home Assistant.", w_use: "Utiliser les listes existantes", w_use_sub: "Elles restent telles quelles. SmartLists les affiche avec catégories, quantités et magasins.", w_combine: "Les regrouper en une liste combinée", w_combine_sub: "Chacun garde sa liste, la liste combinée les affiche toutes.", w_combine_name: "Nom de la liste combinée", w_combine_default: "Courses", w_new: "Créer une nouvelle liste", w_new_sub: "Uniquement dans SmartLists ; tu en es propriétaire et peux la partager.", w_new_name: "Nom de la liste", w_open: "ouverts", w_stores_h: "Où fais-tu tes courses ?", w_stores_lead: "Les magasins sont proposés pendant la saisie, et le mode courses n’affiche que ce dont tu as besoin dans ce magasin.", w_store_other: "Autre magasin", w_store_add: "Ajouter", w_chosen: "Sélectionnés : {list}", w_chosen_none: "Aucun magasin sélectionné pour l’instant", w_becomes: "devient", w_stores_later: "Tu pourras ajouter l’emplacement des magasins plus tard. SmartLists choisira alors le magasin tout seul quand tu y es.", w_naming_h: "Comment marques-tu magasin, personne et étiquette ?", w_naming_lead: "Un caractère placé juste avant un mot le transforme en badge. Il reste dans le texte de l’article, donc Home Assistant et l’application le voient aussi.", w_eg_store: "par exemple @REWE", w_eg_person: "par exemple *Anna", w_eg_tag: "par exemple #bio", w_naming_bad: "« {c} » n’est pas autorisé.", w_naming_dup: "Utilise chaque caractère une seule fois.", w_naming_hint: "Caractères autorisés : {chars}. Laisse vide pour désactiver un type. L’application HA SmartLists reprend ces caractères lors de l’association.", w_eg_item: "Lait", w_eg_qty: "2 l", w_lang_h: "Dans quelle langue écris-tu les articles ?", w_lang_lead: "C’est ainsi que SmartLists reconnaît la catégorie, par exemple le lait dans le rayon frais. Plusieurs langues peuvent être combinées.", w_words: "mots", w_people_h: "Qui participe ?", w_people_lead: "Droits pour la nouvelle liste. Tout le monde voit SmartLists dans sa barre latérale.", w_people_combined: "Les listes combinées sont visibles par toutes les personnes qui voient les listes sources. Les droits par personne existent pour les listes SmartLists propres.", w_you: "toi, admin", w_all: "peut tout faire", w_app: "Application HA SmartLists sur un appareil", w_app_sub: "Dans l’application, touche « Associer » sous Paramètres → Connexion. Les appareils connectés apparaissent ensuite sous Global → Appareils et notes.", w_extras_h: "Que doit encore faire SmartLists ?", w_extras_lead: "Tout peut être activé ou désactivé plus tard.", w_x_notify: "Me prévenir quand quelqu’un ajoute quelque chose", w_x_notify_sub: "Sur ton appareil avec l’application Home Assistant", w_x_notify_none: "Aucun appareil avec l’application Home Assistant trouvé", w_x_voice: "Ajouter des articles à la voix", w_x_voice_sub: "« Ajoute du lait à la liste de courses » avec Assist", w_x_prices: "Prix et dépenses", w_x_prices_sub: "Total de la liste et aperçu mensuel", w_x_barcode: "Rechercher les codes-barres en ligne", w_x_barcode_sub: "Sur Open Food Facts, seul le numéro est envoyé", w_x_share: "Les propriétaires peuvent partager des listes par lien", w_x_share_sub: "Pour les personnes sans compte Home Assistant, par exemple des voisins ou des invités", w_done_h: "Tout est prêt", w_done_lead: "Voici ce qui sera configuré. Tu peux tout modifier à tout moment dans les paramètres.", w_sum_combined: "Liste combinée « {name} » à partir de {lists}", w_sum_new: "Nouvelle liste « {name} »", w_sum_lists: "Listes : {lists}", w_sum_stores: "Magasins : {list}", w_sum_naming: "Notation : {list}", w_sum_lang: "Catégories : {list}", w_sum_people: "Partage : {list}", w_sum_extras: "Activé : {list}", w_off: "désactivé", w_tip: "Astuce : commence simplement à taper dans le champ de saisie, par exemple « 2 kg pommes @REWE ».", w_back: "Retour", w_next: "Suivant", w_skip: "Passer", w_finish: "Configurer", w_start: "C’est parti", w_later: "Modifiable plus tard dans les paramètres", w_close: "Fermer la configuration", w_restart: "Relancer la configuration", w_restart_sub: "L’assistant du premier démarrage, par ex. pour combiner d’autres listes.",
     more: "Plus", ih_title: "Historique", ih_none: "Pas encore d'entrées.", ih_add: "ajouté", ih_check: "coché", ih_uncheck: "rouvert", ih_rename: "renommé", ih_remove: "supprimé", ih_link: "via un lien partagé", ih_auto: "automatisation", mp_title: "Menu de la semaine", mp_add: "Plat", mp_help: "Les plats sont des modèles. « Ingrédients sur la liste » met tout ce qui est prévu cette semaine sur la liste ; les articles identiques sont additionnés. Le menu apparaît aussi comme calendrier dans Home Assistant.", mp_no_tpl: "Crée d'abord un modèle (⋯ → Modèles).", mp_prev: "Semaine précédente", mp_next: "Semaine suivante", mp_mealie: "Récupérer depuis Mealie", mp_recipes: "recettes importées", mp_to_list: "Ingrédients sur la liste", db_title: "Tableau de bord courses", db_help: "Crée une vue dans la barre latérale : toutes les listes, le menu et les statistiques. Modifiable ensuite comme tout tableau de bord.", db_create: "Créer le tableau de bord", db_open: "Ouvrir le tableau de bord", db_lists: "Listes", db_plan: "Menu", db_stats: "Statistiques",
     rs_title: "Repartir de zéro", rs_help: "Choisis ce qui est réinitialisé. L'assistant démarre ensuite. Les listes de tâches et leurs articles ne sont jamais supprimés ; les réglages personnels restent.", rs_settings: "Réinitialiser les réglages", rs_settings_sub: "Convention de nommage, badges et couleurs, magasins et zones, ordre des rayons, droits, voix et automatisations, affichage des listes, packs de mots-clés.", rs_data: "Supprimer les données apprises", rs_data_sub: "Catégories mémorisées, historique et statistiques, prix et dépenses, modèles et menu.", rs_links: "Révoquer tous les liens de partage", rs_links_sub: "Les liens partagés ne fonctionnent plus.", rs_combined: "Supprimer les listes combinées", rs_combined_sub: "Seulement la vue combinée – les listes sources restent inchangées.", rs_go: "Réinitialiser et lancer l'assistant",
+    mp_saved: "Menu enregistré", mp_ask_add: "Mettre maintenant les ingrédients de la semaine sur la liste ?", mp_not_now: "Non, enregistrer seulement",
+    notify_own: "Aussi pour mes propres modifications", notify_own_sub: "p. ex. quand tu ajoutes quelque chose sur le PC et le veux sur ton appareil – ou pour essayer.", notify_test: "Envoyer un message de test", notify_test_sent: "Message de test envoyé – s'il n'arrive pas, vérifie l'app Companion et l'autorisation des notifications.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -909,7 +915,7 @@ const TEXTS = {
     p_left: "A la izquierda", p_right: "A la derecha",
     look: "Etiquetas y colores", look_help: "Aspecto de las etiquetas para todos los usuarios. Los colores y nombres de las tiendas también valen en la app. Vacío o ↺ = predeterminado.",
     look_style: "Estilo", look_filled: "relleno", look_soft: "suave", look_outline: "borde", look_text: "solo texto",
-    look_color: "Color", look_icon: "Símbolo delante", look_label: "Nombre mostrado", look_kinds: "Por tipo", look_values: "Etiquetas individuales",
+    look_color: "Color / fondo", look_text: "Color del texto", look_icon: "Símbolo delante", look_label: "Nombre mostrado", look_kinds: "Por tipo", look_values: "Etiquetas individuales",
     look_search: "Buscar etiqueta … (p. ej. mercadona)", look_more: "Encuentra más con la búsqueda.", look_add: "Colorear una etiqueta",
     look_add_help: "Con su carácter, p. ej. @Kaufland, *Max o #vegano – aunque aún no se haya usado.",
     zone_count: "zonas", zone_unlink: "Desvincular zona", zone_add: "Zona",
@@ -946,7 +952,7 @@ const TEXTS = {
     scan_find: "Buscar",
     scan_no_camera: "El escaneo con cámara no es compatible aquí (p. ej. Safari en iPhone, Firefox) – escribe el número.",
     aisle_down: "Bajar",
-    aisle_help: "Así ordena el modo compra cuando esta tienda está seleccionada.",
+    aisle_help: "Así ordena el modo compra cuando esta tienda está seleccionada. Arrastra el asa ⠿ o usa las flechas.",
     aisle_all_branches: "todas las sucursales",
     aisle_reset: "Predeterminado",
     notify_to: "A mi dispositivo",
@@ -959,7 +965,7 @@ const TEXTS = {
     notify_quiet: "Horas de silencio",
     notify_quiet_none: "ninguna",
     notify: "Notificaciones",
-    notify_help: "Cuando otra persona cambia algo – nunca por tus propios cambios. Varios cambios en un minuto llegan como un solo mensaje.",
+    notify_help: "Cuando otra persona cambia algo (tus propios cambios solo si está activado abajo). Varios cambios en un minuto llegan como un mensaje.",
     stats_90: "90 días",
     stats_year: "Año",
     stats_all: "todo",
@@ -1021,6 +1027,8 @@ const TEXTS = {
     w_title: "Configurar SmartLists", w_time: "Tarda unos dos minutos.", w_step: "Paso {n} de {m}", w_s_lists: "Listas", w_s_stores: "Tiendas", w_s_naming: "Notación", w_s_lang: "Idioma", w_s_people: "Personas y app", w_s_extras: "Extras", w_s_done: "Listo", w_lists_h: "¿Con qué quieres empezar?", w_lists_found: "SmartLists ha encontrado {n} listas de tareas en Home Assistant.", w_lists_none: "Todavía no hay ninguna lista de tareas en Home Assistant.", w_use: "Usar las listas existentes", w_use_sub: "Se quedan como están. SmartLists las muestra con categorías, cantidades y tiendas.", w_combine: "Unirlas en una lista combinada", w_combine_sub: "Cada uno conserva su lista; la lista combinada las muestra todas.", w_combine_name: "Nombre de la lista combinada", w_combine_default: "Compra", w_new: "Crear una lista nueva", w_new_sub: "Solo en SmartLists; tú eres el propietario y puedes compartirla.", w_new_name: "Nombre de la lista", w_open: "abiertas", w_stores_h: "¿Dónde haces la compra?", w_stores_lead: "Las tiendas se sugieren mientras escribes, y el modo compra muestra solo lo que necesitas en esa tienda.", w_store_other: "Otra tienda", w_store_add: "Añadir", w_chosen: "Seleccionadas: {list}", w_chosen_none: "Aún no has seleccionado ninguna tienda", w_becomes: "se convierte en", w_stores_later: "Puedes añadir la ubicación de las tiendas más tarde. Así SmartLists elige la tienda automáticamente cuando estés allí.", w_naming_h: "¿Cómo marcas tienda, persona y etiqueta?", w_naming_lead: "Un carácter justo antes de una palabra la convierte en una insignia. Se queda en el texto del artículo, así que Home Assistant y la app también lo ven.", w_eg_store: "por ejemplo @REWE", w_eg_person: "por ejemplo *Anna", w_eg_tag: "por ejemplo #bio", w_naming_bad: "«{c}» no está permitido.", w_naming_dup: "Usa cada carácter solo una vez.", w_naming_hint: "Se permiten {chars}. Déjalo vacío para desactivar un tipo. La app HA SmartLists adopta estos caracteres al vincularse.", w_eg_item: "Leche", w_eg_qty: "2 l", w_lang_h: "¿En qué idioma escribes los artículos?", w_lang_lead: "Así SmartLists reconoce la categoría, por ejemplo la leche en refrigerados. Se pueden combinar varios idiomas.", w_words: "palabras", w_people_h: "¿Quién participa?", w_people_lead: "Permisos para la lista nueva. Todos ven SmartLists en su barra lateral.", w_people_combined: "Las listas combinadas son visibles para todas las personas que ven las listas de origen. Los permisos por persona existen para las listas propias de SmartLists.", w_you: "tú, admin", w_all: "puede hacerlo todo", w_app: "App HA SmartLists en un dispositivo", w_app_sub: "En la app, toca «Vincular» en Ajustes → Conexión. Los dispositivos conectados aparecen después en Global → Dispositivos y notas.", w_extras_h: "¿Qué más quieres que haga SmartLists?", w_extras_lead: "Todo se puede activar y desactivar más tarde.", w_x_notify: "Avisarme cuando alguien añada algo", w_x_notify_sub: "A tu dispositivo con la app de Home Assistant", w_x_notify_none: "No se ha encontrado ningún dispositivo con la app de Home Assistant", w_x_voice: "Añadir artículos por voz", w_x_voice_sub: "«Añade leche a la lista de la compra» con Assist", w_x_prices: "Precios y gastos", w_x_prices_sub: "Total de la lista y resumen mensual", w_x_barcode: "Buscar códigos de barras en línea", w_x_barcode_sub: "En Open Food Facts; solo se envía el número", w_x_share: "Los propietarios pueden compartir listas mediante enlace", w_x_share_sub: "Para personas sin cuenta de Home Assistant, por ejemplo vecinos o invitados", w_done_h: "Todo listo", w_done_lead: "Esto es lo que se configurará. Puedes cambiarlo todo en cualquier momento en los ajustes.", w_sum_combined: "Lista combinada «{name}» a partir de {lists}", w_sum_new: "Lista nueva «{name}»", w_sum_lists: "Listas: {lists}", w_sum_stores: "Tiendas: {list}", w_sum_naming: "Notación: {list}", w_sum_lang: "Categorías: {list}", w_sum_people: "Compartir: {list}", w_sum_extras: "Activado: {list}", w_off: "desactivado", w_tip: "Consejo: empieza a escribir en el campo de entrada, por ejemplo «2 kg manzanas @REWE».", w_back: "Atrás", w_next: "Siguiente", w_skip: "Omitir", w_finish: "Configurar", w_start: "Empezar", w_later: "Se puede cambiar más tarde en los ajustes", w_close: "Cerrar la configuración", w_restart: "Volver a ejecutar la configuración", w_restart_sub: "El asistente del primer inicio, p. ej. para combinar más listas.",
     more: "Más", ih_title: "Historial", ih_none: "Aún no hay entradas.", ih_add: "añadido", ih_check: "marcado", ih_uncheck: "reabierto", ih_rename: "renombrado", ih_remove: "borrado", ih_link: "mediante enlace compartido", ih_auto: "automatización", mp_title: "Plan semanal", mp_add: "Plato", mp_help: "Los platos son plantillas. «Ingredientes a la lista» pone todo lo de esta semana en la lista; los artículos iguales se suman. El plan también aparece como calendario en Home Assistant.", mp_no_tpl: "Crea primero una plantilla (⋯ → Plantillas).", mp_prev: "Semana anterior", mp_next: "Semana siguiente", mp_mealie: "Traer de Mealie", mp_recipes: "recetas importadas", mp_to_list: "Ingredientes a la lista", db_title: "Panel de compras", db_help: "Crea una vista propia en la barra lateral: todas las listas, el plan semanal y las estadísticas. Después se edita como cualquier panel.", db_create: "Crear panel", db_open: "Abrir panel", db_lists: "Listas", db_plan: "Plan semanal", db_stats: "Estadísticas",
     rs_title: "Empezar de cero", rs_help: "Elige qué se restablece. Después se inicia el asistente. Las listas de tareas y sus artículos nunca se borran; los ajustes personales se mantienen.", rs_settings: "Restablecer ajustes", rs_settings_sub: "Convención de nombres, etiquetas y colores, tiendas y zonas, orden de pasillos, permisos, voz y automatizaciones, vista de las listas, paquetes de palabras clave.", rs_data: "Borrar datos aprendidos", rs_data_sub: "Categorías recordadas, historial y estadísticas, precios y gastos, plantillas y plan semanal.", rs_links: "Revocar todos los enlaces", rs_links_sub: "Los enlaces compartidos dejan de funcionar.", rs_combined: "Quitar listas combinadas", rs_combined_sub: "Solo la vista combinada – las listas de origen no cambian.", rs_go: "Restablecer e iniciar asistente",
+    mp_saved: "Plan guardado", mp_ask_add: "¿Añadir ahora los ingredientes de esta semana a la lista?", mp_not_now: "No, solo guardar",
+    notify_own: "También con mis propios cambios", notify_own_sub: "p. ej. cuando añades algo en el PC y lo quieres en tu dispositivo – o para probar.", notify_test: "Enviar mensaje de prueba", notify_test_sent: "Mensaje de prueba enviado – si no llega, revisa la app Companion y el permiso de notificaciones.",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1136,7 +1144,7 @@ const TEXTS = {
     p_left: "A sinistra", p_right: "A destra",
     look: "Badge e colori", look_help: "Aspetto dei badge per tutti gli utenti. Colori e nomi dei negozi valgono anche nell'app. Vuoto o ↺ = predefinito.",
     look_style: "Stile", look_filled: "pieno", look_soft: "tenue", look_outline: "contorno", look_text: "solo testo",
-    look_color: "Colore", look_icon: "Simbolo davanti", look_label: "Nome visualizzato", look_kinds: "Per tipo", look_values: "Singoli badge",
+    look_color: "Colore / sfondo", look_text: "Colore del testo", look_icon: "Simbolo davanti", look_label: "Nome visualizzato", look_kinds: "Per tipo", look_values: "Singoli badge",
     look_search: "Cerca badge … (es. esselunga)", look_more: "Trova gli altri con la ricerca.", look_add: "Colora un badge",
     look_add_help: "Con il suo carattere, es. @Kaufland, *Max o #vegano – anche se non è ancora stato usato.",
     zone_count: "zone", zone_unlink: "Scollega zona", zone_add: "Zona",
@@ -1173,7 +1181,7 @@ const TEXTS = {
     scan_find: "Cerca",
     scan_no_camera: "La scansione con fotocamera qui non è supportata (es. Safari su iPhone, Firefox) – digita il numero.",
     aisle_down: "Sposta giù",
-    aisle_help: "Così ordina la modalità spesa quando è selezionato questo negozio.",
+    aisle_help: "Così ordina la modalità spesa quando è selezionato questo negozio. Trascina la maniglia ⠿ o usa le frecce.",
     aisle_all_branches: "tutte le filiali",
     aisle_reset: "Predefinito",
     notify_to: "Al mio dispositivo",
@@ -1186,7 +1194,7 @@ const TEXTS = {
     notify_quiet: "Ore di silenzio",
     notify_quiet_none: "nessuna",
     notify: "Notifiche",
-    notify_help: "Quando qualcun altro modifica qualcosa – mai per le tue modifiche. Più modifiche entro un minuto arrivano come un unico messaggio.",
+    notify_help: "Quando qualcun altro modifica qualcosa (le tue modifiche solo se attivato sotto). Più modifiche entro un minuto arrivano come un unico messaggio.",
     stats_90: "90 giorni",
     stats_year: "Anno",
     stats_all: "tutto",
@@ -1248,6 +1256,8 @@ const TEXTS = {
     w_title: "Configura SmartLists", w_time: "Ci vogliono circa due minuti.", w_step: "Passo {n} di {m}", w_s_lists: "Liste", w_s_stores: "Negozi", w_s_naming: "Notazione", w_s_lang: "Lingua", w_s_people: "Persone e app", w_s_extras: "Extra", w_s_done: "Fatto", w_lists_h: "Da cosa vuoi iniziare?", w_lists_found: "SmartLists ha trovato {n} liste di cose da fare in Home Assistant.", w_lists_none: "In Home Assistant non c’è ancora nessuna lista di cose da fare.", w_use: "Usa le liste esistenti", w_use_sub: "Restano come sono. SmartLists le mostra con categorie, quantità e negozi.", w_combine: "Uniscile in una lista combinata", w_combine_sub: "Ognuno mantiene la propria lista, quella combinata le mostra tutte.", w_combine_name: "Nome della lista combinata", w_combine_default: "Spesa", w_new: "Crea una nuova lista", w_new_sub: "Solo in SmartLists; ne sei il proprietario e puoi condividerla.", w_new_name: "Nome della lista", w_open: "aperte", w_stores_h: "Dove fai la spesa?", w_stores_lead: "I negozi vengono proposti mentre scrivi, e la modalità spesa mostra solo ciò che ti serve in quel negozio.", w_store_other: "Altro negozio", w_store_add: "Aggiungi", w_chosen: "Selezionati: {list}", w_chosen_none: "Nessun negozio ancora selezionato", w_becomes: "diventa", w_stores_later: "Puoi aggiungere la posizione dei negozi in seguito. Così SmartLists sceglie il negozio da solo quando ci sei.", w_naming_h: "Come contrassegni negozio, persona e tag?", w_naming_lead: "Un carattere subito prima di una parola la trasforma in un badge. Resta nel testo dell’articolo, quindi lo vedono anche Home Assistant e l’app.", w_eg_store: "per esempio @REWE", w_eg_person: "per esempio *Anna", w_eg_tag: "per esempio #bio", w_naming_bad: "“{c}” non è consentito.", w_naming_dup: "Usa ogni carattere una sola volta.", w_naming_hint: "Sono consentiti {chars}. Lascia vuoto per disattivare un tipo. L’app HA SmartLists adotta questi caratteri durante l’associazione.", w_eg_item: "Latte", w_eg_qty: "2 l", w_lang_h: "In quale lingua scrivi gli articoli?", w_lang_lead: "Così SmartLists riconosce la categoria, per esempio il latte nei prodotti refrigerati. Si possono combinare più lingue.", w_words: "parole", w_people_h: "Chi partecipa?", w_people_lead: "Permessi per la nuova lista. Tutti vedono SmartLists nella propria barra laterale.", w_people_combined: "Le liste combinate sono visibili a tutte le persone che vedono le liste di origine. I permessi per persona esistono per le liste SmartLists proprie.", w_you: "tu, admin", w_all: "può fare tutto", w_app: "App HA SmartLists su un dispositivo", w_app_sub: "Nell’app, tocca “Associa” in Impostazioni → Connessione. I dispositivi connessi compaiono poi in Globale → Dispositivi e note.", w_extras_h: "Cos’altro deve fare SmartLists?", w_extras_lead: "Tutto si può attivare e disattivare in seguito.", w_x_notify: "Avvisami quando qualcuno aggiunge qualcosa", w_x_notify_sub: "Sul tuo dispositivo con l’app Home Assistant", w_x_notify_none: "Nessun dispositivo con l’app Home Assistant trovato", w_x_voice: "Aggiungi articoli con la voce", w_x_voice_sub: "“Aggiungi il latte alla lista della spesa” con Assist", w_x_prices: "Prezzi e spese", w_x_prices_sub: "Totale della lista e riepilogo mensile", w_x_barcode: "Cerca i codici a barre online", w_x_barcode_sub: "Su Open Food Facts, viene inviato solo il numero", w_x_share: "I proprietari possono condividere le liste tramite link", w_x_share_sub: "Per le persone senza account Home Assistant, per esempio vicini o ospiti", w_done_h: "Tutto pronto", w_done_lead: "Ecco cosa verrà configurato. Puoi cambiare tutto in qualsiasi momento nelle impostazioni.", w_sum_combined: "Lista combinata “{name}” da {lists}", w_sum_new: "Nuova lista “{name}”", w_sum_lists: "Liste: {lists}", w_sum_stores: "Negozi: {list}", w_sum_naming: "Notazione: {list}", w_sum_lang: "Categorie: {list}", w_sum_people: "Condivisione: {list}", w_sum_extras: "Attivo: {list}", w_off: "disattivato", w_tip: "Suggerimento: inizia semplicemente a scrivere nel campo di inserimento, per esempio “2 kg mele @REWE”.", w_back: "Indietro", w_next: "Avanti", w_skip: "Salta", w_finish: "Configura", w_start: "Iniziamo", w_later: "Modificabile in seguito nelle impostazioni", w_close: "Chiudi la configurazione", w_restart: "Esegui di nuovo la configurazione", w_restart_sub: "L’assistente del primo avvio, ad es. per combinare altre liste.",
     more: "Altro", ih_title: "Cronologia", ih_none: "Ancora nessuna voce.", ih_add: "aggiunto", ih_check: "spuntato", ih_uncheck: "riaperto", ih_rename: "rinominato", ih_remove: "eliminato", ih_link: "tramite link condiviso", ih_auto: "automazione", mp_title: "Piano settimanale", mp_add: "Piatto", mp_help: "I piatti sono modelli. «Ingredienti nella lista» mette in lista tutto quello di questa settimana; gli articoli uguali vengono sommati. Il piano compare anche come calendario in Home Assistant.", mp_no_tpl: "Crea prima un modello (⋯ → Modelli).", mp_prev: "Settimana precedente", mp_next: "Settimana successiva", mp_mealie: "Prendi da Mealie", mp_recipes: "ricette importate", mp_to_list: "Ingredienti nella lista", db_title: "Dashboard spesa", db_help: "Crea una vista nella barra laterale: tutte le liste, piano settimanale e statistiche. Poi si modifica come ogni dashboard.", db_create: "Crea dashboard", db_open: "Apri dashboard", db_lists: "Liste", db_plan: "Piano settimanale", db_stats: "Statistiche",
     rs_title: "Ricomincia da zero", rs_help: "Scegli cosa ripristinare. Poi parte l'assistente. Le liste di attività e i loro articoli non vengono mai eliminati; le impostazioni personali restano.", rs_settings: "Ripristina le impostazioni", rs_settings_sub: "Convenzione dei nomi, badge e colori, negozi e zone, ordine delle corsie, permessi, voce e automazioni, visualizzazione delle liste, pacchetti di parole chiave.", rs_data: "Elimina i dati appresi", rs_data_sub: "Categorie memorizzate, cronologia e statistiche, prezzi e spese, modelli e piano settimanale.", rs_links: "Revoca tutti i link di condivisione", rs_links_sub: "I link condivisi smettono di funzionare.", rs_combined: "Rimuovi le liste combinate", rs_combined_sub: "Solo la vista combinata – le liste di origine restano invariate.", rs_go: "Ripristina e avvia l'assistente",
+    mp_saved: "Piano salvato", mp_ask_add: "Mettere ora in lista gli ingredienti di questa settimana?", mp_not_now: "No, salva soltanto",
+    notify_own: "Anche per le mie modifiche", notify_own_sub: "ad es. quando aggiungi qualcosa dal PC e lo vuoi sul dispositivo – o per provare.", notify_test: "Invia messaggio di prova", notify_test_sent: "Messaggio di prova inviato – se non arriva, controlla l'app Companion e il permesso per le notifiche.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1363,7 +1373,7 @@ const TEXTS = {
     p_left: "W lewo", p_right: "W prawo",
     look: "Plakietki i kolory", look_help: "Wygląd plakietek dla wszystkich użytkowników. Kolory i nazwy sklepów obowiązują też w aplikacji. Puste lub ↺ = domyślne.",
     look_style: "Styl", look_filled: "wypełniony", look_soft: "delikatny", look_outline: "obramowanie", look_text: "tylko tekst",
-    look_color: "Kolor", look_icon: "Symbol z przodu", look_label: "Nazwa wyświetlana", look_kinds: "Wg rodzaju", look_values: "Pojedyncze plakietki",
+    look_color: "Kolor / tło", look_text: "Kolor tekstu", look_icon: "Symbol z przodu", look_label: "Nazwa wyświetlana", look_kinds: "Wg rodzaju", look_values: "Pojedyncze plakietki",
     look_search: "Szukaj plakietki … (np. biedronka)", look_more: "Pozostałe znajdziesz przez wyszukiwanie.", look_add: "Pokoloruj plakietkę",
     look_add_help: "Ze znakiem, np. @Kaufland, *Max lub #wege – nawet jeśli jeszcze nie była używana.",
     zone_count: "stref", zone_unlink: "Odłącz strefę", zone_add: "Strefa",
@@ -1400,7 +1410,7 @@ const TEXTS = {
     scan_find: "Szukaj",
     scan_no_camera: "Skanowanie aparatem nie jest tu obsługiwane (np. Safari na iPhonie, Firefox) – wpisz numer.",
     aisle_down: "W dół",
-    aisle_help: "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep.",
+    aisle_help: "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep. Przeciągnij uchwyt ⠿ lub użyj strzałek.",
     aisle_all_branches: "wszystkie oddziały",
     aisle_reset: "Domyślnie",
     notify_to: "Na moje urządzenie",
@@ -1413,7 +1423,7 @@ const TEXTS = {
     notify_quiet: "Godziny ciszy",
     notify_quiet_none: "brak",
     notify: "Powiadomienia",
-    notify_help: "Gdy ktoś inny coś zmieni – nigdy przy twoich własnych zmianach. Kilka zmian w ciągu minuty przychodzi jako jedna wiadomość.",
+    notify_help: "Gdy ktoś inny coś zmieni (własne zmiany tylko po włączeniu poniżej). Kilka zmian w ciągu minuty przychodzi jako jedna wiadomość.",
     stats_90: "90 dni",
     stats_year: "Rok",
     stats_all: "wszystko",
@@ -1475,6 +1485,8 @@ const TEXTS = {
     w_title: "Konfiguracja SmartLists", w_time: "Zajmie to około dwóch minut.", w_step: "Krok {n} z {m}", w_s_lists: "Listy", w_s_stores: "Sklepy", w_s_naming: "Zapis", w_s_lang: "Język", w_s_people: "Osoby i aplikacja", w_s_extras: "Dodatki", w_s_done: "Gotowe", w_lists_h: "Od czego chcesz zacząć?", w_lists_found: "SmartLists znalazł listy zadań w Home Assistant: {n}.", w_lists_none: "W Home Assistant nie ma jeszcze żadnej listy zadań.", w_use: "Użyj istniejących list", w_use_sub: "Pozostają bez zmian. SmartLists pokazuje je z kategoriami, ilościami i sklepami.", w_combine: "Połącz w jedną listę połączoną", w_combine_sub: "Każdy zachowuje swoją listę, a lista połączona pokazuje wszystkie.", w_combine_name: "Nazwa listy połączonej", w_combine_default: "Zakupy", w_new: "Utwórz nową listę", w_new_sub: "Tylko w SmartLists; jesteś jej właścicielem i możesz ją udostępnić.", w_new_name: "Nazwa listy", w_open: "otwarte", w_stores_h: "Gdzie robisz zakupy?", w_stores_lead: "Sklepy są podpowiadane podczas pisania, a tryb zakupów pokazuje tylko to, czego potrzebujesz w danym sklepie.", w_store_other: "Inny sklep", w_store_add: "Dodaj", w_chosen: "Wybrane: {list}", w_chosen_none: "Nie wybrano jeszcze żadnego sklepu", w_becomes: "zmienia się w", w_stores_later: "Lokalizacje sklepów możesz dodać później. Wtedy SmartLists sam wybierze sklep, gdy w nim będziesz.", w_naming_h: "Jak oznaczasz sklep, osobę i tag?", w_naming_lead: "Znak tuż przed słowem zamienia je w plakietkę. Zostaje w tekście produktu, więc Home Assistant i aplikacja też go widzą.", w_eg_store: "na przykład @REWE", w_eg_person: "na przykład *Anna", w_eg_tag: "na przykład #eko", w_naming_bad: "„{c}” jest niedozwolony.", w_naming_dup: "Użyj każdego znaku tylko raz.", w_naming_hint: "Dozwolone są {chars}. Zostaw puste, aby wyłączyć dany rodzaj. Aplikacja HA SmartLists przejmuje te znaki podczas parowania.", w_eg_item: "Mleko", w_eg_qty: "2 l", w_lang_h: "W jakim języku zapisujesz produkty?", w_lang_lead: "Dzięki temu SmartLists rozpoznaje kategorię, na przykład mleko w produktach chłodzonych. Można łączyć kilka języków.", w_words: "słów", w_people_h: "Kto dołącza?", w_people_lead: "Uprawnienia do nowej listy. Wszyscy widzą SmartLists na swoim pasku bocznym.", w_people_combined: "Listy połączone widzą wszystkie osoby, które widzą listy źródłowe. Uprawnienia dla poszczególnych osób dotyczą własnych list SmartLists.", w_you: "ty, admin", w_all: "może wszystko", w_app: "Aplikacja HA SmartLists na urządzeniu", w_app_sub: "W aplikacji stuknij „Paruj” w Ustawienia → Połączenie. Połączone urządzenia pojawią się potem w Globalne → Urządzenia i notatki.", w_extras_h: "Co jeszcze ma robić SmartLists?", w_extras_lead: "Wszystko można później włączyć i wyłączyć.", w_x_notify: "Powiadom mnie, gdy ktoś coś doda", w_x_notify_sub: "Na twoje urządzenie z aplikacją Home Assistant", w_x_notify_none: "Nie znaleziono urządzenia z aplikacją Home Assistant", w_x_voice: "Dodawaj produkty głosem", w_x_voice_sub: "„Dodaj mleko do listy zakupów” z Assist", w_x_prices: "Ceny i wydatki", w_x_prices_sub: "Suma listy i przegląd miesięczny", w_x_barcode: "Wyszukuj kody kreskowe online", w_x_barcode_sub: "W Open Food Facts, wysyłany jest tylko numer", w_x_share: "Właściciele mogą udostępniać listy przez link", w_x_share_sub: "Dla osób bez konta Home Assistant, na przykład sąsiadów lub gości", w_done_h: "Wszystko gotowe", w_done_lead: "To zostanie skonfigurowane. Wszystko możesz zmienić w dowolnej chwili w ustawieniach.", w_sum_combined: "Lista połączona „{name}” z {lists}", w_sum_new: "Nowa lista „{name}”", w_sum_lists: "Listy: {lists}", w_sum_stores: "Sklepy: {list}", w_sum_naming: "Zapis: {list}", w_sum_lang: "Kategorie: {list}", w_sum_people: "Udostępnianie: {list}", w_sum_extras: "Włączone: {list}", w_off: "wyłączone", w_tip: "Wskazówka: po prostu zacznij pisać w polu wprowadzania, na przykład „2 kg jabłek @REWE”.", w_back: "Wstecz", w_next: "Dalej", w_skip: "Pomiń", w_finish: "Skonfiguruj", w_start: "Zaczynamy", w_later: "Można zmienić później w ustawieniach", w_close: "Zamknij konfigurację", w_restart: "Uruchom konfigurację ponownie", w_restart_sub: "Asystent pierwszego uruchomienia, np. aby połączyć kolejne listy.",
     more: "Więcej", ih_title: "Historia", ih_none: "Brak wpisów.", ih_add: "dodano", ih_check: "odhaczono", ih_uncheck: "przywrócono", ih_rename: "zmieniono nazwę", ih_remove: "usunięto", ih_link: "przez udostępniony link", ih_auto: "automatyzacja", mp_title: "Plan tygodnia", mp_add: "Danie", mp_help: "Dania to szablony. „Składniki na listę” dodaje wszystko z tego tygodnia; takie same produkty są sumowane. Plan pojawia się też jako kalendarz w Home Assistant.", mp_no_tpl: "Najpierw utwórz szablon (⋯ → Szablony).", mp_prev: "Poprzedni tydzień", mp_next: "Następny tydzień", mp_mealie: "Pobierz z Mealie", mp_recipes: "przepisów zaimportowano", mp_to_list: "Składniki na listę", db_title: "Pulpit zakupów", db_help: "Tworzy własny widok na pasku bocznym: wszystkie listy, plan tygodnia i statystyki. Potem można go edytować jak każdy pulpit.", db_create: "Utwórz pulpit", db_open: "Otwórz pulpit", db_lists: "Listy", db_plan: "Plan tygodnia", db_stats: "Statystyki",
     rs_title: "Zacznij od nowa", rs_help: "Wybierz, co zresetować. Potem uruchomi się kreator. Listy zadań i ich produkty nigdy nie są usuwane; ustawienia osobiste użytkowników zostają.", rs_settings: "Zresetuj ustawienia", rs_settings_sub: "Konwencja nazw, plakietki i kolory, sklepy i strefy, kolejność alejek, uprawnienia, głos i automatyzacje, wygląd list, pakiety słów kluczowych.", rs_data: "Usuń wyuczone dane", rs_data_sub: "Zapamiętane kategorie, historia i statystyki, ceny i wydatki, szablony i plan tygodnia.", rs_links: "Cofnij wszystkie linki", rs_links_sub: "Udostępnione linki przestaną działać.", rs_combined: "Usuń listy połączone", rs_combined_sub: "Tylko widok połączony – listy źródłowe pozostają bez zmian.", rs_go: "Zresetuj i uruchom kreator",
+    mp_saved: "Plan zapisany", mp_ask_add: "Dodać teraz składniki z tego tygodnia do listy?", mp_not_now: "Nie, tylko zapisz",
+    notify_own: "Także przy moich zmianach", notify_own_sub: "np. gdy dodajesz coś na komputerze i chcesz to na urządzeniu – albo żeby wypróbować.", notify_test: "Wyślij wiadomość testową", notify_test_sent: "Wysłano wiadomość testową – jeśli nie dotrze, sprawdź aplikację Companion i uprawnienia do powiadomień.",
   },
 };
 
@@ -1599,7 +1611,7 @@ function slDialog(root, opts) {
     const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); close(null); } else if (e.key === "Enter") { e.preventDefault(); submit(); } };
     ok.addEventListener("click", submit);
     if (input) { const upd = () => { ok.disabled = !input.value.trim(); }; input.addEventListener("input", upd); upd(); }
-    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) close(null); } },
+    const back = h("div", { class: "dlg-back", onpointerdown: (ev) => { back._down = ev.target === back; if (!back._down && ev.target.closest && ev.target.closest("input, textarea, select, .emo, .swatch")) back._dirty = true; }, oninput: () => { back._dirty = true; }, onclick: (ev) => { if (backdropClose(back, ev)) close(null); } },
       h("style", {}, DIALOG_STYLE),
       h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": opts.title },
         h("h2", {}, opts.title), opts.text ? h("p", {}, opts.text) : null, input,
@@ -1679,7 +1691,7 @@ function slZoneDialog(root, hass, t, name) {
     });
     nameIn.addEventListener("input", update);
     coordIn.addEventListener("input", update);
-    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) close(null); } },
+    const back = h("div", { class: "dlg-back", onpointerdown: (ev) => { back._down = ev.target === back; if (!back._down && ev.target.closest && ev.target.closest("input, textarea, select, .emo, .swatch")) back._dirty = true; }, oninput: () => { back._dirty = true; }, onclick: (ev) => { if (backdropClose(back, ev)) close(null); } },
       h("style", {}, DIALOG_STYLE),
       h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": t.zone_new, style: "max-width:460px" },
         h("h2", {}, t.zone_new),
@@ -1896,9 +1908,10 @@ function slEmojiPicker(root, current, t) {
     const free = h("input", { value: current || "", placeholder: t.emoji_free, "aria-label": t.emoji_free, maxlength: "8", style: "width:90px;text-align:center;margin:0" });
     // Antippen wählt nur aus (Vorschau im Feld) – übernommen wird mit OK
     const btn = (e) => h("button", { type: "button", class: "emo", title: e, "aria-label": e, onclick: () => { free.value = e; free.focus(); } }, e);
-    const back = h("div", { class: "dlg-back", style: "z-index:1001", onclick: (ev) => { if (ev.target === back) close(null); } },
-      h("style", {}, DIALOG_STYLE + `.emo{width:40px;height:40px;border-radius:10px;border:none;background:none;font-size:22px;cursor:pointer;padding:0}
-        .emo:hover,.emo:focus-visible{background:var(--secondary-background-color,#eee)}.egrid{display:flex;flex-wrap:wrap;gap:2px;margin:0 0 10px}
+    const back = h("div", { class: "dlg-back", style: "z-index:1001", onpointerdown: (ev) => { back._down = ev.target === back; if (!back._down && ev.target.closest && ev.target.closest("input, textarea, select, .emo, .swatch")) back._dirty = true; }, oninput: () => { back._dirty = true; }, onclick: (ev) => { if (backdropClose(back, ev)) close(null); } },
+      h("style", {}, DIALOG_STYLE + `.dlg .emo{width:42px;height:42px;border-radius:10px;border:none;background:none;font-size:22px;line-height:1;cursor:pointer;padding:0;
+          display:inline-flex;align-items:center;justify-content:center;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+        .dlg .emo:hover,.dlg .emo:focus-visible{background:var(--secondary-background-color,#eee)}.egrid{display:flex;flex-wrap:wrap;gap:2px;margin:0 0 10px}
         .eh{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--secondary-text-color,#777);margin:6px 0 2px}`),
       h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": t.emoji_pick, style: "max-width:420px;max-height:85vh;overflow:auto" },
         h("h2", {}, t.emoji_pick),
@@ -1977,6 +1990,17 @@ function fill(el, ...children) {
   el.replaceChildren(...children.flat(Infinity).filter((c) => c != null && c !== false && c !== ""));
   return el;
 }
+// Klick neben ein Fenster schließt es nur, wenn der Klick dort auch begann (nicht beim Markieren von Text)
+// und noch nichts eingetippt/geändert wurde – sonst wackelt das Fenster kurz.
+function backdropClose(back, ev) {
+  if (ev.target !== back || !back._down) return false;
+  if (back._dirty) {
+    const d = back.querySelector(".dlg, .lsd-win, .wiz");
+    if (d && d.animate) d.animate([{ transform: "scale(1)" }, { transform: "scale(1.015)" }, { transform: "scale(1)" }], { duration: 180 });
+    return false;
+  }
+  return true;
+}
 const iconBtn = (path, title, onclick, cls = "") =>
   h("button", { class: `icon-btn ${cls}`, title, "aria-label": title, type: "button", onclick }, svg(path, 18));
 const emojiOf = (label) => (label || "").split(" ")[0];
@@ -1999,14 +2023,16 @@ function textOn(color) {
   return 0.299 * r + 0.587 * g + 0.114 * b > 170 ? "#1a1a1a" : "#fff";
 }
 function badge(tag, look = SL_LOOK) {
+  if (!look || typeof look !== "object") look = SL_LOOK; // auch bei tags.map(badge) (2. Argument = Index)
   const kind = tag.kind === "store" || tag.kind === "person" ? tag.kind : "tag";
   const k = { ...BADGE_DEFAULTS[kind], ...((look.kinds || {})[kind] || {}) };
   const v = (look.values || {})[`${kind}:${String(tag.value).toLowerCase()}`] || {};
   const label = (kind === "store" && v.label) || tag.label || tag.value;
   const color = v.color || (kind === "store" ? tag.color || k.color || hashColor(String(tag.value)) : k.color);
-  const css = !color ? "" : k.style === "filled" ? `background:${color};color:${textOn(color)}`
-    : k.style === "soft" ? `background:color-mix(in srgb, ${color} 18%, transparent);color:${color}`
-    : `color:${color}`;
+  const text = v.text || k.text; // eigene Schriftfarbe (optional)
+  const css = !color ? (text ? `color:${text}` : "") : k.style === "filled" ? `background:${color};color:${text || textOn(color)}`
+    : k.style === "soft" ? `background:color-mix(in srgb, ${color} 18%, transparent);color:${text || color}`
+    : `color:${text || color}`;
   const cls = { store: "store", person: "person", tag: "hash" }[kind];
   const icon = k.icon ? (kind === "person" ? `${k.icon} ` : k.icon) : "";
   return h("span", { class: `tag ${cls} s-${k.style}`, style: css, title: label }, icon, label);
@@ -2057,7 +2083,8 @@ const STYLE = `
   .sugg { position:absolute; z-index:5; left:16px; right:16px; top:52px; background:var(--card-background-color,#fff);
     border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,.2); padding:4px 0; margin:0; list-style:none; max-height:320px; overflow:auto; }
   .sugg li { display:flex; align-items:center; gap:10px; padding:8px 12px; cursor:pointer; }
-  .sugg li.active, .sugg li:hover { background:var(--secondary-background-color,#eee); }
+  .sugg li:hover { background:var(--secondary-background-color,#eee); }
+  .sugg li.active { background:color-mix(in srgb, var(--sl-accent) 22%, transparent); box-shadow:inset 3px 0 0 var(--sl-accent); }
   .sugg .e { width:22px; text-align:center; }
   .sugg .n { flex:1; min-width:0; }
   .sugg .n b { font-weight:600; }
@@ -2208,10 +2235,11 @@ const STYLE = `
   .compact .head { padding-top:10px; }
   .row.press { cursor:default; -webkit-touch-callout:none; user-select:none; }
   .row.pressing { background:var(--secondary-background-color,#eee); transition:background .4s; }
-  .morewrap { position:relative; }
+  .morewrap { position:static; }
   .moreback { position:fixed; inset:0; z-index:7; }
   .menu.morepop { top:52px; right:10px; left:auto; width:260px; position:absolute; }
-  .morepop .sortrow { cursor:default; } .morepop .sortrow .sort { flex:1; } .morepop .sortrow select { width:100%; max-width:none; }
+  .morepop .sortrow { cursor:default; padding:6px 10px; } .morepop .sortrow:hover { background:none; }
+  .morepop .sortrow select { flex:1; min-width:0; width:auto; max-width:100%; box-sizing:border-box; margin:0; }
   ha-card { position:relative; }
   .menu { position:absolute; z-index:8; left:16px; right:16px; max-width:340px; margin:0 auto; background:var(--card-background-color,#fff);
     border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,.25); padding:6px; }
@@ -2370,7 +2398,7 @@ const STYLE = `
   .ok2 { margin-right:auto; color:var(--success-color,#43a047); font-size:.8rem; }
   .btn2 { height:36px; padding:0 14px; border-radius:18px; font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--divider-color,#ddd); background:none; color:var(--sl-accent); }
   .btn2.primary { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
-  .srow2 .icon-btn.up svg { transform:rotate(180deg); }
+  .srow2 .icon-btn.up svg, .aisle .icon-btn.up svg, .icon-btn.up svg { transform:rotate(180deg); }
   .btn2.danger { color:var(--error-color,#db4437); }
   .search2 { width:100%; height:40px; box-sizing:border-box; }
   .packadd { display:flex; flex-direction:column; gap:8px; margin:4px 0 10px; }
@@ -2566,8 +2594,14 @@ class SmartListsCard extends HTMLElement {
       this._cfgSig = sig;
       this._cfg = cfg;
       // Erster Start: Einrichtungs-Assistent einmal zeigen (nur Admins, nur eine Karte gleichzeitig)
-      if (cfg && cfg.setup_needed && this._isAdmin && !window.__smartlistsSetupOpen && !this._config.settings_only) {
+      // …oder auf Wunsch über den Link der Integration (/smartlists?setup=1)
+      let wanted = false;
+      try { wanted = new URLSearchParams(window.location.search).get("setup") === "1"; } catch (e) { /* */ }
+      if (cfg && (cfg.setup_needed || wanted) && this._isAdmin && !window.__smartlistsSetupOpen && !this._config.settings_only) {
         window.__smartlistsSetupOpen = true;
+        if (wanted) {
+          try { const u = new URL(window.location.href); u.searchParams.delete("setup"); window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash); } catch (e) { /* */ }
+        }
         setTimeout(() => this._setupWizard(), 300);
       }
       if (this._cfg && this._cfg.appearance) SL_LOOK = this._cfg.appearance;
@@ -3526,6 +3560,8 @@ class SmartListsCard extends HTMLElement {
         h("span", { class: "s" }, s.source === "history" ? svg(ICON.history, 15) : s.source === "list" ? svg(ICON.list, 15) : ""));
     }));
     el.hidden = false;
+    const act = el.querySelector("li.active");
+    if (act && act.scrollIntoView) act.scrollIntoView({ block: "nearest" });
   }
   _closeSugg() {
     if (this._suggEl) this._suggEl.hidden = true;
@@ -3551,6 +3587,9 @@ class SmartListsCard extends HTMLElement {
 
   _onKey(e) {
     const open = this._suggEl && !this._suggEl.hidden && this._draft.sugg.length;
+    if (e.isComposing) return;
+    // Pfeil runter bei geschlossener Liste: Vorschläge wieder öffnen
+    if (e.key === "ArrowDown" && !open && this._draft.sugg && this._draft.sugg.length && this._draft.text.trim()) { e.preventDefault(); this._draft.active = 0; this._renderSugg(); return; }
     if (e.key === "ArrowDown" && open) { e.preventDefault(); this._draft.active = (this._draft.active + 1) % this._draft.sugg.length; this._renderSugg(); }
     else if (e.key === "ArrowUp" && open) { e.preventDefault(); this._draft.active = (this._draft.active - 1 + this._draft.sugg.length) % this._draft.sugg.length; this._renderSugg(); }
     else if (e.key === "Tab" && open && !e.shiftKey) { e.preventDefault(); this._applySugg(Math.max(0, this._draft.active)); }
@@ -3648,7 +3687,7 @@ class SmartListsCard extends HTMLElement {
         await this._load();
       } catch (err) { this._error = (err && err.message) || t.error; this._render(); }
     };
-    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) close(); } },
+    const back = h("div", { class: "dlg-back", onpointerdown: (ev) => { back._down = ev.target === back; if (!back._down && ev.target.closest && ev.target.closest("input, textarea, select, .emo, .swatch")) back._dirty = true; }, oninput: () => { back._dirty = true; }, onclick: (ev) => { if (backdropClose(back, ev)) close(); } },
       h("style", {}, DIALOG_STYLE),
       h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": n ? t.note_edit : t.note_new, style: "max-width:560px" },
         h("h2", {}, n ? t.note_edit : t.note_new), title, body,
@@ -4258,7 +4297,7 @@ class SmartListsCard extends HTMLElement {
     const close = () => back.remove();
     const meta = [d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : d.type === "notes" ? t.p_group_notes : t.type_list,
       d.own && d.own.owner ? `${t.owner}: ${d.own.owner}` : null].filter(Boolean).join(", ");
-    const back = h("div", { class: "dlg-back lsd", onclick: (e) => { if (e.target === back) close(); } },
+    const back = h("div", { class: "dlg-back lsd", onpointerdown: (ev) => { back._down = ev.target === back; if (!back._down && ev.target.closest && ev.target.closest("input, textarea, select, .emo, .swatch")) back._dirty = true; }, oninput: () => { back._dirty = true; }, onclick: (ev) => { if (backdropClose(back, ev)) close(); } },
       h("style", {}, DIALOG_STYLE + STYLE + LIST_DIALOG_STYLE),
       h("div", { class: "dlg lsheet", role: "dialog", "aria-modal": "true", "aria-label": t.settings_list },
         h("div", { class: "ltop" }, h("div", { class: "lwho" }, h("h2", {}, d.name), h("small", {}, meta)),
@@ -4484,6 +4523,9 @@ class SmartListsCard extends HTMLElement {
           kind === "store" ? null : colorInput(k.color,
             (c) => fill(prevK.lastChild, badge(sample[kind], { ...look, kinds: { ...look.kinds, [kind]: { ...k, color: c } } })),
             (c) => setK({ color: c }), `${t["kind_" + kind]}: ${t.look_color}`),
+          colorInput(k.text || (k.color ? textOn(k.color) : "#ffffff"),
+            (c) => fill(prevK.lastChild, badge(sample[kind], { ...look, kinds: { ...look.kinds, [kind]: { ...k, text: c } } })),
+            (c) => setK({ text: c }), `${t["kind_" + kind]}: ${t.look_text}`),
           kind === "store" ? null : emojiField(this.shadowRoot, h("input", { class: "icon", value: k.icon != null ? k.icon : BADGE_DEFAULTS[kind].icon, maxlength: "8", "aria-label": t.look_icon, title: t.emoji_pick,
             onchange: (e) => setK({ icon: e.target.value === BADGE_DEFAULTS[kind].icon ? null : e.target.value }) }), t),
           reset(() => { const n = { ...look.kinds }; delete n[kind]; look = { ...look, kinds: n }; draw(); save(); }, t.reset_default)));
@@ -4513,7 +4555,11 @@ class SmartListsCard extends HTMLElement {
               (c) => fill(prevV, badge({ ...preview, color: x.kind === "store" ? c : preview.color }, { ...look, values: { ...look.values, [x.key]: { ...cur, color: c } } }),
                 x.count ? h("small", {}, `${x.count}×`) : null),
               (c) => setV({ color: c }), `${x.label}: ${t.look_color}`),
-            Object.keys(cur).length ? reset(() => setV({ color: null, label: null }), t.reset_default) : null));
+            colorInput(cur.text || textOn(cur.color || (x.kind === "store" ? x.color : null) || "#888888"),
+              (c) => fill(prevV, badge(preview, { ...look, values: { ...look.values, [x.key]: { ...cur, text: c } } }),
+                x.count ? h("small", {}, `${x.count}×`) : null),
+              (c) => setV({ text: c }), `${x.label}: ${t.look_text}`),
+            Object.keys(cur).length ? reset(() => setV({ color: null, text: null, label: null }), t.reset_default) : null));
       }), tags.length > 60 && !query ? h("div", { class: "shelp" }, t.look_more) : null);
     };
     const draw = () => {
@@ -4703,7 +4749,7 @@ class SmartListsCard extends HTMLElement {
           name: "", emoji: "", servings: null, items: this._data.items.filter((i) => !i.checked).map((i) => i.text) }, true) }, "📥 " + t.tpl_from_list) : null));
   }
   _dialog(title, body, actions, width = 460) {
-    const back = h("div", { class: "dlg-back", onclick: (e) => { if (e.target === back) back.remove(); } },
+    const back = h("div", { class: "dlg-back", onpointerdown: (ev) => { back._down = ev.target === back; if (!back._down && ev.target.closest && ev.target.closest("input, textarea, select, .emo, .swatch")) back._dirty = true; }, oninput: () => { back._dirty = true; }, onclick: (ev) => { if (backdropClose(back, ev)) back.remove(); } },
       h("style", {}, DIALOG_STYLE),
       h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": title, style: `max-width:${width}px;max-height:90vh;overflow:auto` },
         h("h2", {}, title), body, h("div", { class: "row", style: "margin-top:12px" }, actions)));
@@ -4792,17 +4838,25 @@ class SmartListsCard extends HTMLElement {
       try { days = (await this._call("mealplan", { start: iso(s0), days: 7 }, false)).days; } catch (e) { days = []; }
       draw();
     };
+    // Änderungen erst sammeln (auch über mehrere Wochen), gespeichert wird mit „Speichern“ bzw. „Zutaten auf die Liste“
+    const pending = {};
+    const change = (date, ids) => { pending[date] = ids; dlg._dirty = true; draw(); };
+    const saveAll = async () => {
+      for (const [date, ids] of Object.entries(pending)) { await this._call("set_meals", { date, template_ids: ids }, false); delete pending[date]; }
+      dlg._dirty = false;
+    };
+    const tplById = (id) => tpls.find((x) => x.id === id) || { id, name: id };
     const draw = () => fill(grid, days.map((day) => {
-      const ids = day.templates.map((x) => x.id);
-      const sel = h("select", { "aria-label": day.date, onchange: async (e) => {
+      const ids = pending[day.date] || day.templates.map((x) => x.id);
+      const shown = pending[day.date] ? ids.map(tplById) : day.templates;
+      const sel = h("select", { "aria-label": day.date, onchange: (e) => {
         if (!e.target.value) return;
-        await this._call("set_meals", { date: day.date, template_ids: [...ids, e.target.value] }, false); load();
+        change(day.date, [...ids, e.target.value]);
       } }, h("option", { value: "" }, "＋ " + t.mp_add), tpls.filter((x) => !ids.includes(x.id)).map((x) => h("option", { value: x.id }, `${x.emoji || ""} ${x.name}`.trim())));
       return h("div", { class: "mpday" },
         h("div", { class: "mpd" }, new Date(day.date + "T12:00").toLocaleDateString(lang, { weekday: "short", day: "numeric", month: "numeric" })),
-        h("div", { class: "mpm" }, day.templates.map((x) => h("span", { class: "chip2 on" }, `${x.emoji || ""} ${x.name}`.trim(),
-          h("button", { type: "button", class: "xdel", "aria-label": t.delete, onclick: async () => {
-            await this._call("set_meals", { date: day.date, template_ids: ids.filter((y) => y !== x.id) }, false); load(); } }, "×"))),
+        h("div", { class: "mpm" }, shown.map((x) => h("span", { class: "chip2 on" }, `${x.emoji || ""} ${x.name}`.trim(),
+          h("button", { type: "button", class: "xdel", "aria-label": t.delete, onclick: () => change(day.date, ids.filter((y) => y !== x.id)) }, "×"))),
           tpls.length ? sel : h("span", { class: "shelp" }, t.mp_no_tpl)));
     }));
     const dlg = this._dialog(t.mp_title, h("div", {},
@@ -4815,13 +4869,22 @@ class SmartListsCard extends HTMLElement {
         catch (err) { status.textContent = (err && err.message) || t.error; }
       } }, "🍽️ " + t.mp_mealie)) : null, h("div", {}, status)), [
       h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel),
+      h("button", { type: "button", onclick: async () => {
+        try {
+          await saveAll();
+          const yes = await slDialog(this.shadowRoot, { title: t.mp_saved, text: t.mp_ask_add, ok: t.mp_to_list, cancel: t.mp_not_now });
+          if (!yes) { dlg.remove(); this._toast("✓ " + t.mp_saved); return; }
+          const r = await this._call("add_meals", { start: iso(startOf(week)), days: 7 });
+          dlg.remove(); this._toast(`✓ ${r.added} ${t.added}${r.increased ? `, ${r.increased} ${t.tpl_increased}` : ""}`); this._load();
+        } catch (err) { status.textContent = (err && err.message) || t.error; }
+      } }, t.save),
       h("button", { type: "button", class: "ok", onclick: async () => {
-        try { const r = await this._call("add_meals", { start: iso(startOf(week)), days: 7 });
+        try { await saveAll(); const r = await this._call("add_meals", { start: iso(startOf(week)), days: 7 });
           dlg.remove(); this._toast(`✓ ${r.added} ${t.added}${r.increased ? `, ${r.increased} ${t.tpl_increased}` : ""}`); this._load(); }
         catch (err) { status.textContent = (err && err.message) || t.error; }
       } }, t.mp_to_list)], 640);
     const styleEl = h("style", {}, `.mpgrid{display:grid;gap:0}.mpday{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--divider-color,#e0e0e0)}
-      .mpd{font-weight:600}.mpm{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mpm select{width:auto;height:32px;margin:0}
+      .mpd{font-weight:600}.mpm{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mpm select{width:auto;height:auto;min-height:34px;line-height:1.4;padding:5px 30px 5px 10px;margin:0;box-sizing:border-box}
       .chip2{border:1px solid var(--divider-color,#ddd);border-radius:16px;padding:3px 4px 3px 10px;font-size:.85rem;display:inline-flex;align-items:center;gap:2px}
       .chip2.on{border-color:var(--primary-color);color:var(--primary-color)}.xdel{background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;padding:0 4px;height:auto}
       .mpnav{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:6px}.mpnav .icon-btn{background:none;border:none;color:inherit;cursor:pointer;height:32px;width:32px;padding:0}
@@ -4877,6 +4940,7 @@ class SmartListsCard extends HTMLElement {
           await this._call("reset", opts, false);
           dlg.remove();
           this._showSettings = false; this._render();
+          window.__smartlistsSetupOpen = true; // nicht zusätzlich automatisch öffnen
           await this._loadConfig();
           window.dispatchEvent(new CustomEvent("smartlists-lists-changed"));
           this._setupWizard();
@@ -5001,9 +5065,8 @@ class SmartListsCard extends HTMLElement {
     const listEl = h("div");
     const label = (id) => (cats.find(([c]) => c === id) || [id, id])[1];
     const move = (i, d) => { const j = i + d; if (j < 0 || j >= order.length) return; [order[i], order[j]] = [order[j], order[i]]; draw(); };
-    // Sortiermodus (Knopf): Zeilen am Griff ⠿ ziehen – mit Maus, Finger oder Stift; sonst ▲▼
-    let sorting = false;
-    const sortBtn = h("button", { class: "btn2", type: "button", "aria-pressed": "false", onclick: () => { sorting = !sorting; sortBtn.classList.toggle("primary", sorting); sortBtn.setAttribute("aria-pressed", String(sorting)); draw(); } }, "⠿ " + t.aisle_sort);
+    // Zeilen am Griff ⠿ ziehen (Maus, Finger, Stift) oder mit ▲▼ verschieben
+    const sorting = true;
     const startDrag = (e, from) => {
       e.preventDefault();
       const handle = e.currentTarget;
@@ -5027,7 +5090,7 @@ class SmartListsCard extends HTMLElement {
     const draw = () => fill(listEl, order.map((id, i) => h("div", { class: `aisle ${sorting ? "sorting" : ""}` },
       sorting ? h("span", { class: "handle", title: t.aisle_drag, "aria-label": t.aisle_drag, onpointerdown: (e) => startDrag(e, i) }, "⠿") : null,
       h("span", { class: "n" }, String(i + 1)), h("span", { class: "grow" }, label(id)),
-      sorting ? null : iconBtn(ICON.chevron, t.pack_up, () => move(i, -1), "up"), sorting ? null : iconBtn(ICON.chevron, t.aisle_down, () => move(i, 1)))));
+      iconBtn(ICON.chevron, t.pack_up, () => move(i, -1), "up"), iconBtn(ICON.chevron, t.aisle_down, () => move(i, 1)))));
     const save = async (o) => {
       try {
         const r = await this._call("store_order", { store: st.key, zone: zone || null, order: o }, false);
@@ -5042,7 +5105,7 @@ class SmartListsCard extends HTMLElement {
           h("option", { value: "" }, t.aisle_all_branches),
           zones.map((z) => h("option", { value: z }, (this._hass.states[z] && this._hass.states[z].attributes.friendly_name) || z))) : null),
       listEl,
-      h("div", { class: "acts" }, status, sortBtn,
+      h("div", { class: "acts" }, status,
         h("button", { class: "btn2", type: "button", onclick: () => { save(null); order = cats.map(([id]) => id); draw(); } }, t.aisle_reset),
         h("button", { class: "btn2 primary", type: "button", onclick: () => save(order) }, t.save)));
     draw();
@@ -5071,6 +5134,7 @@ class SmartListsCard extends HTMLElement {
           services.length ? null : t.notify_no_phone),
         this._setRow(t.notify_added, this._switch(cur.added, (v) => save({ added: v }), t.notify_added)),
         this._setRow(t.notify_checked, this._switch(cur.checked, (v) => save({ checked: v }), t.notify_checked)),
+        this._setRow(t.notify_own, this._switch(!!cur.own, (v) => save({ own: v }), t.notify_own), t.notify_own_sub),
         h("div", { class: "grp" }, t.notify_lists),
         h("div", { class: "chips" }, chipOf(!cur.lists.length, t.notify_all_lists, () => save({ lists: [] })),
           lists().map(([e, n]) => chipOf(cur.lists.includes(e), n, () => save({ lists: cur.lists.includes(e) ? cur.lists.filter((x) => x !== e) : [...cur.lists, e] })))),
@@ -5080,7 +5144,11 @@ class SmartListsCard extends HTMLElement {
         this._setRow(t.notify_quiet, h("select", { "aria-label": t.notify_quiet, onchange: (e) => save({ quiet: e.target.value ? e.target.value.split("-").map(Number) : null }) },
           [["", t.notify_quiet_none], ["22-7", "22–7"], ["21-7", "21–7"], ["23-8", "23–8"]].map(([v, l]) =>
             h("option", { value: v, selected: (q ? q.join("-") : "") === v }, l)))),
-        h("div", { class: "acts" }, status));
+        h("div", { class: "acts" }, status, cur.service ? h("button", { class: "btn2", type: "button", onclick: async () => {
+          status.textContent = t.loading;
+          try { await this._call("notify_test", {}, false); status.textContent = "✓ " + t.notify_test_sent; }
+          catch (err) { status.textContent = `${t.error}: ${(err && err.message) || ""}`; }
+        } }, "🔔 " + t.notify_test) : null));
     };
     Promise.all([this._call("notify", {}, false), this._call("users", {}, false).catch(() => ({ users: [] }))])
       .then(([r, u]) => { cur = r.settings; services = r.services; users = u.users || []; draw(); }).catch(() => fill(body, t.error));
@@ -5423,9 +5491,17 @@ class SmartListsCard extends HTMLElement {
     if (!this._moreOpen || !d) return fill(this._moreEl);
     const t = this._t;
     const items = this._moreItems(d);
-    const sortRow = this._config.show_sort && d.type !== "notes" ? h("div", { class: "mi sortrow" }, svg(ICON.sort, 20), this._sortSelect(d)) : null;
+    // Sortierung: nur das Auswahlfeld (ohne zweites Symbol), das Menü direkt unter dem ⋯-Knopf
+    const sortRow = this._config.show_sort && d.type !== "notes" ? h("div", { class: "mi sortrow" }, svg(ICON.sort, 20), this._sortSelect(d).querySelector("select")) : null;
+    const btn = this.shadowRoot && this.shadowRoot.querySelector(".morebtn");
+    const card = this.shadowRoot && this.shadowRoot.querySelector("ha-card");
+    let top = 52;
+    if (btn && card && btn.getBoundingClientRect) {
+      const b = btn.getBoundingClientRect(), c = card.getBoundingClientRect();
+      if (b.height) top = Math.round(b.bottom - c.top + 4);
+    }
     fill(this._moreEl, h("div", { class: "moreback", onclick: () => { this._moreOpen = false; this._renderMore(); } }),
-      h("div", { class: "menu morepop", role: "menu", "aria-label": t.more },
+      h("div", { class: "menu morepop", role: "menu", "aria-label": t.more, style: `top:${top}px` },
         sortRow,
         items.map(([icon, label, fn]) => h("button", { class: "mi", type: "button", role: "menuitem", onclick: fn }, svg(icon, 20), label))));
   }

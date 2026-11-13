@@ -65,10 +65,11 @@ def test_appearance_and_store_overrides():
 
     look = validate_appearance({
         "kinds": {"person": {"style": "outline", "color": "#AA00FF", "icon": "🙂"}, "bogus": {"style": "x"}, "tag": {"style": "nope"}},
-        "values": {"store:REWE": {"color": "#112233", "label": "Rewe City"}, "tag:bio": {"color": "red"}, "x:y": {"color": "#000000"}},
+        "values": {"store:REWE": {"color": "#112233", "label": "Rewe City"}, "tag:bio": {"color": "red"}, "tag:vegan": {"text": "#FFFFFF", "color": "#2E7D32"}, "x:y": {"color": "#000000"}},
     })
     assert look == {"kinds": {"person": {"style": "outline", "color": "#aa00ff", "icon": "🙂"}},
-                    "values": {"store:rewe": {"color": "#112233", "label": "Rewe City"}}}
+                    "values": {"store:rewe": {"color": "#112233", "label": "Rewe City"},
+                               "tag:vegan": {"color": "#2e7d32", "text": "#ffffff"}}}
     learning = _learning()
     learning.set_appearance(look)
     assert itemtext.store_display("rewe") == ("Rewe City", "#112233")
@@ -100,7 +101,8 @@ def test_reset_settings_and_data():
     learning.automation["voice"] = True
     learning.reset(settings=True, data=False)
     assert learning.resolve("Hafermilch")[1] == "manual" and "milch" in learning.history
-    assert not learning.automation and not learning.config()["setup_needed"]  # Daten noch da
+    assert learning.config()["setup_needed"]  # nach dem Zurücksetzen erscheint der Assistent wieder
+    assert set(learning.automation) == {"setup_pending"}
     learning.reset(settings=False, data=True)
     assert learning.resolve("Hafermilch")[1] != "manual" and not learning.history
     assert learning.config()["setup_needed"]  # alles leer → Assistent erscheint wieder von selbst

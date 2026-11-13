@@ -83,8 +83,8 @@ layout: columns
 - **Shopping mode** (cart icon): screen stays on, checked items are hidden, large rows, tap the whole
   row; ↶ in the header undoes the last change. A bar shows **All | REWE · 4 | Lidl · 2 …** – tap a store
   to see only its items. If stores are linked to zones (*General settings → Global → Stores & zones*), the store
-  whose zone you are in is selected automatically. *For me* → "Also show items without a store" adds
-  items without `@store`.
+  whose zone you are in is selected automatically. Items without `@store` are shown as well (on by
+  default; switch off under *For me* → "Also show items without a store").
 - **Header**: search, undo (when possible), shopping mode and **⋯**. The ⋯ menu holds sort order, import,
   templates, meal plan, the **general settings** and the settings window of **this list**. On the sidebar
   page the general settings are the ⚙ at the top right. See [[Settings]].

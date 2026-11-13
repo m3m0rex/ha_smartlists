@@ -403,6 +403,7 @@ class Learning:
             self.history.clear()
             self.tag_history.clear()
         self.automation.pop("setup_done", None)
+        self.automation["setup_pending"] = True  # Assistent beim nächsten Öffnen zeigen, auch wenn Daten bleiben
         self._resort()
         self._changed(categories=True)
 
@@ -550,7 +551,8 @@ class Learning:
             "favorite_stores": list(self.automation.get("favorite_stores") or []),
             # Einrichtungs-Assistent: nur, wenn er noch nie lief und noch nichts benutzt wurde (bestehende
             # Installationen sehen ihn nach dem Update nicht ungefragt)
-            "setup_needed": not self.automation.get("setup_done") and not self.history and not self.manual,
+            "setup_needed": not self.automation.get("setup_done")
+            and (bool(self.automation.get("setup_pending")) or (not self.history and not self.manual)),
         }
 
     # ------------------------------------------------------------------
@@ -600,8 +602,9 @@ BADGE_STYLES = ("filled", "soft", "outline", "text")
 def validate_appearance(raw: Any) -> dict[str, Any]:
     """Badges & Farben prüfen. Unbekanntes wird verworfen (statt Fehler), damit ältere/neuere Dateien
     weiter funktionieren:
-        {"kinds": {"store"|"person"|"tag": {"style", "color", "icon"}},
-         "values": {"store:rewe": {"color", "label"}, "person:anna": {"color"}, "tag:bio": {"color"}}}"""
+        {"kinds": {"store"|"person"|"tag": {"style", "color", "text", "icon"}},
+         "values": {"store:rewe": {"color", "text", "label"}, "person:anna": {"color", "text"}, "tag:bio": {"color", "text"}}}
+    color = Hintergrund bzw. Hauptfarbe, text = Schriftfarbe (optional)."""
     out: dict[str, Any] = {"kinds": {}, "values": {}}
     if not isinstance(raw, dict):
         return out
@@ -613,6 +616,8 @@ def validate_appearance(raw: Any) -> dict[str, Any]:
             clean["style"] = v["style"]
         if isinstance(v.get("color"), str) and _COLOR.match(v["color"]):
             clean["color"] = v["color"].lower()
+        if isinstance(v.get("text"), str) and _COLOR.match(v["text"]):
+            clean["text"] = v["text"].lower()
         if isinstance(v.get("icon"), str) and len(v["icon"]) <= 4:
             clean["icon"] = v["icon"]
         if clean:
@@ -624,6 +629,8 @@ def validate_appearance(raw: Any) -> dict[str, Any]:
         clean = {}
         if isinstance(v.get("color"), str) and _COLOR.match(v["color"]):
             clean["color"] = v["color"].lower()
+        if isinstance(v.get("text"), str) and _COLOR.match(v["text"]):
+            clean["text"] = v["text"].lower()
         if kind == "store" and isinstance(v.get("label"), str) and v["label"].strip():
             clean["label"] = v["label"].strip()[:30]
         if clean:

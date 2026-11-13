@@ -19,6 +19,9 @@
     },
     "error": {
       "combine_two": "Bitte mindestens zwei Listen wählen – oder keine."
+    },
+    "create_entry": {
+      "setup": "SmartLists ist bereit. [Einrichtungs-Assistent öffnen]({url}) – er führt durch Listen, Märkte, Schreibweise, Sprache und Extras. Du kannst ihn auch später unter Konfigurieren starten."
     }
   },
   "config_subentries": {
@@ -121,6 +124,7 @@
         "title": "SmartLists – Einstellungen für alle",
         "description": "Persönliche Abweichungen stellt jeder Benutzer im Zahnrad der Karte ein.",
         "menu_options": {
+          "assistant": "Einrichtungs-Assistent",
           "naming": "Namenskonvention (@Markt, *Person, #Schlagwort)",
           "controls": "Bedienung (Standard für alle)",
           "learned": "Gemerkte Kategorien & Verlauf",
@@ -237,7 +241,7 @@
       },
       "restart": {
         "title": "Einrichtung erneut starten",
-        "description": "Der Einrichtungs-Assistent erscheint, wenn ein Admin das nächste Mal die SmartLists-Seite oder -Karte öffnet. Wahlweise von vorn anfangen – To-do-Listen und ihre Artikel werden nie gelöscht.",
+        "description": "Wähle, was vorher zurückgesetzt wird – To-do-Listen und ihre Artikel werden nie gelöscht. Danach öffnest du den Assistenten über einen Link (er erscheint auch beim nächsten Öffnen von SmartLists durch einen Admin).",
         "data": {
           "settings": "Einstellungen zurücksetzen",
           "data": "Gelernte Daten löschen",
@@ -249,6 +253,14 @@
           "data": "Gemerkte Kategorien, Verlauf und Statistik, Preise und Ausgaben, Vorlagen und Wochenplan.",
           "combined": "Nur die zusammengefasste Ansicht – die Quell-Listen bleiben unverändert."
         }
+      },
+      "assistant": {
+        "title": "Einrichtungs-Assistent",
+        "description": "[➜ Einrichtungs-Assistent öffnen]({url})\n\nEr öffnet sich auf der SmartLists-Seite und führt durch Listen, Märkte, Schreibweise, Sprache, Personen und Extras. Es wird nichts zurückgesetzt. Um vorher Teile zurückzusetzen: „Einrichtung erneut starten / von vorn anfangen“."
+      },
+      "restart_done": {
+        "title": "Zurückgesetzt",
+        "description": "Fertig. [➜ Einrichtungs-Assistent jetzt öffnen]({url}) – er erscheint auch, wenn ein Admin SmartLists das nächste Mal öffnet."
       }
     },
     "error": {

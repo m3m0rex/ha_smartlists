@@ -19,6 +19,9 @@
     },
     "error": {
       "combine_two": "Please choose at least two lists – or none."
+    },
+    "create_entry": {
+      "setup": "SmartLists is ready. [Open the setup assistant]({url}) – it guides you through lists, stores, notation, language and extras. You can also start it later under Configure."
     }
   },
   "config_subentries": {
@@ -121,6 +124,7 @@
         "title": "SmartLists – settings for everyone",
         "description": "Each user can set personal differences via the gear icon in the card.",
         "menu_options": {
+          "assistant": "Setup assistant",
           "naming": "Naming convention (@store, *person, #tag)",
           "controls": "Controls (default for everyone)",
           "learned": "Remembered categories & history",
@@ -237,7 +241,7 @@
       },
       "restart": {
         "title": "Run setup again",
-        "description": "The setup assistant appears the next time an admin opens the SmartLists page or card. Optionally start from scratch – to-do lists and their items are never deleted.",
+        "description": "Choose what to reset first – to-do lists and their items are never deleted. Afterwards the setup assistant opens via a link (and the next time an admin opens SmartLists).",
         "data": {
           "settings": "Reset settings",
           "data": "Delete learned data",
@@ -249,6 +253,14 @@
           "data": "Remembered categories, history and statistics, prices and expenses, templates and meal plan.",
           "combined": "Only the combined view – the source lists stay unchanged."
         }
+      },
+      "assistant": {
+        "title": "Setup assistant",
+        "description": "[➜ Open the setup assistant]({url})\n\nIt opens on the SmartLists page and guides you through lists, stores, notation, language, people and extras. Nothing is reset. To reset parts first, use “Run setup again / start from scratch”."
+      },
+      "restart_done": {
+        "title": "Reset done",
+        "description": "Done. [➜ Open the setup assistant now]({url}) – it also appears the next time an admin opens the SmartLists page or card."
       }
     },
     "error": {

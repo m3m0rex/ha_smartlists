@@ -10,6 +10,9 @@ away, or leave it empty.
 ## Setup assistant
 
 When an admin opens SmartLists for the first time (sidebar page or card), a short assistant appears.
+Right after adding the integration, the success message also has a link **Open the setup assistant**, and
+*Settings → Devices & services → SmartLists → Configure → Setup assistant* links to it any time
+(`/smartlists?setup=1`).
 Every step can be skipped and everything can be changed later in the settings. It is not shown to
 installations that were already in use before 3.0.0; start it any time under *General settings →
 Global → Voice, backup, defaults → Run setup again*.

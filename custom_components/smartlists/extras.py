@@ -56,6 +56,8 @@ class Extras:
         # Einkauf: wann wurde ein Artikel abgehakt, wann wurde der letzte Einkauf beendet (je Liste)
         # Darstellung je Liste (für alle Geräte): {"sort": "category"|…, "show_prices": bool}
         self.list_settings: dict[str, dict[str, Any]] = {}
+        # Wochenplan: "2026-11-16" → [Vorlagen-IDs]
+        self.mealplan: dict[str, list[str]] = {}
         self.checked_at: dict[str, dict[str, int]] = {}
         self.trips: dict[str, int] = {}
 
@@ -69,11 +71,12 @@ class Extras:
         self.checked_at = {k: dict(v) for k, v in (data.get("checked_at") or {}).items()}
         self.trips = dict(data.get("trips") or {})
         self.list_settings = dict(data.get("list_settings") or {})
+        self.mealplan = {k: [x for x in v if isinstance(x, str)] for k, v in (data.get("mealplan") or {}).items() if isinstance(v, list)}
 
     def _data(self) -> dict[str, Any]:
         return {"store_order": self.store_order, "prices": self.prices, "expenses": self.expenses,
                 "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips,
-                "list_settings": self.list_settings}
+                "list_settings": self.list_settings, "mealplan": self.mealplan}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
@@ -141,6 +144,39 @@ class Extras:
                 self.expenses.pop(i)
                 self._save()
                 return
+
+    # ---- Wochenplan ------------------------------------------------------------
+    @callback
+    def set_meals(self, day: str, template_ids: list[str]) -> list[str]:
+        import datetime as dt
+
+        dt.date.fromisoformat(day)  # ValueError bei falschem Datum
+        ids = [t for t in dict.fromkeys(template_ids) if t in self.templates][:6]
+        if ids:
+            self.mealplan[day] = ids
+        else:
+            self.mealplan.pop(day, None)
+        # alte Tage (älter als 60 Tage) aufräumen
+        cutoff = (dt.date.today() - dt.timedelta(days=60)).isoformat()
+        for k in [k for k in self.mealplan if k < cutoff]:
+            self.mealplan.pop(k)
+        self._save()
+        return ids
+
+    def meal_names(self, day: str) -> list[str]:
+        return [f"{self.templates[t].get('emoji') or ''} {self.templates[t]['name']}".strip()
+                for t in self.mealplan.get(day, []) if t in self.templates]
+
+    def plan(self, start: str, days: int) -> list[dict[str, Any]]:
+        import datetime as dt
+
+        d0 = dt.date.fromisoformat(start)
+        out = []
+        for i in range(max(1, min(days, 31))):
+            day = (d0 + dt.timedelta(days=i)).isoformat()
+            out.append({"date": day, "templates": [{"id": t, "name": self.templates[t]["name"], "emoji": self.templates[t].get("emoji", "")}
+                                                   for t in self.mealplan.get(day, []) if t in self.templates]})
+        return out
 
     @callback
     def set_list_settings(self, entity_id: str, sort: str | None = None, show_prices: bool | None = None) -> dict[str, Any]:
@@ -278,6 +314,22 @@ class Extras:
         self.templates.update(data.get("templates") or {})
         self.barcodes.update(data.get("barcodes") or {})
         self._save()
+
+
+def ingredient_text(ing: dict[str, Any]) -> str:
+    """Zutat aus Mealie als Artikeltext ("Mehl 250 g"); leere/Überschrift-Zeilen → ""."""
+    if not isinstance(ing, dict):
+        return str(ing or "").strip()
+    for key in ("display", "original_text", "note"):
+        if ing.get(key) and str(ing[key]).strip():
+            return " ".join(str(ing[key]).split())[:120]
+    food = ing.get("food") or {}
+    name = food.get("name") if isinstance(food, dict) else food
+    unit = ing.get("unit") or {}
+    unit = unit.get("abbreviation") or unit.get("name") if isinstance(unit, dict) else unit
+    qty = ing.get("quantity")
+    parts = [str(name or "").strip(), f"{qty:g}" if isinstance(qty, (int, float)) and qty else "", str(unit or "").strip()]
+    return " ".join(p for p in parts if p)[:120]
 
 
 def scale_quantity(text: str, factor: float) -> str:

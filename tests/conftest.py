@@ -27,14 +27,16 @@ class _Store:
 
 if "homeassistant" not in sys.modules:
     _mod("homeassistant")
-    _mod("homeassistant.core", HomeAssistant=object, callback=lambda f: f, Context=object)
+    _mod("homeassistant.core", HomeAssistant=object, callback=lambda f: f, Context=object, Event=object)
     _mod("homeassistant.helpers")
     _mod("homeassistant.helpers.storage", Store=_Store)
     _mod("homeassistant.helpers.dispatcher", async_dispatcher_send=lambda *a: None)
-    _mod("homeassistant.const", ATTR_FRIENDLY_NAME="friendly_name")
+    _mod("homeassistant.const", ATTR_FRIENDLY_NAME="friendly_name", EVENT_CALL_SERVICE="call_service")
     _mod("homeassistant.components")
     _mod("homeassistant.components.http", HomeAssistantView=object)
     _mod("homeassistant.helpers.aiohttp_client", async_get_clientsession=lambda hass: None)
+    _mod("homeassistant.helpers.event", async_call_later=lambda *a: (lambda: None), async_track_time_interval=lambda *a: (lambda: None))
+    _mod("homeassistant.helpers.issue_registry")
 if "aiohttp" not in sys.modules:
     _mod("aiohttp", web=types.SimpleNamespace(Request=object, Response=object, json_response=None))
 

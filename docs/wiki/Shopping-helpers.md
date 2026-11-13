@@ -25,7 +25,7 @@ automatically through its zone), the list is grouped in this order.
 
 ## Templates & recipes
 
-📋 in the card header opens the templates: tap one to add it – choose servings (quantities are scaled),
+*⋯ → Templates* in the card header opens the templates: tap one to add it – choose servings (quantities are scaled),
 untick items you don't need. Items already open on the list get their quantity increased instead of
 being added twice. *＋ New template* (one item per line, with quantities and tags), *List as template*
 takes the open items. Assist: "Put pancakes on the shopping list" uses the template of that name;
@@ -78,3 +78,24 @@ The product name comes from SmartLists' own memory or a lookup service (only the
 4 days"), *not bought for a while* (with ＋ to put it back on the list), shares per category and store.
 It uses the existing history – nothing new is collected. Admins can remove wrong items (×) from the
 history, and single expense bookings can be deleted under *Bookings* (admins all, others their own).
+
+## Meal plan
+
+*⋯ → Meal plan* shows a week (← → for other weeks). Put dishes – i.e. templates – on days; *Add ingredients
+to list* puts everything of that week on the list, equal items are added up. The plan is also the calendar
+**SmartLists Meal plan** in Home Assistant (for dashboards and automations).
+
+**Mealie:** if the Mealie integration is set up, *Get from Mealie* takes the recipes of the week's Mealie
+meal plan: each recipe becomes a template (🍽️) with its ingredients and is entered in the plan.
+
+## Item history
+
+Long press an item → *History*: who added, checked off, reopened, renamed or deleted it, and when – also
+changes from the app, Home Assistant, automations ("automation") and shared links. The last 400 changes per
+list are kept.
+
+## Shopping dashboard
+
+*General settings → Global → Voice, backup, defaults → Create dashboard* adds a dashboard *Shopping
+dashboard* to the sidebar with all lists, the meal plan calendar and statistics. It is a normal dashboard
+afterwards – edit or delete it like any other.

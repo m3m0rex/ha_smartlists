@@ -328,6 +328,11 @@
       "expenses_month": {
         "name": "Dépenses ce mois-ci"
       }
+    },
+    "calendar": {
+      "meal_plan": {
+        "name": "Menu de la semaine"
+      }
     }
   },
   "services": {
@@ -382,6 +387,16 @@
           "description": "Facultatif ; adapte les quantités."
         }
       }
+    }
+  },
+  "issues": {
+    "missing_source": {
+      "title": "Il manque une liste source à la liste combinée « {list} »",
+      "description": "La liste combinée **{list}** fait référence à des listes de tâches qui n'existent plus : {sources}.\n\nModifie la liste sous Paramètres → Appareils et services → SmartLists (⋮ → Reconfigurer) et supprime-les ou remplace-les."
+    },
+    "stale_device": {
+      "title": "L'appareil « {device} » ne s'est pas synchronisé depuis {days} jours",
+      "description": "L'app HA SmartLists sur **{device}** ne s'est pas synchronisée depuis {days} jours. Si l'appareil n'est plus utilisé, retire-le sous SmartLists → Configurer → Appareils connectés et supprime son jeton dans le profil. S'il est encore utilisé, ouvre l'app une fois pour synchroniser."
     }
   }
 }

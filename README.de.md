@@ -35,6 +35,9 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
 
 ## Gemeinsames Gedächtnis
 
+Neu in 3.0: Wochenplan mit Kalender und Mealie-Import, Verlauf je Artikel, Einkaufs-Dashboard per Klick, Diagnose-Download und Hinweise unter *Reparaturen* – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers).
+
+
 Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.learning`:
 
 - **Kategorien merken:** Wird ein Artikel einmal von Hand einer Kategorie zugeordnet, gilt das künftig

@@ -26,3 +26,11 @@ HACS loads icons from its own catalogue; the integration's own icon shows on the
 **Push rejected: "refusing to allow an OAuth App to create or update workflow"** (developers)
 Use a token with the *workflow* permission, e.g.
 `git -c credential.helper= push https://github.com/m3m0rex/ha_smartlists.git main`.
+
+## Diagnostics and repairs
+
+- *Settings → Devices & services → SmartLists → ⋮ → Download diagnostics* creates a file with version,
+  settings and counters – no item texts, tokens, link keys or user names. Attach it to bug reports.
+- SmartLists reports problems under *Settings → Repairs*: a combined list whose source list no longer
+  exists, and devices with the app that have not synced for 30 days. Share links of deleted lists are
+  removed automatically.

@@ -212,6 +212,9 @@ Every change is enforced by the list entity for the requesting user – also thr
 | `smartlists/setup` | `skip?, lists[], combine_name?, new_list?, shares{}, stores[], tag_rules[], packs[], notify_service?, voice, prices, barcode, share_links` | setup assistant: apply everything at once (admin); `config.setup_needed` tells whether to show it |
 | `smartlists/set_rights` / `share_links_all` | `rights` / – | permissions for non-admins; all active links (admin) |
 | `smartlists/set_list_settings` | `entity_id, name?, sort?, show_prices?` | per-list display settings (admin or owner) |
+| `smartlists/mealplan` / `set_meals` / `add_meals` | `start, days` / `date, template_ids[]` / `entity_id, start, days, servings?` | meal plan per day (templates), add ingredients to a list |
+| `smartlists/mealie_status` / `mealie_import` | – / `start, days, plan` | Mealie meal plan → templates (+ plan) |
+| `smartlists/item_history` | `entity_id, name?` | who added/checked/renamed/deleted an item and when |
 | `smartlists/connect_app_list` | `device_id, list_id` | create a combined list from it (admin); attribute `smartlists_app_list: "<device_id>/<list_id>"` |
 | `smartlists/notes` | – | app notes: `mode` (`hidden`/`section`), `scope` (`owner`/`household`), lists with owner |
 | `smartlists/set_notes` | `mode?, scope?, owners?{entity: user_id \| null}` | (admin) |

@@ -328,6 +328,11 @@
       "expenses_month": {
         "name": "Gastos este mes"
       }
+    },
+    "calendar": {
+      "meal_plan": {
+        "name": "Plan de comidas"
+      }
     }
   },
   "services": {
@@ -382,6 +387,16 @@
           "description": "Opcional; ajusta las cantidades."
         }
       }
+    }
+  },
+  "issues": {
+    "missing_source": {
+      "title": "A la lista combinada «{list}» le falta una lista de origen",
+      "description": "La lista combinada **{list}** hace referencia a listas de tareas que ya no existen: {sources}.\n\nEdita la lista en Ajustes → Dispositivos y servicios → SmartLists (⋮ → Reconfigurar) y quítalas o sustitúyelas."
+    },
+    "stale_device": {
+      "title": "El dispositivo «{device}» lleva {days} días sin sincronizar",
+      "description": "La app HA SmartLists en **{device}** lleva {days} días sin sincronizar. Si ya no se usa el dispositivo, quítalo en SmartLists → Configurar → Dispositivos conectados y borra su token en el perfil. Si se sigue usando, abre la app una vez para sincronizar."
     }
   }
 }

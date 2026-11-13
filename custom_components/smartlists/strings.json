@@ -328,6 +328,11 @@
       "expenses_month": {
         "name": "Expenses this month"
       }
+    },
+    "calendar": {
+      "meal_plan": {
+        "name": "Meal plan"
+      }
     }
   },
   "services": {
@@ -382,6 +387,16 @@
           "description": "Optional; scales the quantities."
         }
       }
+    }
+  },
+  "issues": {
+    "missing_source": {
+      "title": "Combined list “{list}” is missing a source list",
+      "description": "The combined list **{list}** refers to to-do lists that no longer exist: {sources}.\n\nEdit the list under Settings → Devices & services → SmartLists (⋮ → Reconfigure) and remove or replace them."
+    },
+    "stale_device": {
+      "title": "Device “{device}” has not synced for {days} days",
+      "description": "The HA SmartLists app on **{device}** has not synced for {days} days. If the device is no longer used, remove it under SmartLists → Configure → Connected devices and delete its token in the profile. If it is still used, open the app once to sync."
     }
   }
 }

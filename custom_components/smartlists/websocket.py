@@ -35,7 +35,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_subscribe, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -192,7 +192,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -931,14 +931,9 @@ def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnect
     check, add, hours = msg["check"], msg["add"], msg.get("hours", 24 * 7)
     if not connection.user.is_admin:
         # Grenzen des Admins: höchstens erlaubte Rechte und Gültigkeit
-        rights = _learning(hass).rights()
-        order = ["off", "soft", "on"]
-        if order.index(check) > order.index(rights["share_max"]):
-            check = rights["share_max"]
-        if rights["share_max"] != "on":
-            add = False
-        if rights["share_max_hours"] and (hours is None or hours > rights["share_max_hours"]):
-            hours = rights["share_max_hours"]
+        from .learning import clamp_link
+
+        check, add, hours = clamp_link(_learning(hass).rights(), check, add, hours)
     try:
         link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, check, add, hours=hours)
     except ValueError as err:
@@ -1258,3 +1253,139 @@ async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
     learning.automation["setup_done"] = True
     learning._changed(categories=True)
     connection.send_result(msg["id"], {"done": done})
+
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/mealplan", vol.Required("start"): str,
+                                  vol.Optional("days", default=7): vol.All(int, vol.Range(min=1, max=31))})
+@callback
+def ws_mealplan(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Wochenplan: je Tag die eingetragenen Gerichte (Vorlagen)."""
+    try:
+        connection.send_result(msg["id"], {"days": _extras(hass).plan(msg["start"], msg["days"])})
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_meals", vol.Required("date"): str, vol.Required("template_ids"): [str]})
+@callback
+def ws_set_meals(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if _denied(hass, connection, msg, "templates"):
+        return
+    try:
+        connection.send_result(msg["id"], {"template_ids": _extras(hass).set_meals(msg["date"], msg["template_ids"])})
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+
+
+@_list_command({vol.Required("type"): "smartlists/add_meals", vol.Required("entity_id"): str, vol.Required("start"): str,
+                vol.Optional("days", default=7): vol.All(int, vol.Range(min=1, max=31)),
+                vol.Optional("servings"): vol.Any(vol.All(int, vol.Range(min=1, max=100)), None)})
+async def ws_add_meals(hass, msg, context):
+    """Zutaten aller Gerichte im Zeitraum auf eine Liste (gleiche Artikel werden zusammengezählt)."""
+    from .automation import add_template_items
+
+    added = increased = 0
+    for day in _extras(hass).plan(msg["start"], msg["days"]):
+        for tpl in day["templates"]:
+            r = await add_template_items(hass, msg["entity_id"], tpl["id"], msg.get("servings"), [], context)
+            added += r["added"]
+            increased += r["increased"]
+    return {"added": added, "increased": increased}
+
+
+def _mealie_entry(hass: HomeAssistant) -> str | None:
+    entries = [e for e in hass.config_entries.async_entries("mealie") if e.state.value == "loaded"]
+    return entries[0].entry_id if entries else None
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/mealie_status"})
+@callback
+def ws_mealie_status(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    connection.send_result(msg["id"], {"available": _mealie_entry(hass) is not None})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/mealie_import", vol.Required("start"): str,
+                                  vol.Optional("days", default=7): vol.All(int, vol.Range(min=1, max=31)),
+                                  vol.Optional("plan", default=True): bool})
+@websocket_api.async_response
+async def ws_mealie_import(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Mealie-Wochenplan holen: jedes Rezept wird eine Vorlage (Zutaten), auf Wunsch in den Wochenplan eingetragen."""
+    if _denied(hass, connection, msg, "templates"):
+        return
+    import datetime as dt
+
+    entry_id = _mealie_entry(hass)
+    if entry_id is None:
+        connection.send_error(msg["id"], "not_found", "Die Mealie-Integration ist nicht eingerichtet.")
+        return
+    try:
+        start = dt.date.fromisoformat(msg["start"])
+        end = start + dt.timedelta(days=msg["days"] - 1)
+        res = await hass.services.async_call("mealie", "get_mealplan", {"config_entry_id": entry_id, "start_date": start.isoformat(),
+                                             "end_date": end.isoformat()}, blocking=True, return_response=True)
+    except Exception as err:  # noqa: BLE001
+        connection.send_error(msg["id"], "failed", f"Mealie: {err}")
+        return
+    extras = _extras(hass)
+    templates = recipes = 0
+    by_day: dict[str, list[str]] = {}
+    cache: dict[str, str] = {}
+    for meal in (res or {}).get("mealplan") or []:
+        recipe = meal.get("recipe") if isinstance(meal, dict) else None
+        day = str(meal.get("mealplan_date") or meal.get("date") or "")[:10] if isinstance(meal, dict) else ""
+        if not recipe:
+            continue
+        rid = recipe.get("recipe_id") or recipe.get("id") or recipe.get("slug")
+        if not rid:
+            continue
+        if rid not in cache:
+            try:
+                full = await hass.services.async_call("mealie", "get_recipe", {"config_entry_id": entry_id, "recipe_id": str(rid)},
+                                                      blocking=True, return_response=True)
+            except Exception:  # noqa: BLE001
+                continue
+            r = (full or {}).get("recipe") or {}
+            from .extras import ingredient_text
+
+            lines = [x for x in (ingredient_text(i) for i in r.get("ingredients") or []) if x]
+            if not lines:
+                continue
+            servings = r.get("recipe_yield") or r.get("recipe_servings")
+            try:
+                servings = int(float(str(servings).split()[0])) if servings else None
+            except ValueError:
+                servings = None
+            tid = f"mealie_{str(recipe.get('slug') or rid)[:40]}"
+            existed = tid in extras.templates
+            extras.save_template(tid, str(r.get("name") or recipe.get("name") or "Mealie")[:60], lines, "🍽️", servings)
+            cache[rid] = tid
+            recipes += 1
+            templates += 0 if existed else 1
+        if day:
+            by_day.setdefault(day, []).append(cache[rid])
+    if msg["plan"]:
+        for day, ids in by_day.items():
+            try:
+                extras.set_meals(day, [*extras.mealplan.get(day, []), *ids])
+            except ValueError:
+                continue
+    connection.send_result(msg["id"], {"recipes": recipes, "new_templates": templates, "days": len(by_day)})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/item_history", vol.Required("entity_id"): str, vol.Optional("name", default=""): str})
+@websocket_api.async_response
+async def ws_item_history(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Wer hat einen Artikel wann hinzugefügt, abgehakt, umbenannt oder gelöscht."""
+    entity_id = msg["entity_id"]
+    if not lists.notes_allowed(hass, entity_id, connection.user) or lists.own_role(hass, entity_id, connection.user) is None:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Keine Berechtigung für diese Liste.")
+        return
+    rows = hass.data[DOMAIN]["itemlog"].for_item(entity_id, msg["name"])
+    names: dict[str, str] = {}
+    for r in rows:
+        uid = r.get("user")
+        if uid and uid not in names:
+            user = await hass.auth.async_get_user(uid)
+            names[uid] = (user.name if user else "") or "?"
+    connection.send_result(msg["id"], {"entries": [{**r, "user_name": names.get(r.get("user") or "", None)} for r in rows]})

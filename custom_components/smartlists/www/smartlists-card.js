@@ -115,7 +115,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
-    add_placeholder: "z. B. 2 kg Äpfel @REWE", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
+    add_placeholder: "z. B. 2 kg Äpfel {store}", add_ph_store: "Markt", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
     done: "Erledigt", clear: "Erledigte entfernen", own: "Eigene Liste", combined: "Kombiniert", foreign: "Fremd",
     empty: "Nichts zu besorgen 🎉", no_add: "Hinzufügen ist für diese Liste gesperrt.", open: "offen",
     confirm_delete: "Artikel wirklich löschen?", confirm_clear: "Alle erledigten Artikel entfernen?",
@@ -349,7 +349,7 @@ const TEXTS = {
     mg_title: "Listen übernehmen", mg_sub: "Vorhandene To-do-Listen (Einkaufsliste, Local To-do …) in eigene SmartLists-Listen übernehmen – mit Artikeln, Notizen und Häkchen.", mg_help: "Die neuen Listen gehören dir und lassen sich danach teilen. Wähle eine oder mehrere Listen.", mg_lists: "Listen", mg_none: "Keine passenden Listen gefunden.", mg_how: "Mehrere Listen", mg_each: "Je Liste eine eigene", mg_each_sub: "Gleicher Name wie vorher.", mg_one: "Alle in eine Liste", mg_one_sub: "Alle Artikel zusammen in einer neuen Liste.", mg_name: "Name der neuen Liste", mg_tag: "Herkunft markieren als", mg_tag_none: "nicht markieren", mg_old: "Alte Liste danach", mg_keep: "Behalten", mg_keep_sub: "Bleibt unverändert – du räumst selbst auf.", mg_clear: "Leeren", mg_clear_sub: "Die übernommenen Artikel werden dort entfernt, die Liste bleibt.", mg_delete: "Ganz löschen", mg_delete_sub: "Die Local-To-do-Liste wird entfernt.", mg_delete_no: "Nur bei Local-To-do-Listen möglich.", mg_used: "Wird in kombinierten Listen verwendet: {lists}. Dort fehlt sie danach als Quelle.", mg_pick: "Bitte mindestens eine Liste wählen.", mg_go: "Übernehmen", mg_items: "Artikel",
   },
   en: {
-    add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
+    add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
     done: "Done", clear: "Clear completed", own: "Own list", combined: "Combined", foreign: "Foreign",
     empty: "Nothing to buy 🎉", no_add: "Adding is disabled for this list.", open: "open",
     confirm_delete: "Really delete item?", confirm_clear: "Remove all completed items?",
@@ -583,7 +583,7 @@ const TEXTS = {
     mg_title: "Take over lists", mg_sub: "Take existing to-do lists (shopping list, Local To-do …) over into own SmartLists lists – with items, notes and checkmarks.", mg_help: "The new lists belong to you and can be shared afterwards. Pick one or more lists.", mg_lists: "Lists", mg_none: "No suitable lists found.", mg_how: "Several lists", mg_each: "One own list each", mg_each_sub: "Same name as before.", mg_one: "All into one list", mg_one_sub: "All items together in one new list.", mg_name: "Name of the new list", mg_tag: "Mark origin as", mg_tag_none: "don't mark", mg_old: "Old list afterwards", mg_keep: "Keep", mg_keep_sub: "Stays unchanged – you clean up yourself.", mg_clear: "Empty", mg_clear_sub: "The items taken over are removed there; the list stays.", mg_delete: "Delete completely", mg_delete_sub: "The Local To-do list is removed.", mg_delete_no: "Only possible for Local To-do lists.", mg_used: "Used in combined lists: {lists}. It will be missing there as a source.", mg_pick: "Please pick at least one list.", mg_go: "Take over", mg_items: "items",
   },
   fr: {
-    add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
+    add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
     done: "Terminé", clear: "Supprimer les terminés", own: "Liste propre", combined: "Combinée", foreign: "Externe",
     empty: "Rien à acheter 🎉", no_add: "L'ajout est désactivé pour cette liste.", open: "à faire",
     confirm_delete: "Supprimer vraiment cet article ?", confirm_clear: "Supprimer tous les articles terminés ?",
@@ -817,7 +817,7 @@ const TEXTS = {
     mg_title: "Reprendre des listes", mg_sub: "Reprendre des listes de tâches existantes (liste de courses, Local To-do …) dans des listes SmartLists propres – avec articles, notes et coches.", mg_help: "Les nouvelles listes t'appartiennent et peuvent être partagées ensuite. Choisis une ou plusieurs listes.", mg_lists: "Listes", mg_none: "Aucune liste adaptée trouvée.", mg_how: "Plusieurs listes", mg_each: "Une liste propre chacune", mg_each_sub: "Même nom qu'avant.", mg_one: "Toutes dans une liste", mg_one_sub: "Tous les articles ensemble dans une nouvelle liste.", mg_name: "Nom de la nouvelle liste", mg_tag: "Marquer l'origine comme", mg_tag_none: "ne pas marquer", mg_old: "Ancienne liste ensuite", mg_keep: "Garder", mg_keep_sub: "Reste inchangée – tu ranges toi-même.", mg_clear: "Vider", mg_clear_sub: "Les articles repris y sont supprimés ; la liste reste.", mg_delete: "Supprimer entièrement", mg_delete_sub: "La liste Local To-do est supprimée.", mg_delete_no: "Possible seulement pour les listes Local To-do.", mg_used: "Utilisée dans des listes combinées : {lists}. Elle y manquera comme source.", mg_pick: "Choisis au moins une liste.", mg_go: "Reprendre", mg_items: "articles",
   },
   es: {
-    add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
+    add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
     done: "Hecho", clear: "Quitar completados", own: "Lista propia", combined: "Combinada", foreign: "Ajena",
     empty: "Nada que comprar 🎉", no_add: "Añadir está desactivado para esta lista.", open: "pendientes",
     confirm_delete: "¿Seguro que quieres borrar el artículo?", confirm_clear: "¿Quitar todos los artículos completados?",
@@ -1051,7 +1051,7 @@ const TEXTS = {
     mg_title: "Traspasar listas", mg_sub: "Traspasar listas de tareas existentes (lista de la compra, Local To-do …) a listas propias de SmartLists – con artículos, notas y marcas.", mg_help: "Las nuevas listas son tuyas y se pueden compartir después. Elige una o varias listas.", mg_lists: "Listas", mg_none: "No se encontraron listas adecuadas.", mg_how: "Varias listas", mg_each: "Una propia por lista", mg_each_sub: "Mismo nombre que antes.", mg_one: "Todas en una lista", mg_one_sub: "Todos los artículos juntos en una lista nueva.", mg_name: "Nombre de la nueva lista", mg_tag: "Marcar el origen como", mg_tag_none: "no marcar", mg_old: "Lista antigua después", mg_keep: "Conservar", mg_keep_sub: "Queda sin cambios – tú la ordenas.", mg_clear: "Vaciar", mg_clear_sub: "Se quitan allí los artículos traspasados; la lista queda.", mg_delete: "Borrar por completo", mg_delete_sub: "Se elimina la lista Local To-do.", mg_delete_no: "Solo posible con listas Local To-do.", mg_used: "Se usa en listas combinadas: {lists}. Faltará allí como fuente.", mg_pick: "Elige al menos una lista.", mg_go: "Traspasar", mg_items: "artículos",
   },
   it: {
-    add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
+    add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
     done: "Fatto", clear: "Rimuovi completati", own: "Lista propria", combined: "Combinata", foreign: "Esterna",
     empty: "Niente da comprare 🎉", no_add: "L'aggiunta è disattivata per questa lista.", open: "da fare",
     confirm_delete: "Eliminare davvero l'articolo?", confirm_clear: "Rimuovere tutti gli articoli completati?",
@@ -1285,7 +1285,7 @@ const TEXTS = {
     mg_title: "Trasferisci liste", mg_sub: "Trasferisci liste di attività esistenti (lista della spesa, Local To-do …) in liste SmartLists proprie – con articoli, note e spunte.", mg_help: "Le nuove liste appartengono a te e si possono condividere in seguito. Scegli una o più liste.", mg_lists: "Liste", mg_none: "Nessuna lista adatta trovata.", mg_how: "Più liste", mg_each: "Una propria per ciascuna", mg_each_sub: "Stesso nome di prima.", mg_one: "Tutte in una lista", mg_one_sub: "Tutti gli articoli insieme in una nuova lista.", mg_name: "Nome della nuova lista", mg_tag: "Segna l'origine come", mg_tag_none: "non segnare", mg_old: "Vecchia lista dopo", mg_keep: "Mantieni", mg_keep_sub: "Resta invariata – la sistemi tu.", mg_clear: "Svuota", mg_clear_sub: "Gli articoli trasferiti vengono rimossi lì; la lista resta.", mg_delete: "Elimina del tutto", mg_delete_sub: "La lista Local To-do viene rimossa.", mg_delete_no: "Possibile solo per le liste Local To-do.", mg_used: "Usata in liste combinate: {lists}. Lì mancherà come fonte.", mg_pick: "Scegli almeno una lista.", mg_go: "Trasferisci", mg_items: "articoli",
   },
   pl: {
-    add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
+    add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
     done: "Zrobione", clear: "Usuń zrobione", own: "Własna lista", combined: "Połączona", foreign: "Obca",
     empty: "Nic do kupienia 🎉", no_add: "Dodawanie jest wyłączone dla tej listy.", open: "do kupienia",
     confirm_delete: "Na pewno usunąć produkt?", confirm_clear: "Usunąć wszystkie zrobione produkty?",
@@ -2651,6 +2651,7 @@ class SmartListsCard extends HTMLElement {
         setTimeout(() => this._setupWizard(), 300);
       }
       if (this._cfg && this._cfg.appearance) SL_LOOK = this._cfg.appearance;
+      if (this._input) { const ph = this._addPlaceholder(); this._input.placeholder = ph; this._input.setAttribute("aria-label", ph); }
       // Version der Integration für die Anzeige im Zahnrad (hilft bei „neue Funktion fehlt“)
       this._call("info", {}, false).then((i) => {
         this._version = i.version;
@@ -3490,18 +3491,25 @@ class SmartListsCard extends HTMLElement {
       return;
     }
     const t = this._t;
-    this._input = h("input", { class: "smart", placeholder: t.add_placeholder, value: this._draft.text, autocomplete: "off",
-      enterkeyhint: "done", "aria-label": t.add_placeholder,
+    this._input = h("input", { class: "smart", placeholder: this._addPlaceholder(), value: this._draft.text, autocomplete: "off",
+      enterkeyhint: "done", "aria-label": this._addPlaceholder(),
       oninput: () => this._onInput(), onkeydown: (e) => this._onKey(e),
       onfocus: () => { this._focused = true; this._renderFrequent(); },
       onblur: () => setTimeout(() => { this._focused = false; this._closeSugg(); this._renderFrequent(); }, 150) });
-    this._goBtn = h("button", { class: "go", type: "button", title: t.add_placeholder, onclick: () => this._submit() }, svg(ICON.plus));
+    this._goBtn = h("button", { class: "go", type: "button", title: this._addPlaceholder(), onclick: () => this._submit() }, svg(ICON.plus));
     this._previewEl = h("div", { class: "preview" });
     this._suggEl = h("ul", { class: "sugg", role: "listbox", hidden: true });
     this._pickEl = h("div", { class: "catpick", hidden: true });
     const scanBtn = this._config.show_scan !== false ? iconBtn(ICON.barcode, t.scan, () => this._scanDialog(), "scanbtn") : null;
     fill(this._addEl, h("div", { class: "add" }, h("div", { class: "add-row" }, this._input, scanBtn, this._goBtn), this._previewEl, this._suggEl, this._pickEl));
     this._renderPreview();
+  }
+
+  // Beispiel im Eingabefeld: allgemein und mit dem Markt-Zeichen der eigenen Namenskonvention ("@Markt", "!Markt" …)
+  _addPlaceholder() {
+    const t = this._t;
+    const rule = ((this._cfg && this._cfg.tag_rules) || [{ kind: "store", prefix: "@" }]).find((r) => r.kind === "store");
+    return t.add_placeholder.replace("{store}", rule ? rule.prefix + t.add_ph_store : "").trim();
   }
 
   _onInput() {

@@ -61,6 +61,7 @@ taken over from the app are linked to the app's device ("via").
 
 | Field | Meaning |
 |---|---|
+| Origin badge shows / Only these source lists | what the badge on each item shows – the list name (default), the **owner** of the source list, or **"Owner List"** – and from which source lists there is a badge at all (empty = all). Source lists without an owner (Local To-do, shopping list …) always show the list name. Admins and the owner can also change this in the card (list window → *Origin badges*). |
 | Owner, may edit / check off / only view | who sees and changes the combined list. "—" = everyone (as before); with an owner only they, admins and the people chosen here – in card, sidebar page, app and Assist. Also in the card: gear → *Owner* and *Sharing*. Combined lists taken over from the app belong to the account the app is paired with. |
 | Lists to combine | any to-do lists (Shopping List, Local To-do, Google Tasks, Bring!, CalDAV, own SmartLists lists, …) – but not other combined lists |
 | Default list for new items | where items added to the combined list go; empty = adding disabled |

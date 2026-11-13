@@ -57,3 +57,35 @@ def test_combined_access_fields():
     assert apply({"name": "X", "sources": ["todo.a"], "owner": "everyone", "editors": ["u2"]}) == {"name": "X", "sources": ["todo.a"]}
     assert apply({"owner": "u1", "editors": ["u2", "u1"], "viewers": ["u3"], "checkers": []}) == {
         "owner": "u1", "shares": {"u3": "viewer", "u2": "editor"}}
+
+
+def test_source_label_modes():
+    """Herkunfts-Badge: Listenname / Besitzer / „Besitzer Liste“, nur für gewählte Quell-Listen."""
+    import ast
+    import types
+    from pathlib import Path
+
+    from smartlists.itemtext import person_from_list_name
+
+    src = (Path(__file__).resolve().parent.parent / "custom_components" / "smartlists" / "todo.py").read_text(encoding="utf-8")
+    cls = next(n for n in ast.parse(src).body if isinstance(n, ast.ClassDef) and n.name == "CombinedTodoListEntity")
+    fn = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "_source_label")
+    ns = {"person_from_list_name": person_from_list_name, "DOMAIN": "smartlists"}
+    exec(compile(ast.Module(body=[fn], type_ignores=[]), "todo.py", "exec"), ns)
+    label = ns["_source_label"]
+
+    names = {"todo.angebote": "HA Smartlists Angebote", "todo.admin_liste": "Admin Angebote", "todo.local": "Einkaufsliste Peter"}
+    own = {"todo.angebote": types.SimpleNamespace(_owner_name="Admin"), "todo.admin_liste": types.SimpleNamespace(_owner_name="Admin")}
+
+    def make(show, only=()):
+        return types.SimpleNamespace(
+            _label_sources=set(only), _label_show=show, _source_name=lambda e: names[e],
+            hass=types.SimpleNamespace(data={"smartlists": {"own": own}}))
+
+    assert label(make("list"), "todo.angebote") == "HA Smartlists Angebote"            # wie bisher
+    assert label(make("owner"), "todo.angebote") == "Admin"
+    assert label(make("owner_list"), "todo.angebote") == "Admin Angebote"              # Füllwörter weg
+    assert label(make("owner_list"), "todo.admin_liste") == "Admin Angebote"           # Besitzer nicht doppelt
+    assert label(make("owner"), "todo.local") == "Einkaufsliste Peter"                 # ohne Besitzer: Listenname
+    assert label(make("owner_list", ["todo.angebote"]), "todo.local") is None          # nicht ausgewählt → kein Badge
+    assert label(make("owner_list", ["todo.angebote"]), "todo.angebote") == "Admin Angebote"

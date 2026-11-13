@@ -46,7 +46,9 @@
             "owner": "Propriétaire",
             "editors": "Peuvent modifier",
             "checkers": "Peuvent cocher",
-            "viewers": "Peuvent seulement voir"
+            "viewers": "Peuvent seulement voir",
+            "label_show": "Le badge d'origine affiche",
+            "label_sources": "Seules ces listes sources affichent un badge"
           },
           "data_description": {
             "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
@@ -54,7 +56,9 @@
             "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
             "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
             "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés.",
-            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste."
+            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste.",
+            "label_show": "Liste : nom de la liste source. Propriétaire : propriétaire de la liste source. Propriétaire + liste : « Propriétaire Liste ». Les listes sans propriétaire (Local To-do, liste de courses …) affichent toujours le nom.",
+            "label_sources": "Vide = toutes les listes sources."
           }
         },
         "reconfigure": {
@@ -71,7 +75,9 @@
             "owner": "Propriétaire",
             "editors": "Peuvent modifier",
             "checkers": "Peuvent cocher",
-            "viewers": "Peuvent seulement voir"
+            "viewers": "Peuvent seulement voir",
+            "label_show": "Le badge d'origine affiche",
+            "label_sources": "Seules ces listes sources affichent un badge"
           },
           "data_description": {
             "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
@@ -79,7 +85,9 @@
             "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
             "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
             "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés.",
-            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste."
+            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste.",
+            "label_show": "Liste : nom de la liste source. Propriétaire : propriétaire de la liste source. Propriétaire + liste : « Propriétaire Liste ». Les listes sans propriétaire (Local To-do, liste de courses …) affichent toujours le nom.",
+            "label_sources": "Vide = toutes les listes sources."
           }
         }
       },
@@ -88,7 +96,8 @@
         "nested_combined_list": "Les listes combinées ne peuvent pas être imbriquées.",
         "default_not_in_sources": "La liste par défaut doit faire partie des listes sélectionnées.",
         "foreign_not_in_sources": "Les listes étrangères doivent aussi être sélectionnées ci-dessus.",
-        "default_is_foreign": "Une liste étrangère ne peut pas être la liste par défaut."
+        "default_is_foreign": "Une liste étrangère ne peut pas être la liste par défaut.",
+        "labels_not_in_sources": "Choisis seulement des listes sélectionnées comme sources ci-dessus."
       },
       "abort": {
         "reconfigure_successful": "Enregistré."
@@ -388,6 +397,13 @@
     "owner": {
       "options": {
         "everyone": "— tous (sans restriction)"
+      }
+    },
+    "label_show": {
+      "options": {
+        "list": "Nom de la liste",
+        "owner": "Propriétaire de la liste source",
+        "owner_list": "Propriétaire et nom de la liste"
       }
     }
   },

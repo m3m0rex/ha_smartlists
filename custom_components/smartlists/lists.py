@@ -218,6 +218,8 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         # fremd = Liste besteht nur aus fremden Quellen
         "foreign": bool(entity is not None and entity.all_foreign),
         "source_lists": entity.source_names if entity is not None else [],
+        "sources": entity.source_info if entity is not None else [],
+        "label": entity.label_settings if entity is not None else None,
         "permissions": perms,
         "own": own_info,
         "categories": [] if notes else learning.categories.as_list(language),

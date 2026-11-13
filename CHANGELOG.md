@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Origin badges of combined lists** (the chip such as "Admin Angebote"): choose what it shows – the list name,
+  the **owner** of the source list, or **"Owner List"** – and from **which source lists** there is a badge at all.
+  Set when adding/configuring the combined list or in the card (list window → *Origin badges*; admins and the
+  owner). The same text is used in Home Assistant's own to-do view. Default: unchanged (list name, all lists).
+
 ## [3.8.1] – 2026-11-13
 
 ### Fixed

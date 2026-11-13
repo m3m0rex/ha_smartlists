@@ -46,7 +46,9 @@
             "owner": "Owner",
             "editors": "May edit",
             "checkers": "May check off",
-            "viewers": "May only view"
+            "viewers": "May only view",
+            "label_show": "Origin badge shows",
+            "label_sources": "Only these source lists show a badge"
           },
           "data_description": {
             "sources": "Any to-do lists, e.g. shopping lists of several people.",
@@ -54,7 +56,9 @@
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
             "foreign_entities": "Lists of other people that you may only check off.",
             "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped.",
-            "owner": "“—” = visible and editable for everyone (as before). With an owner, only they, admins and the people shared with here see the list – in card, page, app and Assist."
+            "owner": "“—” = visible and editable for everyone (as before). With an owner, only they, admins and the people shared with here see the list – in card, page, app and Assist.",
+            "label_show": "List: name of the source list. Owner: owner of the source list. Owner + list: “Owner List”. Source lists without an owner (Local To-do, shopping list …) always show the list name.",
+            "label_sources": "Empty = all source lists."
           }
         },
         "reconfigure": {
@@ -71,7 +75,9 @@
             "owner": "Owner",
             "editors": "May edit",
             "checkers": "May check off",
-            "viewers": "May only view"
+            "viewers": "May only view",
+            "label_show": "Origin badge shows",
+            "label_sources": "Only these source lists show a badge"
           },
           "data_description": {
             "sources": "Any to-do lists, e.g. shopping lists of several people.",
@@ -79,7 +85,9 @@
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
             "foreign_entities": "Lists of other people that you may only check off.",
             "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped.",
-            "owner": "“—” = visible and editable for everyone (as before). With an owner, only they, admins and the people shared with here see the list – in card, page, app and Assist."
+            "owner": "“—” = visible and editable for everyone (as before). With an owner, only they, admins and the people shared with here see the list – in card, page, app and Assist.",
+            "label_show": "List: name of the source list. Owner: owner of the source list. Owner + list: “Owner List”. Source lists without an owner (Local To-do, shopping list …) always show the list name.",
+            "label_sources": "Empty = all source lists."
           }
         }
       },
@@ -88,7 +96,8 @@
         "nested_combined_list": "Combined lists cannot be nested.",
         "default_not_in_sources": "The default list must be one of the selected lists.",
         "foreign_not_in_sources": "Foreign lists must also be selected above.",
-        "default_is_foreign": "A foreign list cannot be the default list."
+        "default_is_foreign": "A foreign list cannot be the default list.",
+        "labels_not_in_sources": "Pick only lists that are selected as sources above."
       },
       "abort": {
         "reconfigure_successful": "Saved."
@@ -388,6 +397,13 @@
     "owner": {
       "options": {
         "everyone": "— everyone (no restriction)"
+      }
+    },
+    "label_show": {
+      "options": {
+        "list": "List name",
+        "owner": "Owner of the source list",
+        "owner_list": "Owner and list name"
       }
     }
   },

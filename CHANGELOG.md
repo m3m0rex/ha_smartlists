@@ -3,7 +3,7 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
-## [3.0.0] – unreleased
+## [3.0.0] – 2026-11-13
 
 ### Added
 
@@ -12,11 +12,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 - **Barcode scan uses the companion app's own scanner** (Android/iOS) when available – much more reliable
   than the camera in the app's web view. Non-product codes (QR etc.) are rejected with a hint, *Type the
   number* opens manual entry. In browsers the camera/number dialog stays.
-- **Scanner settings** – per user (*For me → Scanner*): target list (this card's list or any other) and
-  whether scanned products go into the input field or are added directly. Per household (*Voice &
-  automations*): which lookup services in which order – Open Food Facts, Open Beauty Facts, Open Pet Food
+- **Scanner settings** – per user (*For me → Shopping and scanning*): target list (this card's list or any other) and
+  whether scanned products go into the input field or are added directly. Global (*Voice, backup,
+  defaults*): which lookup services in which order – Open Food Facts, Open Beauty Facts, Open Pet Food
   Facts, Open Products Facts, UPCitemdb, or your own service (URL with `{code}` + JSON field for the name).
-
 - **Meal plan**: dishes (templates) per day, *Add ingredients to list* for the whole week, calendar entity
   *SmartLists Meal plan*; optional **Mealie** import (recipes of the Mealie meal plan become templates).
 - **History per item** (long press → History): who added, checked off, reopened, renamed or deleted it, and
@@ -36,7 +35,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
   and notes, sharing and permissions, voice/backup/defaults) and *Insights*. Wide screens show the areas
   on the left and the selected area in two columns; narrow screens show the areas first. With search.
   Calmer look without boxes.
-- **Settings window per list** (gear of the list): name, default sort order and prices on/off for the list
+- **Settings window per list** (⋯ → Settings of this list): name, default sort order and prices on/off for the list
   on all devices, sharing with people and sharing via link – two columns on wide screens, a sheet on small.
 - **Sharing and permissions** (Global): admins decide who may create share links (admins · admins and
   owner · everyone who may edit · nobody), what a link may allow at most and the longest validity, see and

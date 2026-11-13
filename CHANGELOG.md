@@ -17,6 +17,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
   automations*): which lookup services in which order – Open Food Facts, Open Beauty Facts, Open Pet Food
   Facts, Open Products Facts, UPCitemdb, or your own service (URL with `{code}` + JSON field for the name).
 
+- **Meal plan**: dishes (templates) per day, *Add ingredients to list* for the whole week, calendar entity
+  *SmartLists Meal plan*; optional **Mealie** import (recipes of the Mealie meal plan become templates).
+- **History per item** (long press → History): who added, checked off, reopened, renamed or deleted it, and
+  when – including the app, automations and shared links.
+- **Shopping dashboard** with one click (Global → Voice, backup, defaults): lists, meal plan, statistics.
+- **Diagnostics** download (no item texts, tokens or names) and hints under **Repairs**: missing source list
+  of a combined list, devices not synced for 30 days; share links of deleted lists are removed.
+- **Slimmer card header**: search, undo, shopping mode and ⋯ (sort, import, templates, meal plan, settings).
+- More automated tests (permissions, link limits, meal plan, Mealie ingredients, item history).
 - **Setup assistant** on first opening (admins): lists (use existing, combine or create new), stores,
   notation (`@` `*` `#` with live example), language (keyword packs), people (permissions for a new own
   list) and extras (notifications, Assist, prices, barcode lookup, link sharing) – every step can be

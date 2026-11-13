@@ -328,6 +328,11 @@
       "expenses_month": {
         "name": "Ausgaben diesen Monat"
       }
+    },
+    "calendar": {
+      "meal_plan": {
+        "name": "Essensplan"
+      }
     }
   },
   "services": {
@@ -382,6 +387,16 @@
           "description": "Optional; rechnet die Mengen um."
         }
       }
+    }
+  },
+  "issues": {
+    "missing_source": {
+      "title": "Der kombinierten Liste „{list}“ fehlt eine Quell-Liste",
+      "description": "Die kombinierte Liste **{list}** verweist auf To-do-Listen, die es nicht mehr gibt: {sources}.\n\nBearbeite die Liste unter Einstellungen → Geräte & Dienste → SmartLists (⋮ → Neu konfigurieren) und entferne oder ersetze sie."
+    },
+    "stale_device": {
+      "title": "Gerät „{device}“ hat sich seit {days} Tagen nicht gemeldet",
+      "description": "Die HA-SmartLists-App auf **{device}** hat seit {days} Tagen nicht abgeglichen. Wird das Gerät nicht mehr benutzt, entferne es unter SmartLists → Konfigurieren → Verbundene Geräte und lösche seinen Token im Profil. Wird es noch benutzt, öffne die App einmal zum Abgleichen."
     }
   }
 }

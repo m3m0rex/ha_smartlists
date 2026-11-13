@@ -328,6 +328,11 @@
       "expenses_month": {
         "name": "Wydatki w tym miesiącu"
       }
+    },
+    "calendar": {
+      "meal_plan": {
+        "name": "Plan posiłków"
+      }
     }
   },
   "services": {
@@ -382,6 +387,16 @@
           "description": "Opcjonalnie; przelicza ilości."
         }
       }
+    }
+  },
+  "issues": {
+    "missing_source": {
+      "title": "Liście połączonej „{list}” brakuje listy źródłowej",
+      "description": "Lista połączona **{list}** odwołuje się do list zadań, które już nie istnieją: {sources}.\n\nEdytuj listę w Ustawienia → Urządzenia i usługi → SmartLists (⋮ → Zmień konfigurację) i usuń je lub zastąp."
+    },
+    "stale_device": {
+      "title": "Urządzenie „{device}” nie synchronizowało się od {days} dni",
+      "description": "Aplikacja HA SmartLists na **{device}** nie synchronizowała się od {days} dni. Jeśli urządzenie nie jest już używane, usuń je w SmartLists → Konfiguruj → Połączone urządzenia i usuń jego token w profilu. Jeśli jest nadal używane, otwórz raz aplikację, aby zsynchronizować."
     }
   }
 }

@@ -4,7 +4,7 @@ There are two places, so that nothing is mixed up.
 
 ## General settings
 
-Card: the **slider icon** in the header. Sidebar page: **⚙** at the top right.
+Card: **⋯ → General settings**. Sidebar page: **⚙** at the top right.
 
 On a wide screen the areas are listed on the left and the selected area is shown next to it in two
 columns; on a narrow screen you first see the areas and open one. The search field filters the areas.
@@ -40,7 +40,7 @@ Admins decide under *Global → Sharing and permissions*:
 
 ## Settings of a list
 
-The **gear** in a list's header opens a window over the list (two columns on wide screens, a sheet from
+**⋯ → Settings of this list** opens a window over the list (two columns on wide screens, a sheet from
 the bottom on small ones):
 
 - **List** – name (the display name in Home Assistant), default sort order and prices on/off. These apply

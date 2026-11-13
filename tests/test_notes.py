@@ -78,3 +78,18 @@ def test_app_lists_cleaned():
         "kaputt",
     ])
     assert out == [{"id": "m1", "name": "Wocheneinkauf", "sources": ["todo.anna", "todo.max"], "default_add": None, "mode": "local"}]
+
+
+def test_itemlog_for_item():
+    from smartlists.itemlog import ItemLog
+
+    log = ItemLog(types.SimpleNamespace(data={}))
+    asyncio.run(log.async_load())
+    log.add("todo.e", "add", "Milch 2 l @REWE", "u1")
+    log.add("todo.e", "check", "Milch 2 l @REWE", "u2")
+    log.add("todo.e", "rename", "Hafermilch", "u1", old="Milch 2 l @REWE")
+    log.add("todo.e", "add", "Brot", "u1", via_link=True)
+    milk = log.for_item("todo.e", "Milch")
+    assert [e["a"] for e in milk] == ["rename", "check", "add"]
+    assert log.for_item("todo.e", "Brot")[0]["link"] is True
+    assert len(log.for_item("todo.e", "")) == 4

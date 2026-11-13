@@ -52,6 +52,8 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
   servings, barcode scan (Open Food Facts), statistics, notifications when others add items, and
   **sharing a list via link or QR code** for people without an HA account – see the
   [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers).
+- **Meal plan** with a calendar entity and optional **Mealie** import, **history per item**, a one-click
+  **shopping dashboard**, **diagnostics** download and hints under **Repairs**.
 - **Settings in one place:** general settings with areas (*For me*, *Global* for admins, *Insights*) and a
   separate settings window per list – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Settings).
 

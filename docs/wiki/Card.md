@@ -85,9 +85,9 @@ layout: columns
   to see only its items. If stores are linked to zones (*General settings → Global → Stores & zones*), the store
   whose zone you are in is selected automatically. *For me* → "Also show items without a store" adds
   items without `@store`.
-- **Two settings menus** in the header: the **slider icon** opens the general settings, the **gear**
-  the settings window of **this list**. On the sidebar page the general settings are the ⚙ at the top
-  right and each list only has its gear. See [[Settings]].
+- **Header**: search, undo (when possible), shopping mode and **⋯**. The ⋯ menu holds sort order, import,
+  templates, meal plan, the **general settings** and the settings window of **this list**. On the sidebar
+  page the general settings are the ⚙ at the top right. See [[Settings]].
 - **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
 - Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
 

@@ -58,6 +58,20 @@ USER_SETTINGS: dict[str, Any] = {
 }
 
 
+def clamp_link(rights: dict[str, Any], check: str, add: bool, hours: int | None) -> tuple[str, bool, int | None]:
+    """Grenzen des Admins für Nicht-Admins anwenden: höchstens erlaubte Rechte und Gültigkeit."""
+    order = ["off", "soft", "on"]
+    top = rights.get("share_max", "on")
+    if order.index(check) > order.index(top):
+        check = top
+    if top != "on":
+        add = False
+    limit = rights.get("share_max_hours")
+    if limit and (hours is None or hours > limit):
+        hours = limit
+    return check, add, hours
+
+
 class Learning:
     """Haushaltsweites Gedächtnis der Integration."""
 

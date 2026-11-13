@@ -35,10 +35,12 @@ from .notes import async_get_notes
 from .extras import async_get_extras
 from .shares import async_get_shares, async_register_views
 from .notify import async_get_notifier
+from .itemlog import async_get_itemlog
+from . import repairs
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.TODO, Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.TODO, Platform.SENSOR, Platform.CALENDAR]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 # eigener Pfad, damit er sich nicht mit der Seitenleisten-Seite /smartlists überschneidet
 CARD_URL = "/smartlists-files/smartlists-card.js"
@@ -64,6 +66,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     hass.bus.async_listen(er.EVENT_ENTITY_REGISTRY_UPDATED, _entity_removed)
     (await async_get_notifier(hass)).start()
+    (await async_get_itemlog(hass)).start()
     websocket.async_register(hass)
     automation.async_setup_services(hass)
     automation.async_setup_intents(hass)
@@ -137,6 +140,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await _async_register_panel(hass)
     # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
     entry.async_on_unload(automation.async_setup_due_timer(hass))
+    # Hinweise unter Einstellungen → Reparaturen (fehlende Quell-Listen, lange nicht gesehene Geräte)
+    entry.async_on_unload(repairs.async_setup_checks(hass, entry))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True

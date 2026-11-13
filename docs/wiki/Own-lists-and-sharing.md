@@ -28,6 +28,8 @@ SmartLists' own lists, combined lists and app notes are not offered.
 
 ## Roles
 
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Sharing with people and via link" width="620">
+
 | Role | See | Check off | Add / edit / delete / reorder | Change sharing, delete list |
 |---|---|---|---|---|
 | Viewer | ✅ | – | – | – |

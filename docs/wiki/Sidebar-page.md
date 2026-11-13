@@ -1,5 +1,7 @@
 # Sidebar page
 
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/hero.svg" alt="Sidebar page with a combined list">
+
 The integration adds **SmartLists** to the sidebar (`/smartlists`). It shows all to-do lists as tabs in
 three groups – **Combined lists**, **Lists** and **Notes** – each rendered like the card. The overview is
 collapsed by default (the selected lists and *All lists ▾*). Combined lists
@@ -8,6 +10,8 @@ created in the app that are not connected yet appear dashed with 📱; tap to co
 Two tabs below the toolbar: **📋 Lists** and **🗓️ Meal plan**. The meal plan tab shows the week right on
 the page (same as *⋯ → Meal plan* in the card); *Ingredients to:* picks the list the ingredients go to. The
 plan is also the calendar **SmartLists Meal plan** in Home Assistant.
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/mealplan.svg" alt="Meal plan tab">
 
 Toolbar buttons:
 
@@ -21,6 +25,8 @@ Toolbar buttons:
 - **⚙ Settings** – the general settings (each list's own settings are in the gear of its card): *For me* (your controls), *Global* (naming
   convention, remembered categories, voice & automations, connected devices, backup, controls for
   everyone – admins) and *This list* (sharing, details).
+
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/notes.svg" alt="Notes as note cards">
 
 **App notes** (`todo.ha_smartlists_note…` of the HA SmartLists app) are not shopping lists and are
 hidden by default. Admins can show them as a separate 📝 section: *⚙ → Global → Devices and notes*. A note list can also be created there (or with ＋📝 on the page) if the app has none yet. Notes are

@@ -24,7 +24,11 @@ with items, notes and checkmarks. You become the owner and can share them afterw
   to delete them yourself once the new list is fine (*Settings → Devices & services*, e.g. Local To-do or the
   respective integration). If an old list is a source of a combined list, add the new list there first.
 
-SmartLists' own lists, combined lists and app notes are not offered.
+- **Note lists** (e.g. notes of the app in Local To-do) can be taken over **as notes** – a new SmartLists note
+  list owned by you with titles, texts and checkmarks (encrypted notes are copied unchanged) – or as a normal
+  list. Only your own notes (or notes shared with everyone) are offered.
+
+SmartLists' own lists and combined lists are not offered.
 
 ## Roles
 

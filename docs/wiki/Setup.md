@@ -61,7 +61,7 @@ taken over from the app are linked to the app's device ("via").
 
 | Field | Meaning |
 |---|---|
-| Lists to combine | any to-do lists (Shopping List, Local To-do, Google Tasks, Bring!, CalDAV, …) |
+| Lists to combine | any to-do lists (Shopping List, Local To-do, Google Tasks, Bring!, CalDAV, own SmartLists lists, …) – but not other combined lists |
 | Default list for new items | where items added to the combined list go; empty = adding disabled |
 | Checking off affects | *source list* (bidirectional) or *this combined list only* (sources stay untouched) |
 | Show source in item name | `Milk · Anna`, `[Anna] Milk` or hidden (HA's own to-do view) |

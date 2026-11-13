@@ -349,6 +349,7 @@ const TEXTS = {
     mg_title: "Listen übernehmen", mg_sub: "Vorhandene To-do-Listen (Einkaufsliste, Local To-do …) in eigene SmartLists-Listen übernehmen – mit Artikeln, Notizen und Häkchen.", mg_help: "Die neuen Listen gehören dir und lassen sich danach teilen. Wähle eine oder mehrere Listen.", mg_lists: "Listen", mg_none: "Keine passenden Listen gefunden.", mg_how: "Mehrere Listen", mg_each: "Je Liste eine eigene", mg_each_sub: "Gleicher Name wie vorher.", mg_one: "Alle in eine Liste", mg_one_sub: "Alle Artikel zusammen in einer neuen Liste.", mg_name: "Name der neuen Liste", mg_tag: "Herkunft markieren als", mg_tag_none: "nicht markieren", mg_old: "Alte Liste", mg_used: "Wird in kombinierten Listen verwendet: {lists}. Trage dort die neue Liste ein, bevor du die alte löschst.", mg_pick: "Bitte mindestens eine Liste wählen.", mg_go: "Übernehmen", mg_items: "Artikel",
     mg_pf_local: "Lokale To-do", mg_pf_shopping: "Einkaufsliste", mg_pf_other: "Andere",
     mg_keep_info: "Die alte Liste bleibt unverändert erhalten. Prüfe die neue Liste und lösche die alte danach selbst.", mg_done_hint: "Die alten Listen gibt es noch. Wenn in der neuen Liste alles passt, lösche sie bitte selbst (Einstellungen → Geräte & Dienste, z. B. bei Local To-do bzw. der jeweiligen Integration):", mg_done_combined: "Mindestens eine alte Liste ist Quelle einer kombinierten Liste – trage dort zuerst die neue Liste ein.",
+    mg_pf_notes: "Notizen", mg_as: "Übernehmen als", mg_as_list: "Liste", mg_as_list_sub: "Eigene SmartLists-Liste mit Kategorien, Mengen und Einkaufsfunktionen.", mg_as_notes: "Notizen", mg_as_notes_sub: "Neue Notizliste (nur für dich sichtbar), Notizen mit Titel und Text – auch verschlüsselte bleiben erhalten.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
@@ -585,6 +586,7 @@ const TEXTS = {
     mg_title: "Take over lists", mg_sub: "Take existing to-do lists (shopping list, Local To-do …) over into own SmartLists lists – with items, notes and checkmarks.", mg_help: "The new lists belong to you and can be shared afterwards. Pick one or more lists.", mg_lists: "Lists", mg_none: "No suitable lists found.", mg_how: "Several lists", mg_each: "One own list each", mg_each_sub: "Same name as before.", mg_one: "All into one list", mg_one_sub: "All items together in one new list.", mg_name: "Name of the new list", mg_tag: "Mark origin as", mg_tag_none: "don't mark", mg_old: "Old list", mg_used: "Used in combined lists: {lists}. Add the new list there before you delete the old one.", mg_pick: "Please pick at least one list.", mg_go: "Take over", mg_items: "items",
     mg_pf_local: "Local To-do", mg_pf_shopping: "Shopping list", mg_pf_other: "Other",
     mg_keep_info: "The old list stays unchanged. Check the new list and delete the old one yourself afterwards.", mg_done_hint: "The old lists still exist. When everything is fine in the new list, please delete them yourself (Settings → Devices & services, e.g. Local To-do or the respective integration):", mg_done_combined: "At least one old list is a source of a combined list – add the new list there first.",
+    mg_pf_notes: "Notes", mg_as: "Take over as", mg_as_list: "List", mg_as_list_sub: "Own SmartLists list with categories, quantities and shopping features.", mg_as_notes: "Notes", mg_as_notes_sub: "New note list (visible only to you), notes with title and text – encrypted ones are kept as they are.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -821,6 +823,7 @@ const TEXTS = {
     mg_title: "Reprendre des listes", mg_sub: "Reprendre des listes de tâches existantes (liste de courses, Local To-do …) dans des listes SmartLists propres – avec articles, notes et coches.", mg_help: "Les nouvelles listes t'appartiennent et peuvent être partagées ensuite. Choisis une ou plusieurs listes.", mg_lists: "Listes", mg_none: "Aucune liste adaptée trouvée.", mg_how: "Plusieurs listes", mg_each: "Une liste propre chacune", mg_each_sub: "Même nom qu'avant.", mg_one: "Toutes dans une liste", mg_one_sub: "Tous les articles ensemble dans une nouvelle liste.", mg_name: "Nom de la nouvelle liste", mg_tag: "Marquer l'origine comme", mg_tag_none: "ne pas marquer", mg_old: "Ancienne liste", mg_used: "Utilisée dans des listes combinées : {lists}. Ajoutes-y la nouvelle liste avant de supprimer l'ancienne.", mg_pick: "Choisis au moins une liste.", mg_go: "Reprendre", mg_items: "articles",
     mg_pf_local: "To-do local", mg_pf_shopping: "Liste de courses", mg_pf_other: "Autre",
     mg_keep_info: "L'ancienne liste reste inchangée. Vérifie la nouvelle liste puis supprime l'ancienne toi-même.", mg_done_hint: "Les anciennes listes existent toujours. Si tout est bon dans la nouvelle liste, supprime-les toi-même (Paramètres → Appareils et services, p. ex. Local To-do ou l'intégration concernée) :", mg_done_combined: "Au moins une ancienne liste est source d'une liste combinée – ajoutes-y d'abord la nouvelle liste.",
+    mg_pf_notes: "Notes", mg_as: "Reprendre comme", mg_as_list: "Liste", mg_as_list_sub: "Liste SmartLists propre avec catégories, quantités et fonctions de courses.", mg_as_notes: "Notes", mg_as_notes_sub: "Nouvelle liste de notes (visible seulement par toi), notes avec titre et texte – les chiffrées restent intactes.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1057,6 +1060,7 @@ const TEXTS = {
     mg_title: "Traspasar listas", mg_sub: "Traspasar listas de tareas existentes (lista de la compra, Local To-do …) a listas propias de SmartLists – con artículos, notas y marcas.", mg_help: "Las nuevas listas son tuyas y se pueden compartir después. Elige una o varias listas.", mg_lists: "Listas", mg_none: "No se encontraron listas adecuadas.", mg_how: "Varias listas", mg_each: "Una propia por lista", mg_each_sub: "Mismo nombre que antes.", mg_one: "Todas en una lista", mg_one_sub: "Todos los artículos juntos en una lista nueva.", mg_name: "Nombre de la nueva lista", mg_tag: "Marcar el origen como", mg_tag_none: "no marcar", mg_old: "Lista antigua", mg_used: "Se usa en listas combinadas: {lists}. Añade allí la nueva lista antes de borrar la antigua.", mg_pick: "Elige al menos una lista.", mg_go: "Traspasar", mg_items: "artículos",
     mg_pf_local: "To-do local", mg_pf_shopping: "Lista de la compra", mg_pf_other: "Otra",
     mg_keep_info: "La lista antigua queda sin cambios. Revisa la nueva lista y borra después la antigua tú mismo.", mg_done_hint: "Las listas antiguas siguen existiendo. Si todo está bien en la nueva lista, bórralas tú (Ajustes → Dispositivos y servicios, p. ej. Local To-do o la integración correspondiente):", mg_done_combined: "Al menos una lista antigua es fuente de una lista combinada – añade allí primero la nueva lista.",
+    mg_pf_notes: "Notas", mg_as: "Traspasar como", mg_as_list: "Lista", mg_as_list_sub: "Lista propia de SmartLists con categorías, cantidades y funciones de compra.", mg_as_notes: "Notas", mg_as_notes_sub: "Nueva lista de notas (solo visible para ti), notas con título y texto – las cifradas se conservan.",
   },
   it: {
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1293,6 +1297,7 @@ const TEXTS = {
     mg_title: "Trasferisci liste", mg_sub: "Trasferisci liste di attività esistenti (lista della spesa, Local To-do …) in liste SmartLists proprie – con articoli, note e spunte.", mg_help: "Le nuove liste appartengono a te e si possono condividere in seguito. Scegli una o più liste.", mg_lists: "Liste", mg_none: "Nessuna lista adatta trovata.", mg_how: "Più liste", mg_each: "Una propria per ciascuna", mg_each_sub: "Stesso nome di prima.", mg_one: "Tutte in una lista", mg_one_sub: "Tutti gli articoli insieme in una nuova lista.", mg_name: "Nome della nuova lista", mg_tag: "Segna l'origine come", mg_tag_none: "non segnare", mg_old: "Vecchia lista", mg_used: "Usata in liste combinate: {lists}. Aggiungi lì la nuova lista prima di eliminare la vecchia.", mg_pick: "Scegli almeno una lista.", mg_go: "Trasferisci", mg_items: "articoli",
     mg_pf_local: "To-do locale", mg_pf_shopping: "Lista della spesa", mg_pf_other: "Altro",
     mg_keep_info: "La vecchia lista resta invariata. Controlla la nuova lista e poi elimina tu la vecchia.", mg_done_hint: "Le vecchie liste esistono ancora. Se nella nuova lista è tutto a posto, eliminale tu (Impostazioni → Dispositivi e servizi, ad es. Local To-do o l'integrazione relativa):", mg_done_combined: "Almeno una vecchia lista è fonte di una lista combinata – aggiungi prima lì la nuova lista.",
+    mg_pf_notes: "Note", mg_as: "Trasferisci come", mg_as_list: "Lista", mg_as_list_sub: "Lista SmartLists propria con categorie, quantità e funzioni per la spesa.", mg_as_notes: "Note", mg_as_notes_sub: "Nuova lista di note (visibile solo a te), note con titolo e testo – quelle cifrate restano invariate.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1529,6 +1534,7 @@ const TEXTS = {
     mg_title: "Przejmij listy", mg_sub: "Przejmij istniejące listy zadań (lista zakupów, Local To-do …) do własnych list SmartLists – z produktami, notatkami i odhaczeniami.", mg_help: "Nowe listy należą do ciebie i można je potem udostępnić. Wybierz jedną lub kilka list.", mg_lists: "Listy", mg_none: "Nie znaleziono odpowiednich list.", mg_how: "Kilka list", mg_each: "Każda jako własna lista", mg_each_sub: "Taka sama nazwa jak wcześniej.", mg_one: "Wszystkie w jedną listę", mg_one_sub: "Wszystkie produkty razem w nowej liście.", mg_name: "Nazwa nowej listy", mg_tag: "Oznacz pochodzenie jako", mg_tag_none: "nie oznaczaj", mg_old: "Stara lista", mg_used: "Używana w listach połączonych: {lists}. Dodaj tam nową listę, zanim usuniesz starą.", mg_pick: "Wybierz co najmniej jedną listę.", mg_go: "Przejmij", mg_items: "produktów",
     mg_pf_local: "Lokalne To-do", mg_pf_shopping: "Lista zakupów", mg_pf_other: "Inne",
     mg_keep_info: "Stara lista pozostaje bez zmian. Sprawdź nową listę, a potem sam(a) usuń starą.", mg_done_hint: "Stare listy nadal istnieją. Jeśli w nowej liście wszystko się zgadza, usuń je sam(a) (Ustawienia → Urządzenia i usługi, np. Local To-do lub odpowiednia integracja):", mg_done_combined: "Co najmniej jedna stara lista jest źródłem listy połączonej – najpierw dodaj tam nową listę.",
+    mg_pf_notes: "Notatki", mg_as: "Przejmij jako", mg_as_list: "Lista", mg_as_list_sub: "Własna lista SmartLists z kategoriami, ilościami i funkcjami zakupów.", mg_as_notes: "Notatki", mg_as_notes_sub: "Nowa lista notatek (widoczna tylko dla ciebie), notatki z tytułem i treścią – zaszyfrowane pozostają bez zmian.",
   },
 };
 
@@ -5158,7 +5164,7 @@ class SmartListsCard extends HTMLElement {
     const t = this._t;
     let cands = [];
     try { cands = (await this._call("migrate_candidates", {}, false)).lists; } catch (err) { this._toast((err && err.message) || t.error); return; }
-    const S = { sel: new Set(), mode: "each", name: "", tag: "" };
+    const S = { sel: new Set(), mode: "each", name: "", tag: "", target: null };
     // Herkunft vor dem Namen: Lokale To-do, Einkaufsliste oder die Integration (Google Tasks, Todoist, CalDAV …)
     const platformChip = (pf) => {
       const known = { local_todo: t.mg_pf_local, shopping_list: t.mg_pf_shopping };
@@ -5169,9 +5175,10 @@ class SmartListsCard extends HTMLElement {
     const status = h("span", { class: "ok2" });
     const draw = () => {
       const chosen = cands.filter((c) => S.sel.has(c.entity_id));
+      if (!S.targetTouched) S.target = chosen.length && chosen.every((c) => c.notes) ? "notes" : "list";
       const used = chosen.filter((c) => c.used_in.length);
       const radio = (group, value, label, sub, disabled) => h("label", { class: `mgopt ${disabled ? "dis" : ""}` },
-        h("input", { type: "radio", name: group, checked: S[group] === value, disabled: !!disabled, onchange: () => { S[group] = value; draw(); } }),
+        h("input", { type: "radio", name: group, checked: S[group] === value, disabled: !!disabled, onchange: () => { S[group] = value; if (group === "target") S.targetTouched = true; draw(); } }),
         h("span", {}, h("b", {}, label), sub ? h("small", {}, sub) : null));
       fill(box,
         h("style", {}, `.mgbox .mgl,.mgbox .mgopt{display:flex;gap:10px;align-items:flex-start;padding:7px 0;cursor:pointer}
@@ -5186,7 +5193,11 @@ class SmartListsCard extends HTMLElement {
         h("h3", {}, t.mg_lists),
         cands.length ? cands.map((c) => h("label", { class: "mgl" },
           h("input", { type: "checkbox", checked: S.sel.has(c.entity_id), onchange: (e) => { if (e.target.checked) S.sel.add(c.entity_id); else S.sel.delete(c.entity_id); draw(); } }),
-          h("span", {}, platformChip(c.platform), h("b", {}, c.name), h("small", {}, `${c.entity_id} · ${c.open} ${t.open}`)))) : h("p", {}, t.mg_none),
+          h("span", {}, platformChip(c.platform), c.notes ? h("span", { class: "pfchip local" }, "📝 " + t.mg_pf_notes) : null, h("b", {}, c.name), h("small", {}, `${c.entity_id} · ${c.open} ${t.open}`)))) : h("p", {}, t.mg_none),
+        // Ziel: als Liste oder als Notizen (Standard: Notizen, wenn nur Notizlisten gewählt sind)
+        chosen.length ? [h("h3", {}, t.mg_as),
+          radio("target", "list", t.mg_as_list, t.mg_as_list_sub),
+          radio("target", "notes", t.mg_as_notes, t.mg_as_notes_sub)] : null,
         chosen.length > 1 ? [h("h3", {}, t.mg_how),
           radio("mode", "each", t.mg_each, t.mg_each_sub),
           radio("mode", "one", t.mg_one, t.mg_one_sub),
@@ -5207,7 +5218,7 @@ class SmartListsCard extends HTMLElement {
         if (!S.sel.size) { status.textContent = t.mg_pick; return; }
         status.textContent = t.loading;
         try {
-          const r = await this._call("migrate", { sources: [...S.sel], mode: S.sel.size > 1 ? S.mode : "each", name: S.name || null, tag_kind: S.tag || null }, false);
+          const r = await this._call("migrate", { sources: [...S.sel], mode: S.sel.size > 1 ? S.mode : "each", name: S.name || null, tag_kind: S.tag || null, target: S.target || "list" }, false);
           dlg.remove();
           window.dispatchEvent(new CustomEvent("smartlists-lists-changed"));
           // Hinweis: die alten Listen gibt es noch – bitte selbst löschen, wenn alles passt

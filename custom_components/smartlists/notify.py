@@ -10,6 +10,7 @@ Mehrere Änderungen kurz hintereinander (60 s) werden zu einer Nachricht zusamme
 from __future__ import annotations
 
 import datetime as dt
+import logging
 from typing import Any
 
 from homeassistant.const import ATTR_FRIENDLY_NAME, EVENT_CALL_SERVICE
@@ -19,21 +20,22 @@ from homeassistant.helpers.storage import Store
 
 from .const import DOMAIN
 
+_LOGGER = logging.getLogger(__name__)
 STORAGE_KEY = f"{DOMAIN}.notify"
 BATCH_SECONDS = 60
 TEXTS = {
     "de": {"via_link": "etwas (über geteilten Link)", "added": "{who} hat {items} auf {list} gesetzt", "checked": "{who} hat {items} abgehakt ({list})",
-           "someone": "Jemand", "and": "und", "more": "{n} weitere"},
+           "someone": "Jemand", "and": "und", "more": "{n} weitere", "test": "Testnachricht – Benachrichtigungen kommen an."},
     "en": {"via_link": "something (via shared link)", "added": "{who} added {items} to {list}", "checked": "{who} checked off {items} ({list})",
-           "someone": "Someone", "and": "and", "more": "{n} more"},
+           "someone": "Someone", "and": "and", "more": "{n} more", "test": "Test message – notifications arrive."},
     "fr": {"via_link": "quelque chose (via un lien partagé)", "added": "{who} a ajouté {items} à {list}", "checked": "{who} a coché {items} ({list})",
-           "someone": "Quelqu'un", "and": "et", "more": "{n} autres"},
+           "someone": "Quelqu'un", "and": "et", "more": "{n} autres", "test": "Message de test – les notifications arrivent."},
     "es": {"via_link": "algo (mediante enlace compartido)", "added": "{who} ha añadido {items} a {list}", "checked": "{who} ha marcado {items} ({list})",
-           "someone": "Alguien", "and": "y", "more": "{n} más"},
+           "someone": "Alguien", "and": "y", "more": "{n} más", "test": "Mensaje de prueba – las notificaciones llegan."},
     "it": {"via_link": "qualcosa (tramite link condiviso)", "added": "{who} ha aggiunto {items} a {list}", "checked": "{who} ha spuntato {items} ({list})",
-           "someone": "Qualcuno", "and": "e", "more": "altri {n}"},
+           "someone": "Qualcuno", "and": "e", "more": "altri {n}", "test": "Messaggio di prova – le notifiche arrivano."},
     "pl": {"via_link": "coś (przez udostępniony link)", "added": "{who} dodał(a) {items} do {list}", "checked": "{who} odhaczył(a) {items} ({list})",
-           "someone": "Ktoś", "and": "i", "more": "{n} więcej"},
+           "someone": "Ktoś", "and": "i", "more": "{n} więcej", "test": "Wiadomość testowa – powiadomienia docierają."},
 }
 
 
@@ -48,6 +50,7 @@ def validate(settings: Any) -> dict[str, Any]:
         "service": str(s.get("service") or "").removeprefix("notify.")[:80] or None,
         "added": bool(s.get("added", True)),
         "checked": bool(s.get("checked", False)),
+        "own": bool(s.get("own", False)),  # auch eigene Änderungen (z. B. von einem anderen Gerät)
         "lists": [str(x) for x in s.get("lists") or [] if str(x).startswith("todo.")][:50],
         "muted": [str(x) for x in s.get("muted") or []][:50],
         "quiet": [int(quiet[0]) % 24, int(quiet[1]) % 24] if quiet else None,
@@ -125,7 +128,7 @@ class Notifier:
         from . import lists
 
         for user_id, s in self.users.items():
-            if not s["service"] or not s[kind] or user_id == actor or (actor and actor in s["muted"]):
+            if not s["service"] or not s[kind] or (user_id == actor and not s["own"]) or (actor and actor in s["muted"]):
                 continue
             if s["lists"] and entity_id not in s["lists"]:
                 continue
@@ -169,8 +172,19 @@ class Notifier:
                 "title": list_name, "message": message,
                 "data": {"tag": f"smartlists-{entity_id}", "group": "smartlists", "clickAction": "/smartlists"},
             })
-        except Exception:  # noqa: BLE001 – falscher Dienst o.ä. soll nichts anderes stören
+        except Exception as err:  # noqa: BLE001 – falscher Dienst o.ä. soll nichts anderes stören
+            _LOGGER.warning("SmartLists: Benachrichtigung über notify.%s fehlgeschlagen: %s", s["service"], err)
             return
+
+    async def async_test(self, user_id: str) -> None:
+        """Testnachricht an das eingestellte Gerät (Fehler gehen an die Karte zurück)."""
+        s = self.get(user_id)
+        if not s["service"]:
+            raise ValueError("no_service")
+        await self.hass.services.async_call("notify", s["service"], {
+            "title": "SmartLists", "message": _text(self.hass)["test"],
+            "data": {"tag": "smartlists-test", "group": "smartlists", "clickAction": "/smartlists"},
+        }, blocking=True)
 
 
 async def async_get_notifier(hass: HomeAssistant) -> Notifier:

@@ -33,9 +33,9 @@ the line. HA's own to-do view of a regular list still shows the raw line.
 *General settings → Global → Badges and colours* (admins) changes how badges look – for all users, without
 touching the item text:
 
-- **Per kind** (store, person, tag): style *filled*, *subtle*, *outline* or *text only*, a colour and the
-  symbol in front (👤 for people, # for tags – or anything else, up to 4 characters).
-- **Individual badges**: a colour for a single store, person or tag (`@REWE`, `*Anna`, `#bio`), and a
+- **Per kind** (store, person, tag): style *filled*, *subtle*, *outline* or *text only*, a colour
+  (background for *filled*), an optional text colour and the symbol in front (👤 for people, # for tags – or anything else, up to 4 characters).
+- **Individual badges**: a colour and text colour for a single store, person or tag (`@REWE`, `*Anna`, `#bio`), and a
   **display name** for stores (e.g. "REWE City"). *Colour a badge* also works for badges not used yet.
 - ↺ resets to the default. Store colours and names are also sent to the app (as known stores).
 

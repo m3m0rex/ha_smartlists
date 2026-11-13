@@ -19,6 +19,9 @@
     },
     "error": {
       "combine_two": "Scegli almeno due liste – oppure nessuna."
+    },
+    "create_entry": {
+      "setup": "SmartLists è pronto. [Apri l'assistente di configurazione]({url}) – ti guida tra liste, negozi, notazione, lingua ed extra. Puoi avviarlo anche più tardi da Configura."
     }
   },
   "config_subentries": {
@@ -121,6 +124,7 @@
         "title": "SmartLists – impostazioni per tutti",
         "description": "Ogni utente può impostare le proprie differenze personali tramite l'icona a ingranaggio nella scheda.",
         "menu_options": {
+          "assistant": "Assistente di configurazione",
           "naming": "Convenzione dei nomi (@negozio, *persona, #tag)",
           "controls": "Comandi (predefiniti per tutti)",
           "learned": "Categorie memorizzate e cronologia",
@@ -237,7 +241,7 @@
       },
       "restart": {
         "title": "Ripeti la configurazione",
-        "description": "L'assistente compare la prossima volta che un admin apre la pagina o la scheda SmartLists. Se vuoi, ricomincia da zero – le liste di attività e i loro articoli non vengono mai eliminati.",
+        "description": "Scegli cosa ripristinare prima – le liste di attività e i loro articoli non vengono mai eliminati. Poi l'assistente si apre tramite un link (e alla prossima apertura di SmartLists da parte di un admin).",
         "data": {
           "settings": "Ripristina le impostazioni",
           "data": "Elimina i dati appresi",
@@ -249,6 +253,14 @@
           "data": "Categorie memorizzate, cronologia e statistiche, prezzi e spese, modelli e piano settimanale.",
           "combined": "Solo la vista combinata – le liste di origine restano invariate."
         }
+      },
+      "assistant": {
+        "title": "Assistente di configurazione",
+        "description": "[➜ Apri l'assistente di configurazione]({url})\n\nSi apre nella pagina SmartLists e ti guida tra liste, negozi, notazione, lingua, persone ed extra. Non viene ripristinato nulla. Per ripristinare prima alcune parti: «Ripeti configurazione / ricomincia da zero»."
+      },
+      "restart_done": {
+        "title": "Ripristinato",
+        "description": "Fatto. [➜ Apri l'assistente ora]({url}) – compare anche la prossima volta che un admin apre SmartLists."
       }
     },
     "error": {

@@ -4,8 +4,8 @@ All of these are optional – without settings SmartLists behaves as before.
 
 ## Aisle order per store
 
-*General settings → Global → Stores & zones → 🛤️ Order* next to a store. Move the categories with ▲▼ –
-or press *Sort* and drag the rows – into the order of the aisles. If the store has several zones (branches), choose a
+*General settings → Global → Stores & zones → 🛤️ Order* next to a store. Drag the rows by the handle ⠿
+(mouse, finger or pen) or move them with ▲▼ into the order of the aisles. If the store has several zones (branches), choose a
 branch to give it its own order. In **shopping mode**, when that store is selected (by hand or
 automatically through its zone), the list is grouped in this order.
 
@@ -57,8 +57,11 @@ active links of all lists.
 
 *General settings → For me → Notifications* – everyone for themselves: which device (companion app),
 on new items and/or when something is checked off, which lists, from whom (per person), quiet hours.
-Your own changes never notify you; several changes within a minute arrive as one message ("Anna added
-milk 2 l, bread to Shopping"). Changes from the card, the app, HA itself and shared links count.
+Your own changes only notify you if *Also for my own changes* is on (handy to try it out, or when you add
+something on the PC and want it on your phone). Several changes within a minute arrive as one message ("Anna
+added milk 2 l, bread to Shopping"). Changes from the card, the app, HA itself and shared links count.
+*Send test message* checks the device right away – if nothing arrives, check the companion app and its
+notification permission; failed messages are logged in *Settings → System → Logs*.
 
 ## Barcode scan
 
@@ -81,8 +84,10 @@ history, and single expense bookings can be deleted under *Bookings* (admins all
 
 ## Meal plan
 
-*⋯ → Meal plan* shows a week (← → for other weeks). Put dishes – i.e. templates – on days; *Add ingredients
-to list* puts everything of that week on the list, equal items are added up. The plan is also the calendar
+*⋯ → Meal plan* shows a week (← → for other weeks). Put dishes – i.e. templates – on days. Changes are
+kept until you press **Save** (then you are asked whether the ingredients should go on the list) or **Add
+ingredients to list** (saves and puts everything of that week on the list; equal items are added up).
+Clicking next to the window does not discard changes. The plan is also the calendar
 **SmartLists Meal plan** in Home Assistant (for dashboards and automations).
 
 **Mealie:** if the Mealie integration is set up, *Get from Mealie* takes the recipes of the week's Mealie

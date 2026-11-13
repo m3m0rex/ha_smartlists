@@ -125,7 +125,7 @@ Ordner `custom_components/smartlists` nach `/config/custom_components/smartlists
 
 Beim ersten Öffnen führt ein **Einrichtungs-Assistent** Admins durch Listen, Märkte, Schreibweise,
 Sprache, Personen und Extras – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).
-Er lässt sich jederzeit erneut starten, auf Wunsch **von vorn** (Einstellungen, gelernte Daten,
+Er lässt sich jederzeit erneut starten (auch verlinkt unter *Konfigurieren* der Integration), auf Wunsch **von vorn** (Einstellungen, gelernte Daten,
 Teilen-Links oder kombinierte Listen zurücksetzen – To-do-Listen werden nie gelöscht).
 
 *Einstellungen → Geräte & Dienste → Integrationen → Integration hinzufügen → **SmartLists***

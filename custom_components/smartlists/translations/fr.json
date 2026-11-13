@@ -19,6 +19,9 @@
     },
     "error": {
       "combine_two": "Veuillez choisir au moins deux listes – ou aucune."
+    },
+    "create_entry": {
+      "setup": "SmartLists est prêt. [Ouvrir l'assistant de configuration]({url}) – il te guide à travers listes, magasins, notation, langue et extras. Tu peux aussi le lancer plus tard via Configurer."
     }
   },
   "config_subentries": {
@@ -121,6 +124,7 @@
         "title": "SmartLists – paramètres pour tous",
         "description": "Chaque utilisateur peut définir ses propres différences via l'icône d'engrenage dans la carte.",
         "menu_options": {
+          "assistant": "Assistant de configuration",
           "naming": "Convention de nommage (@magasin, *personne, #mot-clé)",
           "controls": "Commandes (par défaut pour tous)",
           "learned": "Catégories mémorisées et historique",
@@ -237,7 +241,7 @@
       },
       "restart": {
         "title": "Relancer la configuration",
-        "description": "L'assistant de configuration apparaît la prochaine fois qu'un admin ouvre la page ou la carte SmartLists. Tu peux aussi repartir de zéro – les listes de tâches et leurs articles ne sont jamais supprimés.",
+        "description": "Choisis ce qui est réinitialisé d'abord – les listes de tâches et leurs articles ne sont jamais supprimés. Ensuite, l'assistant s'ouvre via un lien (et à la prochaine ouverture de SmartLists par un admin).",
         "data": {
           "settings": "Réinitialiser les réglages",
           "data": "Supprimer les données apprises",
@@ -249,6 +253,14 @@
           "data": "Catégories mémorisées, historique et statistiques, prix et dépenses, modèles et menu.",
           "combined": "Seulement la vue combinée – les listes sources restent inchangées."
         }
+      },
+      "assistant": {
+        "title": "Assistant de configuration",
+        "description": "[➜ Ouvrir l'assistant de configuration]({url})\n\nIl s'ouvre sur la page SmartLists et te guide à travers listes, magasins, notation, langue, personnes et extras. Rien n'est réinitialisé. Pour réinitialiser d'abord : « Relancer la configuration / repartir de zéro »."
+      },
+      "restart_done": {
+        "title": "Réinitialisé",
+        "description": "Terminé. [➜ Ouvrir l'assistant maintenant]({url}) – il apparaît aussi la prochaine fois qu'un admin ouvre SmartLists."
       }
     },
     "error": {

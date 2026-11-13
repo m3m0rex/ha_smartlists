@@ -14,7 +14,7 @@ columns; on a narrow screen you first see the areas and open one. The search fie
 | For me | Controls | gesture for the item menu, menu entries, pencil/bin in the row – for all your devices or only this one |
 | For me | Shopping and scanning | shopping mode (hide checked, keep screen on, large rows, store by zone), barcode target list and mode |
 | For me | Notifications | device, new items / checked off, lists, people, quiet hours |
-| Global (admins) | Badges and colours | naming convention (`@` `*` `#`), badge style per kind, colours and names of single badges |
+| Global (admins) | Badges and colours | naming convention (`@` `*` `#`), badge style per kind, background and text colours, names of single badges |
 | Global (admins) | Stores & zones | zones per store, aisle order |
 | Global (admins) | Categories | keyword packs, remembered categories |
 | Global (admins) | Devices and notes | connected devices, combined lists from the app, app notes |

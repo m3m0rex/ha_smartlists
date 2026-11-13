@@ -19,6 +19,9 @@
     },
     "error": {
       "combine_two": "Elige al menos dos listas – o ninguna."
+    },
+    "create_entry": {
+      "setup": "SmartLists está listo. [Abrir el asistente de configuración]({url}) – te guía por listas, tiendas, notación, idioma y extras. También puedes iniciarlo más tarde en Configurar."
     }
   },
   "config_subentries": {
@@ -121,6 +124,7 @@
         "title": "SmartLists – ajustes para todos",
         "description": "Cada usuario puede definir sus propias diferencias con el icono de engranaje de la tarjeta.",
         "menu_options": {
+          "assistant": "Asistente de configuración",
           "naming": "Convención de nombres (@tienda, *persona, #etiqueta)",
           "controls": "Controles (predeterminados para todos)",
           "learned": "Categorías recordadas e historial",
@@ -237,7 +241,7 @@
       },
       "restart": {
         "title": "Volver a configurar",
-        "description": "El asistente aparece la próxima vez que un admin abra la página o la tarjeta de SmartLists. Opcionalmente empezar de cero – las listas de tareas y sus artículos nunca se borran.",
+        "description": "Elige qué se restablece primero – las listas de tareas y sus artículos nunca se borran. Después el asistente se abre mediante un enlace (y la próxima vez que un admin abra SmartLists).",
         "data": {
           "settings": "Restablecer ajustes",
           "data": "Borrar datos aprendidos",
@@ -249,6 +253,14 @@
           "data": "Categorías recordadas, historial y estadísticas, precios y gastos, plantillas y plan semanal.",
           "combined": "Solo la vista combinada – las listas de origen no cambian."
         }
+      },
+      "assistant": {
+        "title": "Asistente de configuración",
+        "description": "[➜ Abrir el asistente de configuración]({url})\n\nSe abre en la página de SmartLists y te guía por listas, tiendas, notación, idioma, personas y extras. No se restablece nada. Para restablecer partes antes: «Repetir configuración / empezar de cero»."
+      },
+      "restart_done": {
+        "title": "Restablecido",
+        "description": "Listo. [➜ Abrir el asistente ahora]({url}) – también aparece la próxima vez que un admin abra SmartLists."
       }
     },
     "error": {

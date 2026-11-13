@@ -5,6 +5,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 ## [3.5.1] – 2026-11-13
 
+### Added
+
+- Every SmartLists list now appears as a **device below its entry** on the integration page – combined lists
+  with their source lists ("Combined from: …"), own lists as "Own list". *Visit* on the device opens the list
+  directly on `/smartlists` (`/smartlists?list=todo.…`). Combined lists from the app stay linked to the app's device.
+
 ### Fixed
 
 - Lists that were just created or taken over did not appear on `/smartlists` until the page was reloaded

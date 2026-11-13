@@ -80,6 +80,37 @@ def list_key(subentry: ConfigSubentry) -> str:
     return str(subentry.data.get(LEGACY_UNIQUE_ID) or subentry.subentry_id)
 
 
+_MODEL = {
+    "de": ("Eigene Liste", "Kombiniert aus"), "en": ("Own list", "Combined from"), "fr": ("Liste propre", "Combinée de"),
+    "es": ("Lista propia", "Combinada de"), "it": ("Lista propria", "Combinata da"), "pl": ("Własna lista", "Połączona z"),
+}
+
+
+def list_device(hass: HomeAssistant, key: str, title: str, entity_id: str, sources: list[str] | None = None,
+                via: tuple[str, str] | None = None) -> DeviceInfo:
+    """Ein Gerät je SmartLists-Liste. So erscheint unter jedem Unter-Eintrag der Integration ein anklickbarer
+    Eintrag: bei kombinierten Listen mit den Quell-Listen als Modell, „Besuchen“ öffnet die Liste auf /smartlists."""
+    own_label, combined_label = _MODEL.get((hass.config.language or "en").split("-")[0], _MODEL["en"])
+    if sources is None:
+        model = own_label
+    else:
+        names = []
+        for s in sources:
+            st = hass.states.get(s)
+            names.append(str(st.attributes.get(ATTR_FRIENDLY_NAME)) if st and st.attributes.get(ATTR_FRIENDLY_NAME) else s.split(".", 1)[-1])
+        model = f"{combined_label}: {', '.join(names)}" if names else combined_label
+    info = DeviceInfo(
+        identifiers={(DOMAIN, f"list_{key}")},
+        name=title,
+        manufacturer="SmartLists",
+        model=model[:250],
+        configuration_url=f"homeassistant://smartlists?list={entity_id}",
+    )
+    if via:
+        info["via_device"] = via
+    return info
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
@@ -132,12 +163,12 @@ class CombinedTodoListEntity(TodoListEntity):
         # aus der App übernommen → Entität gehört zum Gerät (Gerät „App …“), die App blendet ihre eigene aus
         self._app_device: str | None = opts.get(CONF_APP_DEVICE) or None
         self._app_list: str | None = opts.get(CONF_APP_LIST) or None
+        self._app_device_info = None
         if self._app_device:
             from .sensor import app_device_info
 
-            # Gerät unbekannt (z. B. in HA entfernt) → Liste trotzdem anlegen, nur ohne Gerät
-            if (info := app_device_info(hass, self._app_device)) is not None:
-                self._attr_device_info = info
+            # Gerät der App (z. B. „S24 Ultra“) – die Liste hängt als eigenes Gerät „über“ diesem Gerät
+            self._app_device_info = app_device_info(hass, self._app_device)
         # Nur im Modus "lokal": abweichender Status je kombinierter UID.
         self._overrides: dict[str, str] = dict(stored.get("overrides", {}))
         # Zuordnung kombinierte UID -> (Quell-Entität, Quell-UID, Original-Name)
@@ -151,6 +182,10 @@ class CombinedTodoListEntity(TodoListEntity):
         # Neue kombinierte Listen: todo.ha_smartlists_list_merged_<name> (wie die App ihre Listen benennt).
         # Gilt nur beim ersten Anlegen – bestehende Entitäten behalten ihre ID.
         self.entity_id = f"todo.ha_smartlists_list_merged_{slugify(title) or 'list'}"
+        from .sensor import device_identifier
+
+        self._attr_device_info = list_device(hass, unique_id, title, self.entity_id, self._sources,
+                                             via=device_identifier(self._app_device) if self._app_device_info else None)
         self._attr_todo_items = []
         self._refresh_debouncer = Debouncer(
             hass, _LOGGER, cooldown=0.5, immediate=False, function=self._async_refresh
@@ -329,7 +364,21 @@ class CombinedTodoListEntity(TodoListEntity):
             return dt_util.as_local(parsed) if parsed else None
         return dt_util.parse_date(raw)
 
+    @callback
+    def _update_device_model(self) -> None:
+        """Beim Start fehlen manchmal noch die Namen der Quell-Listen → Modell (Quellen) später nachziehen."""
+        entry = self.device_entry
+        info = self._attr_device_info
+        if entry is None or not info:
+            return
+        model = list_device(self.hass, self._attr_unique_id, self._attr_name or "", self.entity_id, self._sources)["model"]
+        if entry.model != model:
+            from homeassistant.helpers import device_registry as dr
+
+            dr.async_get(self.hass).async_update_device(entry.id, model=model)
+
     async def _async_refresh(self) -> None:
+        self._update_device_model()
         results = await asyncio.gather(*(self._async_fetch_source(s) for s in self._sources))
         index: dict[str, tuple[str, str, str]] = {}
         per_source: list[list[TodoItem]] = []
@@ -515,6 +564,7 @@ class OwnTodoListEntity(TodoListEntity):
         # Neue eigene Listen: todo.ha_smartlists_list_<name> (gleiches Schema wie in der App). Aus einer gelöschten
         # Liste übernommen → deren Entitäts-ID weiterverwenden (Automationen, Dashboards und die App passen weiter)
         self.entity_id = self.data.get("entity_id") or f"todo.ha_smartlists_list_{slugify(subentry.title) or 'list'}"
+        self._attr_device_info = list_device(hass, f"own_{subentry.subentry_id}", subentry.title, self.entity_id)
         self._owner_name = ""
         self._share_names: dict[str, str] = {}
 

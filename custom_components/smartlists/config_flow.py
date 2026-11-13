@@ -216,7 +216,7 @@ def validate_combined(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, st
     return errors
 
 
-EVERYONE = "__all__"
+EVERYONE = "everyone"  # Übersetzungs-Schlüssel: nur a-z0-9-_, nicht mit _ beginnen
 
 
 async def _access_fields(hass: HomeAssistant, current: dict[str, Any], default_owner: str | None) -> dict[Any, Any]:

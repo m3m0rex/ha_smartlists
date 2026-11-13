@@ -2366,8 +2366,9 @@ class SmartListsCard extends HTMLElement {
     const st = hass.states && hass.states[this._config.entity];
     const rev = st ? `${st.state}|${st.last_updated}` : "missing";
     if (rev !== this._rev) {
+      const firstLoad = this._rev == null;
       this._rev = rev;
-      this._load();
+      this._load(!firstLoad);  // Zustandswechsel kommen auch von anderen → wie Hintergrund-Aktualisierung
     }
   }
 
@@ -2389,9 +2390,35 @@ class SmartListsCard extends HTMLElement {
     this._draft = { text: "", parsed: null, info: null, pickedCat: null, sugg: [], suggMode: "name", active: -1 };
   }
 
-  async _loadConfig() {
+  // Nutzt jemand die Karte gerade (Bearbeiten, Eingabe, Menü, Dialog, Einstellungen, Ziehen)? Dann keine
+  // Hintergrund-Aktualisierung zeichnen – sie wird nachgeholt, sobald man fertig ist.
+  _busy() {
+    const root = this.shadowRoot;
+    const active = root && root.activeElement;
+    const typing = active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName) && (active.value || active.tagName !== "INPUT");
+    return !!(this._editing || this._menu || this._showSettings || this._showImport || this._dragging || SL_DRAG
+      || (root && root.querySelector && root.querySelector(".dlg-back")) || typing);
+  }
+  _defer(fn) {
+    this._deferredFns = this._deferredFns || new Set();
+    this._deferredFns.add(fn);
+    if (this._deferTimer) return;
+    this._deferTimer = setInterval(() => {
+      if (this._busy()) return;
+      clearInterval(this._deferTimer); this._deferTimer = null;
+      const fns = [...this._deferredFns]; this._deferredFns.clear();
+      fns.forEach((f) => f());
+    }, 1000);
+  }
+
+  async _loadConfig(live = false) {
     try {
-      this._cfg = await this._call("config", { language: this._lang }, false);
+      const cfg = await this._call("config", { language: this._lang }, false);
+      const sig = JSON.stringify(cfg);
+      if (live && sig === this._cfgSig) return;  // nichts geändert → nicht neu zeichnen
+      if (live && this._busy()) { this._defer(() => this._loadConfig(true)); return; }
+      this._cfgSig = sig;
+      this._cfg = cfg;
       if (this._cfg && this._cfg.appearance) SL_LOOK = this._cfg.appearance;
       // Version der Integration für die Anzeige im Zahnrad (hilft bei „neue Funktion fehlt“)
       this._call("info", {}, false).then((i) => {
@@ -2404,10 +2431,16 @@ class SmartListsCard extends HTMLElement {
       this._cfg = null;
     }
   }
-  async _load() {
+  /* live = Aktualisierung im Hintergrund (andere haben etwas geändert, Abo, Minuten-Abgleich): zeichnet nur,
+   * wenn sich wirklich etwas geändert hat, und nie während man gerade etwas bearbeitet (dann danach). */
+  async _load(live = false) {
     try {
       const data = await this._call("get_list", { language: this._lang });
       if (!data || !Array.isArray(data.items)) throw new Error("Unexpected response from the SmartLists integration – please update the integration.");
+      const sig = JSON.stringify(data);
+      if (live && sig === this._dataSig && !this._error) return;
+      if (live && this._busy()) { this._defer(() => this._load(true)); return; }
+      this._dataSig = sig;
       // Rückfall: steht die ⚙OFFER-Zeile der App noch in der Notiz, hier selbst zerlegen
       for (const it of data.items) {
         if (!it.offer && it.note) { const r = parseOfferNote(it.note, this._cfg && this._cfg.known_stores); if (r.offer) { it.offer = r.offer; it.note = r.note; } }
@@ -2939,13 +2972,13 @@ class SmartListsCard extends HTMLElement {
       let first = true;
       this._unsub = await conn.subscribeMessage(() => {
         if (first) { first = false; return; } // erste Nachricht = aktueller Stand
-        if (!this._reloadSoon) this._reloadSoon = debounce(() => this._load(), 250);
+        if (!this._reloadSoon) this._reloadSoon = debounce(() => this._load(true), 250);
         this._reloadSoon();
       }, { type: "todo/item/subscribe", entity_id: entity });
       // Haushaltsdaten (Kategorien, Preise, Vorlagen, Badges, Links …) live: neu laden, wenn sie sich ändern
       try {
         this._unsubData = await conn.subscribeMessage(() => {
-          if (!this._dataSoon) this._dataSoon = debounce(async () => { await this._loadConfig(); this._load(); }, 800);
+          if (!this._dataSoon) this._dataSoon = debounce(async () => { await this._loadConfig(true); this._load(true); }, 800);
           this._dataSoon();
         }, { type: "smartlists/subscribe" });
       } catch (e) { this._unsubData = null; } // ältere Integration ohne smartlists/subscribe
@@ -2964,11 +2997,11 @@ class SmartListsCard extends HTMLElement {
     this._hiddenAt = 0;
     this._onVisible = () => {
       if (document.visibilityState === "hidden") { this._hiddenAt = Date.now(); return; }
-      if (this._hiddenAt && Date.now() - this._hiddenAt > 15000) { this._loadConfig(); this._load(); }
+      if (this._hiddenAt && Date.now() - this._hiddenAt > 15000) { this._loadConfig(true); this._load(true); }
       this._hiddenAt = 0;
     };
     document.addEventListener("visibilitychange", this._onVisible);
-    this._liveTimer = setInterval(() => { if (document.visibilityState !== "hidden" && !this._editing && this.isConnected !== false) this._load(); }, 60000);
+    this._liveTimer = setInterval(() => { if (document.visibilityState !== "hidden" && this.isConnected !== false) this._load(true); }, 60000);
   }
   _stopLive() {
     clearInterval(this._liveTimer); this._liveTimer = null;

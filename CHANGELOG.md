@@ -10,6 +10,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 - Sidebar page: the list overview at the top is **collapsed by default** – one line with the selected
   lists and *All lists ▾*; expand to see all groups (remembered per browser, always open while sorting).
 
+### Fixed
+
+- **No more refresh while you edit**: background updates only redraw the list when something really
+  changed (someone else checked, added or deleted items), and never while you are editing an item, typing,
+  have a menu, dialog or the settings open or are dragging – they are applied right after you finish.
+
 ## [2.9.1] – 2026-11-12
 
 ### Fixed

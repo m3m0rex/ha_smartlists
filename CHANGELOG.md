@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.5.0] – 2026-11-13
+
+### Added
+
+- **Take over existing lists** (*Global → Voice, backup, defaults*, admins): turn one or more to-do lists
+  (HA shopping list, Local To-do, other integrations) into own SmartLists lists with items, notes and
+  checkmarks – one list each or all into one (origin optionally as `*Person`/`#tag`). The old list can be
+  kept, emptied or – for Local To-do – deleted; a warning appears if it is a source of a combined list.
+
 ## [3.4.0] – 2026-11-13
 
 ### Added

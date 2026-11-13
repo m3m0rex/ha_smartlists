@@ -45,7 +45,7 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
   a person, `#organic` a tag. Admins choose which character means what. Tags stay in the item name,
   so other interfaces still show them as text.
 - **Automations & voice:** "I'm at the store" notification, store reminder, recurring items, Assist sentences – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Automations-and-voice).
-- **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
+- **Own lists with sharing:** lists with an owner, shared per person to view, check off or edit; existing to-do lists can be taken over with all items – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing).
 - **Connected devices:** every device with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 - **Shopping helpers:** aisle order per store/branch, prices & monthly expenses, templates/recipes with

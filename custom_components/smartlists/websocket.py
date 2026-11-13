@@ -36,7 +36,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_subscribe, ws_reset, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_notify_test, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_reset, ws_migrate_candidates, ws_migrate, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_notify_test, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -193,7 +193,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history", "migrate"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -1446,3 +1446,34 @@ async def async_reset(hass: HomeAssistant, settings: bool, data: bool, links: bo
 @websocket_api.async_response
 async def ws_reset(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     connection.send_result(msg["id"], await async_reset(hass, msg["settings"], msg["data"], msg["links"], msg["combined"]))
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/migrate_candidates"})
+@callback
+def ws_migrate_candidates(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    from .migrate import candidates
+
+    connection.send_result(msg["id"], {"lists": candidates(hass)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({
+    vol.Required("type"): "smartlists/migrate",
+    vol.Required("sources"): [str],
+    vol.Optional("mode", default="each"): vol.In(["each", "one"]),
+    vol.Optional("name"): vol.Any(str, None),
+    vol.Optional("old", default="keep"): vol.In(["keep", "clear", "delete"]),
+    vol.Optional("tag_kind"): vol.Any(None, vol.In(["person", "tag"])),
+})
+@websocket_api.async_response
+async def ws_migrate(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """To-do-Listen in eigene SmartLists-Listen übernehmen (Besitzer: wer migriert)."""
+    from .migrate import async_migrate
+
+    try:
+        result = await async_migrate(hass, connection.user.id, msg["sources"], msg["mode"], msg.get("name"), msg["old"], msg.get("tag_kind"))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+        return
+    connection.send_result(msg["id"], result)

@@ -165,7 +165,7 @@
       },
       "devices": {
         "title": "Connected devices",
-        "description": "{count} phones with the HA SmartLists app:\n\n{devices}\n\n⚠️ = not synced for more than 7 days. Selected devices are removed from the list; a phone that connects again reappears. To revoke access, delete its token under Profile → Long-lived access tokens.",
+        "description": "{count} devices with the HA SmartLists app:\n\n{devices}\n\n⚠️ = not synced for more than 7 days. Selected devices are removed from the list; a device that connects again reappears. To revoke access, delete its token under Profile → Long-lived access tokens.",
         "data": {
           "remove": "Remove from list"
         }
@@ -186,7 +186,7 @@
       },
       "app_lists": {
         "title": "Lists from the app",
-        "description": "{count} combined lists from phones with the HA SmartLists app:\n\n{lists}\n\n➕ = not connected yet, ✅ = connected. Connected lists are created here as combined lists and belong to the respective phone (devices). The app then shows the list from Home Assistant instead of its own. A list is missing? Tap “Sync SmartLists” in the app once.",
+        "description": "{count} combined lists from devices with the HA SmartLists app:\n\n{lists}\n\n➕ = not connected yet, ✅ = connected. Connected lists are created here as combined lists and belong to the respective device. The app then shows the list from Home Assistant instead of its own. A list is missing? Tap “Sync SmartLists” in the app once.",
         "data": {
           "connect": "Connect"
         }

@@ -120,12 +120,12 @@ const TEXTS = {
     error: "Fehler", loading: "Lädt …", readonly: "Nur ansehen", delete: "Löschen", edit: "Bearbeiten",
     frequent: "Häufig gekauft", src_manual: "gemerkt", src_learned: "gelernt", src_pack: "automatisch", src_fallback: "unbekannt",
     unit_hint: "übliche Einheit", category: "Kategorie", settings: "Einstellungen", naming: "Namenskonvention",
-    naming_help: "Zeichen vor einem Wort machen daraus ein Badge. Gilt für alle Listen und Geräte im Haushalt.",
+    naming_help: "Zeichen vor einem Wort machen daraus ein Badge. Gilt für alle Listen, Benutzer und Geräte.",
     kind_store: "Markt", kind_person: "Person", kind_tag: "Schlagwort", add_rule: "Regel hinzufügen", example: "Beispiel",
     learned: "Gemerkte Kategorien", learned_help: "Entstehen, wenn du eine Kategorie von Hand wählst.", forget: "Vergessen",
     none_learned: "Noch nichts gemerkt.", saved: "Gespeichert", admin_only: "Nur Administratoren können das ändern.",
     in_list: "steht schon auf der Liste",
-    tab_me: "Für mich", tab_house: "Haushalt", tab_list: "Diese Liste", ui_me_help: "Gilt für dich. Abweichungen vom Haushalts-Standard sind mit • markiert.",
+    tab_me: "Für mich", tab_house: "Global", tab_list: "Diese Liste", ui_me_help: "Gilt nur für dich. Abweichungen von der globalen Einstellung sind mit • markiert.",
     ui_house: "Bedienung – Standard für alle", reset_default: "Auf Standard zurücksetzen", about_list: "Über diese Liste", type: "Typ", entity: "Entität", sources: "Quellen",
     type_combined: "Kombinierte Liste", type_own: "Eigene SmartLists-Liste", type_list: "To-do-Liste aus Home Assistant", char: "Zeichen", kind: "Art",
     no_hits_short: "Nichts gefunden.", by_hand: "von Hand", search_learned: "Suchen … (z. B. milch)",
@@ -133,8 +133,8 @@ const TEXTS = {
     auto_voice_default_list: "Standard-Liste für Assist", auto_voice_help: "Wenn man im Satz keine Liste nennt.",
     auto_auto_due_list: "Fällige Artikel automatisch auf", auto_due_help: "Stündlich, nach eurem Kaufrhythmus. „—“ = aus.",
     install_sentences: "Assist-Sätze installieren", sentences_installed: "installiert",
-    devices: "Verbundene Geräte", devices_help: "Handys mit der HA-SmartLists-App. ⚠️ = über 7 Tage nicht abgeglichen. Zugang sperren: Token im Profil löschen.",
-    no_devices: "Noch kein Handy verbunden.", remove_device: "Aus der Liste nehmen", last_seen: "zuletzt",
+    devices: "Verbundene Geräte", devices_help: "Geräte mit der HA-SmartLists-App. ⚠️ = über 7 Tage nicht abgeglichen. Zugang sperren: Token im Profil löschen.",
+    no_devices: "Noch kein Gerät verbunden.", remove_device: "Aus der Liste nehmen", last_seen: "zuletzt",
     role_all: "alle Rechte", admin_always: "Admin – darf immer alles", shop_large_help: "Leichter mit dem Daumen zu treffen",
     new_list_help: "Du bist Besitzer und kannst sie danach für andere freigeben.", new_list_placeholder: "z. B. Drogerie", create: "Anlegen",
     p_columns: "Mehrere Listen nebeneinander", p_wide: "Breite Ansicht", p_settings: "Einstellungen", p_back: "Zurück zu den Listen",
@@ -164,7 +164,7 @@ const TEXTS = {
     scope_household: "Standard für alle", scope_user: "Für mich auf allen Geräten", scope_device: "Nur auf diesem Gerät",
     scope_help_household: "Gilt für jeden, der nichts Eigenes eingestellt hat.",
     scope_help_user: "Nur deine Abweichungen vom Standard werden gespeichert (markiert mit •). „Zurücksetzen“ = wieder Standard.",
-    scope_help_device: "Gilt nur in diesem Browser bzw. auf diesem Handy. „Zurücksetzen“ = wieder deine Einstellung.",
+    scope_help_device: "Gilt nur in diesem Browser bzw. auf diesem Gerät. „Zurücksetzen“ = wieder deine Einstellung.",
     press_gesture: "Geste für das Artikel-Menü", g_long: "Lange drücken", g_double: "Doppelklick", g_right: "Rechtsklick", g_off: "Aus",
     press_target: "Wo die Geste greift", t_row: "Ganze Zeile", t_name: "Nur auf den Namen",
     press_result: "Was die Geste macht", r_menu: "Menü öffnen", r_edit: "Direkt bearbeiten", r_delete: "Löschen (mit Nachfrage)",
@@ -220,11 +220,11 @@ const TEXTS = {
     stores: "Märkte & Zonen", stores_help: "Verknüpfe Märkte mit Zonen von Home Assistant. Im Einkaufsmodus siehst du dann automatisch nur die Artikel des Marktes, in dem du gerade bist.",
     notes: "Notizen der App", notes_help: "Die HA-SmartLists-App speichert Notizen als eigene To-do-Liste. Sie sind keine Einkaufslisten und deshalb standardmäßig ausgeblendet.",
     notes_show: "In SmartLists zeigen", notes_show_help: "Als eigener Bereich 📝 auf der Seite – nicht bei Assist, Diensten und kombinierten Listen.",
-    notes_scope: "Wer sieht Notizen", notes_scope_owner: "nur das eigene Konto", notes_scope_household: "der ganze Haushalt",
+    notes_scope: "Wer sieht Notizen", notes_scope_owner: "nur das eigene Konto", notes_scope_household: "alle Benutzer",
     notes_lists: "Notizlisten und Besitzer", notes_none: "Keine Notizliste der App gefunden.", notes_no_owner: "unbekannt (nur Admins)",
     p_order: "Reihenfolge ändern", p_order_hint: "◀ ▶ verschiebt eine Liste. Mit der Maus: Chip auf einen anderen ziehen. Die Reihenfolge gilt auch für die Spalten.",
     p_left: "Nach links", p_right: "Nach rechts",
-    look: "Badges & Farben", look_help: "Aussehen der Badges für den ganzen Haushalt. Farben und Namen der Märkte gelten auch in der App. Leer bzw. ↺ = Standard.",
+    look: "Badges & Farben", look_help: "Aussehen der Badges für alle Benutzer. Farben und Namen der Märkte gelten auch in der App. Leer bzw. ↺ = Standard.",
     look_style: "Stil", look_filled: "gefüllt", look_soft: "dezent", look_outline: "Rahmen", look_text: "nur Text",
     look_color: "Farbe", look_icon: "Symbol davor", look_label: "Anzeigename", look_kinds: "Je Art", look_values: "Einzelne Badges",
     look_search: "Badge suchen … (z. B. rewe)", look_more: "Weitere über die Suche finden.", look_add: "Badge einfärben",
@@ -233,9 +233,9 @@ const TEXTS = {
     app_list: "kombinierte Liste der App", app_list_connected: "verbunden", app_list_connect: "Verbinden",
     zone_name: "Name der Zone, z. B. REWE Standort Test", zone_radius: "Radius", zone_coords: "Koordinaten oder Karten-Link", zone_coords_placeholder: "52.5200, 13.4050 oder Link aus Google/Apple/OSM-Karten", zone_coords_bad: "Keine Koordinaten erkannt.", zone_locating: "Standort wird ermittelt …", zone_no_location: "Standort nicht verfügbar – andere Option wählen.", zone_where: "Wo?", zone_here_opt: "Aktueller Standort (dieses Gerät)", zone_home_opt: "Zuhause", zone_map_opt: "Auf der Karte wählen", zone_after: "Feinjustieren jederzeit unter Einstellungen → Bereiche & Zonen.",
     note_new: "Neue Notiz", note_edit: "Notiz bearbeiten", note_view: "Liste / Raster", note_empty: "Noch keine Notizen.", note_locked: "Verschlüsselte Notiz", note_locked_help: "Mit dem Notiz-Passwort der App verschlüsselt – nur in der App lesbar.", note_title: "Titel", note_body: "Text",
-    p_settings_hint: "Liste antippen, für die „Diese Liste“ gilt. Für mich und Haushalt gelten für alle Listen.",
-    list_settings_hint: "Bedienung, Haushalt und Kategorien: ⚙ oben rechts auf der Seite.",
-    settings_list: "Einstellungen dieser Liste", settings_global: "Allgemeine Einstellungen", list_settings_hint_card: "Bedienung, Haushalt und Kategorien: Regler-Symbol daneben.",
+    p_settings_hint: "",
+    list_settings_hint: "Bedienung und alles Globale: ⚙ oben rechts auf der Seite.",
+    settings_list: "Einstellungen dieser Liste", settings_global: "Allgemeine Einstellungen", list_settings_hint_card: "Bedienung und alles Globale: Regler-Symbol in der Kopfzeile.",
     tpl: "Vorlagen",
     scan: "Strichcode scannen",
     price_sum: "Summe",
@@ -266,8 +266,8 @@ const TEXTS = {
     aisle_help: "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist.",
     aisle_all_branches: "alle Filialen",
     aisle_reset: "Standard",
-    notify_to: "An mein Handy",
-    notify_no_phone: "Kein Handy mit Companion-App gefunden.",
+    notify_to: "An mein Gerät",
+    notify_no_phone: "Kein Gerät mit Companion-App gefunden.",
     notify_added: "Bei neuen Artikeln",
     notify_checked: "Wenn etwas abgehakt wird",
     notify_lists: "Listen",
@@ -334,6 +334,7 @@ const TEXTS = {
     p_lists_all: "Alle Listen", p_lists_less: "Weniger",
     scan_native_help: "Den Strichcode auf der Verpackung ins Bild halten.", scan_type: "Nummer eintippen", scan_not_product: "Das ist kein Produkt-Strichcode (EAN).",
     scan_target: "Ziel-Liste", scan_target_this: "diese Liste (der Karte)", scan_mode: "Gescanntes", scan_mode_input: "ins Eingabefeld (prüfen, dann hinzufügen)", scan_mode_add: "direkt hinzufügen", barcode_providers: "Dienste zum Nachschlagen", barcode_providers_help: "Antippen schaltet ein/aus, die Zahl ist die Reihenfolge – der erste Treffer zählt. Gefundene Codes merkt sich SmartLists.", barcode_custom: "eigener Dienst", barcode_custom_url: "Adresse mit {code}", barcode_custom_field: "Feld für den Namen",
+    a_applies: "Gilt für", a_menu: "Artikel-Menü", a_shop: "Einkaufen und Scannen", a_me_sub: "Gilt nur für dich.", a_look: "Badges und Farben", a_global_sub: "Gilt für alle Benutzer, auch in der App.", a_cats: "Kategorien", a_devices: "Geräte und Notizen", a_rights: "Teilen und Rechte", a_rights_sub: "Was Benutzer ohne Admin-Rechte dürfen.", a_data: "Sprache, Sichern, Standard", a_stats: "Statistik und Ausgaben", a_search: "Einstellung suchen", admin_only_short: "nur Admins", g_stats: "Auswertung", ls_done: "Fertig", rights_who: "Links erstellen dürfen", rights_share_who: "Links erstellen dürfen", rights_who_admins: "nur Admins", rights_who_owners: "Admins und Besitzer der Liste", rights_who_editors: "alle, die die Liste bearbeiten dürfen", rights_who_nobody: "niemand (Teilen aus)", rights_max: "Ein Link darf höchstens", rights_share_max: "Ein Link darf höchstens", rights_max_on: "abhaken und hinzufügen", rights_limits_help: "Die Grenzen gelten für Benutzer ohne Admin-Rechte.", rights_max_hours: "Längste Gültigkeit", rights_share_max_hours: "Längste Gültigkeit", rights_all_links: "Aktive Links aller Listen zeigen", rights_no_links: "Keine aktiven Links.", rights_share_help: "Links geben Leuten ohne Konto Zugriff auf eine einzelne Liste.", rights_other: "Ohne Admin-Rechte erlaubt", rights_create_lists: "Eigene Listen anlegen", rights_templates: "Vorlagen anlegen und ändern", rights_categories: "Kategorien von Hand zuordnen", rights_prices: "Preise eintragen", ls_list: "Liste", ls_list_help: "Gilt für diese Liste auf allen Geräten, solange eine Karte oder ein Gerät nichts anderes festlegt.", ls_name: "Name", ls_sort: "Sortiert nach", ls_default: "Standard der Karte",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -348,7 +349,7 @@ const TEXTS = {
     learned: "Remembered categories", learned_help: "Created when you pick a category manually.", forget: "Forget",
     none_learned: "Nothing remembered yet.", saved: "Saved", admin_only: "Only administrators can change this.",
     in_list: "already on the list",
-    tab_me: "For me", tab_house: "Household", tab_list: "This list", ui_me_help: "Applies to you. Differences from the household default are marked •.",
+    tab_me: "For me", tab_house: "Global", tab_list: "This list", ui_me_help: "Applies to you only. Differences from the global setting are marked •.",
     ui_house: "Controls – default for everyone", reset_default: "Reset to default", about_list: "About this list", type: "Type", entity: "Entity", sources: "Sources",
     type_combined: "Combined list", type_own: "Own SmartLists list", type_list: "Home Assistant to-do list", char: "Character", kind: "Kind",
     no_hits_short: "Nothing found.", by_hand: "by hand", search_learned: "Search … (e.g. milk)",
@@ -356,8 +357,8 @@ const TEXTS = {
     auto_voice_default_list: "Default list for Assist", auto_voice_help: "Used when a sentence names no list.",
     auto_auto_due_list: "Automatically add due items to", auto_due_help: "Hourly, by your buying rhythm. “—” = off.",
     install_sentences: "Install Assist sentences", sentences_installed: "installed",
-    devices: "Connected devices", devices_help: "Phones with the HA SmartLists app. ⚠️ = not synced for 7+ days. To revoke access, delete the token in the profile.",
-    no_devices: "No phone connected yet.", remove_device: "Remove from list", last_seen: "last seen",
+    devices: "Connected devices", devices_help: "Devices with the HA SmartLists app. ⚠️ = not synced for 7+ days. To revoke access, delete the token in the profile.",
+    no_devices: "No device connected yet.", remove_device: "Remove from list", last_seen: "last seen",
     role_all: "all rights", admin_always: "Admin – can always do everything", shop_large_help: "Easier to hit with your thumb",
     new_list_help: "You are the owner and can share it with others afterwards.", new_list_placeholder: "e.g. Drugstore", create: "Create",
     p_columns: "Several lists side by side", p_wide: "Wide layout", p_settings: "Settings", p_back: "Back to the lists",
@@ -387,7 +388,7 @@ const TEXTS = {
     scope_household: "Default for everyone", scope_user: "For me on all devices", scope_device: "Only on this device",
     scope_help_household: "Applies to everyone who hasn't set their own.",
     scope_help_user: "Only your differences from the default are saved (marked •). “Reset” = back to default.",
-    scope_help_device: "Applies to this browser or phone only. “Reset” = back to your setting.",
+    scope_help_device: "Applies to this browser or device only. “Reset” = back to your setting.",
     press_gesture: "Gesture for the item menu", g_long: "Long press", g_double: "Double click", g_right: "Right click", g_off: "Off",
     press_target: "Where the gesture works", t_row: "Whole row", t_name: "Name only",
     press_result: "What the gesture does", r_menu: "Open menu", r_edit: "Edit directly", r_delete: "Delete (with confirmation)",
@@ -443,11 +444,11 @@ const TEXTS = {
     stores: "Stores & zones", stores_help: "Link stores to Home Assistant zones. In shopping mode you then automatically see only the items of the store you are in.",
     notes: "App notes", notes_help: "The HA SmartLists app stores notes as a to-do list of its own. They are not shopping lists and are therefore hidden by default.",
     notes_show: "Show in SmartLists", notes_show_help: "As a separate 📝 section on the page – not in Assist, actions or combined lists.",
-    notes_scope: "Who sees notes", notes_scope_owner: "own account only", notes_scope_household: "the whole household",
+    notes_scope: "Who sees notes", notes_scope_owner: "own account only", notes_scope_household: "all users",
     notes_lists: "Note lists and owners", notes_none: "No note list of the app found.", notes_no_owner: "unknown (admins only)",
     p_order: "Change order", p_order_hint: "◀ ▶ moves a list. With the mouse: drag a chip onto another. The order also applies to the columns.",
     p_left: "Move left", p_right: "Move right",
-    look: "Badges & colours", look_help: "How badges look for the whole household. Store colours and names also apply in the app. Empty or ↺ = default.",
+    look: "Badges & colours", look_help: "How badges look for all users. Store colours and names also apply in the app. Empty or ↺ = default.",
     look_style: "Style", look_filled: "filled", look_soft: "subtle", look_outline: "outline", look_text: "text only",
     look_color: "Colour", look_icon: "Symbol in front", look_label: "Display name", look_kinds: "Per kind", look_values: "Individual badges",
     look_search: "Search badge … (e.g. rewe)", look_more: "Find more via search.", look_add: "Colour a badge",
@@ -456,9 +457,9 @@ const TEXTS = {
     app_list: "combined list of the app", app_list_connected: "connected", app_list_connect: "Connect",
     zone_name: "Zone name, e.g. REWE Standort Test", zone_radius: "Radius", zone_coords: "Coordinates or map link", zone_coords_placeholder: "52.5200, 13.4050 or a Google/Apple/OSM maps link", zone_coords_bad: "No coordinates recognised.", zone_locating: "Getting location …", zone_no_location: "Location not available – choose another option.", zone_where: "Where?", zone_here_opt: "Current location (this device)", zone_home_opt: "Home", zone_map_opt: "Pick on the map", zone_after: "Fine-tune any time under Settings → Areas & zones.",
     note_new: "New note", note_edit: "Edit note", note_view: "List / grid", note_empty: "No notes yet.", note_locked: "Encrypted note", note_locked_help: "Encrypted with the app's notes password – readable only in the app.", note_title: "Title", note_body: "Text",
-    p_settings_hint: "Tap the list that “This list” refers to. For me and Household apply to all lists.",
-    list_settings_hint: "Controls, household and categories: ⚙ at the top right of the page.",
-    settings_list: "Settings of this list", settings_global: "General settings", list_settings_hint_card: "Controls, household and categories: the slider icon next to it.",
+    p_settings_hint: "",
+    list_settings_hint: "Controls and everything global: ⚙ at the top right of the page.",
+    settings_list: "Settings of this list", settings_global: "General settings", list_settings_hint_card: "Controls and everything global: the slider icon in the header.",
     tpl: "Templates",
     scan: "Scan barcode",
     price_sum: "Total",
@@ -489,8 +490,8 @@ const TEXTS = {
     aisle_help: "This is how shopping mode sorts when this store is selected.",
     aisle_all_branches: "all branches",
     aisle_reset: "Default",
-    notify_to: "To my phone",
-    notify_no_phone: "No phone with the companion app found.",
+    notify_to: "To my device",
+    notify_no_phone: "No device with the companion app found.",
     notify_added: "On new items",
     notify_checked: "When something is checked off",
     notify_lists: "Lists",
@@ -557,6 +558,7 @@ const TEXTS = {
     p_lists_all: "All lists", p_lists_less: "Less",
     scan_native_help: "Point the camera at the barcode on the package.", scan_type: "Type the number", scan_not_product: "This is not a product barcode (EAN).",
     scan_target: "Target list", scan_target_this: "this list (of the card)", scan_mode: "Scanned items", scan_mode_input: "into the input field (check, then add)", scan_mode_add: "add directly", barcode_providers: "Lookup services", barcode_providers_help: "Tap to turn on/off, the number is the order – the first hit counts. SmartLists remembers found codes.", barcode_custom: "custom service", barcode_custom_url: "URL with {code}", barcode_custom_field: "Field with the name",
+    a_applies: "Applies to", a_menu: "Item menu", a_shop: "Shopping and scanning", a_me_sub: "Applies to you only.", a_look: "Badges and colours", a_global_sub: "Applies to all users, also in the app.", a_cats: "Categories", a_devices: "Devices and notes", a_rights: "Sharing and permissions", a_rights_sub: "What users without admin rights may do.", a_data: "Voice, backup, defaults", a_stats: "Statistics and expenses", a_search: "Search settings", admin_only_short: "admins only", g_stats: "Insights", ls_done: "Done", rights_who: "May create links", rights_share_who: "May create links", rights_who_admins: "admins only", rights_who_owners: "admins and the list's owner", rights_who_editors: "everyone who may edit the list", rights_who_nobody: "nobody (sharing off)", rights_max: "A link may at most", rights_share_max: "A link may at most", rights_max_on: "check off and add", rights_limits_help: "The limits apply to users without admin rights.", rights_max_hours: "Longest validity", rights_share_max_hours: "Longest validity", rights_all_links: "Show active links of all lists", rights_no_links: "No active links.", rights_share_help: "Links give people without an account access to a single list.", rights_other: "Allowed without admin rights", rights_create_lists: "Create own lists", rights_templates: "Create and change templates", rights_categories: "Assign categories by hand", rights_prices: "Enter prices", ls_list: "List", ls_list_help: "Applies to this list on all devices, unless a card or a device sets something else.", ls_name: "Name", ls_sort: "Sorted by", ls_default: "card default",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -571,7 +573,7 @@ const TEXTS = {
     learned: "Catégories mémorisées", learned_help: "Créées quand tu choisis une catégorie à la main.", forget: "Oublier",
     none_learned: "Rien de mémorisé pour l'instant.", saved: "Enregistré", admin_only: "Seuls les administrateurs peuvent modifier ceci.",
     in_list: "déjà sur la liste",
-    tab_me: "Pour moi", tab_house: "Foyer", tab_list: "Cette liste", ui_me_help: "S'applique à toi. Les écarts par rapport au réglage du foyer sont marqués •.",
+    tab_me: "Pour moi", tab_house: "Global", tab_list: "Cette liste", ui_me_help: "S'applique seulement à toi. Les écarts par rapport au réglage global sont marqués •.",
     ui_house: "Commandes – réglage par défaut pour tous", reset_default: "Rétablir les valeurs par défaut", about_list: "À propos de cette liste", type: "Type", entity: "Entité", sources: "Sources",
     type_combined: "Liste combinée", type_own: "Liste SmartLists propre", type_list: "Liste de tâches Home Assistant", char: "Caractère", kind: "Type",
     no_hits_short: "Aucun résultat.", by_hand: "à la main", search_learned: "Rechercher … (p. ex. lait)",
@@ -579,8 +581,8 @@ const TEXTS = {
     auto_voice_default_list: "Liste par défaut pour Assist", auto_voice_help: "Utilisée quand la phrase ne cite aucune liste.",
     auto_auto_due_list: "Ajouter automatiquement les articles à racheter à", auto_due_help: "Toutes les heures, selon votre rythme d'achat. « — » = désactivé.",
     install_sentences: "Installer les phrases Assist", sentences_installed: "installées",
-    devices: "Appareils connectés", devices_help: "Téléphones avec l'app HA SmartLists. ⚠️ = pas synchronisé depuis plus de 7 jours. Pour retirer l'accès, supprime le jeton dans le profil.",
-    no_devices: "Aucun téléphone connecté.", remove_device: "Retirer de la liste", last_seen: "vu",
+    devices: "Appareils connectés", devices_help: "Appareils avec l'app HA SmartLists. ⚠️ = pas synchronisé depuis plus de 7 jours. Pour retirer l'accès, supprime le jeton dans le profil.",
+    no_devices: "Aucun appareil connecté.", remove_device: "Retirer de la liste", last_seen: "vu",
     role_all: "tous les droits", admin_always: "Admin – peut toujours tout faire", shop_large_help: "Plus facile à toucher avec le pouce",
     new_list_help: "Tu en es le propriétaire et peux la partager ensuite.", new_list_placeholder: "p. ex. Droguerie", create: "Créer",
     p_columns: "Plusieurs listes côte à côte", p_wide: "Affichage large", p_settings: "Paramètres", p_back: "Retour aux listes",
@@ -610,7 +612,7 @@ const TEXTS = {
     scope_household: "Par défaut pour tous", scope_user: "Pour moi sur tous les appareils", scope_device: "Seulement sur cet appareil",
     scope_help_household: "S'applique à tous ceux qui n'ont rien réglé eux-mêmes.",
     scope_help_user: "Seuls tes écarts par rapport au défaut sont enregistrés (marqués •). « Réinitialiser » = retour au défaut.",
-    scope_help_device: "S'applique seulement à ce navigateur ou ce téléphone. « Réinitialiser » = retour à ton réglage.",
+    scope_help_device: "S'applique seulement à ce navigateur ou cet appareil. « Réinitialiser » = retour à ton réglage.",
     press_gesture: "Geste pour le menu d'article", g_long: "Appui long", g_double: "Double-clic", g_right: "Clic droit", g_off: "Désactivé",
     press_target: "Où le geste agit", t_row: "Toute la ligne", t_name: "Seulement sur le nom",
     press_result: "Ce que fait le geste", r_menu: "Ouvrir le menu", r_edit: "Modifier directement", r_delete: "Supprimer (avec confirmation)",
@@ -666,11 +668,11 @@ const TEXTS = {
     stores: "Magasins & zones", stores_help: "Associe les magasins à des zones de Home Assistant. En mode courses, tu ne vois alors automatiquement que les articles du magasin où tu te trouves.",
     notes: "Notes de l'app", notes_help: "L'app HA SmartLists enregistre les notes dans sa propre liste de tâches. Ce ne sont pas des listes de courses, elles sont donc masquées par défaut.",
     notes_show: "Afficher dans SmartLists", notes_show_help: "Comme section 📝 séparée sur la page – pas dans Assist, les actions ni les listes combinées.",
-    notes_scope: "Qui voit les notes", notes_scope_owner: "seulement son propre compte", notes_scope_household: "tout le foyer",
+    notes_scope: "Qui voit les notes", notes_scope_owner: "seulement son propre compte", notes_scope_household: "tous les utilisateurs",
     notes_lists: "Listes de notes et propriétaires", notes_none: "Aucune liste de notes de l'app trouvée.", notes_no_owner: "inconnu (admins seulement)",
     p_order: "Changer l'ordre", p_order_hint: "◀ ▶ déplace une liste. À la souris : glisse une puce sur une autre. L'ordre vaut aussi pour les colonnes.",
     p_left: "Vers la gauche", p_right: "Vers la droite",
-    look: "Badges & couleurs", look_help: "Apparence des badges pour tout le foyer. Les couleurs et noms des magasins s'appliquent aussi dans l'app. Vide ou ↺ = par défaut.",
+    look: "Badges & couleurs", look_help: "Apparence des badges pour tous les utilisateurs. Les couleurs et noms des magasins s'appliquent aussi dans l'app. Vide ou ↺ = par défaut.",
     look_style: "Style", look_filled: "plein", look_soft: "discret", look_outline: "contour", look_text: "texte seul",
     look_color: "Couleur", look_icon: "Symbole devant", look_label: "Nom affiché", look_kinds: "Par type", look_values: "Badges individuels",
     look_search: "Chercher un badge … (p. ex. carrefour)", look_more: "Trouve les autres via la recherche.", look_add: "Colorer un badge",
@@ -679,9 +681,9 @@ const TEXTS = {
     app_list: "liste combinée de l'app", app_list_connected: "associée", app_list_connect: "Associer",
     zone_name: "Nom de la zone, p. ex. Carrefour Centre", zone_radius: "Rayon", zone_coords: "Coordonnées ou lien de carte", zone_coords_placeholder: "48.8566, 2.3522 ou un lien Google/Apple/OSM", zone_coords_bad: "Aucune coordonnée reconnue.", zone_locating: "Localisation en cours …", zone_no_location: "Position indisponible – choisis une autre option.", zone_where: "Où ?", zone_here_opt: "Position actuelle (cet appareil)", zone_home_opt: "Domicile", zone_map_opt: "Choisir sur la carte", zone_after: "À ajuster à tout moment dans Paramètres → Pièces et zones.",
     note_new: "Nouvelle note", note_edit: "Modifier la note", note_view: "Liste / grille", note_empty: "Pas encore de notes.", note_locked: "Note chiffrée", note_locked_help: "Chiffrée avec le mot de passe des notes de l'app – lisible uniquement dans l'app.", note_title: "Titre", note_body: "Texte",
-    p_settings_hint: "Touche la liste à laquelle « Cette liste » se rapporte. Pour moi et Foyer valent pour toutes les listes.",
-    list_settings_hint: "Commandes, foyer et catégories : ⚙ en haut à droite de la page.",
-    settings_list: "Paramètres de cette liste", settings_global: "Paramètres généraux", list_settings_hint_card: "Commandes, foyer et catégories : l'icône de réglage à côté.",
+    p_settings_hint: "",
+    list_settings_hint: "Commandes et réglages globaux : ⚙ en haut à droite de la page.",
+    settings_list: "Paramètres de cette liste", settings_global: "Paramètres généraux", list_settings_hint_card: "Commandes et réglages globaux : l'icône de réglage dans l'en-tête.",
     tpl: "Modèles",
     scan: "Scanner le code-barres",
     price_sum: "Total",
@@ -712,8 +714,8 @@ const TEXTS = {
     aisle_help: "C'est l'ordre du mode courses quand ce magasin est sélectionné.",
     aisle_all_branches: "toutes les succursales",
     aisle_reset: "Par défaut",
-    notify_to: "Sur mon téléphone",
-    notify_no_phone: "Aucun téléphone avec l'application Companion trouvé.",
+    notify_to: "Sur mon appareil",
+    notify_no_phone: "Aucun appareil avec l'application Companion trouvé.",
     notify_added: "Nouveaux articles",
     notify_checked: "Quand quelque chose est coché",
     notify_lists: "Listes",
@@ -780,6 +782,7 @@ const TEXTS = {
     p_lists_all: "Toutes les listes", p_lists_less: "Moins",
     scan_native_help: "Vise le code-barres sur l'emballage.", scan_type: "Saisir le numéro", scan_not_product: "Ce n'est pas un code-barres de produit (EAN).",
     scan_target: "Liste cible", scan_target_this: "cette liste (de la carte)", scan_mode: "Articles scannés", scan_mode_input: "dans le champ de saisie (vérifier, puis ajouter)", scan_mode_add: "ajouter directement", barcode_providers: "Services de recherche", barcode_providers_help: "Touche pour activer/désactiver, le numéro est l'ordre – le premier résultat compte. SmartLists mémorise les codes trouvés.", barcode_custom: "service personnalisé", barcode_custom_url: "URL avec {code}", barcode_custom_field: "Champ du nom",
+    a_applies: "S'applique à", a_menu: "Menu d'article", a_shop: "Courses et scan", a_me_sub: "S'applique seulement à toi.", a_look: "Badges et couleurs", a_global_sub: "S'applique à tous les utilisateurs, aussi dans l'app.", a_cats: "Catégories", a_devices: "Appareils et notes", a_rights: "Partage et droits", a_rights_sub: "Ce que les utilisateurs sans droits d'admin peuvent faire.", a_data: "Voix, sauvegarde, réglages par défaut", a_stats: "Statistiques et dépenses", a_search: "Chercher un réglage", admin_only_short: "admins seulement", g_stats: "Analyse", ls_done: "Terminé", rights_who: "Peuvent créer des liens", rights_share_who: "Peuvent créer des liens", rights_who_admins: "admins seulement", rights_who_owners: "admins et propriétaire de la liste", rights_who_editors: "tous ceux qui peuvent modifier la liste", rights_who_nobody: "personne (partage désactivé)", rights_max: "Un lien permet au plus", rights_share_max: "Un lien permet au plus", rights_max_on: "cocher et ajouter", rights_limits_help: "Les limites s'appliquent aux utilisateurs sans droits d'admin.", rights_max_hours: "Validité maximale", rights_share_max_hours: "Validité maximale", rights_all_links: "Afficher les liens actifs de toutes les listes", rights_no_links: "Aucun lien actif.", rights_share_help: "Les liens donnent accès à une seule liste aux personnes sans compte.", rights_other: "Autorisé sans droits d'admin", rights_create_lists: "Créer ses propres listes", rights_templates: "Créer et modifier des modèles", rights_categories: "Attribuer des catégories à la main", rights_prices: "Saisir des prix", ls_list: "Liste", ls_list_help: "S'applique à cette liste sur tous les appareils, sauf si une carte ou un appareil en décide autrement.", ls_name: "Nom", ls_sort: "Triée par", ls_default: "réglage de la carte",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -794,7 +797,7 @@ const TEXTS = {
     learned: "Categorías recordadas", learned_help: "Se crean cuando eliges una categoría a mano.", forget: "Olvidar",
     none_learned: "Todavía no hay nada recordado.", saved: "Guardado", admin_only: "Solo los administradores pueden cambiar esto.",
     in_list: "ya está en la lista",
-    tab_me: "Para mí", tab_house: "Hogar", tab_list: "Esta lista", ui_me_help: "Se aplica a ti. Las diferencias con el ajuste del hogar se marcan con •.",
+    tab_me: "Para mí", tab_house: "Global", tab_list: "Esta lista", ui_me_help: "Solo se aplica a ti. Las diferencias con el ajuste global se marcan con •.",
     ui_house: "Controles – predeterminado para todos", reset_default: "Restablecer predeterminado", about_list: "Sobre esta lista", type: "Tipo", entity: "Entidad", sources: "Fuentes",
     type_combined: "Lista combinada", type_own: "Lista propia de SmartLists", type_list: "Lista de tareas de Home Assistant", char: "Carácter", kind: "Tipo",
     no_hits_short: "Sin resultados.", by_hand: "a mano", search_learned: "Buscar … (p. ej. leche)",
@@ -802,8 +805,8 @@ const TEXTS = {
     auto_voice_default_list: "Lista predeterminada para Assist", auto_voice_help: "Se usa cuando la frase no nombra ninguna lista.",
     auto_auto_due_list: "Añadir automáticamente los artículos pendientes a", auto_due_help: "Cada hora, según vuestro ritmo de compra. «—» = desactivado.",
     install_sentences: "Instalar frases de Assist", sentences_installed: "instaladas",
-    devices: "Dispositivos conectados", devices_help: "Móviles con la app HA SmartLists. ⚠️ = sin sincronizar desde hace más de 7 días. Para quitar el acceso, borra el token en el perfil.",
-    no_devices: "Ningún móvil conectado todavía.", remove_device: "Quitar de la lista", last_seen: "visto",
+    devices: "Dispositivos conectados", devices_help: "Dispositivos con la app HA SmartLists. ⚠️ = sin sincronizar desde hace más de 7 días. Para quitar el acceso, borra el token en el perfil.",
+    no_devices: "Ningún dispositivo conectado todavía.", remove_device: "Quitar de la lista", last_seen: "visto",
     role_all: "todos los permisos", admin_always: "Admin – siempre puede hacerlo todo", shop_large_help: "Más fácil de tocar con el pulgar",
     new_list_help: "Eres el propietario y luego puedes compartirla con otros.", new_list_placeholder: "p. ej. Droguería", create: "Crear",
     p_columns: "Varias listas una al lado de otra", p_wide: "Vista ancha", p_settings: "Ajustes", p_back: "Volver a las listas",
@@ -833,7 +836,7 @@ const TEXTS = {
     scope_household: "Predeterminado para todos", scope_user: "Para mí en todos los dispositivos", scope_device: "Solo en este dispositivo",
     scope_help_household: "Se aplica a todos los que no han ajustado nada propio.",
     scope_help_user: "Solo se guardan tus diferencias con el predeterminado (marcadas con •). «Restablecer» = volver al predeterminado.",
-    scope_help_device: "Se aplica solo a este navegador o móvil. «Restablecer» = volver a tu ajuste.",
+    scope_help_device: "Se aplica solo a este navegador o dispositivo. «Restablecer» = volver a tu ajuste.",
     press_gesture: "Gesto para el menú del artículo", g_long: "Pulsación larga", g_double: "Doble clic", g_right: "Clic derecho", g_off: "Desactivado",
     press_target: "Dónde funciona el gesto", t_row: "Toda la fila", t_name: "Solo en el nombre",
     press_result: "Qué hace el gesto", r_menu: "Abrir menú", r_edit: "Editar directamente", r_delete: "Borrar (con confirmación)",
@@ -889,11 +892,11 @@ const TEXTS = {
     stores: "Tiendas y zonas", stores_help: "Vincula tiendas con zonas de Home Assistant. En el modo compra verás automáticamente solo los artículos de la tienda en la que estás.",
     notes: "Notas de la app", notes_help: "La app HA SmartLists guarda las notas en su propia lista de tareas. No son listas de la compra, por eso están ocultas por defecto.",
     notes_show: "Mostrar en SmartLists", notes_show_help: "Como sección 📝 aparte en la página – no en Assist, acciones ni listas combinadas.",
-    notes_scope: "Quién ve las notas", notes_scope_owner: "solo la propia cuenta", notes_scope_household: "todo el hogar",
+    notes_scope: "Quién ve las notas", notes_scope_owner: "solo la propia cuenta", notes_scope_household: "todos los usuarios",
     notes_lists: "Listas de notas y propietarios", notes_none: "No se encontró ninguna lista de notas de la app.", notes_no_owner: "desconocido (solo admins)",
     p_order: "Cambiar el orden", p_order_hint: "◀ ▶ mueve una lista. Con el ratón: arrastra una etiqueta sobre otra. El orden vale también para las columnas.",
     p_left: "A la izquierda", p_right: "A la derecha",
-    look: "Etiquetas y colores", look_help: "Aspecto de las etiquetas para todo el hogar. Los colores y nombres de las tiendas también valen en la app. Vacío o ↺ = predeterminado.",
+    look: "Etiquetas y colores", look_help: "Aspecto de las etiquetas para todos los usuarios. Los colores y nombres de las tiendas también valen en la app. Vacío o ↺ = predeterminado.",
     look_style: "Estilo", look_filled: "relleno", look_soft: "suave", look_outline: "borde", look_text: "solo texto",
     look_color: "Color", look_icon: "Símbolo delante", look_label: "Nombre mostrado", look_kinds: "Por tipo", look_values: "Etiquetas individuales",
     look_search: "Buscar etiqueta … (p. ej. mercadona)", look_more: "Encuentra más con la búsqueda.", look_add: "Colorear una etiqueta",
@@ -902,9 +905,9 @@ const TEXTS = {
     app_list: "lista combinada de la app", app_list_connected: "vinculada", app_list_connect: "Vincular",
     zone_name: "Nombre de la zona, p. ej. Mercadona Centro", zone_radius: "Radio", zone_coords: "Coordenadas o enlace de mapa", zone_coords_placeholder: "40.4168, -3.7038 o un enlace de Google/Apple/OSM", zone_coords_bad: "No se reconocen coordenadas.", zone_locating: "Obteniendo ubicación …", zone_no_location: "Ubicación no disponible – elige otra opción.", zone_where: "¿Dónde?", zone_here_opt: "Ubicación actual (este dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Elegir en el mapa", zone_after: "Ajústala cuando quieras en Ajustes → Áreas y zonas.",
     note_new: "Nueva nota", note_edit: "Editar nota", note_view: "Lista / cuadrícula", note_empty: "Aún no hay notas.", note_locked: "Nota cifrada", note_locked_help: "Cifrada con la contraseña de notas de la app – solo legible en la app.", note_title: "Título", note_body: "Texto",
-    p_settings_hint: "Toca la lista a la que se refiere «Esta lista». Para mí y Hogar valen para todas las listas.",
-    list_settings_hint: "Controles, hogar y categorías: ⚙ arriba a la derecha de la página.",
-    settings_list: "Ajustes de esta lista", settings_global: "Ajustes generales", list_settings_hint_card: "Controles, hogar y categorías: el icono de controles al lado.",
+    p_settings_hint: "",
+    list_settings_hint: "Controles y ajustes globales: ⚙ arriba a la derecha de la página.",
+    settings_list: "Ajustes de esta lista", settings_global: "Ajustes generales", list_settings_hint_card: "Controles y ajustes globales: el icono de controles en la cabecera.",
     tpl: "Plantillas",
     scan: "Escanear código de barras",
     price_sum: "Total",
@@ -935,8 +938,8 @@ const TEXTS = {
     aisle_help: "Así ordena el modo compra cuando esta tienda está seleccionada.",
     aisle_all_branches: "todas las sucursales",
     aisle_reset: "Predeterminado",
-    notify_to: "A mi móvil",
-    notify_no_phone: "No se encontró ningún móvil con la app Companion.",
+    notify_to: "A mi dispositivo",
+    notify_no_phone: "No se encontró ningún dispositivo con la app Companion.",
     notify_added: "Con artículos nuevos",
     notify_checked: "Cuando se marca algo",
     notify_lists: "Listas",
@@ -1003,6 +1006,7 @@ const TEXTS = {
     p_lists_all: "Todas las listas", p_lists_less: "Menos",
     scan_native_help: "Apunta al código de barras del envase.", scan_type: "Escribir el número", scan_not_product: "No es un código de barras de producto (EAN).",
     scan_target: "Lista de destino", scan_target_this: "esta lista (de la tarjeta)", scan_mode: "Artículos escaneados", scan_mode_input: "al campo de entrada (revisar y añadir)", scan_mode_add: "añadir directamente", barcode_providers: "Servicios de búsqueda", barcode_providers_help: "Toca para activar/desactivar, el número es el orden – cuenta el primer resultado. SmartLists recuerda los códigos encontrados.", barcode_custom: "servicio propio", barcode_custom_url: "URL con {code}", barcode_custom_field: "Campo con el nombre",
+    a_applies: "Se aplica a", a_menu: "Menú del artículo", a_shop: "Comprar y escanear", a_me_sub: "Solo se aplica a ti.", a_look: "Etiquetas y colores", a_global_sub: "Se aplica a todos los usuarios, también en la app.", a_cats: "Categorías", a_devices: "Dispositivos y notas", a_rights: "Compartir y permisos", a_rights_sub: "Lo que pueden hacer los usuarios sin permisos de admin.", a_data: "Voz, copia, predeterminados", a_stats: "Estadísticas y gastos", a_search: "Buscar ajuste", admin_only_short: "solo admins", g_stats: "Análisis", ls_done: "Listo", rights_who: "Pueden crear enlaces", rights_share_who: "Pueden crear enlaces", rights_who_admins: "solo admins", rights_who_owners: "admins y propietario de la lista", rights_who_editors: "todos los que pueden editar la lista", rights_who_nobody: "nadie (compartir desactivado)", rights_max: "Un enlace permite como máximo", rights_share_max: "Un enlace permite como máximo", rights_max_on: "marcar y añadir", rights_limits_help: "Los límites se aplican a los usuarios sin permisos de admin.", rights_max_hours: "Validez máxima", rights_share_max_hours: "Validez máxima", rights_all_links: "Mostrar enlaces activos de todas las listas", rights_no_links: "No hay enlaces activos.", rights_share_help: "Los enlaces dan acceso a una sola lista a personas sin cuenta.", rights_other: "Permitido sin permisos de admin", rights_create_lists: "Crear listas propias", rights_templates: "Crear y cambiar plantillas", rights_categories: "Asignar categorías a mano", rights_prices: "Introducir precios", ls_list: "Lista", ls_list_help: "Se aplica a esta lista en todos los dispositivos, salvo que una tarjeta o un dispositivo indique otra cosa.", ls_name: "Nombre", ls_sort: "Ordenada por", ls_default: "predeterminado de la tarjeta",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1017,7 +1021,7 @@ const TEXTS = {
     learned: "Categorie memorizzate", learned_help: "Si creano quando scegli una categoria a mano.", forget: "Dimentica",
     none_learned: "Ancora niente di memorizzato.", saved: "Salvato", admin_only: "Solo gli amministratori possono modificarlo.",
     in_list: "è già nella lista",
-    tab_me: "Per me", tab_house: "Casa", tab_list: "Questa lista", ui_me_help: "Vale per te. Le differenze rispetto all'impostazione di casa sono segnate con •.",
+    tab_me: "Per me", tab_house: "Globale", tab_list: "Questa lista", ui_me_help: "Vale solo per te. Le differenze rispetto all'impostazione globale sono segnate con •.",
     ui_house: "Comandi – predefinito per tutti", reset_default: "Ripristina predefinito", about_list: "Informazioni sulla lista", type: "Tipo", entity: "Entità", sources: "Origini",
     type_combined: "Lista combinata", type_own: "Lista SmartLists propria", type_list: "Lista to-do di Home Assistant", char: "Carattere", kind: "Tipo",
     no_hits_short: "Nessun risultato.", by_hand: "a mano", search_learned: "Cerca … (es. latte)",
@@ -1025,8 +1029,8 @@ const TEXTS = {
     auto_voice_default_list: "Lista predefinita per Assist", auto_voice_help: "Usata quando la frase non nomina nessuna lista.",
     auto_auto_due_list: "Aggiungi automaticamente gli articoli da ricomprare a", auto_due_help: "Ogni ora, secondo il vostro ritmo di acquisto. «—» = disattivato.",
     install_sentences: "Installa frasi Assist", sentences_installed: "installate",
-    devices: "Dispositivi collegati", devices_help: "Telefoni con l'app HA SmartLists. ⚠️ = non sincronizzato da oltre 7 giorni. Per revocare l'accesso, elimina il token nel profilo.",
-    no_devices: "Nessun telefono collegato.", remove_device: "Rimuovi dalla lista", last_seen: "visto",
+    devices: "Dispositivi collegati", devices_help: "Dispositivi con l'app HA SmartLists. ⚠️ = non sincronizzato da oltre 7 giorni. Per revocare l'accesso, elimina il token nel profilo.",
+    no_devices: "Nessun dispositivo collegato.", remove_device: "Rimuovi dalla lista", last_seen: "visto",
     role_all: "tutti i permessi", admin_always: "Admin – può sempre fare tutto", shop_large_help: "Più facile da toccare con il pollice",
     new_list_help: "Sei il proprietario e poi puoi condividerla con altri.", new_list_placeholder: "es. Drogheria", create: "Crea",
     p_columns: "Più liste affiancate", p_wide: "Vista larga", p_settings: "Impostazioni", p_back: "Torna alle liste",
@@ -1056,7 +1060,7 @@ const TEXTS = {
     scope_household: "Predefinito per tutti", scope_user: "Per me su tutti i dispositivi", scope_device: "Solo su questo dispositivo",
     scope_help_household: "Vale per chi non ha impostato nulla di proprio.",
     scope_help_user: "Si salvano solo le tue differenze dal predefinito (segnate con •). «Ripristina» = torna al predefinito.",
-    scope_help_device: "Vale solo per questo browser o telefono. «Ripristina» = torna alla tua impostazione.",
+    scope_help_device: "Vale solo per questo browser o dispositivo. «Ripristina» = torna alla tua impostazione.",
     press_gesture: "Gesto per il menu dell'articolo", g_long: "Pressione lunga", g_double: "Doppio clic", g_right: "Clic destro", g_off: "Disattivato",
     press_target: "Dove funziona il gesto", t_row: "Tutta la riga", t_name: "Solo sul nome",
     press_result: "Cosa fa il gesto", r_menu: "Apri menu", r_edit: "Modifica direttamente", r_delete: "Elimina (con conferma)",
@@ -1112,11 +1116,11 @@ const TEXTS = {
     stores: "Negozi e zone", stores_help: "Collega i negozi alle zone di Home Assistant. In modalità spesa vedrai automaticamente solo gli articoli del negozio in cui ti trovi.",
     notes: "Note dell'app", notes_help: "L'app HA SmartLists salva le note in una propria lista to-do. Non sono liste della spesa e perciò sono nascoste per impostazione predefinita.",
     notes_show: "Mostra in SmartLists", notes_show_help: "Come sezione 📝 separata nella pagina – non in Assist, azioni o liste combinate.",
-    notes_scope: "Chi vede le note", notes_scope_owner: "solo il proprio account", notes_scope_household: "tutta la casa",
+    notes_scope: "Chi vede le note", notes_scope_owner: "solo il proprio account", notes_scope_household: "tutti gli utenti",
     notes_lists: "Liste di note e proprietari", notes_none: "Nessuna lista di note dell'app trovata.", notes_no_owner: "sconosciuto (solo admin)",
     p_order: "Cambia ordine", p_order_hint: "◀ ▶ sposta una lista. Col mouse: trascina un chip su un altro. L'ordine vale anche per le colonne.",
     p_left: "A sinistra", p_right: "A destra",
-    look: "Badge e colori", look_help: "Aspetto dei badge per tutta la casa. Colori e nomi dei negozi valgono anche nell'app. Vuoto o ↺ = predefinito.",
+    look: "Badge e colori", look_help: "Aspetto dei badge per tutti gli utenti. Colori e nomi dei negozi valgono anche nell'app. Vuoto o ↺ = predefinito.",
     look_style: "Stile", look_filled: "pieno", look_soft: "tenue", look_outline: "contorno", look_text: "solo testo",
     look_color: "Colore", look_icon: "Simbolo davanti", look_label: "Nome visualizzato", look_kinds: "Per tipo", look_values: "Singoli badge",
     look_search: "Cerca badge … (es. esselunga)", look_more: "Trova gli altri con la ricerca.", look_add: "Colora un badge",
@@ -1125,9 +1129,9 @@ const TEXTS = {
     app_list: "lista combinata dell'app", app_list_connected: "collegata", app_list_connect: "Collega",
     zone_name: "Nome della zona, es. Esselunga Centro", zone_radius: "Raggio", zone_coords: "Coordinate o link della mappa", zone_coords_placeholder: "45.4642, 9.1900 o un link Google/Apple/OSM", zone_coords_bad: "Nessuna coordinata riconosciuta.", zone_locating: "Rilevamento posizione …", zone_no_location: "Posizione non disponibile – scegli un'altra opzione.", zone_where: "Dove?", zone_here_opt: "Posizione attuale (questo dispositivo)", zone_home_opt: "Casa", zone_map_opt: "Scegli sulla mappa", zone_after: "Regolala quando vuoi in Impostazioni → Aree e zone.",
     note_new: "Nuova nota", note_edit: "Modifica nota", note_view: "Lista / griglia", note_empty: "Ancora nessuna nota.", note_locked: "Nota cifrata", note_locked_help: "Cifrata con la password delle note dell'app – leggibile solo nell'app.", note_title: "Titolo", note_body: "Testo",
-    p_settings_hint: "Tocca la lista a cui si riferisce «Questa lista». Per me e Casa valgono per tutte le liste.",
-    list_settings_hint: "Comandi, casa e categorie: ⚙ in alto a destra nella pagina.",
-    settings_list: "Impostazioni di questa lista", settings_global: "Impostazioni generali", list_settings_hint_card: "Comandi, casa e categorie: l'icona dei cursori accanto.",
+    p_settings_hint: "",
+    list_settings_hint: "Comandi e impostazioni globali: ⚙ in alto a destra nella pagina.",
+    settings_list: "Impostazioni di questa lista", settings_global: "Impostazioni generali", list_settings_hint_card: "Comandi e impostazioni globali: l'icona dei cursori nell'intestazione.",
     tpl: "Modelli",
     scan: "Scansiona codice a barre",
     price_sum: "Totale",
@@ -1158,8 +1162,8 @@ const TEXTS = {
     aisle_help: "Così ordina la modalità spesa quando è selezionato questo negozio.",
     aisle_all_branches: "tutte le filiali",
     aisle_reset: "Predefinito",
-    notify_to: "Al mio telefono",
-    notify_no_phone: "Nessun telefono con l'app Companion trovato.",
+    notify_to: "Al mio dispositivo",
+    notify_no_phone: "Nessun dispositivo con l'app Companion trovato.",
     notify_added: "Per nuovi articoli",
     notify_checked: "Quando qualcosa viene spuntato",
     notify_lists: "Liste",
@@ -1226,6 +1230,7 @@ const TEXTS = {
     p_lists_all: "Tutte le liste", p_lists_less: "Meno",
     scan_native_help: "Inquadra il codice a barre sulla confezione.", scan_type: "Digita il numero", scan_not_product: "Non è un codice a barre di prodotto (EAN).",
     scan_target: "Lista di destinazione", scan_target_this: "questa lista (della scheda)", scan_mode: "Articoli scansionati", scan_mode_input: "nel campo di inserimento (controlla, poi aggiungi)", scan_mode_add: "aggiungi subito", barcode_providers: "Servizi di ricerca", barcode_providers_help: "Tocca per attivare/disattivare, il numero è l'ordine – vale il primo risultato. SmartLists ricorda i codici trovati.", barcode_custom: "servizio personale", barcode_custom_url: "URL con {code}", barcode_custom_field: "Campo con il nome",
+    a_applies: "Vale per", a_menu: "Menu dell'articolo", a_shop: "Spesa e scansione", a_me_sub: "Vale solo per te.", a_look: "Badge e colori", a_global_sub: "Vale per tutti gli utenti, anche nell'app.", a_cats: "Categorie", a_devices: "Dispositivi e note", a_rights: "Condivisione e permessi", a_rights_sub: "Cosa possono fare gli utenti senza diritti di admin.", a_data: "Voce, backup, predefiniti", a_stats: "Statistiche e spese", a_search: "Cerca impostazione", admin_only_short: "solo admin", g_stats: "Analisi", ls_done: "Fatto", rights_who: "Possono creare link", rights_share_who: "Possono creare link", rights_who_admins: "solo admin", rights_who_owners: "admin e proprietario della lista", rights_who_editors: "tutti quelli che possono modificare la lista", rights_who_nobody: "nessuno (condivisione disattivata)", rights_max: "Un link permette al massimo", rights_share_max: "Un link permette al massimo", rights_max_on: "spuntare e aggiungere", rights_limits_help: "I limiti valgono per gli utenti senza diritti di admin.", rights_max_hours: "Validità massima", rights_share_max_hours: "Validità massima", rights_all_links: "Mostra i link attivi di tutte le liste", rights_no_links: "Nessun link attivo.", rights_share_help: "I link danno accesso a una sola lista a chi non ha un account.", rights_other: "Consentito senza diritti di admin", rights_create_lists: "Creare liste proprie", rights_templates: "Creare e modificare modelli", rights_categories: "Assegnare categorie a mano", rights_prices: "Inserire prezzi", ls_list: "Lista", ls_list_help: "Vale per questa lista su tutti i dispositivi, a meno che una scheda o un dispositivo non stabilisca altro.", ls_name: "Nome", ls_sort: "Ordinata per", ls_default: "predefinito della scheda",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1240,7 +1245,7 @@ const TEXTS = {
     learned: "Zapamiętane kategorie", learned_help: "Powstają, gdy wybierasz kategorię ręcznie.", forget: "Zapomnij",
     none_learned: "Nic jeszcze nie zapamiętano.", saved: "Zapisano", admin_only: "Tylko administratorzy mogą to zmienić.",
     in_list: "jest już na liście",
-    tab_me: "Dla mnie", tab_house: "Dom", tab_list: "Ta lista", ui_me_help: "Dotyczy ciebie. Różnice względem ustawień domu są oznaczone •.",
+    tab_me: "Dla mnie", tab_house: "Globalne", tab_list: "Ta lista", ui_me_help: "Dotyczy tylko ciebie. Różnice względem ustawienia globalnego są oznaczone •.",
     ui_house: "Sterowanie – domyślne dla wszystkich", reset_default: "Przywróć domyślne", about_list: "O tej liście", type: "Typ", entity: "Encja", sources: "Źródła",
     type_combined: "Lista połączona", type_own: "Własna lista SmartLists", type_list: "Lista zadań Home Assistant", char: "Znak", kind: "Rodzaj",
     no_hits_short: "Nic nie znaleziono.", by_hand: "ręcznie", search_learned: "Szukaj … (np. mleko)",
@@ -1248,8 +1253,8 @@ const TEXTS = {
     auto_voice_default_list: "Domyślna lista dla Assist", auto_voice_help: "Używana, gdy zdanie nie wymienia listy.",
     auto_auto_due_list: "Automatycznie dodawaj produkty do ponownego zakupu do", auto_due_help: "Co godzinę, według waszego rytmu zakupów. „—” = wyłączone.",
     install_sentences: "Zainstaluj zdania Assist", sentences_installed: "zainstalowane",
-    devices: "Połączone urządzenia", devices_help: "Telefony z aplikacją HA SmartLists. ⚠️ = brak synchronizacji od ponad 7 dni. Aby odebrać dostęp, usuń token w profilu.",
-    no_devices: "Nie połączono jeszcze żadnego telefonu.", remove_device: "Usuń z listy", last_seen: "ostatnio",
+    devices: "Połączone urządzenia", devices_help: "Urządzenia z aplikacją HA SmartLists. ⚠️ = brak synchronizacji od ponad 7 dni. Aby odebrać dostęp, usuń token w profilu.",
+    no_devices: "Nie połączono jeszcze żadnego urządzenia.", remove_device: "Usuń z listy", last_seen: "ostatnio",
     role_all: "wszystkie prawa", admin_always: "Admin – zawsze może wszystko", shop_large_help: "Łatwiej trafić kciukiem",
     new_list_help: "Jesteś właścicielem i możesz potem udostępnić ją innym.", new_list_placeholder: "np. Drogeria", create: "Utwórz",
     p_columns: "Kilka list obok siebie", p_wide: "Szeroki widok", p_settings: "Ustawienia", p_back: "Wróć do list",
@@ -1279,7 +1284,7 @@ const TEXTS = {
     scope_household: "Domyślne dla wszystkich", scope_user: "Dla mnie na wszystkich urządzeniach", scope_device: "Tylko na tym urządzeniu",
     scope_help_household: "Dotyczy każdego, kto nie ustawił nic własnego.",
     scope_help_user: "Zapisywane są tylko twoje różnice względem domyślnych (oznaczone •). „Resetuj” = powrót do domyślnych.",
-    scope_help_device: "Dotyczy tylko tej przeglądarki lub telefonu. „Resetuj” = powrót do twojego ustawienia.",
+    scope_help_device: "Dotyczy tylko tej przeglądarki lub tego urządzenia. „Resetuj” = powrót do twojego ustawienia.",
     press_gesture: "Gest menu produktu", g_long: "Długie naciśnięcie", g_double: "Dwuklik", g_right: "Prawy przycisk", g_off: "Wyłączony",
     press_target: "Gdzie działa gest", t_row: "Cały wiersz", t_name: "Tylko na nazwie",
     press_result: "Co robi gest", r_menu: "Otwórz menu", r_edit: "Edytuj od razu", r_delete: "Usuń (z potwierdzeniem)",
@@ -1335,11 +1340,11 @@ const TEXTS = {
     stores: "Sklepy i strefy", stores_help: "Połącz sklepy ze strefami Home Assistant. W trybie zakupów zobaczysz wtedy automatycznie tylko produkty ze sklepu, w którym jesteś.",
     notes: "Notatki aplikacji", notes_help: "Aplikacja HA SmartLists zapisuje notatki we własnej liście zadań. To nie są listy zakupów, dlatego domyślnie są ukryte.",
     notes_show: "Pokazuj w SmartLists", notes_show_help: "Jako osobna sekcja 📝 na stronie – nie w Assist, akcjach ani listach połączonych.",
-    notes_scope: "Kto widzi notatki", notes_scope_owner: "tylko własne konto", notes_scope_household: "cały dom",
+    notes_scope: "Kto widzi notatki", notes_scope_owner: "tylko własne konto", notes_scope_household: "wszyscy użytkownicy",
     notes_lists: "Listy notatek i właściciele", notes_none: "Nie znaleziono listy notatek aplikacji.", notes_no_owner: "nieznany (tylko admini)",
     p_order: "Zmień kolejność", p_order_hint: "◀ ▶ przesuwa listę. Myszą: przeciągnij jeden chip na inny. Kolejność dotyczy też kolumn.",
     p_left: "W lewo", p_right: "W prawo",
-    look: "Plakietki i kolory", look_help: "Wygląd plakietek dla całego domu. Kolory i nazwy sklepów obowiązują też w aplikacji. Puste lub ↺ = domyślne.",
+    look: "Plakietki i kolory", look_help: "Wygląd plakietek dla wszystkich użytkowników. Kolory i nazwy sklepów obowiązują też w aplikacji. Puste lub ↺ = domyślne.",
     look_style: "Styl", look_filled: "wypełniony", look_soft: "delikatny", look_outline: "obramowanie", look_text: "tylko tekst",
     look_color: "Kolor", look_icon: "Symbol z przodu", look_label: "Nazwa wyświetlana", look_kinds: "Wg rodzaju", look_values: "Pojedyncze plakietki",
     look_search: "Szukaj plakietki … (np. biedronka)", look_more: "Pozostałe znajdziesz przez wyszukiwanie.", look_add: "Pokoloruj plakietkę",
@@ -1348,9 +1353,9 @@ const TEXTS = {
     app_list: "lista połączona aplikacji", app_list_connected: "połączona", app_list_connect: "Połącz",
     zone_name: "Nazwa strefy, np. Biedronka Centrum", zone_radius: "Promień", zone_coords: "Współrzędne lub link do mapy", zone_coords_placeholder: "52.2297, 21.0122 lub link z Google/Apple/OSM", zone_coords_bad: "Nie rozpoznano współrzędnych.", zone_locating: "Ustalanie lokalizacji …", zone_no_location: "Lokalizacja niedostępna – wybierz inną opcję.", zone_where: "Gdzie?", zone_here_opt: "Obecna lokalizacja (to urządzenie)", zone_home_opt: "Dom", zone_map_opt: "Wybierz na mapie", zone_after: "Dostosuj w dowolnej chwili w Ustawienia → Obszary i strefy.",
     note_new: "Nowa notatka", note_edit: "Edytuj notatkę", note_view: "Lista / siatka", note_empty: "Brak notatek.", note_locked: "Zaszyfrowana notatka", note_locked_help: "Zaszyfrowana hasłem notatek aplikacji – do odczytu tylko w aplikacji.", note_title: "Tytuł", note_body: "Treść",
-    p_settings_hint: "Dotknij listy, której dotyczy „Ta lista”. Dla mnie i Dom dotyczą wszystkich list.",
-    list_settings_hint: "Sterowanie, dom i kategorie: ⚙ w prawym górnym rogu strony.",
-    settings_list: "Ustawienia tej listy", settings_global: "Ustawienia ogólne", list_settings_hint_card: "Sterowanie, dom i kategorie: ikona suwaków obok.",
+    p_settings_hint: "",
+    list_settings_hint: "Sterowanie i ustawienia globalne: ⚙ w prawym górnym rogu strony.",
+    settings_list: "Ustawienia tej listy", settings_global: "Ustawienia ogólne", list_settings_hint_card: "Sterowanie i ustawienia globalne: ikona suwaków w nagłówku.",
     tpl: "Szablony",
     scan: "Skanuj kod kreskowy",
     price_sum: "Suma",
@@ -1381,8 +1386,8 @@ const TEXTS = {
     aisle_help: "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep.",
     aisle_all_branches: "wszystkie oddziały",
     aisle_reset: "Domyślnie",
-    notify_to: "Na mój telefon",
-    notify_no_phone: "Nie znaleziono telefonu z aplikacją Companion.",
+    notify_to: "Na moje urządzenie",
+    notify_no_phone: "Nie znaleziono urządzenia z aplikacją Companion.",
     notify_added: "Przy nowych produktach",
     notify_checked: "Gdy coś zostanie odhaczone",
     notify_lists: "Listy",
@@ -1449,6 +1454,7 @@ const TEXTS = {
     p_lists_all: "Wszystkie listy", p_lists_less: "Mniej",
     scan_native_help: "Skieruj aparat na kod kreskowy na opakowaniu.", scan_type: "Wpisz numer", scan_not_product: "To nie jest kod kreskowy produktu (EAN).",
     scan_target: "Lista docelowa", scan_target_this: "ta lista (karty)", scan_mode: "Zeskanowane produkty", scan_mode_input: "do pola wpisywania (sprawdź, potem dodaj)", scan_mode_add: "dodaj od razu", barcode_providers: "Usługi wyszukiwania", barcode_providers_help: "Dotknij, aby włączyć/wyłączyć, liczba to kolejność – liczy się pierwszy wynik. SmartLists zapamiętuje znalezione kody.", barcode_custom: "własna usługa", barcode_custom_url: "Adres z {code}", barcode_custom_field: "Pole z nazwą",
+    a_applies: "Dotyczy", a_menu: "Menu produktu", a_shop: "Zakupy i skanowanie", a_me_sub: "Dotyczy tylko ciebie.", a_look: "Plakietki i kolory", a_global_sub: "Dotyczy wszystkich użytkowników, także w aplikacji.", a_cats: "Kategorie", a_devices: "Urządzenia i notatki", a_rights: "Udostępnianie i uprawnienia", a_rights_sub: "Co mogą robić użytkownicy bez uprawnień admina.", a_data: "Głos, kopia, ustawienia domyślne", a_stats: "Statystyki i wydatki", a_search: "Szukaj ustawienia", admin_only_short: "tylko admini", g_stats: "Analiza", ls_done: "Gotowe", rights_who: "Linki mogą tworzyć", rights_share_who: "Linki mogą tworzyć", rights_who_admins: "tylko admini", rights_who_owners: "admini i właściciel listy", rights_who_editors: "wszyscy, którzy mogą edytować listę", rights_who_nobody: "nikt (udostępnianie wyłączone)", rights_max: "Link pozwala najwyżej", rights_share_max: "Link pozwala najwyżej", rights_max_on: "odhaczać i dodawać", rights_limits_help: "Limity dotyczą użytkowników bez uprawnień admina.", rights_max_hours: "Najdłuższa ważność", rights_share_max_hours: "Najdłuższa ważność", rights_all_links: "Pokaż aktywne linki wszystkich list", rights_no_links: "Brak aktywnych linków.", rights_share_help: "Linki dają osobom bez konta dostęp do jednej listy.", rights_other: "Dozwolone bez uprawnień admina", rights_create_lists: "Tworzenie własnych list", rights_templates: "Tworzenie i zmiana szablonów", rights_categories: "Ręczne przypisywanie kategorii", rights_prices: "Wpisywanie cen", ls_list: "Lista", ls_list_help: "Dotyczy tej listy na wszystkich urządzeniach, chyba że karta lub urządzenie ustawi coś innego.", ls_name: "Nazwa", ls_sort: "Sortowanie", ls_default: "domyślne karty",
   },
 };
 
@@ -2276,27 +2282,46 @@ const STYLE = `
   .mini .mcount { font-size:1.6rem; font-weight:700; color:var(--sl-accent); }
 
   /* Zahnrad-Menü */
-  .sl-settings { padding:12px 14px 14px; display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--divider-color,#e0e0e0);
-    background:color-mix(in srgb, var(--secondary-background-color,#f2f2f2) 40%, var(--card-background-color,#fff)); }
-  .tabs2 { display:flex; background:var(--secondary-background-color,#eee); border-radius:10px; padding:3px; gap:3px; }
-  .tabs2 button { flex:1; border:none; background:none; color:var(--secondary-text-color); font:inherit; font-weight:500; padding:7px 6px; border-radius:8px; cursor:pointer; }
-  .tabs2 button.on { background:var(--card-background-color,#fff); color:var(--primary-text-color); box-shadow:0 1px 2px rgba(0,0,0,.25); }
-  .tabs2 .tag { font-size:.66rem; margin-left:4px; padding:1px 5px; border-radius:6px; background:var(--divider-color,#ddd); color:var(--secondary-text-color); }
-  .sec { background:var(--card-background-color,#fff); border:1px solid var(--divider-color,#e0e0e0); border-radius:12px; overflow:hidden; }
-  .sh { display:flex; align-items:center; gap:10px; padding:12px 14px 4px; }
-  .sh .ic { width:28px; height:28px; border-radius:8px; display:grid; place-items:center; flex:none; font-size:.95rem;
-    background:color-mix(in srgb, var(--sl-accent) 16%, transparent); color:var(--sl-accent); font-weight:700; }
-  .sh h3 { margin:0; font-size:.95rem; font-weight:600; flex:1; min-width:0; }
+  .sl-settings { border-top:1px solid var(--divider-color,#e0e0e0); container-type:inline-size; }
+  .sgrid { display:grid; grid-template-columns:minmax(0,1fr); }
+  .snav { padding:12px 10px 14px; }
+  .snav .search2 { margin:0 0 6px; height:36px; }
+  .snav h4 { margin:14px 10px 4px; font-size:.76rem; font-weight:600; color:var(--secondary-text-color); }
+  .snav h4 span { font-weight:400; }
+  .snav button { display:block; width:100%; text-align:left; border:none; background:none; color:var(--primary-text-color); font:inherit; padding:8px 10px; border-radius:8px; cursor:pointer; }
+  .snav button:hover { background:var(--secondary-background-color,#f2f2f2); }
+  .snav button.on { color:var(--sl-accent); font-weight:600; background:color-mix(in srgb, var(--sl-accent) 10%, transparent); }
+  .snav .ver { display:flex; justify-content:space-between; margin:16px 10px 0; font-size:.75rem; color:var(--secondary-text-color); }
+  .snav .ver a { color:var(--sl-accent); text-decoration:none; }
+  .smain { padding:14px 16px 4px; min-width:0; }
+  .smain > header h2 { margin:0; font-size:1.3rem; font-weight:600; letter-spacing:-.01em; }
+  .smain > header p { margin:2px 0 0; color:var(--secondary-text-color); font-size:.88rem; max-width:70ch; }
+  .smain > header { margin-bottom:18px; }
+  .sback { border:none; background:none; color:var(--sl-accent); font:inherit; padding:0 0 10px; cursor:pointer; }
+  .sgrid:not(.detail) .smain { display:none; } .sgrid.detail .snav { display:none; }
+  @container (min-width: 720px) {
+    .sgrid { grid-template-columns:210px minmax(0,1fr); }
+    .sgrid:not(.detail) .smain, .sgrid.detail .snav { display:block; }
+    .snav { border-right:1px solid var(--divider-color,#e0e0e0); }
+    .sback { display:none; }
+    .smain { padding:20px 26px 6px; }
+    .acols { columns:2 300px; column-gap:40px; }
+  }
+  .linkbtn { border:none; background:none; color:var(--sl-accent); font:inherit; padding:8px 0; cursor:pointer; }
+  /* Gruppen ohne Kästen: Überschrift, feine Linien, Abstand */
+  .sec { break-inside:avoid; margin:0 0 26px; }
+  .sh { display:flex; align-items:baseline; gap:8px; }
+  .sh h3 { margin:0; font-size:.82rem; font-weight:600; color:var(--secondary-text-color); flex:1; min-width:0; }
   .sh .cnt { font-size:.75rem; color:var(--secondary-text-color); white-space:nowrap; }
-  .shelp { margin:0; padding:0 14px 10px 52px; color:var(--secondary-text-color); font-size:.8rem; }
-  .sbody { padding:0 14px 14px; }
+  .shelp { margin:2px 0 4px; padding:0; color:var(--secondary-text-color); font-size:.8rem; }
+  .sbody { padding:0; }
   .srow2 { display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid var(--divider-color,#e0e0e0); }
   .sbody > .srow2:first-child, .chips + .srow2, .grp + .srow2 { border-top:none; }
   .srow2 .sl { flex:1; min-width:0; }
   .srow2 .sl small { display:block; color:var(--secondary-text-color); font-size:.76rem; overflow-wrap:anywhere; }
   .srow2 select { width:180px; flex:none; height:36px; padding:0 10px; }
   .srow2 .val { color:var(--secondary-text-color); font-size:.85rem; text-align:right; overflow-wrap:anywhere; }
-  .grp { font-size:.72rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--secondary-text-color); margin:12px 0 4px; }
+  .grp { font-size:.8rem; font-weight:600; color:var(--secondary-text-color); margin:14px 0 2px; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; }
   .chip2 { border:1px solid var(--divider-color,#ddd); background:none; color:var(--primary-text-color); border-radius:16px; padding:6px 12px; font:inherit; font-size:.85rem; cursor:pointer; }
   .chip2.on { background:color-mix(in srgb, var(--sl-accent) 18%, transparent); border-color:var(--sl-accent); color:var(--sl-accent); font-weight:600; }
@@ -2334,6 +2359,28 @@ const STYLE = `
   .manual { font-size:.68rem; color:var(--sl-accent); margin-left:6px; }
   .foot2 { display:flex; justify-content:space-between; padding:0 4px; font-size:.75rem; color:var(--secondary-text-color); }
   .foot2 a { color:var(--sl-accent); text-decoration:none; }
+`;
+
+const LIST_DIALOG_STYLE = `
+  .lsd { align-items:flex-end; padding:0; }
+  .lsheet { max-width:none; width:100%; max-height:92vh; overflow:auto; padding:0; border-radius:16px 16px 0 0; --sl-accent:var(--primary-color,#03a9f4); }
+  .ltop { display:flex; align-items:center; gap:10px; padding:14px 18px 12px; border-bottom:1px solid var(--divider-color,#e0e0e0); position:sticky; top:0; background:var(--card-background-color,#fff); z-index:1; }
+  .lwho { flex:1; min-width:0; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .lwho h2 { margin:0; font-size:1.15rem; } .lwho small { color:var(--secondary-text-color); }
+  .ltwo { display:grid; grid-template-columns:minmax(0,1fr); gap:0 40px; padding:18px 18px 0; }
+  .lfoot { display:flex; align-items:center; gap:10px; padding:10px 18px 14px; border-top:1px solid var(--divider-color,#e0e0e0); }
+  .lfoot .shelp { flex:1; margin:0; }
+  .dlg.lsheet input, .dlg.lsheet select { width:auto; margin:0; height:36px; }
+  .dlg.lsheet .srow2 select { width:180px; }
+  .dlg.lsheet button { height:auto; }
+  .dlg.lsheet .btn2 { height:36px; } .dlg.lsheet .icon-btn { border:none; padding:0; }
+  .dlg.lsheet .lfoot .ok { height:38px; }
+  @media (min-width: 760px) {
+    .lsd { align-items:center; padding:16px; }
+    .lsheet { max-width:860px; border-radius:16px; }
+    .ltwo:not(.one) { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+    .ltwo { padding:22px 24px 0; } .ltop, .lfoot { padding-left:24px; padding-right:24px; }
+  }
 `;
 
 class SmartListsCard extends HTMLElement {
@@ -2467,6 +2514,16 @@ class SmartListsCard extends HTMLElement {
         this._sortMode = this._config.sort;
       }
       this._data = data;
+      // Darstellung dieser Liste (für alle Geräte gemerkt): gilt, solange die Karte bzw. dieses Gerät nichts anderes festlegt
+      const ls = data.settings || {};
+      if (JSON.stringify(ls) !== this._listSettingsApplied) {
+        this._listSettingsApplied = JSON.stringify(ls);
+        const raw = this._rawConfig || {};
+        if (!("show_prices" in raw)) this._config.show_prices = ls.show_prices !== false;
+        let saved = null;
+        try { saved = localStorage.getItem(`smartlists-sort:${this._config.entity}`); } catch (e) { /* */ }
+        if (!SORT_MODES.includes(saved) && !("sort" in raw) && ls.sort) this._sortMode = ls.sort;
+      }
       // noch nicht gespeicherte Stepper-Werte beibehalten (sonst springt die Anzeige zurück)
       for (const it of this._data.items) {
         const pend = this._qtyPending && this._qtyPending[it.uid];
@@ -3768,7 +3825,7 @@ class SmartListsCard extends HTMLElement {
    * Alle Texte in TEXTS (de/en). */
   _sec(icon, title, help, body, count) {
     return h("div", { class: "sec" },
-      h("div", { class: "sh" }, h("span", { class: "ic" }, icon), h("h3", {}, title), count != null ? h("span", { class: "cnt" }, String(count)) : null),
+      h("div", { class: "sh" }, h("h3", {}, title), count != null ? h("span", { class: "cnt" }, String(count)) : null),
       help ? h("p", { class: "shelp" }, help) : null,
       h("div", { class: "sbody" }, body));
   }
@@ -3780,7 +3837,7 @@ class SmartListsCard extends HTMLElement {
   }
 
   // Bedienung für eine Ebene: user/device (Für mich) oder household (Standard für alle)
-  _controls(scope) {
+  _controls(scope, part) {
     const t = this._t;
     const ui = this._scopeValues(scope);
     const house = this._scopeValues("household");
@@ -3790,64 +3847,165 @@ class SmartListsCard extends HTMLElement {
       opts.map(([v, l]) => h("option", { value: v, selected: ui[key] === v }, t[l])));
     const sw = (key, sub) => this._setRow(t[key], this._switch(ui[key], (v) => save({ [key]: v }), t[key]), sub, differs(key));
     const actions = ui.menu_actions || MENU_ACTIONS;
-    return [
+    const parts = {};
+    parts.menu = [
       this._setRow(t.press_gesture, sel("press_gesture", [["long", "g_long"], ["double", "g_double"], ["right", "g_right"], ["off", "g_off"]]), null, differs("press_gesture")),
       this._setRow(t.press_result, sel("press_result", [["menu", "r_menu"], ["edit", "r_edit"], ["delete", "r_delete"]]), null, differs("press_result")),
       this._setRow(t.press_target, sel("press_target", [["row", "t_row"], ["name", "t_name"]]), null, differs("press_target")),
-      h("div", { class: "grp" }, t.menu_actions),
-      h("div", { class: "chips" }, MENU_ACTIONS.map((a) => h("button", { type: "button", class: `chip2 ${actions.includes(a) ? "on" : ""}`, "aria-pressed": String(actions.includes(a)),
-        onclick: () => save({ menu_actions: MENU_ACTIONS.filter((x) => (x === a ? !actions.includes(a) : actions.includes(x))) }) }, t["m_" + a]))),
       sw("row_buttons"),
-      h("div", { class: "grp" }, t.shop),
+    ];
+    parts.actions = [
+      h("div", { class: "chips", style: "padding-top:8px" }, MENU_ACTIONS.map((a) => h("button", { type: "button", class: `chip2 ${actions.includes(a) ? "on" : ""}`, "aria-pressed": String(actions.includes(a)),
+        onclick: () => save({ menu_actions: MENU_ACTIONS.filter((x) => (x === a ? !actions.includes(a) : actions.includes(x))) }) }, t["m_" + a]))),
+    ];
+    parts.shop = [
       sw("shop_hide_checked"), sw("shop_keep_awake"), sw("shop_large", t.shop_large_help), sw("shop_tap_row"),
       sw("shop_auto_store", t.shop_auto_store_help), sw("shop_untagged", t.shop_untagged_help),
-      h("div", { class: "grp" }, t.scan),
+    ];
+    parts.scan = [
       this._setRow(t.scan_target, h("select", { "aria-label": t.scan_target, onchange: (e) => save({ scan_target: e.target.value }) },
         h("option", { value: "", selected: !ui.scan_target }, t.scan_target_this),
         Object.keys(this._hass.states).filter((e) => e.startsWith("todo.") && !isNotesEntity(e, this._hass.states[e].attributes.friendly_name))
           .map((e) => h("option", { value: e, selected: ui.scan_target === e }, this._hass.states[e].attributes.friendly_name || e))), null, differs("scan_target")),
       this._setRow(t.scan_mode, sel("scan_mode", [["input", "scan_mode_input"], ["add", "scan_mode_add"]]), null, differs("scan_mode")),
     ];
+    return part ? parts[part] : [...parts.menu, h("div", { class: "grp" }, t.menu_actions), ...parts.actions,
+      h("div", { class: "grp" }, t.shop), ...parts.shop, h("div", { class: "grp" }, t.scan), ...parts.scan];
   }
 
-  _paneMe() {
+  /* Allgemeine Einstellungen: Bereiche (links Navigation, rechts der Bereich in Spalten; schmal: erst die
+   * Bereiche, dann der gewählte). Gruppen: Für mich · Global (nur Admins) · Auswertung. */
+  _areas() {
     const t = this._t;
     const device = this._uiScope === "device";
+    const scope = device ? "device" : "user";
     const chip = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, onclick: fn }, label);
-    return [this._controlsSection(device, chip), this._notifySection()];
-  }
-  _controlsSection(device, chip) {
-    const t = this._t;
-    return this._sec("✋", t.ui, t.ui_me_help, [
-      h("div", { class: "chips", style: "margin-bottom:6px" },
-        chip(!device, t.scope_user, () => this._setScope("user")), chip(device, t.scope_device, () => this._setScope("device"))),
-      ...this._controls(device ? "device" : "user"),
-      h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi(device ? "device" : "user") }, t.reset_default)),
-    ]);
+    const scopeRow = () => this._setRow(t.a_applies, h("div", { class: "chips" },
+      chip(!device, t.scope_user, () => this._setScope("user")), chip(device, t.scope_device, () => this._setScope("device"))));
+    const reset = (sc) => h("button", { class: "linkbtn", type: "button", onclick: () => this._resetUi(sc) }, sc === "household" ? t.reset : t.reset_default);
+    const me = [
+      { g: "me", id: "controls", label: t.ui, sub: t.ui_me_help, kw: [t.press_gesture, t.menu_actions, t.row_buttons], build: () => [
+        this._sec("", t.a_menu, null, [scopeRow(), ...this._controls(scope, "menu")]),
+        this._sec("", t.menu_actions, null, [...this._controls(scope, "actions"), reset(scope)])] },
+      { g: "me", id: "shop", label: t.a_shop, sub: t.a_me_sub, kw: [t.shop, t.scan, t.scan_target], build: () => [
+        this._sec("", t.shop, null, this._controls(scope, "shop")),
+        this._sec("", t.scan, null, this._controls(scope, "scan"))] },
+      { g: "me", id: "notify", label: t.notify, sub: t.a_me_sub, kw: [t.notify_to, t.notify_quiet], build: () => [this._notifySection()] },
+    ];
+    const global = !this._isAdmin ? [] : [
+      { g: "global", id: "look", label: t.a_look, sub: t.a_global_sub, kw: [t.naming, t.look, t.look_color], build: () => [this._namingSection(), this._appearanceSection()] },
+      { g: "global", id: "stores", label: t.stores, sub: t.a_global_sub, kw: [t.zone, t.aisle], build: () => [this._storesSection()] },
+      { g: "global", id: "cats", label: t.a_cats, sub: t.learned_help, kw: [t.packs, t.learned, t.category], build: () => [this._packsSection(), this._learnedSection()] },
+      { g: "global", id: "devices", label: t.a_devices, sub: t.devices_help, kw: [t.devices, t.notes, t.app_list], build: () => [this._devicesSection(), this._notesSection()] },
+      { g: "global", id: "rights", label: t.a_rights, sub: t.a_rights_sub, kw: [t.share, t.rights_who], build: () => [this._rightsShareSection(), this._rightsOtherSection()] },
+      { g: "global", id: "data", label: t.a_data, sub: t.a_global_sub, kw: [t.automation, t.backup, t.barcode_providers, t.ui_house], build: () => [
+        this._automationSection(), this._exportImport(),
+        this._sec("", t.ui_house, t.scope_help_household, [...this._controls("household"), reset("household")])] },
+    ];
+    const stats = [{ g: "stats", id: "stats", label: t.a_stats, sub: null, kw: [t.stats, t.exp], build: () => [this._statsSection(), this._expensesSection()] }];
+    return [...me, ...global, ...stats];
   }
 
-  _paneHouse() {
+  // Global → Teilen und Rechte: was Benutzer ohne Admin-Rechte dürfen
+  _rightsShareSection() {
     const t = this._t;
-    if (!this._isAdmin) return h("p", { class: "shelp", style: "padding:8px 4px" }, t.admin_only);
-    return [this._namingSection(), this._appearanceSection(), this._storesSection(), this._notesSection(), this._packsSection(), this._learnedSection(), this._automationSection(), this._devicesSection(), this._exportImport(),
-      this._sec("✋", t.ui_house, t.scope_help_household, [...this._controls("household"),
-        h("div", { class: "acts" }, h("button", { class: "btn2", type: "button", onclick: () => this._resetUi("household") }, t.reset))])];
+    const status = h("span", { class: "ok2" });
+    const body = h("div");
+    const linksEl = h("div");
+    let rights = { ...((this._cfg && this._cfg.rights) || {}) };
+    const save = async (patch) => {
+      rights = { ...rights, ...patch };
+      try { rights = (await this._call("set_rights", { rights }, false)).rights; this._cfg = { ...this._cfg, rights }; status.textContent = "✓ " + t.saved; }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
+      draw();
+    };
+    const pick = (key, opts, map = (v) => v) => h("select", { "aria-label": t["rights_" + key], onchange: (e) => save({ [key]: map(e.target.value) }) },
+      opts.map(([v, l]) => h("option", { value: String(v), selected: String(rights[key] ?? "") === String(v) }, l)));
+    const fmt = (ts) => new Date(ts * 1000).toLocaleDateString(this._hass.language || "de");
+    const showLinks = async () => {
+      fill(linksEl, h("div", { class: "shelp" }, t.loading));
+      let links = [];
+      try { links = (await this._call("share_links_all", {}, false)).links; } catch (e) { /* */ }
+      if (!links.length) return fill(linksEl, h("div", { class: "shelp" }, t.rights_no_links));
+      fill(linksEl, ...links.map((l) => this._setRow(l.list_name,
+        h("button", { class: "linkbtn", type: "button", onclick: async () => { await this._hass.callWS({ type: "smartlists/share_revoke", entity_id: l.entity_id, link_id: l.id }); showLinks(); } }, t.share_revoke),
+        `${({ off: t.share_view, soft: t.share_soft, on: t.share_check })[l.check]}${l.add ? ", " + t.share_add : ""}, ${l.expired ? t.share_expired : l.expires ? `${t.share_until} ${fmt(l.expires)}` : t.share_forever}, ${l.opens}× ${t.share_opened}`)));
+    };
+    const draw = () => fill(body,
+      this._setRow(t.rights_who, pick("share_who", [["admins", t.rights_who_admins], ["owners", t.rights_who_owners], ["editors", t.rights_who_editors], ["nobody", t.rights_who_nobody]])),
+      this._setRow(t.rights_max, pick("share_max", [["off", t.share_view], ["soft", t.share_soft], ["on", t.rights_max_on]]), t.rights_limits_help),
+      this._setRow(t.rights_max_hours, pick("share_max_hours", [["", t.share_forever], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d]], (v) => (v ? Number(v) : null))),
+      h("div", { class: "acts", style: "justify-content:flex-start" }, h("button", { class: "linkbtn", type: "button", onclick: showLinks }, t.rights_all_links), status),
+      linksEl);
+    draw();
+    return this._sec("", t.share, t.rights_share_help, [body]);
+  }
+  _rightsOtherSection() {
+    const t = this._t;
+    const body = h("div");
+    let rights = { ...((this._cfg && this._cfg.rights) || {}) };
+    const draw = () => fill(body, ...["create_lists", "templates", "categories", "prices"].map((key) =>
+      this._setRow(t["rights_" + key], this._switch(rights[key] !== false, async (on) => {
+        rights = { ...rights, [key]: on };
+        try { rights = (await this._call("set_rights", { rights }, false)).rights; this._cfg = { ...this._cfg, rights }; } catch (e) { /* */ }
+        draw();
+      }, t["rights_" + key]))));
+    draw();
+    return this._sec("", t.rights_other, null, [body]);
   }
 
-  _paneList() {
+  // Einstellungen dieser Liste – als Fenster über der Liste (breit: zwei Spalten, Handy: Blatt von unten)
+  _listSections() {
     const t = this._t;
     const d = this._data;
-    const out = [];
-    if (d && d.own && d.own.can_share) out.push(this._sharing());
-    if (d && d.type !== "notes" && (this._isAdmin || (d.own && d.own.role === "owner"))) out.push(this._shareLinkSection());
-    const type = !d ? "?" : d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : t.type_list;
-    out.push(this._sec("ℹ️", t.about_list, null, [
+    const canEdit = !!d && (this._isAdmin || (d.own && d.own.role === "owner"));
+    const type = !d ? "?" : d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : d.type === "notes" ? t.p_group_notes : t.type_list;
+    const status = h("span", { class: "ok2" });
+    const set = async (patch) => {
+      try { await this._call("set_list_settings", patch); status.textContent = "✓ " + t.saved; this._listSettingsApplied = null; await this._load(); }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    const cur = (d && d.settings) || {};
+    const modes = SORT_MODES.filter((m) => m !== "list" || (d && d.type === "combined"));
+    const listSec = this._sec("", t.ls_list, canEdit ? t.ls_list_help : null, [
+      canEdit ? this._setRow(t.ls_name, h("input", { class: "search2", style: "width:180px;margin:0", value: d.name, maxlength: "60", "aria-label": t.ls_name,
+        onchange: (e) => { const v = e.target.value.trim(); if (v && v !== d.name) set({ name: v }); } })) : null,
+      canEdit && d.type !== "notes" ? this._setRow(t.ls_sort, h("select", { "aria-label": t.ls_sort, onchange: (e) => set({ sort: e.target.value || null }) },
+        h("option", { value: "", selected: !cur.sort }, t.ls_default), modes.map((m) => h("option", { value: m, selected: cur.sort === m }, t["sort_" + m])))) : null,
+      canEdit && d.type !== "notes" ? this._setRow(t.l_show_prices, this._switch(cur.show_prices !== false, (v) => set({ show_prices: v }), t.l_show_prices)) : null,
       this._setRow(t.type, h("span", { class: "val" }, type)),
       this._setRow(t.entity, h("code", { class: "val" }, this._config.entity)),
       d && d.own ? this._setRow(t.owner, h("span", { class: "val" }, d.own.owner || "?")) : null,
       d && d.source_lists && d.source_lists.length ? this._setRow(t.sources, h("span", { class: "val" }, d.source_lists.join(", "))) : null,
-    ]));
-    return out;
+      h("div", { class: "acts" }, status),
+    ]);
+    const left = [listSec];
+    if (d && d.own && d.own.can_share) left.push(this._sharing());
+    const right = [];
+    const rights = (this._cfg && this._cfg.rights) || {};
+    const mayLink = d && d.type !== "notes" && rights.share_who !== "nobody" && (this._isAdmin
+      || (rights.share_who === "owners" && d.own && d.own.role === "owner")
+      || (rights.share_who === "editors" && (!d.own || ["owner", "editor"].includes(d.own.role))));
+    if (mayLink) right.push(this._shareLinkSection());
+    return { left, right };
+  }
+  _listDialog() {
+    const t = this._t;
+    const d = this._data;
+    if (!d) return;
+    const { left, right } = this._listSections();
+    const close = () => back.remove();
+    const meta = [d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : d.type === "notes" ? t.p_group_notes : t.type_list,
+      d.own && d.own.owner ? `${t.owner}: ${d.own.owner}` : null].filter(Boolean).join(", ");
+    const back = h("div", { class: "dlg-back lsd", onclick: (e) => { if (e.target === back) close(); } },
+      h("style", {}, DIALOG_STYLE + STYLE + LIST_DIALOG_STYLE),
+      h("div", { class: "dlg lsheet", role: "dialog", "aria-modal": "true", "aria-label": t.settings_list },
+        h("div", { class: "ltop" }, h("div", { class: "lwho" }, h("h2", {}, d.name), h("small", {}, meta)),
+          iconBtn(ICON.close, t.cancel, close)),
+        h("div", { class: `ltwo ${right.length ? "" : "one"}` }, h("div", {}, left), right.length ? h("div", {}, right) : null),
+        h("div", { class: "lfoot" }, h("span", { class: "shelp" }, this._config.settings_scope === "list" ? t.list_settings_hint : t.list_settings_hint_card),
+          h("button", { type: "button", class: "ok", onclick: close }, t.ls_done))));
+    this.shadowRoot.append(back);
   }
 
   _namingSection() {
@@ -4642,6 +4800,12 @@ class SmartListsCard extends HTMLElement {
     const status = h("span", { class: "ok2" });
     let check = "off", add = false, hours = 168, links = [];
     const lang = this._hass.language;
+    // Nicht-Admins: nur anbieten, was der Admin erlaubt (Global → Teilen und Rechte)
+    const rights = this._isAdmin ? {} : (this._cfg && this._cfg.rights) || {};
+    const lvl = ["off", "soft", "on"];
+    const maxLvl = lvl.indexOf(rights.share_max || "on");
+    const maxHours = rights.share_max_hours || null;
+    if (maxHours && hours > maxHours) hours = maxHours;
     const base = () => {
       const c = this._hass.config || {};
       return String(c.external_url || (this._hass.auth && this._hass.auth.data && this._hass.auth.data.hassUrl) || location.origin).replace(/\/$/, "");
@@ -4651,10 +4815,12 @@ class SmartListsCard extends HTMLElement {
     const created = h("div");
     const draw = () => fill(body,
       this._setRow(t.share_mode, h("select", { "aria-label": t.share_mode, onchange: (e) => { check = e.target.value; } },
-        [["off", t.share_view], ["soft", t.share_soft], ["on", t.share_check]].map(([v, l]) => h("option", { value: v, selected: check === v }, l))), t.share_mode_help),
-      this._setRow(t.share_add, this._switch(add, (v) => { add = v; }, t.share_add)),
+        [["off", t.share_view], ["soft", t.share_soft], ["on", t.share_check]].filter(([v]) => lvl.indexOf(v) <= maxLvl)
+          .map(([v, l]) => h("option", { value: v, selected: check === v }, l))), t.share_mode_help),
+      maxLvl === 2 ? this._setRow(t.share_add, this._switch(add, (v) => { add = v; }, t.share_add)) : null,
       this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { hours = e.target.value ? Number(e.target.value) : null; } },
-        [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]].map(([v, l]) =>
+        [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]]
+          .filter(([v]) => !maxHours || (v !== "" && v <= maxHours)).map(([v, l]) =>
           h("option", { value: String(v), selected: String(hours ?? "") === String(v) }, l)))),
       this._data && this._data.type === "combined" ? h("div", { class: "shelp", style: "padding:6px 0" }, "⚠️ " + t.share_combined) : null,
       h("div", { class: "acts" }, status, h("button", { class: "btn2 primary", type: "button", onclick: create }, "🔗 " + t.share_create)),
@@ -4863,10 +5029,11 @@ class SmartListsCard extends HTMLElement {
   }
 
   _settingsBtn(scope, icon, label) {
-    const open = this._showSettings && this._settingsScope === scope;
+    if (scope === "list") return iconBtn(icon, label, () => this._listDialog());
+    const open = this._showSettings;
     return iconBtn(open ? ICON.close : icon, label, () => {
       this._showSettings = !open;
-      this._settingsScope = scope;
+      this._setChosen = false;
       this._showImport = false;
       this._renderImport(); this._renderSettings(); this._render();
     });
@@ -4876,24 +5043,32 @@ class SmartListsCard extends HTMLElement {
     const el = this._settingsEl;
     if (!this._showSettings || !this._cfg) return fill(el);
     const t = this._t;
-    // settings_scope: "list" (Karten auf der Seite) = nur „Diese Liste“; "global" (⚙ der Seite) = Für mich + Haushalt
-    const scope = ["global", "list", "stats"].includes(this._config.settings_scope)
-      ? this._config.settings_scope : this._settingsScope || "global";
-    const allowed = scope === "list" ? ["list"] : scope === "stats" ? ["stats"] : ["me", "house", "stats"];
-    const tab = allowed.includes(this._setTab) ? this._setTab : allowed[0];
-    const tabBtn = (id, label, extra) => h("button", { type: "button", role: "tab", class: tab === id ? "on" : "", "aria-selected": String(tab === id),
-      onclick: () => { this._setTab = id; this._renderSettings(); } }, label, extra);
-    const pane = tab === "house" ? this._paneHouse() : tab === "list" ? this._paneList() : tab === "stats" ? this._paneStats() : this._paneMe();
-    fill(el, h("div", { class: "sl-settings" },
-      allowed.length > 1 ? h("div", { class: "tabs2", role: "tablist" },
-        allowed.includes("me") ? tabBtn("me", t.tab_me) : null,
-        allowed.includes("house") ? tabBtn("house", t.tab_house, h("span", { class: "tag" }, t.admin)) : null,
-        allowed.includes("stats") ? tabBtn("stats", t.tab_stats) : null,
-        allowed.includes("list") ? tabBtn("list", t.tab_list) : null) : null,
-      pane,
-      scope === "list" ? h("p", { class: "shelp", style: "padding:0 4px" }, this._config.settings_scope === "list" ? t.list_settings_hint : t.list_settings_hint_card) : null,
-      h("div", { class: "foot2" }, h("span", {}, `SmartLists ${this._version || "?"} · ${t.card_version} ${CARD_VERSION}`),
-        h("a", { href: "https://github.com/m3m0rex/ha_smartlists/wiki", target: "_blank", rel: "noopener" }, "Wiki ↗"))));
+    const areas = this._areas();
+    // 📊 auf der Seite öffnet direkt die Auswertung
+    if (this._config.settings_scope === "stats" && !this._setArea) { this._setArea = "stats"; this._setChosen = true; }
+    const cur = areas.find((a) => a.id === this._setArea) || areas[0];
+    const open = (id) => { this._setArea = id; this._setChosen = true; this._renderSettings(); };
+    const btns = [];
+    const group = (g, title, extra) => {
+      const list = areas.filter((a) => a.g === g);
+      if (!list.length) return null;
+      return [h("h4", {}, title, extra ? h("span", {}, ` (${extra})`) : null), list.map((a) => {
+        const b = h("button", { type: "button", class: a.id === cur.id ? "on" : "", "aria-current": a.id === cur.id ? "page" : "false", onclick: () => open(a.id) }, a.label);
+        btns.push([b, searchKey([a.label, a.sub, ...(a.kw || [])].join(" "))]);
+        return b;
+      })];
+    };
+    const search = h("input", { type: "search", class: "search2", placeholder: t.a_search, "aria-label": t.a_search,
+      oninput: (e) => { const q = searchKey(e.target.value); btns.forEach(([b, key]) => { b.hidden = !!q && !key.includes(q); }); } });
+    const nav = h("nav", { class: "snav", "aria-label": t.settings }, search,
+      group("me", t.tab_me), group("global", t.tab_house, t.admin_only_short), group("stats", t.g_stats),
+      h("div", { class: "ver" }, h("span", {}, `SmartLists ${this._version || CARD_VERSION}`),
+        h("a", { href: "https://github.com/m3m0rex/ha_smartlists/wiki", target: "_blank", rel: "noopener" }, "Wiki")));
+    const main = h("div", { class: "smain" },
+      h("button", { class: "sback", type: "button", onclick: () => { this._setChosen = false; this._renderSettings(); } }, "← " + t.settings),
+      h("header", {}, h("h2", {}, cur.label), cur.sub ? h("p", {}, cur.sub) : null),
+      h("div", { class: "acols" }, cur.build()));
+    fill(el, h("div", { class: "sl-settings" }, h("div", { class: `sgrid ${this._setChosen ? "detail" : ""}` }, nav, main)));
   }
 }
 
@@ -5016,7 +5191,7 @@ const PANEL_STYLE = `
   .chip .n { font-size:.75rem; opacity:.75; }
   .hint { font-size:.8rem; color:var(--secondary-text-color); padding:2px 16px 0; margin:0 auto; box-sizing:border-box; }
   .content { margin:0 auto; padding:8px 16px 32px; box-sizing:border-box; display:grid; gap:16px; align-items:start; }
-  .w-normal { max-width:760px; } .w-wide { max-width:none; }
+  .w-normal { max-width:760px; } .w-wide { max-width:none; } .w-settings { max-width:1180px; }
   .cols-1 { grid-template-columns:minmax(0,1fr); }
   .cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .cols-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
@@ -5150,20 +5325,18 @@ class SmartListsPanel extends HTMLElement {
     this._orderBtn.classList.toggle("on", !!this._ordering);
     this._orderBtn.setAttribute("aria-pressed", String(!!this._ordering));
     if (this._settingsOpen) {
-      // Globale Einstellungen (Für mich / Haushalt). Was nur eine Liste betrifft, steht im Zahnrad der Karte.
+      // Allgemeine Einstellungen (Für mich / Global / Auswertung). Was nur eine Liste betrifft, steht im Zahnrad der Karte.
       if (!lists.some((l) => l.e === this._settingsEntity)) this._settingsEntity = sel[0] || (lists[0] && lists[0].e);
       const entity = this._settingsEntity;
       if (!entity) { fill(this._contentEl, h("div", { class: "empty" }, this._t.p_empty)); return; }
       const scope = this._settingsOpen === "stats" ? "stats" : "global";
       if (!this._settingsCard || this._settingsCard._config.entity !== entity || this._settingsCard._config.settings_scope !== scope) {
-        const tab = this._settingsCard && this._settingsCard._setTab;
         this._settingsCard = document.createElement("smartlists-card");
         this._settingsCard.setConfig({ entity, settings_only: true, settings_scope: scope });
-        if (tab) this._settingsCard._setTab = tab;
       }
       this._settingsCard.hass = this._hass;
       fill(this._chipsEl); fill(this._hintEl);
-      this._contentEl.className = "content w-normal cols-1";
+      this._contentEl.className = "content w-settings cols-1";
       if (this._contentEl.firstChild !== this._settingsCard) fill(this._contentEl, this._settingsCard);
       return;
     }

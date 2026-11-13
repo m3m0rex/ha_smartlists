@@ -1,6 +1,6 @@
-"""Je verbundenem Handy (siehe devices.py) ein HA-Gerät mit Sensoren „Zuletzt gesehen“ und „App-Version“.
+"""Je verbundenem Gerät (siehe devices.py) ein HA-Gerät mit Sensoren „Zuletzt gesehen“ und „App-Version“.
 
-Damit lassen sich z.B. Automationen bauen: „Melde mir, wenn ein Handy seit 7 Tagen nicht abgeglichen hat.“
+Damit lassen sich z.B. Automationen bauen: „Melde mir, wenn ein Gerät seit 7 Tagen nicht abgeglichen hat.“
 """
 
 from __future__ import annotations
@@ -106,7 +106,7 @@ class _DeviceSensor(SensorEntity):
         self._attr_translation_key = self._key
         self._attr_device_info = DeviceInfo(
             identifiers={device_identifier(device_id)},
-            name=d.get("name") or "Handy",
+            name=d.get("name") or "Gerät",
             manufacturer=d.get("manufacturer") or MANUFACTURER_FALLBACK,
             model=d.get("model"),
             sw_version=d.get("app_version"),

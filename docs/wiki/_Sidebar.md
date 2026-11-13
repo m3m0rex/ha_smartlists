@@ -3,6 +3,7 @@
 - [[Home]]
 - [[Installation]]
 - [[Setup]]
+- [[Settings]]
 - [[Own lists and sharing]]
 - [[Card]]
 - [[Sidebar page]]

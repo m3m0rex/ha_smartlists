@@ -4,8 +4,8 @@ All of these are optional – without settings SmartLists behaves as before.
 
 ## Aisle order per store
 
-*General settings (slider icon) → Household → Stores & zones → 🛤️ Order* next to a store. Move the
-categories with ▲▼ into the order of the aisles. If the store has several zones (branches), choose a
+*General settings → Global → Stores & zones → 🛤️ Order* next to a store. Move the categories with ▲▼ –
+or press *Sort* and drag the rows – into the order of the aisles. If the store has several zones (branches), choose a
 branch to give it its own order. In **shopping mode**, when that store is selected (by hand or
 automatically through its zone), the list is grouped in this order.
 
@@ -20,6 +20,8 @@ automatically through its zone), the list is grouped in this order.
   (re-opening within 6 hours takes it back). *General settings → Statistics → Expenses* shows weeks,
   months or years per store; `sensor.smartlists_expenses_this_month` has the current month.
 - Items checked off directly in the app or HA's own to-do view are not booked yet.
+- **Shopping done** next to the total sets the "in cart" sum back to 0 (expenses stay booked); optionally
+  it reopens everything checked for lists you reuse every week.
 
 ## Templates & recipes
 
@@ -31,7 +33,11 @@ action `smartlists.add_template` does the same in automations.
 
 ## Share via link / QR code
 
-*Gear of the list (settings of this list) → Share via link* – admins, and owners of own lists.
+*Gear of the list (settings of this list) → Share via link*. Who may create links is decided by an admin
+under *General settings → Global → Sharing and permissions*: admins only, admins and the list's owner
+(default), everyone who may edit the list, or nobody (sharing off). There the admin also sets what a link
+may allow at most, the longest validity for users without admin rights, and sees – and can revoke – the
+active links of all lists.
 
 - Options when creating: **checking off** – *view only* (default), *“soft”* (the person can mark
   items; you see "✓ marked from outside" but the item stays open until you check it off) or *really
@@ -49,20 +55,26 @@ action `smartlists.add_template` does the same in automations.
 
 ## Notifications
 
-*General settings → For me → Notifications* – everyone for themselves: which phone (companion app),
+*General settings → For me → Notifications* – everyone for themselves: which device (companion app),
 on new items and/or when something is checked off, which lists, from whom (per person), quiet hours.
 Your own changes never notify you; several changes within a minute arrive as one message ("Anna added
 milk 2 l, bread to Shopping"). Changes from the card, the app, HA itself and shared links count.
 
 ## Barcode scan
 
-The barcode button next to the input opens the camera (Chrome/Android; on iPhone Safari and Firefox
-type the number). The product name comes from SmartLists' own memory or **Open Food Facts** (only the
-number is sent) and lands in the input field to adjust. Turn online lookup off under *Household →
-Voice & automations → Look up barcodes online*.
+The barcode button next to the input opens the scanner. In the Home Assistant companion app (Android/iOS)
+its own full-screen scanner is used; in a browser the camera (Chrome) or a field to type the number.
+The product name comes from SmartLists' own memory or a lookup service (only the number is sent).
+
+- *For me → Shopping and scanning*: the **target list** (this card's list or any other) and whether a
+  scanned product goes into the input field to check or is **added directly**.
+- *Global → Voice, backup, defaults*: which **lookup services** in which order – Open Food Facts, Open
+  Beauty Facts, Open Pet Food Facts, Open Products Facts, UPCitemdb, or your own (URL with `{code}` and the
+  JSON field holding the name). *Look up barcodes online* turns the lookup off altogether.
 
 ## Statistics
 
 📊 on the sidebar page (or *General settings → Statistics*): bought most often with rhythm ("every
 4 days"), *not bought for a while* (with ＋ to put it back on the list), shares per category and store.
-It uses the existing history – nothing new is collected.
+It uses the existing history – nothing new is collected. Admins can remove wrong items (×) from the
+history, and single expense bookings can be deleted under *Bookings* (admins all, others their own).

@@ -21,19 +21,19 @@ current ones are kept) and device-specific data (backup folder permission). Encr
 encrypted with your own password.
 
 **Backup password** (*App → Settings → Backup → Backup password*): encrypts every backup – Home
-Assistant, WebDAV and file – with AES-256-GCM before it leaves the phone. Home Assistant only stores
+Assistant, WebDAV and file – with AES-256-GCM before it leaves the device. Home Assistant only stores
 unreadable data; nobody can read it without the password, not even an admin. The password is kept only
-on the phone and is never part of a backup. After a reinstall the app asks for it when restoring.
+on the device and is never part of a backup. After a reinstall the app asks for it when restoring.
 **If you forget it, the backup cannot be restored.**
 
 ## Connected devices
 
-*Configure → Connected devices* lists every phone with user, model, app and Android version and last
-seen (⚠️ after 7 days). Each phone is also an HA device under SmartLists with the sensors
+*Configure → Connected devices* lists every device with user, model, app and Android version and last
+seen (⚠️ after 7 days). Each one is also an HA device under SmartLists with the sensors
 **Last seen** (usable in automations) and **App version**.
 
 Removing a device only removes it from the list; it reappears on the next sync. To revoke access delete
-the phone's token under *Profile → Security → Long-lived access tokens*. Use one token per person so
+the device's token under *Profile → Security → Long-lived access tokens*. Use one token per person so
 everyone gets their own settings.
 
 Interface details for developers: [`docs/app-api.md`](https://github.com/m3m0rex/ha_smartlists/blob/main/docs/app-api.md).
@@ -43,10 +43,23 @@ Interface details for developers: [`docs/app-api.md`](https://github.com/m3m0rex
 Combined lists created **in the app** (from Home Assistant lists) are reported to the integration when
 the app syncs. You find them
 
-- in the card's gear menu → *Household → Connected devices*, below the phone, with **Connect**, and
+- in the general settings → *Global → Devices and notes*, below the device, with **Connect**,
+- on the sidebar page as a dashed 📱 chip under *Combined lists*, and
 - under *Settings → Devices & services → SmartLists → Configure → Lists from the app*.
 
 Connecting creates a real combined list in Home Assistant with the same sources. It **belongs to the
-phone's device** (it shows up on the device page) and can be edited like any combined list. From then on
+device of the app** (it shows up on its device page) and can be edited like any combined list. From then on
 the app shows the list from Home Assistant instead of its own, so it is not there twice. Lists that
 also contain local (non-HA) lists of the app cannot be connected.
+
+Lists that also contain **local** lists of the app are not reported. In the app, open *Combined lists → ⋮ →
+Send to Home Assistant*: the local source lists are moved to Home Assistant (items included) and the combined
+list is connected right away if your HA account is an admin.
+
+## Naming convention and badge look in the app
+
+When paired, the app takes the **naming convention** (`@` store, `*` person, `#` tag – or whatever you set
+under *Global → Badges and colours*) and the **look of the badges** from Home Assistant: style per kind
+(filled, subtle, outline, text only), colours, the symbol in front, and colour/display name of individual
+stores, people and tags. The app refreshes this on every sync (at most every 15 minutes), so a change in
+Home Assistant shows up in the app without doing anything.

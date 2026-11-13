@@ -30,7 +30,7 @@ the line. HA's own to-do view of a regular list still shows the raw line.
 
 ## Badges & colours
 
-*⚙ → Household → Badges & colours* (admins) changes how badges look – for the whole household, without
+*General settings → Global → Badges and colours* (admins) changes how badges look – for all users, without
 touching the item text:
 
 - **Per kind** (store, person, tag): style *filled*, *subtle*, *outline* or *text only*, a colour and the

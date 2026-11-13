@@ -82,21 +82,18 @@ layout: columns
   the same list to reorder (sort "added").
 - **Shopping mode** (cart icon): screen stays on, checked items are hidden, large rows, tap the whole
   row; ↶ in the header undoes the last change. A bar shows **All | REWE · 4 | Lidl · 2 …** – tap a store
-  to see only its items. If stores are linked to zones (*⚙ → Household → Stores & zones*), the store
+  to see only its items. If stores are linked to zones (*General settings → Global → Stores & zones*), the store
   whose zone you are in is selected automatically. *For me* → "Also show items without a store" adds
   items without `@store`.
-- **Two settings menus** in the header: the **slider icon** opens the general settings with the tabs
-  *For me* (your controls, optionally only on this device) and *Household* (admins: naming convention,
-  badges & colours, stores & zones, app notes, keyword packs, remembered categories, voice &
-  automations, connected devices, backup, controls for everyone); the **gear** opens the settings of
-  **this list** (sharing for own lists, details). On the sidebar page the general settings are the ⚙
-  at the top right and each list only has its gear.
+- **Two settings menus** in the header: the **slider icon** opens the general settings, the **gear**
+  the settings window of **this list**. On the sidebar page the general settings are the ⚙ at the top
+  right and each list only has its gear. See [[Settings]].
 - **Frequently bought** (empty input): due items by your buying rhythm first, marked ⏰.
 - Starting the **shopping mode** fires `smartlists_shopping` – see [[Automations and voice]].
 
 ## Stores & zones
 
-*⚙ → Household → Stores & zones* (admins) lists the stores you use (`@REWE`, `@Lidl`, …) and the known
+*General settings → Global → Stores & zones* (admins) lists the stores you use (`@REWE`, `@Lidl`, …) and the known
 chains. Each store can have **several zones** (one per branch – REWE Nord, REWE Süd, …): pick existing
 Home Assistant zones via *＋ Zone* (× unlinks one) or choose *＋ New zone …*: a dialog asks for the name, **where** (current location of this device,
 home, pick on the map – if Home Assistant's map editor is available – or coordinates / a link from

@@ -34,6 +34,11 @@ EXPORT_VERSION = 1
 TAG_HISTORY_LIMIT = 200
 
 MENU_ACTIONS = ("rename", "move", "copy", "category", "delete")
+# share_who: wer Links erstellen darf (admins | owners = Admins + Besitzer eigener Listen | editors = alle, die die
+# Liste bearbeiten dürfen | nobody); share_max: was ein Link höchstens erlauben darf (off = nur ansehen, soft, on =
+# abhaken + hinzufügen); share_max_hours: längste Gültigkeit (None = unbegrenzt). Grenzen gelten für Nicht-Admins.
+RIGHTS_DEFAULT: dict[str, Any] = {"share_who": "owners", "share_max": "on", "share_max_hours": None,
+                                  "create_lists": True, "templates": True, "categories": True, "prices": True}
 # Erlaubte Bedien-Einstellungen pro Benutzer → erlaubte Werte
 USER_SETTINGS: dict[str, Any] = {
     "press_gesture": ("long", "double", "right", "off"),
@@ -250,11 +255,32 @@ class Learning:
 
     @callback
     def set_automation(self, settings: dict[str, Any]) -> None:
-        zones = self.automation.get("store_zones")
+        keep = {k: self.automation.get(k) for k in ("store_zones", "rights")}
         self.automation = {k: v for k, v in settings.items() if v not in (None, "", [], {})}
-        if zones and "store_zones" not in settings:  # Markt-Zonen nicht versehentlich mitlöschen
-            self.automation["store_zones"] = zones
+        for k, v in keep.items():  # Markt-Zonen und Rechte nicht versehentlich mitlöschen
+            if v and k not in settings:
+                self.automation[k] = v
         self._changed()
+
+    # Rechte für Benutzer ohne Admin-Rechte (Global → Teilen und Rechte). Fehlende Angaben = Standard.
+    def rights(self) -> dict[str, Any]:
+        raw = self.automation.get("rights") or {}
+        out = dict(RIGHTS_DEFAULT)
+        if raw.get("share_who") in ("admins", "owners", "editors", "nobody"):
+            out["share_who"] = raw["share_who"]
+        if raw.get("share_max") in ("off", "soft", "on"):
+            out["share_max"] = raw["share_max"]
+        if isinstance(raw.get("share_max_hours"), int) and raw["share_max_hours"] > 0:
+            out["share_max_hours"] = raw["share_max_hours"]
+        for key in ("create_lists", "templates", "categories", "prices"):
+            if isinstance(raw.get(key), bool):
+                out[key] = raw[key]
+        return out
+
+    def set_rights(self, rights: dict[str, Any]) -> dict[str, Any]:
+        self.automation["rights"] = {k: v for k, v in rights.items() if k in RIGHTS_DEFAULT}
+        self._changed(categories=True)
+        return self.rights()
 
     # Märkte ↔ Zonen: "rewe" → "zone.rewe_innenstadt". Im Einkaufsmodus wird automatisch der Markt
     # gewählt, in dessen Zone die eigene Person gerade ist.
@@ -484,6 +510,7 @@ class Learning:
                              (itemtext.store_display(k) for k in dict.fromkeys([*itemtext.KNOWN_STORES, *itemtext.STORE_OVERRIDES]))],
             "store_zones": self.store_zones,
             "appearance": self.appearance,
+            "rights": self.rights(),
         }
 
     # ------------------------------------------------------------------

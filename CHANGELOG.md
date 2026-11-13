@@ -17,6 +17,26 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
   automations*): which lookup services in which order – Open Food Facts, Open Beauty Facts, Open Pet Food
   Facts, Open Products Facts, UPCitemdb, or your own service (URL with `{code}` + JSON field for the name).
 
+- **New settings layout**: the general settings are organised in areas – *For me* (controls, shopping and
+  scanning, notifications), *Global* for admins (badges and colours, stores & zones, categories, devices
+  and notes, sharing and permissions, voice/backup/defaults) and *Insights*. Wide screens show the areas
+  on the left and the selected area in two columns; narrow screens show the areas first. With search.
+  Calmer look without boxes.
+- **Settings window per list** (gear of the list): name, default sort order and prices on/off for the list
+  on all devices, sharing with people and sharing via link – two columns on wide screens, a sheet on small.
+- **Sharing and permissions** (Global): admins decide who may create share links (admins · admins and
+  owner · everyone who may edit · nobody), what a link may allow at most and the longest validity, see and
+  revoke the active links of all lists, and switch off for non-admins: creating own lists, changing
+  templates, assigning categories, entering prices.
+- WebSocket: `smartlists/set_rights`, `share_links_all`, `set_list_settings`; `config` returns `rights`,
+  `get_list` returns `settings`.
+
+### Changed
+
+- "Household" is now called **Global** in the settings; "phone" is now **device** everywhere (interface in
+  all six languages, setup dialogs, documentation).
+- New wiki page *Settings*; the pages on sharing, scanning, devices and the sidebar page were updated.
+
 ### Fixed
 
 - **No more refresh while you edit**: background updates only redraw the list when something really

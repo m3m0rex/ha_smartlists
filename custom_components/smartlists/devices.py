@@ -7,7 +7,7 @@ nicht als jemand anderes ausgeben. Gespeichert in `.storage/smartlists.devices`.
 Jedes Gerät erscheint zusätzlich als Gerät in HA (unter SmartLists) mit Sensoren
 „Zuletzt gesehen“ und „App-Version“ – siehe sensor.py.
 
-Entfernen heißt hier nur „aus der Liste nehmen“. Meldet sich das Handy wieder, erscheint es erneut.
+Entfernen heißt hier nur „aus der Liste nehmen“. Meldet sich das Gerät wieder, erscheint es erneut.
 Den Zugang sperrt man in HA über das Profil → Langlebige Zugangstoken.
 """
 
@@ -74,7 +74,7 @@ class Devices:
         for key, limit in _FIELDS.items():
             if info.get(key):
                 entry[key] = str(info[key]).strip()[:limit]
-        entry.setdefault("name", entry.get("model") or "Handy")
+        entry.setdefault("name", entry.get("model") or "Gerät")
         if isinstance(info.get("app_lists"), list):
             entry["app_lists"] = _clean_app_lists(info["app_lists"])
         entry.update(last_seen=now, user_id=user_id, user_name=user_name)

@@ -35,7 +35,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_subscribe, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_notify, ws_set_notify, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -97,6 +97,8 @@ def ws_describe(hass: HomeAssistant, connection: websocket_api.ActiveConnection,
 @callback
 def ws_set_category(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Kategorie für einen Artikel merken (gilt künftig auch für ähnliche Artikel)."""
+    if _denied(hass, connection, msg, "categories"):
+        return
     learning = _learning(hass)
     name = learning.parse(msg["name"]).name
     try:
@@ -190,7 +192,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },
@@ -449,6 +451,8 @@ async def ws_users(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 @callback
 def ws_create_list(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Neue eigene Liste; Besitzer ist, wer sie anlegt."""
+    if _denied(hass, connection, msg, "create_lists"):
+        return
     from types import MappingProxyType
 
     from homeassistant.config_entries import ConfigSubentry
@@ -783,7 +787,7 @@ def ws_app_lists(hass: HomeAssistant, connection: websocket_api.ActiveConnection
 )
 @callback
 def ws_connect_app_list(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """App-Liste als kombinierte Liste der Integration anlegen (gehört dann zum Handy-Gerät)."""
+    """App-Liste als kombinierte Liste der Integration anlegen (gehört dann zum Gerät der App)."""
     from . import app_lists
 
     try:
@@ -821,6 +825,8 @@ def ws_store_order(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 @callback
 def ws_set_price(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Preis je Einheit für einen Artikel merken (None = vergessen)."""
+    if _denied(hass, connection, msg, "prices"):
+        return
     price = msg.get("price")
     if price is not None and not 0 <= price < 100000:
         connection.send_error(msg["id"], "invalid", "Preis ungültig")
@@ -848,6 +854,8 @@ def ws_templates(hass: HomeAssistant, connection: websocket_api.ActiveConnection
                                   vol.Optional("servings"): vol.Any(vol.All(int, vol.Range(min=1, max=100)), None)})
 @callback
 def ws_save_template(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if _denied(hass, connection, msg, "templates"):
+        return
     try:
         tid = _extras(hass).save_template(msg.get("template_id"), msg["name"], msg["items"], msg["emoji"], msg.get("servings"))
     except ValueError as err:
@@ -859,6 +867,8 @@ def ws_save_template(hass: HomeAssistant, connection: websocket_api.ActiveConnec
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/delete_template", vol.Required("template_id"): str})
 @callback
 def ws_delete_template(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    if _denied(hass, connection, msg, "templates"):
+        return
     _extras(hass).delete_template(msg["template_id"])
     connection.send_result(msg["id"], {})
 
@@ -885,11 +895,18 @@ def _may_share(hass: HomeAssistant, entity_id: str, user: Any) -> str | None:
         return "Liste nicht gefunden."
     if lists.is_notes(hass, entity_id):
         return "Notizlisten lassen sich nicht teilen."
+    who = _learning(hass).rights()["share_who"]
+    if who == "nobody":
+        return "Teilen per Link ist ausgeschaltet (Global → Teilen und Rechte)."
     if user.is_admin:
         return None
-    if lists.own_entity(hass, entity_id) is not None and lists.own_role(hass, entity_id, user) == "owner":
+    own = lists.own_entity(hass, entity_id) is not None
+    role = lists.own_role(hass, entity_id, user)
+    if who == "owners" and own and role == "owner":
         return None
-    return "Teilen dürfen Admins und der Besitzer einer eigenen Liste."
+    if who == "editors" and role in ("owner", "editor"):  # andere Listen: jeder darf sie bearbeiten → role "owner"
+        return None
+    return "Du darfst diese Liste nicht per Link teilen (legt ein Admin unter Global → Teilen und Rechte fest)."
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/share_links", vol.Required("entity_id"): str})
@@ -911,9 +928,19 @@ def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnect
     if (err := _may_share(hass, msg["entity_id"], connection.user)) is not None:
         connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, err)
         return
+    check, add, hours = msg["check"], msg["add"], msg.get("hours", 24 * 7)
+    if not connection.user.is_admin:
+        # Grenzen des Admins: höchstens erlaubte Rechte und Gültigkeit
+        rights = _learning(hass).rights()
+        order = ["off", "soft", "on"]
+        if order.index(check) > order.index(rights["share_max"]):
+            check = rights["share_max"]
+        if rights["share_max"] != "on":
+            add = False
+        if rights["share_max_hours"] and (hours is None or hours > rights["share_max_hours"]):
+            hours = rights["share_max_hours"]
     try:
-        link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, msg["check"], msg["add"],
-                                                   hours=msg.get("hours", 24 * 7))
+        link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, check, add, hours=hours)
     except ValueError as err:
         connection.send_error(msg["id"], "invalid", str(err))
         return
@@ -933,7 +960,7 @@ def ws_share_revoke(hass: HomeAssistant, connection: websocket_api.ActiveConnect
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/notify"})
 @callback
 def ws_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Eigene Benachrichtigungs-Einstellungen + verfügbare Handys (notify.mobile_app_…)."""
+    """Eigene Benachrichtigungs-Einstellungen + verfügbare Geräte (notify.mobile_app_…)."""
     n = hass.data[DOMAIN]["notifier"]
     connection.send_result(msg["id"], {"settings": n.get(connection.user.id), "services": n.services()})
 
@@ -944,7 +971,7 @@ def ws_set_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
     n = hass.data[DOMAIN]["notifier"]
     service = (msg["settings"].get("service") or "").removeprefix("notify.")
     if service and service not in n.services():
-        connection.send_error(msg["id"], "invalid", "Unbekanntes Handy (notify-Dienst)")
+        connection.send_error(msg["id"], "invalid", "Unbekanntes Gerät (notify-Dienst)")
         return
     connection.send_result(msg["id"], {"settings": n.set(connection.user.id, msg["settings"])})
 
@@ -1075,3 +1102,61 @@ async def ws_finish_shopping(hass, msg, context):
                 await lists._call(hass, "update_item", {"entity_id": msg["entity_id"], "item": item["uid"], "status": lists.STATUS_OPEN}, context)
                 reopened += 1
     return {"trip_start": start, "reopened": reopened}
+
+
+
+def _denied(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any], right: str) -> bool:
+    """True (und Fehlermeldung gesendet), wenn ein Nicht-Admin etwas tut, das der Admin abgeschaltet hat."""
+    if connection.user.is_admin or _learning(hass).rights().get(right, True):
+        return False
+    connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED,
+                          "Das hat ein Admin für Benutzer ohne Admin-Rechte ausgeschaltet (Global → Teilen und Rechte).")
+    return True
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_rights", vol.Required("rights"): dict})
+@callback
+def ws_set_rights(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Was Benutzer ohne Admin-Rechte dürfen (Teilen per Link, Listen anlegen, Vorlagen, Kategorien, Preise)."""
+    connection.send_result(msg["id"], {"rights": _learning(hass).set_rights(msg["rights"])})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/share_links_all"})
+@callback
+def ws_share_links_all(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Alle aktiven Links aller Listen (für die Übersicht des Admins)."""
+    out = []
+    for link in hass.data[DOMAIN]["shares"].all_links():
+        state = hass.states.get(link["entity_id"])
+        out.append({**link, "list_name": state.attributes.get("friendly_name", link["entity_id"]) if state else link["entity_id"]})
+    connection.send_result(msg["id"], {"links": out})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/set_list_settings", vol.Required("entity_id"): str,
+                                  vol.Optional("name"): vol.All(str, vol.Length(min=1, max=60)),
+                                  vol.Optional("sort"): vol.Any(str, None), vol.Optional("show_prices"): bool})
+@callback
+def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Darstellung einer Liste für alle Geräte: Name (Anzeigename in HA), Standard-Sortierung, Preise an/aus.
+    Admins; bei eigenen Listen auch der Besitzer."""
+    entity_id = msg["entity_id"]
+    user = connection.user
+    owner = lists.own_entity(hass, entity_id) is not None and lists.own_role(hass, entity_id, user) == "owner"
+    if hass.states.get(entity_id) is None or not entity_id.startswith("todo."):
+        connection.send_error(msg["id"], "not_found", "Liste nicht gefunden.")
+        return
+    if not (user.is_admin or owner):
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur Admins oder der Besitzer der Liste.")
+        return
+    if "name" in msg:
+        from homeassistant.helpers import entity_registry as er
+
+        registry = er.async_get(hass)
+        if registry.async_get(entity_id) is None:
+            connection.send_error(msg["id"], "invalid", "Diese Liste lässt sich hier nicht umbenennen.")
+            return
+        registry.async_update_entity(entity_id, name=msg["name"].strip())
+    settings = _extras(hass).set_list_settings(entity_id, msg.get("sort") if "sort" in msg else None, msg.get("show_prices"))
+    connection.send_result(msg["id"], {"settings": settings})

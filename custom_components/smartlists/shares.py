@@ -102,6 +102,9 @@ class Shares:
                 "expires": link["expires"], "created": link["created"], "opens": link.get("opens", 0),
                 "expired": bool(link["expires"] and link["expires"] < time.time())}
 
+    def all_links(self) -> list[dict[str, Any]]:
+        return [self.describe(h) for h in self.links]
+
     def for_list(self, entity_id: str) -> list[dict[str, Any]]:
         return [self.describe(h) for h, link in self.links.items() if link["entity_id"] == entity_id]
 

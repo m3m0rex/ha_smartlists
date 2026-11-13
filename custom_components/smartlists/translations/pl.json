@@ -165,7 +165,7 @@
       },
       "devices": {
         "title": "Połączone urządzenia",
-        "description": "Telefony z aplikacją HA SmartLists: {count}\n\n{devices}\n\n⚠️ = brak synchronizacji od ponad 7 dni. Wybrane urządzenia zostaną usunięte z listy; telefon, który połączy się ponownie, pojawi się znowu. Aby cofnąć dostęp, usuń jego token w Profil → Tokeny dostępu długoterminowego.",
+        "description": "Urządzenia z aplikacją HA SmartLists: {count}\n\n{devices}\n\n⚠️ = brak synchronizacji od ponad 7 dni. Wybrane urządzenia zostaną usunięte z listy; urządzenie, które połączy się ponownie, pojawi się znowu. Aby cofnąć dostęp, usuń jego token w Profil → Tokeny dostępu długoterminowego.",
         "data": {
           "remove": "Usuń z listy"
         }
@@ -186,7 +186,7 @@
       },
       "app_lists": {
         "title": "Listy z aplikacji",
-        "description": "{count} list połączonych z telefonów z aplikacją HA SmartLists:\n\n{lists}\n\n➕ = jeszcze niepołączona, ✅ = połączona. Połączone listy są tworzone tutaj jako listy połączone i należą do danego telefonu (urządzenia). Aplikacja pokazuje wtedy listę z Home Assistant zamiast własnej. Brakuje listy? Dotknij raz „Synchronizuj SmartLists” w aplikacji.",
+        "description": "{count} list połączonych z urządzeń z aplikacją HA SmartLists:\n\n{lists}\n\n➕ = jeszcze niepołączona, ✅ = połączona. Połączone listy są tworzone tutaj jako listy połączone i należą do danego urządzenia. Aplikacja pokazuje wtedy listę z Home Assistant zamiast własnej. Brakuje listy? Dotknij raz „Synchronizuj SmartLists” w aplikacji.",
         "data": {
           "connect": "Połącz"
         }

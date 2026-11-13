@@ -52,6 +52,11 @@ Configure → Run setup again / start from scratch*. Tip: export a backup first 
 
 **Add combined list** merges several to-do lists into one new to-do entity (e.g. `todo.weekly_shop`).
 
+Every SmartLists list (combined and own) appears as a **device below its entry** on the integration page:
+combined lists show their source lists ("Combined from: Anna, Max"), own lists "Own list". Open the device →
+**Visit** jumps straight to the list on `/smartlists`; the entity opens it in Home Assistant. Combined lists
+taken over from the app are linked to the app's device ("via").
+
 | Field | Meaning |
 |---|---|
 | Lists to combine | any to-do lists (Shopping List, Local To-do, Google Tasks, Bring!, CalDAV, …) |

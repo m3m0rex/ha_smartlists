@@ -6093,6 +6093,15 @@ class SmartListsPanel extends HTMLElement {
   _render() {
     if (!this._hass) return;
     const lists = this._lists();
+    // Sprung aus der Integration („Besuchen“ beim Gerät der Liste): /smartlists?list=todo.…
+    if (this._wantList === undefined) {
+      try { this._wantList = new URLSearchParams(window.location.search).get("list") || null; } catch (e) { this._wantList = null; }
+    }
+    if (this._wantList && lists.some((l) => l.e === this._wantList)) {
+      this._prefs.selected = this._prefs.columns ? [...this._prefs.selected.filter((e) => e !== this._wantList), this._wantList] : [this._wantList];
+      this._prefs.tab = "lists"; this._settingsOpen = false; this._wantList = null; this._save();
+      try { const u = new URL(window.location.href); u.searchParams.delete("list"); window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash); } catch (e) { /* */ }
+    }
     if (this._pendingSelect) {
       const hit = lists.find((l) => l.name === this._pendingSelect);
       if (hit) { this._pendingSelect = null; this._prefs.selected = this._prefs.columns ? [...this._prefs.selected, hit.e] : [hit.e]; this._save(); }

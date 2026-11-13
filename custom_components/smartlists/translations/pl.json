@@ -387,7 +387,7 @@
     },
     "owner": {
       "options": {
-        "__all__": "— wszyscy (bez ograniczeń)"
+        "everyone": "— wszyscy (bez ograniczeń)"
       }
     }
   },

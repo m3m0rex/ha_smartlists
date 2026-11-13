@@ -54,6 +54,6 @@ def test_combined_access_fields():
     ns = {"Any": object}
     exec(compile(ast.Module(body=nodes, type_ignores=[]), "config_flow.py", "exec"), ns)
     apply = ns["_apply_access"]
-    assert apply({"name": "X", "sources": ["todo.a"], "owner": "__all__", "editors": ["u2"]}) == {"name": "X", "sources": ["todo.a"]}
+    assert apply({"name": "X", "sources": ["todo.a"], "owner": "everyone", "editors": ["u2"]}) == {"name": "X", "sources": ["todo.a"]}
     assert apply({"owner": "u1", "editors": ["u2", "u1"], "viewers": ["u3"], "checkers": []}) == {
         "owner": "u1", "shares": {"u3": "viewer", "u2": "editor"}}

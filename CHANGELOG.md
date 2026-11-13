@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.8.1] – 2026-11-13
+
+### Fixed
+
+- Validation (hassfest) failed on a translation key (`__all__`) of the owner selector added in 3.8.0; the key is
+  now `everyone`. A new test checks all translation keys against the hassfest rules.
+
 ## [3.8.0] – 2026-11-13
 
 ### Added

@@ -35,3 +35,19 @@ def test_same_keys_and_placeholders():
         assert set(other) == set(ref), (f.name, set(ref) ^ set(other))
         for key, text in ref.items():
             assert set(re.findall(r"\{(\w+)\}", other[key])) == set(re.findall(r"\{(\w+)\}", text)), (f.name, key)
+
+
+def test_keys_valid_for_hassfest():
+    """hassfest: Schlüssel nur [a-z0-9-_], nicht mit - oder _ beginnen/enden (z. B. kein "__all__")."""
+    bad = []
+
+    def walk(obj, path):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if not re.fullmatch(r"[a-z0-9][a-z0-9_-]*[a-z0-9]|[a-z0-9]", k):
+                    bad.append((path, k))
+                walk(v, f"{path}.{k}")
+
+    for f in FILES:
+        walk(json.loads(f.read_text(encoding="utf-8")), f.name)
+    assert not bad, bad[:10]

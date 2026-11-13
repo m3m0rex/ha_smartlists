@@ -10,7 +10,9 @@ Mehrere Änderungen kurz hintereinander (60 s) werden zu einer Nachricht zusamme
 from __future__ import annotations
 
 import datetime as dt
+import json
 import logging
+import re
 from functools import partial
 from typing import Any
 
@@ -44,11 +46,49 @@ def _text(hass: HomeAssistant) -> dict[str, str]:
     return TEXTS.get((hass.config.language or "en").split("-")[0], TEXTS["en"])
 
 
+_ID = re.compile(r"^[a-z0-9_]+\.[a-z0-9_]+$")
+TARGET_KINDS = ("service", "entity", "custom")
+MAX_TARGETS = 10
+
+
+def validate_targets(raw: Any, legacy_service: Any = None) -> list[dict[str, Any]]:
+    """Ziele einer Benachrichtigung – beliebig viele, nicht nur Geräte der Companion-App:
+        {"kind": "service", "id": "notify.mobile_app_pixel"}   jeder notify-Dienst (App, Telegram, E-Mail …)
+        {"kind": "entity",  "id": "notify.wohnzimmer"}         notify-Entität (notify.send_message)
+        {"kind": "custom",  "id": "telegram_bot.send_message", "data": {"target": 123}}   beliebiger Dienst (nur Admins)
+    Unbekanntes wird verworfen statt Fehler – ältere/neuere Dateien funktionieren weiter."""
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    items = list(raw) if isinstance(raw, list) else []
+    if legacy_service:  # alte Einstellung "service": "mobile_app_x" (bis 3.3)
+        items.append({"kind": "service", "id": "notify." + str(legacy_service).removeprefix("notify.")})
+    for t in items:
+        if not isinstance(t, dict) or t.get("kind") not in TARGET_KINDS:
+            continue
+        tid = str(t.get("id") or "").strip().lower()
+        if not _ID.match(tid) or (t["kind"] in ("service", "entity") and not tid.startswith("notify.")):
+            continue
+        clean: dict[str, Any] = {"kind": t["kind"], "id": tid}
+        if t["kind"] == "custom":
+            data = t.get("data") if isinstance(t.get("data"), dict) else {}
+            if len(json.dumps(data, default=str)) > 2000:
+                continue
+            clean["data"] = data
+        if isinstance(t.get("label"), str) and t["label"].strip():
+            clean["label"] = t["label"].strip()[:40]
+        key = json.dumps([clean["kind"], clean["id"], clean.get("data")], sort_keys=True, default=str)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(clean)
+    return out[:MAX_TARGETS]
+
+
 def validate(settings: Any) -> dict[str, Any]:
     s = settings if isinstance(settings, dict) else {}
     quiet = s.get("quiet") if isinstance(s.get("quiet"), list) and len(s["quiet"]) == 2 else None
     return {
-        "service": str(s.get("service") or "").removeprefix("notify.")[:80] or None,
+        "targets": validate_targets(s.get("targets"), s.get("service")),
         "added": bool(s.get("added", True)),
         "checked": bool(s.get("checked", False)),
         "own": bool(s.get("own", False)),  # auch eigene Änderungen (z. B. von einem anderen Gerät)
@@ -79,7 +119,65 @@ class Notifier:
         return self.users[user_id]
 
     def services(self) -> list[str]:
-        return sorted(s for s in self.hass.services.async_services().get("notify", {}) if s.startswith("mobile_app_"))
+        """Alle notify-Dienste (Companion-App, Telegram, E-Mail, …) – nicht nur Geräte."""
+        return sorted(s for s in self.hass.services.async_services().get("notify", {}) if s not in ("send_message",))
+
+    def entities(self) -> list[dict[str, str]]:
+        """notify-Entitäten (neue Art, notify.send_message)."""
+        return sorted(({"id": st.entity_id, "name": st.attributes.get(ATTR_FRIENDLY_NAME, st.entity_id)}
+                       for st in self.hass.states.async_all("notify")), key=lambda x: str(x["name"]).casefold())
+
+    def check_targets(self, targets: list[dict[str, Any]], is_admin: bool) -> str | None:
+        """Fehlertext, wenn ein Ziel nicht (mehr) existiert oder nicht erlaubt ist."""
+        for t in validate_targets(targets):
+            domain, _, name = t["id"].partition(".")
+            if t["kind"] == "service" and not self.hass.services.has_service("notify", name):
+                return f"Unbekannter Dienst: {t['id']}"
+            if t["kind"] == "entity" and self.hass.states.get(t["id"]) is None:
+                return f"Unbekannte Entität: {t['id']}"
+            if t["kind"] == "custom":
+                if not is_admin:
+                    return "Eigene Dienste kann nur ein Admin eintragen."
+                if not self.hass.services.has_service(domain, name):
+                    return f"Unbekannter Dienst: {t['id']}"
+        return None
+
+    async def _deliver(self, target: dict[str, Any], title: str, message: str, tag: str) -> None:
+        domain, _, name = target["id"].partition(".")
+        if target["kind"] == "entity":
+            await self.hass.services.async_call("notify", "send_message", {"entity_id": target["id"], "title": title, "message": message}, blocking=True)
+        elif target["kind"] == "service":
+            data: dict[str, Any] = {"title": title, "message": message}
+            if name.startswith("mobile_app_"):  # Companion-App: gruppieren, ersetzen, antippen öffnet SmartLists
+                data["data"] = {"tag": tag, "group": "smartlists", "clickAction": "/smartlists"}
+            await self.hass.services.async_call("notify", name, data, blocking=True)
+        else:
+            # eigener Dienst: {title}/{message} in Texten ersetzen; ohne Platzhalter kommen title/message dazu
+            raw = target.get("data") or {}
+            dumped = json.dumps(raw)
+            if "{message}" in dumped or "{title}" in dumped:
+                def fill(v: Any) -> Any:
+                    if isinstance(v, str):
+                        return v.replace("{title}", title).replace("{message}", message)
+                    if isinstance(v, dict):
+                        return {k: fill(x) for k, x in v.items()}
+                    if isinstance(v, list):
+                        return [fill(x) for x in v]
+                    return v
+                payload = fill(raw)
+            else:
+                payload = {"title": title, "message": message, **raw}
+            await self.hass.services.async_call(domain, name, payload, blocking=True)
+
+    async def _deliver_all(self, s: dict[str, Any], title: str, message: str, tag: str) -> list[str]:
+        errors = []
+        for t in s["targets"]:
+            try:
+                await self._deliver(t, title, message, tag)
+            except Exception as err:  # noqa: BLE001 – ein falsches Ziel soll die anderen nicht aufhalten
+                _LOGGER.warning("SmartLists: Benachrichtigung an %s fehlgeschlagen: %s", t["id"], err)
+                errors.append(f"{t.get('label') or t['id']}: {err}")
+        return errors
 
     @callback
     def start(self) -> Any:
@@ -129,7 +227,7 @@ class Notifier:
         from . import lists
 
         for user_id, s in self.users.items():
-            if not s["service"] or not s[kind] or (user_id == actor and not s["own"]) or (actor and actor in s["muted"]):
+            if not s["targets"] or not s[kind] or (user_id == actor and not s["own"]) or (actor and actor in s["muted"]):
                 continue
             # gewählt werden kann auch eine kombinierte Liste – Änderungen kommen aber an ihren Quell-Listen an
             if s["lists"] and entity_id not in s["lists"] and not any(entity_id in self._sources_of(c) for c in s["lists"]):
@@ -166,7 +264,7 @@ class Notifier:
         pend = self._pending.pop(key, None)
         user_id, entity_id, kind = key
         s = self.users.get(user_id)
-        if not pend or not s or not s["service"] or self._quiet(s):
+        if not pend or not s or not s["targets"] or self._quiet(s):
             return
         t = _text(self.hass)
         names = []
@@ -178,24 +276,17 @@ class Notifier:
         state = self.hass.states.get(entity_id)
         list_name = state.attributes.get(ATTR_FRIENDLY_NAME, entity_id) if state else entity_id
         message = t[kind].format(who=f" {t['and']} ".join(dict.fromkeys(names)), items=shown, list=list_name)
-        try:
-            await self.hass.services.async_call("notify", s["service"], {
-                "title": list_name, "message": message,
-                "data": {"tag": f"smartlists-{entity_id}", "group": "smartlists", "clickAction": "/smartlists"},
-            })
-        except Exception as err:  # noqa: BLE001 – falscher Dienst o.ä. soll nichts anderes stören
-            _LOGGER.warning("SmartLists: Benachrichtigung über notify.%s fehlgeschlagen: %s", s["service"], err)
-            return
+        await self._deliver_all(s, list_name, message, f"smartlists-{entity_id}")
 
-    async def async_test(self, user_id: str) -> None:
-        """Testnachricht an das eingestellte Gerät (Fehler gehen an die Karte zurück)."""
+    async def async_test(self, user_id: str) -> dict[str, Any]:
+        """Testnachricht an alle eingestellten Ziele; Fehler je Ziel gehen an die Karte zurück."""
         s = self.get(user_id)
-        if not s["service"]:
-            raise ValueError("no_service")
-        await self.hass.services.async_call("notify", s["service"], {
-            "title": "SmartLists", "message": _text(self.hass)["test"],
-            "data": {"tag": "smartlists-test", "group": "smartlists", "clickAction": "/smartlists"},
-        }, blocking=True)
+        if not s["targets"]:
+            raise ValueError("no_target")
+        errors = await self._deliver_all(s, "SmartLists", _text(self.hass)["test"], "smartlists-test")
+        if len(errors) == len(s["targets"]):
+            raise ValueError("; ".join(errors))
+        return {"sent": len(s["targets"]) - len(errors), "errors": errors}
 
 
 async def async_get_notifier(hass: HomeAssistant) -> Notifier:

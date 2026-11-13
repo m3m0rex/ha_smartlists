@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.3.1";
+const CARD_VERSION = "3.4.0";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -228,7 +228,7 @@ const TEXTS = {
     p_left: "Nach links", p_right: "Nach rechts",
     look: "Badges & Farben", look_help: "Aussehen der Badges für alle Benutzer. Farben und Namen der Märkte gelten auch in der App. Leer bzw. ↺ = Standard.",
     look_style: "Stil", look_filled: "gefüllt", look_soft: "dezent", look_outline: "Rahmen", look_text: "nur Text",
-    look_color: "Farbe / Hintergrund", look_text: "Schriftfarbe", look_icon: "Symbol davor", look_label: "Anzeigename", look_kinds: "Je Art", look_values: "Einzelne Badges",
+    look_color: "Hintergrundfarbe", look_text: "Schriftfarbe", look_icon: "Symbol davor", look_label: "Anzeigename", look_kinds: "Je Art", look_values: "Einzelne Badges",
     look_search: "Badge suchen … (z. B. rewe)", look_more: "Weitere über die Suche finden.", look_add: "Badge einfärben",
     look_add_help: "Mit Zeichen davor, z. B. @Kaufland, *Max oder #vegan – auch wenn es noch nicht benutzt wurde.",
     zone_count: "Zonen", zone_unlink: "Zone lösen", zone_add: "Zone",
@@ -268,7 +268,7 @@ const TEXTS = {
     aisle_help: "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist. Am Griff ⠿ ziehen oder mit den Pfeilen verschieben.",
     aisle_all_branches: "alle Filialen",
     aisle_reset: "Standard",
-    notify_to: "An mein Gerät",
+    notify_to: "Senden an",
     notify_no_phone: "Kein Gerät mit Companion-App gefunden.",
     notify_added: "Bei neuen Artikeln",
     notify_checked: "Wenn etwas abgehakt wird",
@@ -345,6 +345,7 @@ const TEXTS = {
     m_select: "Auswählen", sel_mode: "Mehrere auswählen", sel_count: "{n} ausgewählt", sel_all: "Alle", sel_none: "Keine", sel_check: "Abhaken", sel_checked: "abgehakt", sel_reopened: "wieder offen", sel_delete_q: "{n} Artikel löschen?",
     mp_target: "Zutaten auf:",
     p_tab_lists: "Listen",
+    nt_add: "Ziel hinzufügen", nt_none: "Noch kein Ziel – dann kommt keine Nachricht.", nt_service: "Benachrichtigungsdienst", nt_entity: "Benachrichtigungs-Entität", nt_custom: "Eigener Dienst", nt_no_services: "Keine notify-Dienste gefunden.", nt_no_entities: "Keine notify-Entitäten gefunden.", nt_custom_help: "Beliebiger Dienst (nur Admins), z. B. telegram_bot.send_message oder script.meine_nachricht. Daten als JSON; {title} und {message} werden ersetzt – ohne Platzhalter kommen title und message dazu.", nt_help: "Mehrere Ziele sind möglich: Companion-App, Telegram, E-Mail, Signal, Lautsprecher … – alles, was Home Assistant als Benachrichtigung kennt.", nt_bad_service: "Dienst im Format domain.dienst angeben.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples @REWE", note: "Note", save: "Save", cancel: "Cancel",
@@ -460,7 +461,7 @@ const TEXTS = {
     p_left: "Move left", p_right: "Move right",
     look: "Badges & colours", look_help: "How badges look for all users. Store colours and names also apply in the app. Empty or ↺ = default.",
     look_style: "Style", look_filled: "filled", look_soft: "subtle", look_outline: "outline", look_text: "text only",
-    look_color: "Colour / background", look_text: "Text colour", look_icon: "Symbol in front", look_label: "Display name", look_kinds: "Per kind", look_values: "Individual badges",
+    look_color: "Background colour", look_text: "Text colour", look_icon: "Symbol in front", look_label: "Display name", look_kinds: "Per kind", look_values: "Individual badges",
     look_search: "Search badge … (e.g. rewe)", look_more: "Find more via search.", look_add: "Colour a badge",
     look_add_help: "With its character, e.g. @Kaufland, *Max or #vegan – even if not used yet.",
     zone_count: "zones", zone_unlink: "Unlink zone", zone_add: "Zone",
@@ -500,7 +501,7 @@ const TEXTS = {
     aisle_help: "This is how shopping mode sorts when this store is selected. Drag the handle ⠿ or use the arrows.",
     aisle_all_branches: "all branches",
     aisle_reset: "Default",
-    notify_to: "To my device",
+    notify_to: "Send to",
     notify_no_phone: "No device with the companion app found.",
     notify_added: "On new items",
     notify_checked: "When something is checked off",
@@ -577,6 +578,7 @@ const TEXTS = {
     m_select: "Select", sel_mode: "Select several", sel_count: "{n} selected", sel_all: "All", sel_none: "None", sel_check: "Check off", sel_checked: "checked off", sel_reopened: "reopened", sel_delete_q: "Delete {n} items?",
     mp_target: "Ingredients to:",
     p_tab_lists: "Lists",
+    nt_add: "Add target", nt_none: "No target yet – no messages will be sent.", nt_service: "Notification service", nt_entity: "Notification entity", nt_custom: "Custom service", nt_no_services: "No notify services found.", nt_no_entities: "No notify entities found.", nt_custom_help: "Any service (admins only), e.g. telegram_bot.send_message or script.my_message. Data as JSON; {title} and {message} are replaced – without placeholders, title and message are added.", nt_help: "Several targets are possible: companion app, Telegram, e-mail, Signal, speakers … – anything Home Assistant knows as a notification.", nt_bad_service: "Enter the service as domain.service.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes @Carrefour", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -692,7 +694,7 @@ const TEXTS = {
     p_left: "Vers la gauche", p_right: "Vers la droite",
     look: "Badges & couleurs", look_help: "Apparence des badges pour tous les utilisateurs. Les couleurs et noms des magasins s'appliquent aussi dans l'app. Vide ou ↺ = par défaut.",
     look_style: "Style", look_filled: "plein", look_soft: "discret", look_outline: "contour", look_text: "texte seul",
-    look_color: "Couleur / fond", look_text: "Couleur du texte", look_icon: "Symbole devant", look_label: "Nom affiché", look_kinds: "Par type", look_values: "Badges individuels",
+    look_color: "Couleur de fond", look_text: "Couleur du texte", look_icon: "Symbole devant", look_label: "Nom affiché", look_kinds: "Par type", look_values: "Badges individuels",
     look_search: "Chercher un badge … (p. ex. carrefour)", look_more: "Trouve les autres via la recherche.", look_add: "Colorer un badge",
     look_add_help: "Avec son caractère, p. ex. @Kaufland, *Max ou #vegan – même s'il n'est pas encore utilisé.",
     zone_count: "zones", zone_unlink: "Dissocier la zone", zone_add: "Zone",
@@ -732,7 +734,7 @@ const TEXTS = {
     aisle_help: "C'est l'ordre du mode courses quand ce magasin est sélectionné. Fais glisser la poignée ⠿ ou utilise les flèches.",
     aisle_all_branches: "toutes les succursales",
     aisle_reset: "Par défaut",
-    notify_to: "Sur mon appareil",
+    notify_to: "Envoyer à",
     notify_no_phone: "Aucun appareil avec l'application Companion trouvé.",
     notify_added: "Nouveaux articles",
     notify_checked: "Quand quelque chose est coché",
@@ -809,6 +811,7 @@ const TEXTS = {
     m_select: "Sélectionner", sel_mode: "Sélectionner plusieurs", sel_count: "{n} sélectionné(s)", sel_all: "Tous", sel_none: "Aucun", sel_check: "Cocher", sel_checked: "cochés", sel_reopened: "rouverts", sel_delete_q: "Supprimer {n} articles ?",
     mp_target: "Ingrédients sur :",
     p_tab_lists: "Listes",
+    nt_add: "Ajouter une cible", nt_none: "Aucune cible – aucun message ne sera envoyé.", nt_service: "Service de notification", nt_entity: "Entité de notification", nt_custom: "Service personnalisé", nt_no_services: "Aucun service notify trouvé.", nt_no_entities: "Aucune entité notify trouvée.", nt_custom_help: "N'importe quel service (admins seulement), p. ex. telegram_bot.send_message ou script.mon_message. Données en JSON ; {title} et {message} sont remplacés – sans espaces réservés, title et message sont ajoutés.", nt_help: "Plusieurs cibles possibles : app Companion, Telegram, e-mail, Signal, haut-parleurs … – tout ce que Home Assistant connaît comme notification.", nt_bad_service: "Indique le service sous la forme domaine.service.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas @Mercadona", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -924,7 +927,7 @@ const TEXTS = {
     p_left: "A la izquierda", p_right: "A la derecha",
     look: "Etiquetas y colores", look_help: "Aspecto de las etiquetas para todos los usuarios. Los colores y nombres de las tiendas también valen en la app. Vacío o ↺ = predeterminado.",
     look_style: "Estilo", look_filled: "relleno", look_soft: "suave", look_outline: "borde", look_text: "solo texto",
-    look_color: "Color / fondo", look_text: "Color del texto", look_icon: "Símbolo delante", look_label: "Nombre mostrado", look_kinds: "Por tipo", look_values: "Etiquetas individuales",
+    look_color: "Color de fondo", look_text: "Color del texto", look_icon: "Símbolo delante", look_label: "Nombre mostrado", look_kinds: "Por tipo", look_values: "Etiquetas individuales",
     look_search: "Buscar etiqueta … (p. ej. mercadona)", look_more: "Encuentra más con la búsqueda.", look_add: "Colorear una etiqueta",
     look_add_help: "Con su carácter, p. ej. @Kaufland, *Max o #vegano – aunque aún no se haya usado.",
     zone_count: "zonas", zone_unlink: "Desvincular zona", zone_add: "Zona",
@@ -964,7 +967,7 @@ const TEXTS = {
     aisle_help: "Así ordena el modo compra cuando esta tienda está seleccionada. Arrastra el asa ⠿ o usa las flechas.",
     aisle_all_branches: "todas las sucursales",
     aisle_reset: "Predeterminado",
-    notify_to: "A mi dispositivo",
+    notify_to: "Enviar a",
     notify_no_phone: "No se encontró ningún dispositivo con la app Companion.",
     notify_added: "Con artículos nuevos",
     notify_checked: "Cuando se marca algo",
@@ -1041,6 +1044,7 @@ const TEXTS = {
     m_select: "Seleccionar", sel_mode: "Seleccionar varios", sel_count: "{n} seleccionados", sel_all: "Todos", sel_none: "Ninguno", sel_check: "Marcar", sel_checked: "marcados", sel_reopened: "reabiertos", sel_delete_q: "¿Borrar {n} artículos?",
     mp_target: "Ingredientes a:",
     p_tab_lists: "Listas",
+    nt_add: "Añadir destino", nt_none: "Aún no hay destino – no se enviarán mensajes.", nt_service: "Servicio de notificación", nt_entity: "Entidad de notificación", nt_custom: "Servicio propio", nt_no_services: "No se encontraron servicios notify.", nt_no_entities: "No se encontraron entidades notify.", nt_custom_help: "Cualquier servicio (solo admins), p. ej. telegram_bot.send_message o script.mi_mensaje. Datos en JSON; {title} y {message} se sustituyen – sin marcadores se añaden title y message.", nt_help: "Se pueden varios destinos: app Companion, Telegram, correo, Signal, altavoces … – todo lo que Home Assistant conoce como notificación.", nt_bad_service: "Indica el servicio como dominio.servicio.",
   },
   it: {
     add_placeholder: "es. 2 kg mele @Esselunga", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1156,7 +1160,7 @@ const TEXTS = {
     p_left: "A sinistra", p_right: "A destra",
     look: "Badge e colori", look_help: "Aspetto dei badge per tutti gli utenti. Colori e nomi dei negozi valgono anche nell'app. Vuoto o ↺ = predefinito.",
     look_style: "Stile", look_filled: "pieno", look_soft: "tenue", look_outline: "contorno", look_text: "solo testo",
-    look_color: "Colore / sfondo", look_text: "Colore del testo", look_icon: "Simbolo davanti", look_label: "Nome visualizzato", look_kinds: "Per tipo", look_values: "Singoli badge",
+    look_color: "Colore di sfondo", look_text: "Colore del testo", look_icon: "Simbolo davanti", look_label: "Nome visualizzato", look_kinds: "Per tipo", look_values: "Singoli badge",
     look_search: "Cerca badge … (es. esselunga)", look_more: "Trova gli altri con la ricerca.", look_add: "Colora un badge",
     look_add_help: "Con il suo carattere, es. @Kaufland, *Max o #vegano – anche se non è ancora stato usato.",
     zone_count: "zone", zone_unlink: "Scollega zona", zone_add: "Zona",
@@ -1196,7 +1200,7 @@ const TEXTS = {
     aisle_help: "Così ordina la modalità spesa quando è selezionato questo negozio. Trascina la maniglia ⠿ o usa le frecce.",
     aisle_all_branches: "tutte le filiali",
     aisle_reset: "Predefinito",
-    notify_to: "Al mio dispositivo",
+    notify_to: "Invia a",
     notify_no_phone: "Nessun dispositivo con l'app Companion trovato.",
     notify_added: "Per nuovi articoli",
     notify_checked: "Quando qualcosa viene spuntato",
@@ -1273,6 +1277,7 @@ const TEXTS = {
     m_select: "Seleziona", sel_mode: "Seleziona più elementi", sel_count: "{n} selezionati", sel_all: "Tutti", sel_none: "Nessuno", sel_check: "Spunta", sel_checked: "spuntati", sel_reopened: "riaperti", sel_delete_q: "Eliminare {n} articoli?",
     mp_target: "Ingredienti in:",
     p_tab_lists: "Liste",
+    nt_add: "Aggiungi destinazione", nt_none: "Nessuna destinazione – non verranno inviati messaggi.", nt_service: "Servizio di notifica", nt_entity: "Entità di notifica", nt_custom: "Servizio personalizzato", nt_no_services: "Nessun servizio notify trovato.", nt_no_entities: "Nessuna entità notify trovata.", nt_custom_help: "Qualsiasi servizio (solo admin), ad es. telegram_bot.send_message o script.mio_messaggio. Dati in JSON; {title} e {message} vengono sostituiti – senza segnaposto vengono aggiunti title e message.", nt_help: "Sono possibili più destinazioni: app Companion, Telegram, e-mail, Signal, altoparlanti … – tutto ciò che Home Assistant conosce come notifica.", nt_bad_service: "Indica il servizio come dominio.servizio.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek @Biedronka", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1388,7 +1393,7 @@ const TEXTS = {
     p_left: "W lewo", p_right: "W prawo",
     look: "Plakietki i kolory", look_help: "Wygląd plakietek dla wszystkich użytkowników. Kolory i nazwy sklepów obowiązują też w aplikacji. Puste lub ↺ = domyślne.",
     look_style: "Styl", look_filled: "wypełniony", look_soft: "delikatny", look_outline: "obramowanie", look_text: "tylko tekst",
-    look_color: "Kolor / tło", look_text: "Kolor tekstu", look_icon: "Symbol z przodu", look_label: "Nazwa wyświetlana", look_kinds: "Wg rodzaju", look_values: "Pojedyncze plakietki",
+    look_color: "Kolor tła", look_text: "Kolor tekstu", look_icon: "Symbol z przodu", look_label: "Nazwa wyświetlana", look_kinds: "Wg rodzaju", look_values: "Pojedyncze plakietki",
     look_search: "Szukaj plakietki … (np. biedronka)", look_more: "Pozostałe znajdziesz przez wyszukiwanie.", look_add: "Pokoloruj plakietkę",
     look_add_help: "Ze znakiem, np. @Kaufland, *Max lub #wege – nawet jeśli jeszcze nie była używana.",
     zone_count: "stref", zone_unlink: "Odłącz strefę", zone_add: "Strefa",
@@ -1428,7 +1433,7 @@ const TEXTS = {
     aisle_help: "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep. Przeciągnij uchwyt ⠿ lub użyj strzałek.",
     aisle_all_branches: "wszystkie oddziały",
     aisle_reset: "Domyślnie",
-    notify_to: "Na moje urządzenie",
+    notify_to: "Wyślij do",
     notify_no_phone: "Nie znaleziono urządzenia z aplikacją Companion.",
     notify_added: "Przy nowych produktach",
     notify_checked: "Gdy coś zostanie odhaczone",
@@ -1505,6 +1510,7 @@ const TEXTS = {
     m_select: "Zaznacz", sel_mode: "Zaznacz kilka", sel_count: "Zaznaczono: {n}", sel_all: "Wszystkie", sel_none: "Żadne", sel_check: "Odhacz", sel_checked: "odhaczono", sel_reopened: "ponownie otwarte", sel_delete_q: "Usunąć {n} produktów?",
     mp_target: "Składniki na:",
     p_tab_lists: "Listy",
+    nt_add: "Dodaj cel", nt_none: "Brak celu – wiadomości nie będą wysyłane.", nt_service: "Usługa powiadomień", nt_entity: "Encja powiadomień", nt_custom: "Własna usługa", nt_no_services: "Nie znaleziono usług notify.", nt_no_entities: "Nie znaleziono encji notify.", nt_custom_help: "Dowolna usługa (tylko admini), np. telegram_bot.send_message lub script.moja_wiadomosc. Dane jako JSON; {title} i {message} są podmieniane – bez symboli zastępczych dodawane są title i message.", nt_help: "Możliwych jest kilka celów: aplikacja Companion, Telegram, e-mail, Signal, głośniki … – wszystko, co Home Assistant zna jako powiadomienie.", nt_bad_service: "Podaj usługę jako domena.usługa.",
   },
 };
 
@@ -4282,7 +4288,7 @@ class SmartListsCard extends HTMLElement {
       newName: t.w_combine_default, stores: ["REWE", "LIDL"].filter(() => this._lang === "de"),
       rules: { store: rules0.store ?? "@", person: rules0.person ?? "*", tag: rules0.tag ?? "#" },
       packs: packs.filter((p) => p.active).map((p) => p.id), shares: {},
-      notify: services[0] || "", voice: true, prices: true, barcode: true, share: false,
+      notify: services.find((x) => x.startsWith("mobile_app_")) || "", voice: true, prices: true, barcode: true, share: false,
     };
     const steps = ["lists", "stores", "naming", "lang", "people", "extras", "done"];
     let i = 0;
@@ -5288,7 +5294,7 @@ class SmartListsCard extends HTMLElement {
     const t = this._t;
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
     const status = h("span", { class: "ok2" });
-    let cur = null, services = [], users = [];
+    let cur = null, services = [], entities = [], customAllowed = false, users = [];
     const save = async (patch) => {
       cur = { ...cur, ...patch };
       try { cur = (await this._call("set_notify", { settings: cur }, false)).settings; status.textContent = "✓ " + t.saved; draw(); }
@@ -5297,13 +5303,60 @@ class SmartListsCard extends HTMLElement {
     const lists = () => Object.keys(this._hass.states).filter((e) => e.startsWith("todo.") && !isNotesEntity(e, this._hass.states[e].attributes.friendly_name))
       .map((e) => [e, this._hass.states[e].attributes.friendly_name || e]);
     const chipOf = (on, label, fn) => h("button", { type: "button", class: `chip2 ${on ? "on" : ""}`, "aria-pressed": String(on), onclick: fn }, label);
+    const pretty = (name) => name.replace(/_/g, " ");
+    const targetLabel = (x) => {
+      if (x.label) return x.label;
+      const name = x.id.split(".")[1] || x.id;
+      if (x.kind === "entity") { const e = entities.find((y) => y.id === x.id); return "🔔 " + (e ? e.name : x.id); }
+      if (x.kind === "custom") return "⚙️ " + x.id;
+      return name.startsWith("mobile_app_") ? "📱 " + pretty(name.slice(11)) : /telegram/.test(name) ? "✈️ " + pretty(name) : "✉️ " + pretty(name);
+    };
+    // Ziel hinzufügen: Dienst | Entität | eigener Dienst (Admins, z. B. telegram_bot.send_message mit {"target": 123})
+    const addTarget = () => {
+      let kind = services.length ? "service" : entities.length ? "entity" : "custom";
+      const box = h("div", {});
+      const err = h("div", { class: "shelp" });
+      const fields = {};
+      const drawBox = () => {
+        const tabs = [["service", t.nt_service], ["entity", t.nt_entity], ...(customAllowed ? [["custom", t.nt_custom]] : [])];
+        fields.select = null; fields.id = null; fields.data = null;
+        fill(box,
+          h("div", { class: "chips", style: "margin-bottom:10px" }, tabs.map(([k, l]) => h("button", { type: "button", class: `chip2 ${kind === k ? "on" : ""}`, onclick: () => { kind = k; drawBox(); } }, l))),
+          kind === "service" ? (services.length ? (fields.select = h("select", { "aria-label": t.nt_service, style: "width:100%" },
+            services.map((sv) => h("option", { value: "notify." + sv }, targetLabel({ kind: "service", id: "notify." + sv }))))) : h("p", { class: "shelp" }, t.nt_no_services)) : null,
+          kind === "entity" ? (entities.length ? (fields.select = h("select", { "aria-label": t.nt_entity, style: "width:100%" },
+            entities.map((e) => h("option", { value: e.id }, `${e.name} (${e.id})`)))) : h("p", { class: "shelp" }, t.nt_no_entities)) : null,
+          kind === "custom" ? [
+            (fields.id = h("input", { placeholder: "telegram_bot.send_message", "aria-label": t.nt_custom, style: "width:100%;box-sizing:border-box" })),
+            (fields.data = h("textarea", { rows: "4", placeholder: '{"target": 123456789}', "aria-label": "JSON", style: "width:100%;box-sizing:border-box;margin-top:8px;font-family:monospace" })),
+            h("p", { class: "shelp" }, t.nt_custom_help)] : null,
+          h("p", { class: "shelp" }, t.nt_help), err);
+      };
+      drawBox();
+      const dlg = this._dialog(t.nt_add, box, [
+        h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel),
+        h("button", { type: "button", class: "ok", onclick: async () => {
+          let target;
+          if (kind === "custom") {
+            let data = {};
+            try { data = fields.data.value.trim() ? JSON.parse(fields.data.value) : {}; } catch (e) { err.textContent = t.pack_bad_json; return; }
+            if (!/^[a-z0-9_]+\.[a-z0-9_]+$/.test(fields.id.value.trim())) { err.textContent = t.nt_bad_service; return; }
+            target = { kind, id: fields.id.value.trim(), data };
+          } else if (fields.select) target = { kind, id: fields.select.value };
+          else return;
+          dlg.remove();
+          await save({ targets: [...cur.targets, target] });
+        } }, t.nt_add)]);
+    };
     const draw = () => {
       const q = cur.quiet;
       fill(body,
-        this._setRow(t.notify_to, h("select", { "aria-label": t.notify_to, onchange: (e) => save({ service: e.target.value || null }) },
-          h("option", { value: "" }, "— " + t.g_off),
-          services.map((sv) => h("option", { value: sv, selected: cur.service === sv }, sv.replace(/^mobile_app_/, "").replace(/_/g, " ")))),
-          services.length ? null : t.notify_no_phone),
+        // Ziele: beliebig viele – Companion-App, andere notify-Dienste (Telegram, E-Mail …), notify-Entitäten, eigene Dienste
+        h("div", { class: "grp" }, t.notify_to),
+        h("div", { class: "chips" }, cur.targets.map((x, i) => h("span", { class: "chip2 on" }, targetLabel(x),
+          h("button", { type: "button", class: "xdel", "aria-label": t.delete, title: t.delete, onclick: () => save({ targets: cur.targets.filter((_, j) => j !== i) }) }, "×"))),
+          h("button", { type: "button", class: "chip2", onclick: () => addTarget() }, "＋ " + t.nt_add)),
+        cur.targets.length ? null : h("div", { class: "shelp" }, t.nt_none),
         this._setRow(t.notify_added, this._switch(cur.added, (v) => save({ added: v }), t.notify_added)),
         this._setRow(t.notify_checked, this._switch(cur.checked, (v) => save({ checked: v }), t.notify_checked)),
         this._setRow(t.notify_own, this._switch(!!cur.own, (v) => save({ own: v }), t.notify_own), t.notify_own_sub),
@@ -5316,14 +5369,17 @@ class SmartListsCard extends HTMLElement {
         this._setRow(t.notify_quiet, h("select", { "aria-label": t.notify_quiet, onchange: (e) => save({ quiet: e.target.value ? e.target.value.split("-").map(Number) : null }) },
           [["", t.notify_quiet_none], ["22-7", "22–7"], ["21-7", "21–7"], ["23-8", "23–8"]].map(([v, l]) =>
             h("option", { value: v, selected: (q ? q.join("-") : "") === v }, l)))),
-        h("div", { class: "acts" }, status, cur.service ? h("button", { class: "btn2", type: "button", onclick: async () => {
+        h("div", { class: "acts" }, status, cur.targets.length ? h("button", { class: "btn2", type: "button", onclick: async () => {
           status.textContent = t.loading;
-          try { await this._call("notify_test", {}, false); status.textContent = "✓ " + t.notify_test_sent; }
+          try {
+            const r = await this._call("notify_test", {}, false);
+            status.textContent = "✓ " + t.notify_test_sent + (r.errors && r.errors.length ? ` – ${t.error}: ${r.errors.join("; ")}` : "");
+          }
           catch (err) { status.textContent = `${t.error}: ${(err && err.message) || ""}`; }
         } }, "🔔 " + t.notify_test) : null));
     };
     Promise.all([this._call("notify", {}, false), this._call("users", {}, false).catch(() => ({ users: [] }))])
-      .then(([r, u]) => { cur = r.settings; services = r.services; users = u.users || []; draw(); }).catch(() => fill(body, t.error));
+      .then(([r, u]) => { cur = r.settings; services = r.services || []; entities = r.entities || []; customAllowed = !!r.custom_allowed; users = u.users || []; draw(); }).catch(() => fill(body, t.error));
     return this._sec("🔔", t.notify, t.notify_help, [body]);
   }
 

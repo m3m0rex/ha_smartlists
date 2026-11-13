@@ -35,6 +35,8 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
 
 ## Gemeinsames Gedächtnis
 
+Neu in 3.4: Benachrichtigungen an mehrere Ziele – jeder notify-Dienst (Companion-App, Telegram, E-Mail …), notify-Entitäten und für Admins eigene Dienste.
+
 Neu in 3.3: mehrere Artikel markieren (verschieben, kopieren, abhaken, löschen), Wochenplan als Tab auf der Seite /smartlists, Preise im Artikeltext („Milch 2 l 1,19€ @REWE“) werden erkannt.
 
 Neu in 3.0: Wochenplan mit Kalender und Mealie-Import, Verlauf je Artikel, Einkaufs-Dashboard per Klick, Diagnose-Download und Hinweise unter *Reparaturen* – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers).

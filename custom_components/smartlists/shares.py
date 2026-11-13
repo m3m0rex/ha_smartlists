@@ -1,4 +1,4 @@
-"""Liste per Link teilen – für Leute ohne Home-Assistant-Konto (z. B. der Nachbar, der etwas mitbringt).
+"""Liste per Link teilen – für Personen ohne Home-Assistant-Konto (z. B. Nachbarn oder Gäste).
 
 Sicherheit (bewusst eng gefasst):
 - Der Link enthält einen Zufallsschlüssel mit 256 Bit (secrets.token_urlsafe(32)). Gespeichert wird nur

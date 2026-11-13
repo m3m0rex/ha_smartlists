@@ -55,14 +55,25 @@ active links of all lists.
 
 ## Notifications
 
-*General settings → For me → Notifications* – everyone for themselves: which device (companion app),
-on new items and/or when something is checked off, which lists, from whom (per person), quiet hours.
+*General settings → For me → Notifications* – everyone for themselves: **where to** (one or more
+targets), on new items and/or when something is checked off, which lists, from whom (per person), quiet hours.
 Your own changes only notify you if *Also for my own changes* is on (handy to try it out, or when you add
 something on the PC and want it on your phone). Several changes within a minute arrive as one message ("Anna
 added milk 2 l, bread to Shopping"). Changes from the card, the app, HA itself and shared links count. Messages are sent about a minute after the first change (several changes are combined). If you pick a
 combined list, changes in its source lists count too.
 *Send test message* checks the device right away – if nothing arrives, check the companion app and its
 notification permission; failed messages are logged in *Settings → System → Logs*.
+
+**Targets** (*Send to → ＋ Add target*) – as many as you like, no companion app required:
+
+- **Notification service** – every `notify.*` service: companion app devices (📱), Telegram (`notify.telegram_…`),
+  e-mail, Signal, Pushover, groups … – whatever is set up in Home Assistant.
+- **Notification entity** – new-style `notify.*` entities (sent with `notify.send_message`).
+- **Custom service** (admins) – any service with JSON data, e.g. `telegram_bot.send_message` with
+  `{"target": 123456789}` or a `script.*` that does whatever you want. `{title}` and `{message}` in the data
+  are replaced; without them `title` and `message` are added.
+
+A failing target does not stop the others; *Send test message* shows which one failed.
 
 ## Barcode scan
 

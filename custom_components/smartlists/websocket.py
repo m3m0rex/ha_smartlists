@@ -7,6 +7,7 @@ Tag-Regeln und Vergessen gelernter Stichwörter nur Administratoren.
 from __future__ import annotations
 
 import asyncio
+import json
 
 from typing import Any
 
@@ -955,18 +956,24 @@ def ws_share_revoke(hass: HomeAssistant, connection: websocket_api.ActiveConnect
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/notify"})
 @callback
 def ws_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Eigene Benachrichtigungs-Einstellungen + verfügbare Geräte (notify.mobile_app_…)."""
+    """Eigene Benachrichtigungs-Einstellungen + mögliche Ziele (alle notify-Dienste und -Entitäten)."""
     n = hass.data[DOMAIN]["notifier"]
-    connection.send_result(msg["id"], {"settings": n.get(connection.user.id), "services": n.services()})
+    connection.send_result(msg["id"], {"settings": n.get(connection.user.id), "services": n.services(), "entities": n.entities(),
+                                       "custom_allowed": bool(connection.user.is_admin)})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/set_notify", vol.Required("settings"): dict})
 @callback
 def ws_set_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     n = hass.data[DOMAIN]["notifier"]
-    service = (msg["settings"].get("service") or "").removeprefix("notify.")
-    if service and service not in n.services():
-        connection.send_error(msg["id"], "invalid", "Unbekanntes Gerät (notify-Dienst)")
+    from .notify import validate_targets
+
+    targets = validate_targets(msg["settings"].get("targets"), msg["settings"].get("service"))
+    # unverändert gespeicherte Ziele (z. B. ein später entfernter Dienst) blockieren andere Änderungen nicht
+    old = {json.dumps(t, sort_keys=True, default=str) for t in n.get(connection.user.id)["targets"]}
+    new = [t for t in targets if json.dumps(t, sort_keys=True, default=str) not in old]
+    if (err := n.check_targets(new, bool(connection.user.is_admin))) is not None:
+        connection.send_error(msg["id"], "invalid", err)
         return
     connection.send_result(msg["id"], {"settings": n.set(connection.user.id, msg["settings"])})
 
@@ -975,11 +982,11 @@ def ws_set_notify(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
 @websocket_api.async_response
 async def ws_notify_test(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     try:
-        await hass.data[DOMAIN]["notifier"].async_test(connection.user.id)
+        result = await hass.data[DOMAIN]["notifier"].async_test(connection.user.id)
     except Exception as err:  # noqa: BLE001
         connection.send_error(msg["id"], "notify_failed", str(err))
         return
-    connection.send_result(msg["id"], {"ok": True})
+    connection.send_result(msg["id"], {"ok": True, **result})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/barcode", vol.Required("code"): vol.All(str, vol.Match(r"^\d{6,14}$"))})
@@ -1243,7 +1250,8 @@ async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         if msg.get("notify_service"):
             notifier = hass.data[DOMAIN]["notifier"]
             if msg["notify_service"] in notifier.services():
-                notifier.set(user.id, {**notifier.get(user.id), "service": msg["notify_service"], "added": True})
+                cur = notifier.get(user.id)
+                notifier.set(user.id, {**cur, "targets": [*cur["targets"], {"kind": "service", "id": "notify." + msg["notify_service"]}], "added": True})
                 done.append("notify")
         if msg["voice"] and main_list:
             learning.automation["voice_default_list"] = main_list

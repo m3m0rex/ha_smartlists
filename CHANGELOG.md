@@ -3,6 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.4.0] – 2026-11-13
+
+### Added
+
+- **Notification targets**: send to **one or more** targets instead of a single companion app device –
+  any `notify.*` service (companion app, Telegram, e-mail, Signal, groups …), `notify.*` entities
+  (`notify.send_message`) and, for admins, **custom services** with JSON data (e.g.
+  `telegram_bot.send_message` with `{"target": …}` or a script; `{title}`/`{message}` placeholders).
+  A failing target does not stop the others; the test message reports per target. Existing settings are
+  taken over automatically.
+
+### Changed
+
+- Badges and colours: the first colour field is now labelled *Background colour* (next to *Text colour*).
+
 ## [3.3.1] – 2026-11-13
 
 ### Fixed

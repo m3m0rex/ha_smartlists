@@ -49,7 +49,7 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 - **Connected devices:** every device with the app appears under *Configure → Connected devices* and as an HA device with *Last seen* and *App version* sensors.
 - **Controls:** default for everyone (admin) → per user → optionally per device.
 - **Shopping helpers:** aisle order per store/branch, prices & monthly expenses, templates/recipes with
-  servings, barcode scan (Open Food Facts), statistics, notifications when others add items, and
+  servings, barcode scan (Open Food Facts), statistics, notifications when others add items (to any notify service, notify entity or custom service such as Telegram), and
   **sharing a list via link or QR code** for people without an HA account – see the
   [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers).
 - **Select several items** to move, copy, check off or delete them at once; prices typed into the item

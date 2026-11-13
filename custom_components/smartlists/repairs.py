@@ -60,8 +60,13 @@ def async_check(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 @callback
 def async_setup_checks(hass: HomeAssistant, entry: ConfigEntry) -> Any:
-    cancel_first = async_call_later(hass, 90, lambda _now: async_check(hass, entry))
-    cancel_hourly = async_track_time_interval(hass, lambda _now: async_check(hass, entry), timedelta(hours=1))
+    # @callback: läuft in der Ereignisschleife (eine einfache lambda würde HA in einem Thread ausführen)
+    @callback
+    def _run(_now: Any) -> None:
+        async_check(hass, entry)
+
+    cancel_first = async_call_later(hass, 90, _run)
+    cancel_hourly = async_track_time_interval(hass, _run, timedelta(hours=1))
 
     def _cancel() -> None:
         cancel_first()

@@ -63,3 +63,12 @@ def test_notify_settings_own_changes():
     assert validate({})["own"] is False
     s = validate({"service": "notify.mobile_app_pixel", "own": True, "quiet": [22, 7]})
     assert s["service"] == "mobile_app_pixel" and s["own"] is True and s["quiet"] == [22, 7]
+
+
+def test_notify_batch_runs_in_event_loop():
+    # async_call_later führt einfache Funktionen in einem Thread aus – der verzögerte Versand muss eine Koroutine sein
+    import inspect
+
+    from smartlists.notify import Notifier
+
+    assert inspect.iscoroutinefunction(Notifier._send_later)

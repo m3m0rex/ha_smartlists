@@ -120,6 +120,9 @@ Ordner `custom_components/smartlists` nach `/config/custom_components/smartlists
 
 ## Einrichtung
 
+Beim ersten Öffnen führt ein **Einrichtungs-Assistent** Admins durch Listen, Märkte, Schreibweise,
+Sprache, Personen und Extras – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).
+
 *Einstellungen → Geräte & Dienste → Integrationen → Integration hinzufügen → **SmartLists***
 
 SmartLists wird einmal eingerichtet. Danach ist die Lovelace-Karte sofort verfügbar, und bei der

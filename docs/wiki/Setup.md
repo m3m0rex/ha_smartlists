@@ -7,6 +7,26 @@
 The setup suggests your existing to-do lists: pick two or more to create the first combined list right
 away, or leave it empty.
 
+## Setup assistant
+
+When an admin opens SmartLists for the first time (sidebar page or card), a short assistant appears.
+Every step can be skipped and everything can be changed later in the settings. It is not shown to
+installations that were already in use before 3.0.0; start it any time under *General settings →
+Global → Voice, backup, defaults → Run setup again*.
+
+1. **Lists** – use the existing to-do lists (optionally combined into one shared list) or create a new
+   own list.
+2. **Stores** – the stores you shop at; they are offered while typing.
+3. **Notation** – the characters for store, person and tag (`@` `*` `#` by default), with a live
+   example. The app takes them when pairing.
+4. **Language** – which keyword packs recognise the categories.
+5. **People and app** – permissions for a new own list; how to pair the app.
+6. **Extras** – notifications to your device, Assist, prices and expenses, barcode lookup, sharing via
+   link for owners.
+7. **Done** – a summary; *Set up* applies everything at once.
+
+The assistant is available in all six languages of the interface.
+
 ## Combined lists
 
 **Add combined list** merges several to-do lists into one new to-do entity (e.g. `todo.weekly_shop`).

@@ -50,6 +50,24 @@ def _int(v: Any) -> int:
         return 0
 
 
+def nice_title(name: str, entity_id: str) -> str:
+    """Lesbarer Name für die neue Liste: ohne „HA Smartlists“-Vorsatz der App und ohne rohe Entitäts-ID
+    ("ha_smartlists_list_barcodes" → "Barcodes", "HA Smartlists Angebote" → "Angebote")."""
+    n = name.strip()
+    if n == entity_id or n == entity_id.split(".", 1)[-1]:
+        n = entity_id.split(".", 1)[-1]
+        for p in ("ha_smartlists_list_", "ha_smartlists_"):
+            if n.startswith(p):
+                n = n[len(p):]
+        n = n.replace("_", " ").strip().capitalize()
+    low = n.lower()
+    for p in ("ha smartlists list ", "ha smartlists "):
+        if low.startswith(p) and len(n) > len(p):
+            n = n[len(p):].strip()
+            break
+    return n or name
+
+
 def _tagged(text: str, tag: str | None) -> str:
     return f"{text} {tag}" if tag and tag.split()[0] not in text.split() else text
 
@@ -91,10 +109,10 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
     # (Titel, Artikel, Quelle bei „je Liste“)
     groups: list[tuple[str, list[dict[str, Any]], str | None]]
     if mode == "one":
-        title = (name or "").strip() or str(allowed[sources[0]]["name"])
+        title = (name or "").strip() or nice_title(str(allowed[sources[0]]["name"]), sources[0])
         groups = [(title, own_items([(s, i) for s in sources for i in items_by_source[s]])[:MAX_ITEMS], None)]
     else:
-        groups = [(str(allowed[s]["name"]), own_items([(s, i) for i in items_by_source[s]]), s) for s in sources]
+        groups = [(nice_title(str(allowed[s]["name"]), s), own_items([(s, i) for i in items_by_source[s]]), s) for s in sources]
 
     created = []
     for title, items, _src in groups:
@@ -104,7 +122,7 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
 
     result_old = {s: "kept" for s in sources}
 
-    # zum Schluss anlegen (jede neue Unter-Liste lädt die Integration neu)
+    # zum Schluss anlegen – das Neuladen der Integration fasst mehrere neue Listen zu einem zusammen (__init__.py)
     for sub, _ in created:
         hass.config_entries.async_add_subentry(entry, sub)
     return {"lists": [{"name": sub.title, "subentry_id": sub.subentry_id, "items": n} for sub, n in created], "old": result_old}

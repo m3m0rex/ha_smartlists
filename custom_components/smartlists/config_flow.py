@@ -86,6 +86,16 @@ def _notes_ids(hass: HomeAssistant) -> list[str]:
                   if looks_like_notes(s.entity_id, s.attributes.get("friendly_name")))
 
 
+def _combined_ids(hass: HomeAssistant) -> list[str]:
+    """Entitäten kombinierter SmartLists-Listen (nicht die eigenen Listen – die haben unique_id own_…)."""
+    ids = set(hass.data.get(DOMAIN, {}).get("entities", {}))
+    for entry in er.async_entries_for_config_entry(er.async_get(hass), next(
+            (e.entry_id for e in hass.config_entries.async_entries(DOMAIN)), "")):
+        if entry.domain == "todo" and not str(entry.unique_id).startswith("own_"):
+            ids.add(entry.entity_id)
+    return sorted(ids)
+
+
 def _todo_selector(multiple: bool, exclude: list[str] | None = None) -> selector.EntitySelector:
     cfg: dict[str, Any] = {"domain": "todo", "multiple": multiple}
     if exclude:
@@ -188,13 +198,11 @@ def validate_combined(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, st
     if not sources:
         errors[CONF_SOURCES] = "no_sources"
         return errors
-    registry = er.async_get(hass)
-    for entity_id in sources:
-        entry = registry.async_get(entity_id)
-        if entry is not None and entry.platform == DOMAIN:
-            # Kombinierte Listen dürfen nicht ineinander verschachtelt werden (Endlosschleifen).
-            errors[CONF_SOURCES] = "nested_combined_list"
-            return errors
+    # Kombinierte Listen dürfen nicht ineinander verschachtelt werden (Endlosschleifen).
+    # Eigene SmartLists-Listen (auch übernommene) sind dagegen ganz normale Quellen.
+    if any(e in _combined_ids(hass) for e in sources):
+        errors[CONF_SOURCES] = "nested_combined_list"
+        return errors
     default_add = data.get(CONF_DEFAULT_ADD)
     if default_add and default_add not in sources:
         errors[CONF_DEFAULT_ADD] = "default_not_in_sources"
@@ -216,7 +224,7 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
             if not errors:
                 name = user_input.pop(CONF_NAME)
                 return self.async_create_entry(title=name, data=user_input)
-        schema = vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass))})
+        schema = vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass) + _combined_ids(self.hass))})
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
@@ -236,7 +244,7 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
                 )
         current = {**DEFAULTS, **subentry.data, CONF_NAME: subentry.title}
         schema = self.add_suggested_values_to_schema(
-            vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass))}),
+            vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass) + _combined_ids(self.hass))}),
             user_input if user_input is not None else current,
         )
         return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)

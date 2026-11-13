@@ -41,8 +41,30 @@ def _setup():
     async def remove_items(hass, eid, uids, context=None):
         removed.append((eid, uids))
 
+    added_items = []
+
+    async def add_item(hass, eid, text, note="", checked=False, context=None, from_share=False):
+        added_items.append((eid, text, note, checked))
+        return {"uid": "n"}
+
+    items["todo.ha_smartlists_note_julia"] = [{"uid": "x", "text": "Party", "note": "Snacks, ice", "checked": False},
+                                             {"uid": "y", "text": "Geheim", "note": "ENC:abc", "checked": False}]
     lists = types.ModuleType("smartlists.lists")
-    lists.raw_items, lists.remove_items, lists.is_notes = raw_items, remove_items, (lambda hass, e: False)
+    lists.raw_items, lists.remove_items, lists.add_item = raw_items, remove_items, add_item
+    lists.is_notes = lambda hass, e: "note" in e
+    lists.notes_allowed = lambda hass, e, user: user is not None and getattr(user, "id", None) == "u1"
+    lists.added_items = added_items
+    sys.modules["smartlists.lists"] = lists
+    created_notes = []
+
+    async def async_create_notes_list(hass, user, name=""):
+        if name == "Julia":  # gibt es schon → nächster Name
+            raise ValueError("exists")
+        created_notes.append(name)
+        return "todo.ha_smartlists_notes_" + name.lower().replace(" ", "_")
+
+    lists.created_notes = created_notes
+    lists.fake_create_notes = async_create_notes_list
     sys.modules["smartlists.lists"] = lists
     sys.modules.pop("smartlists.migrate", None)
     import smartlists.migrate as m
@@ -58,7 +80,8 @@ def _hass(m):
         removed_entries.append(entry_id)
 
     states = [types.SimpleNamespace(entity_id=e, state=s, attributes={"friendly_name": n})
-              for e, s, n in [("todo.einkaufsliste", "1", "Einkaufsliste"), ("todo.anna", "1", "Anna"), ("todo.ha_smartlists_list_x", "0", "X")]]
+              for e, s, n in [("todo.einkaufsliste", "1", "Einkaufsliste"), ("todo.anna", "1", "Anna"), ("todo.ha_smartlists_list_x", "0", "X"),
+                              ("todo.ha_smartlists_note_julia", "2", "HA Smartlists Notes Julia")]]
     learning = types.SimpleNamespace(tag_rules=[{"kind": "person", "prefix": "*"}, {"kind": "tag", "prefix": "#"}])
     hass = types.SimpleNamespace(
         data={"smartlists": {"entities": {}, "own": {"todo.ha_smartlists_list_x": object()}, "learning": learning}},
@@ -71,7 +94,7 @@ def _hass(m):
 def test_migrate_each_and_one():
     m, removed = _setup()
     hass, added, removed_entries = _hass(m)
-    cands = m.candidates(hass)
+    cands = m.candidates(hass)  # ohne Benutzer: keine Notizen
     assert [c["entity_id"] for c in cands] == ["todo.anna", "todo.einkaufsliste"]  # eigene SmartLists-Liste nicht
     assert [c["platform"] for c in cands] == ["local_todo", "shopping_list"]
     for bad in ("delete", "clear"):  # alte Listen werden weder gelöscht noch geleert
@@ -102,3 +125,31 @@ def test_nice_title():
     assert m.nice_title("HA Smartlists Angebote", "todo.ha_smartlists_list_angebote") == "Angebote"
     assert m.nice_title("Einkaufsliste", "todo.einkaufsliste") == "Einkaufsliste"
     assert m.nice_title("HA Smartlists", "todo.x") == "HA Smartlists"
+
+
+def test_migrate_notes():
+    m, _ = _setup()
+    import smartlists.lists as lists
+    hass, added, _ = _hass(m)
+    u1 = types.SimpleNamespace(id="u1", name="Julia", is_admin=True)
+    other = types.SimpleNamespace(id="u2", name="Max", is_admin=True)
+    assert "todo.ha_smartlists_note_julia" in [c["entity_id"] for c in m.candidates(hass, u1)]
+    assert "todo.ha_smartlists_note_julia" not in [c["entity_id"] for c in m.candidates(hass, other)]  # fremde Notizen privat
+    # smartlists.notes nur für diesen Aufruf ersetzen (andere Tests brauchen das echte Modul)
+    real = sys.modules.get("smartlists.notes")
+    fake = types.ModuleType("smartlists.notes")
+    fake.async_create_notes_list = lists.fake_create_notes
+    sys.modules["smartlists.notes"] = fake
+    try:
+        r = asyncio.run(m.async_migrate(hass, "u1", ["todo.ha_smartlists_note_julia"], "each", target="notes", user=u1))
+    finally:
+        if real is not None:
+            sys.modules["smartlists.notes"] = real
+        else:
+            sys.modules.pop("smartlists.notes", None)
+    # Name „HA Smartlists Notes Julia“ → „Julia“ gibt es schon → „Julia 2“; keine SmartLists-Unterliste
+    assert lists.created_notes == ["Julia 2"] and added == []
+    assert r["lists"] == [{"name": "Julia 2", "entity_id": "todo.ha_smartlists_notes_julia_2", "items": 2}]
+    assert lists.added_items == [("todo.ha_smartlists_notes_julia_2", "Party", "Snacks, ice", False),
+                                 ("todo.ha_smartlists_notes_julia_2", "Geheim", "ENC:abc", False)]
+    assert r["old"] == {"todo.ha_smartlists_note_julia": "kept"}

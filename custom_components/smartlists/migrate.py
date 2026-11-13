@@ -27,19 +27,23 @@ OLD_ACTIONS = ("keep",)
 MAX_ITEMS = 2000
 
 
-def candidates(hass: HomeAssistant) -> list[dict[str, Any]]:
-    """Listen, die sich übernehmen lassen: alle To-do-Listen außer SmartLists-eigenen, kombinierten und Notizen."""
+def candidates(hass: HomeAssistant, user: Any | None = None) -> list[dict[str, Any]]:
+    """Listen, die sich übernehmen lassen: alle To-do-Listen außer SmartLists-eigenen und kombinierten.
+    Notizlisten nur, wenn `user` sie sehen darf (eigene bzw. „für alle“) – sie werden als Notizen übernommen."""
     combined = hass.data.get(DOMAIN, {}).get("entities", {})
     own = hass.data.get(DOMAIN, {}).get("own", {})
     out = []
     for st in hass.states.async_all("todo"):
         eid = st.entity_id
-        if eid in combined or eid in own or lists.is_notes(hass, eid) or st.state == "unavailable":
+        if eid in combined or eid in own or st.state == "unavailable":
             continue
+        is_notes = lists.is_notes(hass, eid)
+        if is_notes and not lists.notes_allowed(hass, eid, user):
+            continue  # fremde Notizen bleiben privat
         used_in = [e.name or k for k, e in combined.items() if eid in getattr(e, "_sources", [])]
         reg = er.async_get(hass).async_get(eid)
         out.append({"entity_id": eid, "name": st.attributes.get(ATTR_FRIENDLY_NAME, eid), "open": _int(st.state),
-                    "platform": reg.platform if reg else None, "used_in": used_in})
+                    "platform": reg.platform if reg else None, "used_in": used_in, "notes": is_notes})
     return sorted(out, key=lambda x: str(x["name"]).casefold())
 
 
@@ -73,7 +77,7 @@ def _tagged(text: str, tag: str | None) -> str:
 
 
 async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mode: str = "each", name: str | None = None,
-                        old: str = "keep", tag_kind: str | None = None) -> dict[str, Any]:
+                        old: str = "keep", tag_kind: str | None = None, target: str = "list", user: Any | None = None) -> dict[str, Any]:
     """Liefert {"lists": [{"name", "subentry_id", "items"}], "old": {entity_id: "kept"}}. Alte Listen werden nie verändert."""
     entries = hass.config_entries.async_entries(DOMAIN)
     if not entries:
@@ -81,7 +85,9 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
     entry = entries[0]
     if old not in OLD_ACTIONS:
         raise ValueError("Unbekannte Aktion für die alte Liste")
-    allowed = {c["entity_id"]: c for c in candidates(hass)}
+    if target not in ("list", "notes"):
+        raise ValueError("Unbekanntes Ziel")
+    allowed = {c["entity_id"]: c for c in candidates(hass, user)}
     sources = [s for s in dict.fromkeys(sources) if s in allowed]
     if not sources:
         raise ValueError("Keine passende Liste ausgewählt.")
@@ -114,6 +120,9 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
     else:
         groups = [(nice_title(str(allowed[s]["name"]), s), own_items([(s, i) for i in items_by_source[s]]), s) for s in sources]
 
+    if target == "notes":
+        return await _as_notes(hass, user, groups, sources)
+
     created = []
     for title, items, _src in groups:
         sub = ConfigSubentry(data=MappingProxyType({"owner": owner, "shares": {}}), subentry_type=SUBENTRY_OWN, title=title[:60], unique_id=None)
@@ -126,3 +135,34 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
     for sub, _ in created:
         hass.config_entries.async_add_subentry(entry, sub)
     return {"lists": [{"name": sub.title, "subentry_id": sub.subentry_id, "items": n} for sub, n in created], "old": result_old}
+
+
+async def _as_notes(hass: HomeAssistant, user: Any, groups: list[tuple[str, list[dict[str, Any]], str | None]],
+                    sources: list[str]) -> dict[str, Any]:
+    """Als Notizliste übernehmen: neue Local-To-do-Liste todo.ha_smartlists_notes_<name> (Besitzer: wer übernimmt),
+    Notizen mit Titel, Text und Häkchen. Verschlüsselte Notizen der App werden unverändert kopiert."""
+    from .notes import async_create_notes_list
+
+    if user is None:
+        raise ValueError("Notizen brauchen einen Benutzer als Besitzer.")
+    created = []
+    for title, items, _src in groups:
+        # „Notes Julia“ → „Julia“ (der Vorsatz kommt beim Anlegen wieder dazu); gibt es den Namen schon → „… 2“
+        base = title
+        for p in ("notes ", "notizen ", "note ", "notiz "):
+            if base.lower().startswith(p) and len(base) > len(p):
+                base = base[len(p):].strip()
+        entity_id, err = None, None
+        for candidate in (base, f"{base} 2", f"{base} 3"):
+            try:
+                entity_id = await async_create_notes_list(hass, user, candidate)
+                title = candidate
+                break
+            except ValueError as e:
+                err = e
+        if entity_id is None:
+            raise err or ValueError("Notizliste konnte nicht angelegt werden.")
+        for i in items:
+            await lists.add_item(hass, entity_id, i["summary"], i.get("description") or "", i["status"] == "completed")
+        created.append({"name": title, "entity_id": entity_id, "items": len(items)})
+    return {"lists": created, "old": {s: "kept" for s in sources}}

@@ -3,6 +3,20 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- *Take over lists*: **note lists** (e.g. notes of the app in Local To-do) can be taken over too – *as notes*
+  (new SmartLists note list owned by you, titles, texts and checkmarks; encrypted notes are copied as they are)
+  or as a normal list. Other users' notes are not offered.
+
+### Fixed
+
+- Adding an **own SmartLists list** (e.g. one taken over from Local To-do) as a source of a combined list failed
+  with "Combined lists cannot be nested". Only combined lists are blocked now – they are also no longer
+  offered in the list picker.
+
 ## [3.5.2] – 2026-11-13
 
 ### Fixed

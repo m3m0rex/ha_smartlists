@@ -134,3 +134,39 @@ async def async_get_notes(hass: HomeAssistant) -> Notes:
 
 def get_notes(hass: HomeAssistant) -> Notes | None:
     return hass.data.get(DOMAIN, {}).get("notes")
+
+
+async def async_create_notes_list(hass: HomeAssistant, user: Any, name: str = "") -> str:
+    """Neue Notizliste (Local To-do, Entitäts-ID todo.ha_smartlists_notes_<name>) mit `user` als Besitzer.
+    Liefert die entity_id; ValueError mit lesbarem Text, wenn es nicht klappt."""
+    import asyncio
+
+    from homeassistant.helpers import entity_registry as er
+    from homeassistant.util import slugify
+
+    label = (name.strip() or getattr(user, "name", "") or "notes")[:40]
+    slug = slugify(label) or "notes"
+    before = {s.entity_id for s in hass.states.async_all("todo")}
+    try:
+        result = await hass.config_entries.flow.async_init(
+            "local_todo", context={"source": "user"}, data={"todo_list_name": f"ha_smartlists_notes_{slug}"})
+    except Exception as err:  # noqa: BLE001 – z. B. Local To-do nicht verfügbar
+        raise ValueError(f"Notizliste konnte nicht angelegt werden: {err}") from err
+    if result.get("type") != "create_entry":
+        raise ValueError("Notizliste konnte nicht angelegt werden (gibt es den Namen schon?).")
+    entity_id = None
+    for _ in range(40):  # Entität erscheint kurz nach dem Einrichten
+        new = [s.entity_id for s in hass.states.async_all("todo") if s.entity_id not in before]
+        if new:
+            entity_id = new[0]
+            break
+        await asyncio.sleep(0.25)
+    if entity_id is None:
+        raise ValueError("Notizliste angelegt, aber noch nicht gefunden – gleich noch einmal laden.")
+    # schöner Name in HA, die ID bleibt technisch (wie bei der App)
+    er.async_get(hass).async_update_entity(entity_id, name=f"HA Smartlists Notes {label}")
+    notes = hass.data[DOMAIN]["notes"]
+    notes.claim([entity_id], user.id)
+    if notes.mode == "hidden" and getattr(user, "is_admin", False):
+        notes.update(mode="section")
+    return entity_id

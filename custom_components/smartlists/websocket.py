@@ -1064,39 +1064,14 @@ def ws_forget_history(hass: HomeAssistant, connection: websocket_api.ActiveConne
 async def ws_create_notes(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Notizliste anlegen (Local To-do, Entitäts-ID todo.ha_smartlists_notes_<name>), Besitzer = wer sie anlegt.
     So kann man Notizen in SmartLists nutzen, auch wenn die App noch keine angelegt hat."""
-    from homeassistant.util import slugify
+    from .notes import async_create_notes_list
 
-    user = connection.user
-    label = (msg["name"].strip() or user.name or "notes")[:40]
-    slug = slugify(label) or "notes"
-    before = {s.entity_id for s in hass.states.async_all("todo")}
     try:
-        result = await hass.config_entries.flow.async_init(
-            "local_todo", context={"source": "user"}, data={"todo_list_name": f"ha_smartlists_notes_{slug}"})
-    except Exception as err:  # noqa: BLE001 – z. B. Local To-do nicht verfügbar
-        connection.send_error(msg["id"], "failed", f"Notizliste konnte nicht angelegt werden: {err}")
+        entity_id = await async_create_notes_list(hass, connection.user, msg["name"])
+    except ValueError as err:
+        connection.send_error(msg["id"], "failed", str(err))
         return
-    if result.get("type") != "create_entry":
-        connection.send_error(msg["id"], "failed", "Notizliste konnte nicht angelegt werden (gibt es den Namen schon?).")
-        return
-    entity_id = None
-    for _ in range(40):  # Entität erscheint kurz nach dem Einrichten
-        new = [s.entity_id for s in hass.states.async_all("todo") if s.entity_id not in before]
-        if new:
-            entity_id = new[0]
-            break
-        await asyncio.sleep(0.25)
-    if entity_id is None:
-        connection.send_error(msg["id"], "failed", "Notizliste angelegt, aber noch nicht gefunden – gleich noch einmal laden.")
-        return
-    from homeassistant.helpers import entity_registry as er
-
-    # schöner Name in HA, die ID bleibt technisch (wie bei der App)
-    er.async_get(hass).async_update_entity(entity_id, name=f"HA Smartlists Notes {label}")
     notes = hass.data[DOMAIN]["notes"]
-    notes.claim([entity_id], user.id)
-    if notes.mode == "hidden" and user.is_admin:
-        notes.update(mode="section")
     connection.send_result(msg["id"], {"entity_id": entity_id, "mode": notes.mode})
 
 
@@ -1454,7 +1429,7 @@ async def ws_reset(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 def ws_migrate_candidates(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     from .migrate import candidates
 
-    connection.send_result(msg["id"], {"lists": candidates(hass)})
+    connection.send_result(msg["id"], {"lists": candidates(hass, connection.user)})
 
 
 @websocket_api.require_admin
@@ -1465,6 +1440,7 @@ def ws_migrate_candidates(hass: HomeAssistant, connection: websocket_api.ActiveC
     vol.Optional("name"): vol.Any(str, None),
     vol.Optional("old", default="keep"): vol.In(["keep"]),  # alte Listen bleiben immer
     vol.Optional("tag_kind"): vol.Any(None, vol.In(["person", "tag"])),
+    vol.Optional("target", default="list"): vol.In(["list", "notes"]),
 })
 @websocket_api.async_response
 async def ws_migrate(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
@@ -1472,7 +1448,8 @@ async def ws_migrate(hass: HomeAssistant, connection: websocket_api.ActiveConnec
     from .migrate import async_migrate
 
     try:
-        result = await async_migrate(hass, connection.user.id, msg["sources"], msg["mode"], msg.get("name"), msg["old"], msg.get("tag_kind"))
+        result = await async_migrate(hass, connection.user.id, msg["sources"], msg["mode"], msg.get("name"), msg["old"], msg.get("tag_kind"),
+                                     msg["target"], connection.user)
     except ValueError as err:
         connection.send_error(msg["id"], "invalid", str(err))
         return

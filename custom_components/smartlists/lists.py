@@ -66,10 +66,19 @@ def own_role(hass: HomeAssistant, entity_id: str, user: Any | None) -> str | Non
     Notizlisten anderer Konten: None (kein Zugriff)."""
     if user is not None and not notes_allowed(hass, entity_id, user):
         return None
-    entity = own_entity(hass, entity_id)
+    entity = access_entity(hass, entity_id)
     if entity is None:
         return "owner"
     return role_for(entity.data, getattr(user, "id", None), bool(getattr(user, "is_admin", False))) if user else "owner"
+
+
+def access_entity(hass: HomeAssistant, entity_id: str) -> Any | None:
+    """Liste mit Besitzer/Freigaben: eigene Listen immer, kombinierte Listen, wenn ein Besitzer gesetzt ist."""
+    own = own_entity(hass, entity_id)
+    if own is not None:
+        return own
+    comb = combined_entity(hass, entity_id)
+    return comb if comb is not None and (getattr(comb, "data", None) or {}).get("owner") else None
 
 
 def combined_entity(hass: HomeAssistant, entity_id: str) -> Any | None:
@@ -140,7 +149,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         raise ListError("Diese Notizliste gehört zu einem anderen Konto.")
     learning = _learning(hass)
     perms = list_permissions(hass, entity_id)
-    own = own_entity(hass, entity_id)
+    own = access_entity(hass, entity_id)
     own_info = None
     if own is not None:
         role = own_role(hass, entity_id, user)

@@ -3,6 +3,16 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Owner and sharing for combined lists**: choose an owner and who may edit, check off or only view – when
+  adding/configuring a combined list, or in the card (gear → *Owner*, *Sharing*). Without an owner ("— everyone")
+  a combined list stays visible and editable for everyone, as before. Enforced in card, sidebar page, app and for
+  HA services. Combined lists taken over from the app now belong to the account the app is paired with.
+- Card: admins and owners can change the owner of own lists in the list window (the list moves to the new owner's entry).
+
 ## [3.7.0] – 2026-11-13
 
 ### Changed

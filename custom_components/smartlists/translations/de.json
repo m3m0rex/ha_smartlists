@@ -42,14 +42,19 @@
             "source_label": "Herkunft im Artikelnamen anzeigen",
             "sort": "Sortierung",
             "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)",
-            "source_as_person": "Herkunft als Person anzeigen"
+            "source_as_person": "Herkunft als Person anzeigen",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen"
           },
           "data_description": {
             "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
             "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
             "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
-            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
+            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen.",
+            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist."
           }
         },
         "reconfigure": {
@@ -62,14 +67,19 @@
             "source_label": "Herkunft im Artikelnamen anzeigen",
             "sort": "Sortierung",
             "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)",
-            "source_as_person": "Herkunft als Person anzeigen"
+            "source_as_person": "Herkunft als Person anzeigen",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen"
           },
           "data_description": {
             "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
             "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
             "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
             "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
-            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen."
+            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen.",
+            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist."
           }
         }
       },
@@ -373,6 +383,11 @@
         "edit": "Stichwörter eines Packs bearbeiten",
         "new": "Neues Pack (z. B. weitere Sprache)",
         "import": "Pack als JSON einfügen"
+      }
+    },
+    "owner": {
+      "options": {
+        "__all__": "— alle (keine Einschränkung)"
       }
     }
   },

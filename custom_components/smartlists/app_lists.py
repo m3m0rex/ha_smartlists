@@ -93,6 +93,9 @@ def connect(hass: HomeAssistant, device_id: str, list_id: str) -> str:
         CONF_APP_DEVICE: device_id,
         CONF_APP_LIST: list_id,
     }
+    # gehört dem HA-Konto, mit dem die App gekoppelt ist (andere sehen sie erst nach Freigabe)
+    if device and device.get("user_id"):
+        data["owner"], data["shares"] = device["user_id"], {}
     if lst.get("default_add") in sources:
         data[CONF_DEFAULT_ADD] = lst["default_add"]
     sub = ConfigSubentry(data=MappingProxyType(data), subentry_type=SUBENTRY_COMBINED, title=lst["name"], unique_id=None)

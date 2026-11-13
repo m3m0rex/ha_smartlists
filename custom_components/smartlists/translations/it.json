@@ -42,14 +42,19 @@
             "source_label": "Mostra la lista di origine nel nome dell'articolo",
             "sort": "Ordinamento",
             "foreign_entities": "Liste altrui (solo spuntare, non rinominare/eliminare)",
-            "source_as_person": "Mostra la lista di origine come persona"
+            "source_as_person": "Mostra la lista di origine come persona",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo vedere"
           },
           "data_description": {
             "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
             "default_add_entity": "I nuovi articoli aggiunti alla lista combinata finiscono qui. Vuoto = aggiunta disattivata.",
             "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
             "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
-            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse."
+            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse.",
+            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista."
           }
         },
         "reconfigure": {
@@ -62,14 +67,19 @@
             "source_label": "Mostra la lista di origine nel nome dell'articolo",
             "sort": "Ordinamento",
             "foreign_entities": "Liste altrui (solo spuntare, non rinominare/eliminare)",
-            "source_as_person": "Mostra la lista di origine come persona"
+            "source_as_person": "Mostra la lista di origine come persona",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo vedere"
           },
           "data_description": {
             "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
             "default_add_entity": "I nuovi articoli aggiunti alla lista combinata finiscono qui. Vuoto = aggiunta disattivata.",
             "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
             "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
-            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse."
+            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse.",
+            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista."
           }
         }
       },
@@ -373,6 +383,11 @@
         "edit": "Modifica le parole chiave di un pacchetto",
         "new": "Nuovo pacchetto (es. un'altra lingua)",
         "import": "Incolla pacchetto come JSON"
+      }
+    },
+    "owner": {
+      "options": {
+        "__all__": "— tutti (nessuna restrizione)"
       }
     }
   },

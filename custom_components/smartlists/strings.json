@@ -42,14 +42,19 @@
             "source_label": "Show source list in item name",
             "sort": "Sort order",
             "foreign_entities": "Foreign lists (check only, no rename/delete)",
-            "source_as_person": "Show source list as person"
+            "source_as_person": "Show source list as person",
+            "owner": "Owner",
+            "editors": "May edit",
+            "checkers": "May check off",
+            "viewers": "May only view"
           },
           "data_description": {
             "sources": "Any to-do lists, e.g. shopping lists of several people.",
             "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
             "foreign_entities": "Lists of other people that you may only check off.",
-            "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped."
+            "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped.",
+            "owner": "“—” = visible and editable for everyone (as before). With an owner, only they, admins and the people shared with here see the list – in card, page, app and Assist."
           }
         },
         "reconfigure": {
@@ -62,14 +67,19 @@
             "source_label": "Show source list in item name",
             "sort": "Sort order",
             "foreign_entities": "Foreign lists (check only, no rename/delete)",
-            "source_as_person": "Show source list as person"
+            "source_as_person": "Show source list as person",
+            "owner": "Owner",
+            "editors": "May edit",
+            "checkers": "May check off",
+            "viewers": "May only view"
           },
           "data_description": {
             "sources": "Any to-do lists, e.g. shopping lists of several people.",
             "default_add_entity": "New items added to the combined list go here. Empty = adding disabled.",
             "mode": "Bidirectional: checking writes to the source list. Local: checkmarks stay in the combined list only.",
             "foreign_entities": "Lists of other people that you may only check off.",
-            "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped."
+            "source_as_person": "Items from e.g. todo.peter get the badge 👤 Peter – like *Peter in the name. Filler words like “shopping list” are dropped.",
+            "owner": "“—” = visible and editable for everyone (as before). With an owner, only they, admins and the people shared with here see the list – in card, page, app and Assist."
           }
         }
       },
@@ -373,6 +383,11 @@
         "edit": "Edit keywords of a pack",
         "new": "New pack (e.g. another language)",
         "import": "Paste pack as JSON"
+      }
+    },
+    "owner": {
+      "options": {
+        "__all__": "— everyone (no restriction)"
       }
     }
   },

@@ -61,6 +61,7 @@ taken over from the app are linked to the app's device ("via").
 
 | Field | Meaning |
 |---|---|
+| Owner, may edit / check off / only view | who sees and changes the combined list. "—" = everyone (as before); with an owner only they, admins and the people chosen here – in card, sidebar page, app and Assist. Also in the card: gear → *Owner* and *Sharing*. Combined lists taken over from the app belong to the account the app is paired with. |
 | Lists to combine | any to-do lists (Shopping List, Local To-do, Google Tasks, Bring!, CalDAV, own SmartLists lists, …) – but not other combined lists |
 | Default list for new items | where items added to the combined list go; empty = adding disabled |
 | Checking off affects | *source list* (bidirectional) or *this combined list only* (sources stay untouched) |

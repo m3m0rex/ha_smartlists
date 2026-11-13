@@ -216,17 +216,61 @@ def validate_combined(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, st
     return errors
 
 
+EVERYONE = "__all__"
+
+
+async def _access_fields(hass: HomeAssistant, current: dict[str, Any], default_owner: str | None) -> dict[Any, Any]:
+    """Besitzer + wer sehen/abhaken/bearbeiten darf (für kombinierte Listen; „Alle“ = keine Einschränkung)."""
+    from .own import async_household_users
+
+    users = await async_household_users(hass)
+    opts = [selector.SelectOptionDict(value=u["id"], label=u["name"]) for u in users]
+    owner_opts = [selector.SelectOptionDict(value=EVERYONE, label="—"), *opts]
+    multi = selector.SelectSelector(selector.SelectSelectorConfig(options=opts, multiple=True, mode=selector.SelectSelectorMode.DROPDOWN))
+    shares = current.get("shares") or {}
+    by_role = {r: [u for u, role in shares.items() if role == r] for r in ("viewer", "checker", "editor")}
+    owner = current.get("owner") if "owner" in current else default_owner
+    return {
+        vol.Required("owner", default=owner or EVERYONE): selector.SelectSelector(
+            selector.SelectSelectorConfig(options=owner_opts, translation_key="owner", mode=selector.SelectSelectorMode.DROPDOWN)),
+        vol.Optional("editors", default=by_role["editor"]): multi,
+        vol.Optional("checkers", default=by_role["checker"]): multi,
+        vol.Optional("viewers", default=by_role["viewer"]): multi,
+    }
+
+
+def _apply_access(user_input: dict[str, Any]) -> dict[str, Any]:
+    """Formularfelder → owner/shares in den Daten der kombinierten Liste."""
+    data = dict(user_input)
+    owner = data.pop("owner", EVERYONE)
+    picked = {k: data.pop(k, []) or [] for k in ("viewers", "checkers", "editors")}
+    data.pop("owner", None)
+    if owner and owner != EVERYONE:
+        shares: dict[str, str] = {}
+        for key, role in (("viewers", "viewer"), ("checkers", "checker"), ("editors", "editor")):
+            for uid in picked[key]:
+                if uid != owner:
+                    shares[uid] = role
+        data["owner"], data["shares"] = owner, shares
+    return data
+
+
 class CombinedListSubentryFlow(ConfigSubentryFlow):
-    """Kombinierte Liste anlegen bzw. neu konfigurieren."""
+    """Kombinierte Liste anlegen bzw. neu konfigurieren – mit Besitzer und Freigaben."""
+
+    async def _schema(self, current: dict[str, Any]) -> vol.Schema:
+        base = {vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass) + _combined_ids(self.hass))}
+        return vol.Schema({**base, **await _access_fields(self.hass, current, self.context.get("user_id"))})
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
             errors = validate_combined(self.hass, user_input)
             if not errors:
-                name = user_input.pop(CONF_NAME)
-                return self.async_create_entry(title=name, data=user_input)
-        schema = vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass) + _combined_ids(self.hass))})
+                data = _apply_access(user_input)
+                name = data.pop(CONF_NAME)
+                return self.async_create_entry(title=name, data=data)
+        schema = await self._schema({})
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
@@ -237,18 +281,19 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
         if user_input is not None:
             errors = validate_combined(self.hass, user_input)
             if not errors:
-                name = user_input.pop(CONF_NAME)
+                data = _apply_access(user_input)
+                name = data.pop(CONF_NAME)
                 # interne Felder (z.B. legacy_unique_id aus der Migration) behalten
                 # … und die Verknüpfung mit der App (Liste gehört zum Gerät)
                 keep = {k: v for k, v in subentry.data.items() if k.startswith("legacy_") or k in ("app_device", "app_list")}
                 return self.async_update_and_abort(
-                    self._get_entry(), subentry, title=name, data={**keep, **user_input}
+                    self._get_entry(), subentry, title=name, data={**keep, **data}
                 )
         current = {**DEFAULTS, **subentry.data, CONF_NAME: subentry.title}
-        schema = self.add_suggested_values_to_schema(
-            vol.Schema({vol.Required(CONF_NAME): selector.TextSelector(), **combined_schema(_notes_ids(self.hass) + _combined_ids(self.hass))}),
-            user_input if user_input is not None else current,
-        )
+        if "owner" not in subentry.data:
+            current["owner"] = None  # bisher ohne Besitzer → „—“ (für alle) vorauswählen
+        schema = self.add_suggested_values_to_schema(await self._schema(current), user_input if user_input is not None else
+                                                     {k: v for k, v in current.items() if k not in ("owner", "shares")})
         return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)
 
 

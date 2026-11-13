@@ -350,6 +350,7 @@ const TEXTS = {
     mg_pf_local: "Lokale To-do", mg_pf_shopping: "Einkaufsliste", mg_pf_other: "Andere",
     mg_keep_info: "Die alte Liste bleibt unverändert erhalten. Prüfe die neue Liste und lösche die alte danach selbst.", mg_done_hint: "Die alten Listen gibt es noch. Wenn in der neuen Liste alles passt, lösche sie bitte selbst (Einstellungen → Geräte & Dienste, z. B. bei Local To-do bzw. der jeweiligen Integration):", mg_done_combined: "Mindestens eine alte Liste ist Quelle einer kombinierten Liste – trage dort zuerst die neue Liste ein.",
     mg_pf_notes: "Notizen", mg_as: "Übernehmen als", mg_as_list: "Liste", mg_as_list_sub: "Eigene SmartLists-Liste mit Kategorien, Mengen und Einkaufsfunktionen.", mg_as_notes: "Notizen", mg_as_notes_sub: "Neue Notizliste (nur für dich sichtbar), Notizen mit Titel und Text – auch verschlüsselte bleiben erhalten.",
+    owner_everyone: "— alle (keine Einschränkung)", owner_combined_help: "Mit Besitzer sehen die Liste nur er, Admins und die Freigegebenen.",
   },
   en: {
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
@@ -587,6 +588,7 @@ const TEXTS = {
     mg_pf_local: "Local To-do", mg_pf_shopping: "Shopping list", mg_pf_other: "Other",
     mg_keep_info: "The old list stays unchanged. Check the new list and delete the old one yourself afterwards.", mg_done_hint: "The old lists still exist. When everything is fine in the new list, please delete them yourself (Settings → Devices & services, e.g. Local To-do or the respective integration):", mg_done_combined: "At least one old list is a source of a combined list – add the new list there first.",
     mg_pf_notes: "Notes", mg_as: "Take over as", mg_as_list: "List", mg_as_list_sub: "Own SmartLists list with categories, quantities and shopping features.", mg_as_notes: "Notes", mg_as_notes_sub: "New note list (visible only to you), notes with title and text – encrypted ones are kept as they are.",
+    owner_everyone: "— everyone (no restriction)", owner_combined_help: "With an owner, only they, admins and the people shared with see the list.",
   },
   fr: {
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -824,6 +826,7 @@ const TEXTS = {
     mg_pf_local: "To-do local", mg_pf_shopping: "Liste de courses", mg_pf_other: "Autre",
     mg_keep_info: "L'ancienne liste reste inchangée. Vérifie la nouvelle liste puis supprime l'ancienne toi-même.", mg_done_hint: "Les anciennes listes existent toujours. Si tout est bon dans la nouvelle liste, supprime-les toi-même (Paramètres → Appareils et services, p. ex. Local To-do ou l'intégration concernée) :", mg_done_combined: "Au moins une ancienne liste est source d'une liste combinée – ajoutes-y d'abord la nouvelle liste.",
     mg_pf_notes: "Notes", mg_as: "Reprendre comme", mg_as_list: "Liste", mg_as_list_sub: "Liste SmartLists propre avec catégories, quantités et fonctions de courses.", mg_as_notes: "Notes", mg_as_notes_sub: "Nouvelle liste de notes (visible seulement par toi), notes avec titre et texte – les chiffrées restent intactes.",
+    owner_everyone: "— tous (sans restriction)", owner_combined_help: "Avec un propriétaire, seuls lui, les admins et les personnes partagées voient la liste.",
   },
   es: {
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1061,6 +1064,7 @@ const TEXTS = {
     mg_pf_local: "To-do local", mg_pf_shopping: "Lista de la compra", mg_pf_other: "Otra",
     mg_keep_info: "La lista antigua queda sin cambios. Revisa la nueva lista y borra después la antigua tú mismo.", mg_done_hint: "Las listas antiguas siguen existiendo. Si todo está bien en la nueva lista, bórralas tú (Ajustes → Dispositivos y servicios, p. ej. Local To-do o la integración correspondiente):", mg_done_combined: "Al menos una lista antigua es fuente de una lista combinada – añade allí primero la nueva lista.",
     mg_pf_notes: "Notas", mg_as: "Traspasar como", mg_as_list: "Lista", mg_as_list_sub: "Lista propia de SmartLists con categorías, cantidades y funciones de compra.", mg_as_notes: "Notas", mg_as_notes_sub: "Nueva lista de notas (solo visible para ti), notas con título y texto – las cifradas se conservan.",
+    owner_everyone: "— todos (sin restricción)", owner_combined_help: "Con propietario, solo él, los admins y las personas compartidas ven la lista.",
   },
   it: {
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1298,6 +1302,7 @@ const TEXTS = {
     mg_pf_local: "To-do locale", mg_pf_shopping: "Lista della spesa", mg_pf_other: "Altro",
     mg_keep_info: "La vecchia lista resta invariata. Controlla la nuova lista e poi elimina tu la vecchia.", mg_done_hint: "Le vecchie liste esistono ancora. Se nella nuova lista è tutto a posto, eliminale tu (Impostazioni → Dispositivi e servizi, ad es. Local To-do o l'integrazione relativa):", mg_done_combined: "Almeno una vecchia lista è fonte di una lista combinata – aggiungi prima lì la nuova lista.",
     mg_pf_notes: "Note", mg_as: "Trasferisci come", mg_as_list: "Lista", mg_as_list_sub: "Lista SmartLists propria con categorie, quantità e funzioni per la spesa.", mg_as_notes: "Note", mg_as_notes_sub: "Nuova lista di note (visibile solo a te), note con titolo e testo – quelle cifrate restano invariate.",
+    owner_everyone: "— tutti (nessuna restrizione)", owner_combined_help: "Con un proprietario, solo lui, gli admin e le persone condivise vedono la lista.",
   },
   pl: {
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -1535,6 +1540,7 @@ const TEXTS = {
     mg_pf_local: "Lokalne To-do", mg_pf_shopping: "Lista zakupów", mg_pf_other: "Inne",
     mg_keep_info: "Stara lista pozostaje bez zmian. Sprawdź nową listę, a potem sam(a) usuń starą.", mg_done_hint: "Stare listy nadal istnieją. Jeśli w nowej liście wszystko się zgadza, usuń je sam(a) (Ustawienia → Urządzenia i usługi, np. Local To-do lub odpowiednia integracja):", mg_done_combined: "Co najmniej jedna stara lista jest źródłem listy połączonej – najpierw dodaj tam nową listę.",
     mg_pf_notes: "Notatki", mg_as: "Przejmij jako", mg_as_list: "Lista", mg_as_list_sub: "Własna lista SmartLists z kategoriami, ilościami i funkcjami zakupów.", mg_as_notes: "Notatki", mg_as_notes_sub: "Nowa lista notatek (widoczna tylko dla ciebie), notatki z tytułem i treścią – zaszyfrowane pozostają bez zmian.",
+    owner_everyone: "— wszyscy (bez ograniczeń)", owner_combined_help: "Z właścicielem listę widzą tylko on, admini i osoby, którym ją udostępniono.",
   },
 };
 
@@ -4287,7 +4293,9 @@ class SmartListsCard extends HTMLElement {
       canEdit && d.type !== "notes" ? this._setRow(t.l_show_prices, this._switch(cur.show_prices !== false, (v) => set({ show_prices: v }), t.l_show_prices)) : null,
       this._setRow(t.type, h("span", { class: "val" }, type)),
       this._setRow(t.entity, h("code", { class: "val" }, this._config.entity)),
-      d && d.own ? this._setRow(t.owner, h("span", { class: "val" }, d.own.owner || "?")) : null,
+      d && (d.type === "combined" || d.type === "own") && (this._isAdmin || (d.own && d.own.role === "owner"))
+        ? this._setRow(t.owner, this._ownerSelect(d, status), d.type === "combined" ? t.owner_combined_help : null)
+        : d && d.own ? this._setRow(t.owner, h("span", { class: "val" }, d.own.owner || "?")) : null,
       d && d.source_lists && d.source_lists.length ? this._setRow(t.sources, h("span", { class: "val" }, d.source_lists.join(", "))) : null,
       h("div", { class: "acts" }, status),
     ]);
@@ -5742,6 +5750,29 @@ class SmartListsCard extends HTMLElement {
   }
 
   // Freigaben einer eigenen Liste (nur Besitzer/Admins): pro Person keine / sehen / abhaken / bearbeiten
+  // Besitzer wählen: eigene Listen (Pflicht) und kombinierte Listen („— alle“ = keine Einschränkung)
+  _ownerSelect(d, status) {
+    const t = this._t;
+    const sel = h("select", { "aria-label": t.owner, disabled: true }, h("option", {}, t.loading));
+    this._call("users", {}, false).then((r) => {
+      const current = (d.own && d.own.owner_id) || "";
+      fill(sel, d.type === "combined" ? h("option", { value: "", selected: !current }, t.owner_everyone) : null,
+        r.users.map((u) => h("option", { value: u.id, selected: u.id === current }, u.name)));
+      sel.disabled = false;
+    }).catch(() => fill(sel, h("option", {}, t.error)));
+    sel.addEventListener("change", async () => {
+      try {
+        await this._call("set_owner", { owner: sel.value || null });
+        status.textContent = "✓ " + t.saved;
+        await this._load();
+        // Fenster neu aufbauen (Freigaben erscheinen bzw. verschwinden je nach Besitzer)
+        const open = this.shadowRoot.querySelector(".dlg-back.lsd");
+        if (open) { open.remove(); this._listDialog(); }
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    });
+    return sel;
+  }
+
   _sharing() {
     const t = this._t;
     const own = this._data.own;

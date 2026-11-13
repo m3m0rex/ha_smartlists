@@ -41,3 +41,19 @@ def test_context_age_float_and_datetime():
     assert age(time.time() - 10) > 5
     assert age(datetime.datetime.now(datetime.timezone.utc)) < 1
     assert age(None) == float("inf")
+
+
+def test_combined_access_fields():
+    """Kombinierte Liste: „— alle“ = ohne Besitzer (wie bisher), sonst owner + shares; Besitzer nicht in shares."""
+    import ast
+    from pathlib import Path
+
+    src = (Path(__file__).resolve().parent.parent / "custom_components" / "smartlists" / "config_flow.py").read_text(encoding="utf-8")
+    nodes = [n for n in ast.parse(src).body if (isinstance(n, ast.FunctionDef) and n.name == "_apply_access")
+             or (isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "EVERYONE")]
+    ns = {"Any": object}
+    exec(compile(ast.Module(body=nodes, type_ignores=[]), "config_flow.py", "exec"), ns)
+    apply = ns["_apply_access"]
+    assert apply({"name": "X", "sources": ["todo.a"], "owner": "__all__", "editors": ["u2"]}) == {"name": "X", "sources": ["todo.a"]}
+    assert apply({"owner": "u1", "editors": ["u2", "u1"], "viewers": ["u3"], "checkers": []}) == {
+        "owner": "u1", "shares": {"u3": "viewer", "u2": "editor"}}

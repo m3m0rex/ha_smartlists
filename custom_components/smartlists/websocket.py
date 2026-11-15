@@ -37,7 +37,7 @@ def async_register(hass: HomeAssistant) -> None:
                     ws_register_device, ws_devices, ws_remove_device,
                     ws_users, ws_create_list, ws_share, ws_set_owner, ws_set_labels, ws_delete_list,
                     ws_install_sentences, ws_shopping, ws_due,
-                    ws_subscribe, ws_reset, ws_migrate_candidates, ws_migrate, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_features, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_delete_expenses, ws_reset_stats, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_share_public, ws_set_share_public, ws_notify, ws_set_notify, ws_notify_test, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
+                    ws_subscribe, ws_reset, ws_migrate_candidates, ws_migrate, ws_mealplan, ws_set_meals, ws_add_meals, ws_mealie_status, ws_mealie_import, ws_item_history, ws_setup, ws_set_features, ws_set_rights, ws_share_links_all, ws_set_list_settings, ws_finish_shopping, ws_expense_entries, ws_delete_expense, ws_delete_expenses, ws_reset_stats, ws_forget_history, ws_create_notes, ws_store_order, ws_set_price, ws_expenses, ws_templates, ws_save_template, ws_delete_template, ws_add_template, ws_stats, ws_share_links, ws_share_create, ws_share_revoke, ws_share_pending, ws_share_public, ws_set_share_public, ws_notify, ws_set_notify, ws_notify_test, ws_barcode, ws_app_lists, ws_connect_app_list, ws_appearance, ws_set_appearance, ws_stores, ws_set_store_zone, ws_notes, ws_set_notes, ws_pack_create, ws_pack_terms, ws_pack_update, ws_packs, ws_pack_upload, ws_pack_delete, ws_pack_set_active, ws_pack_export,
                     ws_app_backup_save, ws_app_backups, ws_app_backup_get, ws_app_backup_delete, ws_export, ws_import, ws_automation, ws_set_automation,
                     ws_get_list, ws_lists, ws_add_item, ws_update_item, ws_remove_items, ws_clear_completed, ws_move_item):
         websocket_api.async_register_command(hass, handler)
@@ -1044,6 +1044,7 @@ def _public_info(hass: HomeAssistant) -> dict[str, Any]:
                                   vol.Optional("check", default="off"): vol.In(["off", "soft", "on"]),
                                   vol.Optional("add", default=False): bool,
                                   vol.Optional("notes", default=False): bool,
+                                  vol.Optional("approve", default=False): bool,
                                   vol.Optional("password"): vol.Any(vol.All(str, vol.Length(max=100)), None),
                                   vol.Optional("hours"): vol.Any(vol.All(int, vol.Range(min=1, max=24 * 365)), None)})
 @callback
@@ -1068,11 +1069,42 @@ def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnect
         return
     try:
         link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, check, add, hours=hours, base=base,
-                                                   notes=msg["notes"], password=(msg.get("password") or "").strip() or None)
+                                                   notes=msg["notes"], password=(msg.get("password") or "").strip() or None,
+                                                   approve=msg["approve"])
     except ValueError as err:
         connection.send_error(msg["id"], "invalid", str(err))
         return
     connection.send_result(msg["id"], {**link, "path": f"/smartlists-share/{link['token']}", "base": base})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/share_pending", vol.Required("entity_id"): str,
+                                  vol.Required("pending_id"): str, vol.Required("approve"): bool})
+@websocket_api.async_response
+async def ws_share_pending(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Über einen Link Hinzugefügtes übernehmen (approve) oder verwerfen – wer die Liste teilen darf."""
+    if (err := _may_share(hass, msg["entity_id"], connection.user)) is not None:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, err)
+        return
+    p = hass.data[DOMAIN]["shares"].take_pending(msg["entity_id"], msg["pending_id"])
+    if p is None:
+        connection.send_error(msg["id"], "not_found", "Nicht mehr vorhanden.")
+        return
+    if msg["approve"]:
+        from homeassistant.core import Context
+
+        from .shares import SHARE_CONTEXTS
+
+        context = Context()
+        SHARE_CONTEXTS[context.id] = p.get("by", "")
+        added = await lists.add_item(hass, msg["entity_id"], p["text"], context=context, from_share=True)
+        shares = hass.data[DOMAIN]["shares"]
+        if added and added.get("uid"):
+            for link in shares.links.values():
+                if link["entity_id"] == msg["entity_id"]:
+                    link.setdefault("added", {})[added["uid"]] = {"t": p.get("t", 0), "by": p.get("by", "")}
+                    shares._save()
+                    break
+    connection.send_result(msg["id"], {})
 
 
 @websocket_api.require_admin

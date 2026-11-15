@@ -302,3 +302,50 @@ def test_share_password_and_bulk_resets():
     assert ex.delete_expenses([first], "u2") == 0  # fremde Buchung: nein
     assert ex.delete_expenses([first]) == 1
     assert ex.delete_expenses(None, "u1") == 1 and [e["name"] for e in ex.expenses] == ["B"]
+
+
+def test_share_page_csp_hash_and_password_lockout():
+    import base64
+    import hashlib
+    import re
+
+    from smartlists import shares
+
+    script = re.search(r"<script>(.*?)</script>", shares.SHARE_PAGE, re.S).group(1)
+    digest = base64.b64encode(hashlib.sha256(script.encode()).digest()).decode()
+    assert f"'sha256-{digest}'" in shares.PAGE_CSP and "script-src 'unsafe-inline'" not in shares.PAGE_CSP
+
+    link = {"pw": shares.make_password("richtig")}
+    hass = object()  # ohne Executor: direkt prüfen
+    shares._PW_FAILS.clear()
+    for _ in range(shares.PW_MAX_FAILS):
+        assert asyncio.run(shares.async_check_password(hass, "h1", link, "falsch")) is False
+    assert shares.pw_locked("h1")
+    assert not shares.pw_locked("h2")
+    assert asyncio.run(shares.async_check_password(hass, "h2", link, "richtig")) is True
+    shares._PW_FAILS.clear()
+
+
+def test_share_access_key_replaces_password():
+    from smartlists import shares
+
+    link = {"pw": shares.make_password("geheim")}
+    key = shares.access_key("h1", link)
+    assert shares.check_access("h1", link, key) and not shares.check_access("h2", link, key)
+    assert not shares.check_access("h1", link, "x" * 64) and not shares.check_access("h1", {}, key)
+    assert "geheim" not in key
+
+
+def test_share_pending_approval_store():
+    import types
+
+    from smartlists.shares import Shares
+
+    sh = Shares(types.SimpleNamespace(data={}))
+    r = sh.create("todo.a", "u1", "off", True, 24, approve=True)
+    h = next(iter(sh.links))
+    assert sh.links[h]["approve"] is True and r["approve"] is True
+    sh.links[h]["pending"] = {"p1": {"text": "Chips", "by": "Max", "t": 1}}
+    assert [p["text"] for p in sh.pending_for("todo.a")] == ["Chips"]
+    assert sh.take_pending("todo.a", "p1")["by"] == "Max" and sh.pending_for("todo.a") == []
+    assert sh.create("todo.a", "u1", "off", False, 24, approve=True)["approve"] is False  # ohne Hinzufügen kein Sinn

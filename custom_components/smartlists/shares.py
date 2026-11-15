@@ -82,6 +82,60 @@ def make_password(password: str) -> dict[str, str]:
     return {"salt": salt, "hash": _pw_hash(password, salt)}
 
 
+# Falsche Passwörter je Link: nach PW_MAX_FAILS Fehlversuchen innerhalb von PW_WINDOW Sekunden ist der Link
+# PW_LOCK Sekunden gesperrt (bremst Raten; der Schlüssel im Link allein reicht dann nicht).
+PW_MAX_FAILS = 10
+PW_WINDOW = 900
+PW_LOCK = 900
+_PW_FAILS: dict[str, list[float]] = {}
+# bereits geprüfte Passwörter (Hash von Link+Passwort → bis wann gültig): PBKDF2 nicht bei jeder Aktualisierung
+_PW_OK: dict[str, float] = {}
+
+
+def pw_locked(h: str) -> bool:
+    now = time.monotonic()
+    fails = [t for t in _PW_FAILS.get(h, []) if now - t < PW_WINDOW + PW_LOCK]
+    _PW_FAILS[h] = fails
+    return len(fails) >= PW_MAX_FAILS and now - fails[-1] < PW_LOCK
+
+
+async def async_check_password(hass: Any, h: str, link: dict[str, Any], given: str | None) -> bool:
+    """Wie check_password, aber PBKDF2 im Hintergrund-Thread (blockiert Home Assistant nicht), mit kurzem Merker
+    für richtige Passwörter und Zählung der Fehlversuche."""
+    if not link.get("pw"):
+        return True
+    if not given or len(given) > MAX_PASSWORD:
+        return False
+    key = hashlib.sha256(f"{h}\0{given}".encode()).hexdigest()
+    now = time.monotonic()
+    if _PW_OK.get(key, 0) > now:
+        return True
+    ok = await hass.async_add_executor_job(check_password, link, given) if hasattr(hass, "async_add_executor_job") \
+        else check_password(link, given)
+    if ok:
+        if len(_PW_OK) > 500:
+            _PW_OK.clear()
+        _PW_OK[key] = now + 600
+    else:
+        _PW_FAILS.setdefault(h, []).append(now)
+    return ok
+
+
+def access_key(h: str, link: dict[str, Any]) -> str:
+    """Zugangsschlüssel nach richtigem Passwort: gilt, bis der Link abläuft oder widerrufen wird (danach gibt es den
+    Link nicht mehr). Abgeleitet vom gespeicherten Passwort-Hash – den kennt nur der Server; das Passwort selbst wird
+    auf dem Gerät nicht gespeichert."""
+    return hashlib.sha256(f"smartlists-access\0{h}\0{link['pw']['hash']}".encode()).hexdigest()
+
+
+def check_access(h: str, link: dict[str, Any], given: str | None) -> bool:
+    if not link.get("pw") or not given or len(given) != 64:
+        return False
+    import hmac
+
+    return hmac.compare_digest(given, access_key(h, link))
+
+
 def check_password(link: dict[str, Any], given: str | None) -> bool:
     pw = link.get("pw")
     if not pw:
@@ -121,7 +175,8 @@ class Shares:
 
     @callback
     def create(self, entity_id: str, user_id: str, check: str = "off", add: bool = False, hours: int | None = 168,
-               base: str | None = None, notes: bool = False, password: str | None = None) -> dict[str, Any]:
+               base: str | None = None, notes: bool = False, password: str | None = None,
+               approve: bool = False) -> dict[str, Any]:
         """Neuer Link. hours = Gültigkeit (z. B. 2, 24, 168, 720), None = unbegrenzt bis zum Widerruf.
         base = öffentliche Adresse (Tunnel/Proxy, siehe public.py) – gemerkt, um später zu zeigen, wenn sich die
         Tunnel-Adresse geändert hat und der Link deshalb nicht mehr geht. None = Adresse von Home Assistant."""
@@ -135,7 +190,8 @@ class Shares:
         now = int(time.time())
         self.links[h] = {"entity_id": entity_id, "check": check, "add": bool(add),
                          "expires": now + int(hours) * 3600 if hours else None, "created": now,
-                         "created_by": user_id, "opens": 0, "soft": {}, "base": base, "notes": bool(notes)}
+                         "created_by": user_id, "opens": 0, "soft": {}, "base": base, "notes": bool(notes),
+                         "approve": bool(approve and add)}  # Hinzugefügtes erst nach Freigabe in die Liste
         if password:
             if len(password) > MAX_PASSWORD:
                 raise ValueError("Passwort zu lang")
@@ -148,7 +204,28 @@ class Shares:
         return {"id": h[:16], "entity_id": link["entity_id"], "check": link["check"], "add": link["add"],
                 "expires": link["expires"], "created": link["created"], "opens": link.get("opens", 0),
                 "expired": bool(link["expires"] and link["expires"] < time.time()), "base": link.get("base"),
-                "notes": bool(link.get("notes")), "password": bool(link.get("pw"))}
+                "notes": bool(link.get("notes")), "password": bool(link.get("pw")),
+                "approve": bool(link.get("approve")), "pending": len(link.get("pending") or {})}
+
+    # ---- Freigabe: über Links Hinzugefügtes wartet, bis Besitzer/Admin zustimmt ----
+    def pending_for(self, entity_id: str) -> list[dict[str, Any]]:
+        out = []
+        for h, link in self.links.items():
+            if link["entity_id"] != entity_id:
+                continue
+            for pid, p in (link.get("pending") or {}).items():
+                out.append({"id": pid, "text": p.get("text", ""), "by": p.get("by", ""), "t": p.get("t", 0)})
+        return sorted(out, key=lambda x: x["t"])
+
+    @callback
+    def take_pending(self, entity_id: str, pid: str) -> dict[str, Any] | None:
+        """Wartenden Eintrag herausnehmen (zum Übernehmen oder Ablehnen)."""
+        for link in self.links.values():
+            if link["entity_id"] == entity_id and pid in (link.get("pending") or {}):
+                p = link["pending"].pop(pid)
+                self._save()
+                return p
+        return None
 
     @callback
     def revoke_all(self) -> int:
@@ -275,12 +352,18 @@ class ShareApiView(HomeAssistantView):
         h, link = found
         if not shares.allow_read(h):
             return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
-        if not check_password(link, request.headers.get("X-Share-Password")):
+        if link.get("pw") and pw_locked(h):
+            return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
+        via_key = check_access(h, link, request.headers.get("X-Share-Access"))
+        if not via_key and not await async_check_password(hass, h, link, request.headers.get("X-Share-Password")):
             await asyncio.sleep(0.6)  # Raten bremsen
             return web.json_response({"error": "password"}, status=401, headers=SECURITY_HEADERS)
         shares.count_open(h)
         lang = str(request.query.get("lang") or "")[:5]
-        return web.json_response(await self._payload(hass, shares, link, lang), headers=SECURITY_HEADERS)
+        body = await self._payload(hass, shares, link, lang)
+        if link.get("pw") and not via_key:
+            body["access"] = access_key(h, link)  # das Gerät merkt sich den Schlüssel statt des Passworts
+        return web.json_response(body, headers=SECURITY_HEADERS)
 
     async def _payload(self, hass: HomeAssistant, shares: Shares, link: dict[str, Any], lang: str = "") -> dict[str, Any]:
         from . import lists
@@ -333,6 +416,8 @@ class ShareApiView(HomeAssistantView):
         return {
             "name": name, "check": link["check"], "add": link["add"], "expires": link["expires"],
             "items": out_items,
+            # über diesen Link hinzugefügt, wartet noch auf Freigabe
+            "pending": [{"text": p.get("text", ""), "by": p.get("by", "")} for p in (link.get("pending") or {}).values()],
             # Reihenfolge und Namen der Kategorien (wie im Markt) sowie Badge-Farben des Haushalts
             "categories": learning.categories.as_list(lang or getattr(getattr(hass, "config", None), "language", None))
             if grouped else [],
@@ -348,7 +433,10 @@ class ShareApiView(HomeAssistantView):
         h, link = found
         if not shares.allow_write(h):
             return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
-        if not check_password(link, request.headers.get("X-Share-Password")):
+        if link.get("pw") and pw_locked(h):
+            return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
+        via_key = check_access(h, link, request.headers.get("X-Share-Access"))
+        if not via_key and not await async_check_password(hass, h, link, request.headers.get("X-Share-Password")):
             await asyncio.sleep(0.6)
             return web.json_response({"error": "password"}, status=401, headers=SECURITY_HEADERS)
         if (request.content_length or 0) > MAX_BODY:
@@ -395,6 +483,15 @@ class ShareApiView(HomeAssistantView):
                     return web.json_response({"error": "bad_request"}, status=400, headers=SECURITY_HEADERS)
                 if not shares._limit(f"a:{h}", ADD_LIMIT_PER_MIN):
                     return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
+                if link.get("approve"):
+                    # erst nach Freigabe in die Liste – bis dahin nur beim Link gemerkt (höchstens 50 wartende)
+                    pend = link.setdefault("pending", {})
+                    if len(pend) >= 50:
+                        return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
+                    pend[secrets.token_hex(6)] = {"text": text, "by": who, "t": int(time.time())}
+                    shares._save()
+                    return web.json_response(await self._payload(hass, shares, link, str(request.query.get("lang") or "")[:5]),
+                                             headers=SECURITY_HEADERS)
                 # über Links: keine Preise/Verlauf des Haushalts verändern
                 added = await lists.add_item(hass, entity_id, text, context=context, from_share=True)
                 # in der Karte als „über Link hinzugefügt“ markieren (wie „soft“ abgehakt)
@@ -425,12 +522,12 @@ class SharePageView(HomeAssistantView):
 
 
 SHARE_TEXTS = {
-    "de": {"open": "offen", "done": "erledigt", "add": "Hinzufügen", "placeholder": "Artikel hinzufügen …", "gone": "Dieser Link ist abgelaufen oder wurde widerrufen.", "until": "gültig bis", "soft": "von dir markiert", "error": "Das hat nicht geklappt – bitte neu laden.", "name_ask": "Wie heißt du?", "name_help": "Bitte gib deinen Namen an. Er erscheint bei dem, was du markierst oder hinzufügst – so sieht man, von wem es kommt. Er wird nur auf diesem Gerät gemerkt.", "name_ph": "Vorname", "name_go": "Weiter", "name_skip": "ohne Namen weiter", "you": "du bist", "anon": "ohne Namen", "change": "ändern", "offer": "Angebot", "offer_expired": "abgelaufen", "pw_help": "Diese Liste ist mit einem Passwort geschützt.", "pw_ph": "Passwort", "pw_wrong": "Passwort falsch – bitte noch einmal.", "pw_ask": "Passwort eingeben", "added_by": "von {name} hinzugefügt", "you_short": "dir", "search": "Suchen", "search_ph": "Artikel suchen …", "no_hits": "Nichts gefunden.", "sort": "Sortierung", "sort_cat": "Kategorie", "sort_store": "Markt", "sort_alpha": "A–Z", "sort_added": "Hinzugefügt", "no_store": "ohne Markt", "shared_until": "Geteilt bis {date}", "left_days": "noch {n} Tage", "left_hours": "noch {n} Std.", "shared_forever": "Geteilt, bis der Link widerrufen wird", "hello": "Hallo {name}"},
-    "en": {"open": "open", "done": "done", "add": "Add", "placeholder": "Add an item …", "gone": "This link has expired or was revoked.", "until": "valid until", "soft": "marked by you", "error": "That did not work – please reload.", "name_ask": "What's your name?", "name_help": "Please enter your name. It is shown with what you mark or add – so everyone sees who it came from. It is only remembered on this device.", "name_ph": "First name", "name_go": "Continue", "name_skip": "continue without a name", "you": "you are", "anon": "without a name", "change": "change", "offer": "Offer", "offer_expired": "expired", "pw_help": "This list is protected with a password.", "pw_ph": "Password", "pw_wrong": "Wrong password – please try again.", "pw_ask": "Enter password", "added_by": "added by {name}", "you_short": "you", "search": "Search", "search_ph": "Search items …", "no_hits": "Nothing found.", "sort": "Sort", "sort_cat": "Category", "sort_store": "Store", "sort_alpha": "A–Z", "sort_added": "Added", "no_store": "no store", "shared_until": "Shared until {date}", "left_days": "{n} days left", "left_hours": "{n} h left", "shared_forever": "Shared until the link is revoked", "hello": "Hello {name}"},
-    "fr": {"open": "à faire", "done": "fait", "add": "Ajouter", "placeholder": "Ajouter un article …", "gone": "Ce lien a expiré ou a été révoqué.", "until": "valable jusqu'au", "soft": "marqué par toi", "error": "Ça n'a pas marché – recharge la page.", "name_ask": "Comment t'appelles-tu ?", "name_help": "Ton nom apparaît avec ce que tu coches ou ajoutes – on voit ainsi de qui ça vient. Il n'est retenu que sur cet appareil.", "name_ph": "Prénom", "name_go": "Continuer", "name_skip": "continuer sans nom", "you": "tu es", "anon": "sans nom", "change": "modifier", "offer": "Promo", "offer_expired": "expiré", "pw_help": "Cette liste est protégée par un mot de passe.", "pw_ph": "Mot de passe", "pw_wrong": "Mot de passe incorrect – réessaie.", "pw_ask": "Saisir le mot de passe", "added_by": "ajouté par {name}", "you_short": "toi", "search": "Rechercher", "search_ph": "Rechercher un article …", "no_hits": "Rien trouvé.", "sort": "Tri", "sort_cat": "Catégorie", "sort_store": "Magasin", "sort_alpha": "A–Z", "sort_added": "Ajout", "no_store": "sans magasin", "shared_until": "Partagée jusqu'au {date}", "left_days": "encore {n} jours", "left_hours": "encore {n} h", "shared_forever": "Partagée jusqu'à la révocation du lien", "hello": "Bonjour {name}"},
-    "es": {"open": "pendientes", "done": "hecho", "add": "Añadir", "placeholder": "Añadir artículo …", "gone": "Este enlace ha caducado o se ha revocado.", "until": "válido hasta", "soft": "marcado por ti", "error": "No ha funcionado – recarga la página.", "name_ask": "¿Cómo te llamas?", "name_help": "Tu nombre aparece con lo que marcas o añades – así se ve de quién viene. Solo se guarda en este dispositivo.", "name_ph": "Nombre", "name_go": "Continuar", "name_skip": "continuar sin nombre", "you": "eres", "anon": "sin nombre", "change": "cambiar", "offer": "Oferta", "offer_expired": "caducada", "pw_help": "Esta lista está protegida con contraseña.", "pw_ph": "Contraseña", "pw_wrong": "Contraseña incorrecta – inténtalo de nuevo.", "pw_ask": "Introduce la contraseña", "added_by": "añadido por {name}", "you_short": "ti", "search": "Buscar", "search_ph": "Buscar artículo …", "no_hits": "No se encontró nada.", "sort": "Orden", "sort_cat": "Categoría", "sort_store": "Tienda", "sort_alpha": "A–Z", "sort_added": "Añadido", "no_store": "sin tienda", "shared_until": "Compartida hasta {date}", "left_days": "quedan {n} días", "left_hours": "quedan {n} h", "shared_forever": "Compartida hasta que se revoque el enlace", "hello": "Hola {name}"},
-    "it": {"open": "da fare", "done": "fatto", "add": "Aggiungi", "placeholder": "Aggiungi un articolo …", "gone": "Questo link è scaduto o è stato revocato.", "until": "valido fino al", "soft": "segnato da te", "error": "Non ha funzionato – ricarica la pagina.", "name_ask": "Come ti chiami?", "name_help": "Il tuo nome compare con ciò che segni o aggiungi – così si vede da chi arriva. Viene ricordato solo su questo dispositivo.", "name_ph": "Nome", "name_go": "Continua", "name_skip": "continua senza nome", "you": "sei", "anon": "senza nome", "change": "cambia", "offer": "Offerta", "offer_expired": "scaduta", "pw_help": "Questa lista è protetta da password.", "pw_ph": "Password", "pw_wrong": "Password errata – riprova.", "pw_ask": "Inserisci la password", "added_by": "aggiunto da {name}", "you_short": "te", "search": "Cerca", "search_ph": "Cerca articolo …", "no_hits": "Nessun risultato.", "sort": "Ordine", "sort_cat": "Categoria", "sort_store": "Negozio", "sort_alpha": "A–Z", "sort_added": "Aggiunta", "no_store": "senza negozio", "shared_until": "Condivisa fino al {date}", "left_days": "ancora {n} giorni", "left_hours": "ancora {n} h", "shared_forever": "Condivisa finché il link non viene revocato", "hello": "Ciao {name}"},
-    "pl": {"open": "do kupienia", "done": "zrobione", "add": "Dodaj", "placeholder": "Dodaj produkt …", "gone": "Ten link wygasł lub został cofnięty.", "until": "ważny do", "soft": "oznaczone przez ciebie", "error": "Nie udało się – odśwież stronę.", "name_ask": "Jak masz na imię?", "name_help": "Twoje imię pojawi się przy tym, co oznaczysz lub dodasz – widać wtedy, od kogo to jest. Zapamiętywane tylko na tym urządzeniu.", "name_ph": "Imię", "name_go": "Dalej", "name_skip": "dalej bez imienia", "you": "jesteś", "anon": "bez imienia", "change": "zmień", "offer": "Promocja", "offer_expired": "wygasła", "pw_help": "Ta lista jest chroniona hasłem.", "pw_ph": "Hasło", "pw_wrong": "Złe hasło – spróbuj ponownie.", "pw_ask": "Wpisz hasło", "added_by": "dodane przez {name}", "you_short": "ciebie", "search": "Szukaj", "search_ph": "Szukaj produktu …", "no_hits": "Nic nie znaleziono.", "sort": "Sortowanie", "sort_cat": "Kategoria", "sort_store": "Sklep", "sort_alpha": "A–Z", "sort_added": "Dodane", "no_store": "bez sklepu", "shared_until": "Udostępniona do {date}", "left_days": "zostało {n} dni", "left_hours": "zostało {n} godz.", "shared_forever": "Udostępniona do cofnięcia linku", "hello": "Cześć {name}"},
+    "de": {"open": "offen", "done": "erledigt", "add": "Hinzufügen", "placeholder": "Artikel hinzufügen …", "gone": "Dieser Link ist abgelaufen oder wurde widerrufen.", "until": "gültig bis", "soft": "von dir markiert", "error": "Das hat nicht geklappt – bitte neu laden.", "name_ask": "Wie heißt du?", "name_help": "Bitte gib deinen Namen an. Er erscheint bei dem, was du markierst oder hinzufügst – so sieht man, von wem es kommt. Er wird nur auf diesem Gerät gemerkt.", "name_ph": "Vorname", "name_go": "Weiter", "name_skip": "ohne Namen weiter", "you": "du bist", "anon": "ohne Namen", "change": "ändern", "offer": "Angebot", "offer_expired": "abgelaufen", "pw_help": "Diese Liste ist mit einem Passwort geschützt.", "pw_ph": "Passwort", "pw_wrong": "Passwort falsch – bitte noch einmal.", "pw_ask": "Passwort eingeben", "added_by": "von {name} hinzugefügt", "you_short": "dir", "search": "Suchen", "search_ph": "Artikel suchen …", "no_hits": "Nichts gefunden.", "sort": "Sortierung", "sort_cat": "Kategorie", "sort_store": "Markt", "sort_alpha": "A–Z", "sort_added": "Hinzugefügt", "no_store": "ohne Markt", "shared_until": "Geteilt bis {date}", "left_days": "noch {n} Tage", "left_hours": "noch {n} Std.", "shared_forever": "Geteilt, bis der Link widerrufen wird", "hello": "Hallo {name}", "pending": "Wartet auf Freigabe"},
+    "en": {"open": "open", "done": "done", "add": "Add", "placeholder": "Add an item …", "gone": "This link has expired or was revoked.", "until": "valid until", "soft": "marked by you", "error": "That did not work – please reload.", "name_ask": "What's your name?", "name_help": "Please enter your name. It is shown with what you mark or add – so everyone sees who it came from. It is only remembered on this device.", "name_ph": "First name", "name_go": "Continue", "name_skip": "continue without a name", "you": "you are", "anon": "without a name", "change": "change", "offer": "Offer", "offer_expired": "expired", "pw_help": "This list is protected with a password.", "pw_ph": "Password", "pw_wrong": "Wrong password – please try again.", "pw_ask": "Enter password", "added_by": "added by {name}", "you_short": "you", "search": "Search", "search_ph": "Search items …", "no_hits": "Nothing found.", "sort": "Sort", "sort_cat": "Category", "sort_store": "Store", "sort_alpha": "A–Z", "sort_added": "Added", "no_store": "no store", "shared_until": "Shared until {date}", "left_days": "{n} days left", "left_hours": "{n} h left", "shared_forever": "Shared until the link is revoked", "hello": "Hello {name}", "pending": "Waiting for approval"},
+    "fr": {"open": "à faire", "done": "fait", "add": "Ajouter", "placeholder": "Ajouter un article …", "gone": "Ce lien a expiré ou a été révoqué.", "until": "valable jusqu'au", "soft": "marqué par toi", "error": "Ça n'a pas marché – recharge la page.", "name_ask": "Comment t'appelles-tu ?", "name_help": "Ton nom apparaît avec ce que tu coches ou ajoutes – on voit ainsi de qui ça vient. Il n'est retenu que sur cet appareil.", "name_ph": "Prénom", "name_go": "Continuer", "name_skip": "continuer sans nom", "you": "tu es", "anon": "sans nom", "change": "modifier", "offer": "Promo", "offer_expired": "expiré", "pw_help": "Cette liste est protégée par un mot de passe.", "pw_ph": "Mot de passe", "pw_wrong": "Mot de passe incorrect – réessaie.", "pw_ask": "Saisir le mot de passe", "added_by": "ajouté par {name}", "you_short": "toi", "search": "Rechercher", "search_ph": "Rechercher un article …", "no_hits": "Rien trouvé.", "sort": "Tri", "sort_cat": "Catégorie", "sort_store": "Magasin", "sort_alpha": "A–Z", "sort_added": "Ajout", "no_store": "sans magasin", "shared_until": "Partagée jusqu'au {date}", "left_days": "encore {n} jours", "left_hours": "encore {n} h", "shared_forever": "Partagée jusqu'à la révocation du lien", "hello": "Bonjour {name}", "pending": "En attente de validation"},
+    "es": {"open": "pendientes", "done": "hecho", "add": "Añadir", "placeholder": "Añadir artículo …", "gone": "Este enlace ha caducado o se ha revocado.", "until": "válido hasta", "soft": "marcado por ti", "error": "No ha funcionado – recarga la página.", "name_ask": "¿Cómo te llamas?", "name_help": "Tu nombre aparece con lo que marcas o añades – así se ve de quién viene. Solo se guarda en este dispositivo.", "name_ph": "Nombre", "name_go": "Continuar", "name_skip": "continuar sin nombre", "you": "eres", "anon": "sin nombre", "change": "cambiar", "offer": "Oferta", "offer_expired": "caducada", "pw_help": "Esta lista está protegida con contraseña.", "pw_ph": "Contraseña", "pw_wrong": "Contraseña incorrecta – inténtalo de nuevo.", "pw_ask": "Introduce la contraseña", "added_by": "añadido por {name}", "you_short": "ti", "search": "Buscar", "search_ph": "Buscar artículo …", "no_hits": "No se encontró nada.", "sort": "Orden", "sort_cat": "Categoría", "sort_store": "Tienda", "sort_alpha": "A–Z", "sort_added": "Añadido", "no_store": "sin tienda", "shared_until": "Compartida hasta {date}", "left_days": "quedan {n} días", "left_hours": "quedan {n} h", "shared_forever": "Compartida hasta que se revoque el enlace", "hello": "Hola {name}", "pending": "Pendiente de aprobación"},
+    "it": {"open": "da fare", "done": "fatto", "add": "Aggiungi", "placeholder": "Aggiungi un articolo …", "gone": "Questo link è scaduto o è stato revocato.", "until": "valido fino al", "soft": "segnato da te", "error": "Non ha funzionato – ricarica la pagina.", "name_ask": "Come ti chiami?", "name_help": "Il tuo nome compare con ciò che segni o aggiungi – così si vede da chi arriva. Viene ricordato solo su questo dispositivo.", "name_ph": "Nome", "name_go": "Continua", "name_skip": "continua senza nome", "you": "sei", "anon": "senza nome", "change": "cambia", "offer": "Offerta", "offer_expired": "scaduta", "pw_help": "Questa lista è protetta da password.", "pw_ph": "Password", "pw_wrong": "Password errata – riprova.", "pw_ask": "Inserisci la password", "added_by": "aggiunto da {name}", "you_short": "te", "search": "Cerca", "search_ph": "Cerca articolo …", "no_hits": "Nessun risultato.", "sort": "Ordine", "sort_cat": "Categoria", "sort_store": "Negozio", "sort_alpha": "A–Z", "sort_added": "Aggiunta", "no_store": "senza negozio", "shared_until": "Condivisa fino al {date}", "left_days": "ancora {n} giorni", "left_hours": "ancora {n} h", "shared_forever": "Condivisa finché il link non viene revocato", "hello": "Ciao {name}", "pending": "In attesa di approvazione"},
+    "pl": {"open": "do kupienia", "done": "zrobione", "add": "Dodaj", "placeholder": "Dodaj produkt …", "gone": "Ten link wygasł lub został cofnięty.", "until": "ważny do", "soft": "oznaczone przez ciebie", "error": "Nie udało się – odśwież stronę.", "name_ask": "Jak masz na imię?", "name_help": "Twoje imię pojawi się przy tym, co oznaczysz lub dodasz – widać wtedy, od kogo to jest. Zapamiętywane tylko na tym urządzeniu.", "name_ph": "Imię", "name_go": "Dalej", "name_skip": "dalej bez imienia", "you": "jesteś", "anon": "bez imienia", "change": "zmień", "offer": "Promocja", "offer_expired": "wygasła", "pw_help": "Ta lista jest chroniona hasłem.", "pw_ph": "Hasło", "pw_wrong": "Złe hasło – spróbuj ponownie.", "pw_ask": "Wpisz hasło", "added_by": "dodane przez {name}", "you_short": "ciebie", "search": "Szukaj", "search_ph": "Szukaj produktu …", "no_hits": "Nic nie znaleziono.", "sort": "Sortowanie", "sort_cat": "Kategoria", "sort_store": "Sklep", "sort_alpha": "A–Z", "sort_added": "Dodane", "no_store": "bez sklepu", "shared_until": "Udostępniona do {date}", "left_days": "zostało {n} dni", "left_hours": "zostało {n} godz.", "shared_forever": "Udostępniona do cofnięcia linku", "hello": "Cześć {name}", "pending": "Czeka na zatwierdzenie"},
 }
 
 SHARE_PAGE = """<!doctype html><html lang="__LANG__"><head><meta charset="utf-8">
@@ -488,10 +585,14 @@ function getName(){var v=null;try{v=localStorage.getItem(NK)}catch(e){}if(!v){v=
 function setName(v){try{localStorage.setItem(NK,v)}catch(e){}
   document.cookie="smartlists_share_name="+encodeURIComponent(v)+"; Max-Age=34560000; Path="+CP+"; SameSite=Lax"+(location.protocol==="https:"?"; Secure":"")}
 var cur=null;
-/* Passwort (falls der Link eins hat): nur für diese Sitzung gemerkt */
-var PK="smartlists-share-pw:"+token;
-function getPw(){try{return sessionStorage.getItem(PK)||""}catch(e){return ""}}
-function setPw(v){try{sessionStorage.setItem(PK,v)}catch(e){}}
+/* Passwort (falls der Link eins hat): einmal eingeben – danach merkt sich das Gerät einen Zugangsschlüssel (nicht das
+   Passwort), bis der Link abläuft oder widerrufen wird */
+var PK="smartlists-share-pw:"+token,AK="smartlists-share-access:"+token,pwNow="";
+function getPw(){return pwNow}
+function setPw(v){pwNow=v}
+function getAk(){try{return localStorage.getItem(AK)||""}catch(e){return ""}}
+function setAk(v){try{if(v)localStorage.setItem(AK,v);else localStorage.removeItem(AK)}catch(e){}}
+try{sessionStorage.removeItem(PK)}catch(e){}
 function askPw(wrong){
   var inp=el("input",{type:"password",placeholder:T.pw_ph,maxlength:"100","aria-label":T.pw_ask,autocomplete:"current-password"});
   var go=el("button",{type:"button",text:T.name_go});
@@ -501,8 +602,10 @@ function askPw(wrong){
     wrong?el("p",{class:"sub",style:"color:#d93025",text:T.pw_wrong}):el("p",{class:"sub",text:T.pw_help}),el("div",{class:"add"},[inp,go]));
   setTimeout(function(){inp.focus()},30)}
 function call(body){if(body&&!getName()){if(cur)ask(cur);return Promise.reject("name")}if(body)body.name=getName();
-  var hd={"X-Share-Password":getPw()};if(body)hd["Content-Type"]="application/json";
-  return fetch(api,body?{method:"POST",headers:hd,body:JSON.stringify(body)}:{headers:hd}).then(function(r){if(r.status===404)throw "gone";if(r.status===401)throw "password";if(!r.ok)throw "err";return r.json()})}
+  var hd={"X-Share-Password":getPw(),"X-Share-Access":getAk()};if(body)hd["Content-Type"]="application/json";
+  return fetch(api,body?{method:"POST",headers:hd,body:JSON.stringify(body)}:{headers:hd}).then(function(r){
+    if(r.status===404){setAk("");throw "gone"}if(r.status===401){setAk("");throw "password"}if(!r.ok)throw "err";return r.json()})
+    .then(function(d){if(d&&d.access){setAk(d.access);pwNow=""}return d})}
 /* Badges wie in der Karte: Markt gefüllt in Markenfarbe, Person/Schlagwort dezent – mit den Farben des Haushalts */
 var DEF={store:{style:"filled",icon:""},person:{style:"soft",icon:"👤"},tag:{style:"soft",icon:"#"}};
 function hashColor(s){var x=0;s=String(s).toLowerCase();for(var k=0;k<s.length;k++)x=(x*31+s.charCodeAt(k))>>>0;return "hsl("+(x%360)+" 55% 42%)"}
@@ -575,6 +678,9 @@ function draw(d){cur=d;
     var send=function(){var v=inp.value.trim();if(!v)return;call({action:"add",text:v}).then(function(x){inp.value="";draw(x)},function(e){e==="gone"?fail():e==="name"?0:alert(T.error)})};
     inp.addEventListener("keydown",function(e){if(e.key==="Enter")send()});
     kids.push(el("div",{class:"add top-add"},[inp,el("button",{type:"button",text:T.add,onclick:send})]))}
+  if(d.pending&&d.pending.length){kids.push(el("h3",{text:"⏳ "+T.pending+" · "+d.pending.length}));
+    kids.push(el("div",{class:"card"},d.pending.map(function(p){return el("div",{class:"row soft"},[el("span",{class:"nmw"},[el("span",{text:p.text}),
+      el("span",{class:"nt",text:T.added_by.replace("{name}",p.by===getName()?T.you_short:(p.by||"?"))})])])})))}
   if(query&&!open.length&&!done.length)kids.push(el("div",{class:"msg",text:T.no_hits}));
   kids=kids.concat(body);
   if(done.length){kids.push(el("h2",{text:T.done+" · "+done.length}));kids.push(el("div",{class:"card"},done.map(row)))}
@@ -613,6 +719,19 @@ def _page() -> str:
 
 
 SHARE_PAGE = _page()
+
+
+def _script_csp() -> str:
+    """Nur genau das eingebettete Skript der Seite darf laufen (sha256-Hash statt 'unsafe-inline')."""
+    import base64
+    import re
+
+    m = re.search(r"<script>(.*?)</script>", SHARE_PAGE, re.S)
+    digest = base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode() if m else ""
+    return PAGE_CSP.replace("script-src 'unsafe-inline'", f"script-src 'sha256-{digest}'")
+
+
+PAGE_CSP = _script_csp()
 
 
 @callback

@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.9.19";
+const CARD_VERSION = "3.9.20";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -322,6 +322,7 @@ const TEXTS = {
     share_30d: "30 Tage",
     share_forever: "bis zum Widerruf",
     share_create: "Link erstellen",
+    share_approve: "Hinzufügen braucht Freigabe", share_approve_help: "Über den Link Hinzugefügtes erscheint erst nach deinem Okay in der Liste.", pending_title: "Wartet auf Freigabe", pending_ok: "Übernehmen", pending_no: "Verwerfen",
     p_view: "Ansicht", p_columns_sub: "Listen antippen, um sie dazuzunehmen", p_wide_sub: "ganze Bildschirmbreite nutzen", p_order_done: "Reihenfolge fertig", app_install_guide: "Installieren / Anleitung",
     share_password2: "Passwort wiederholen", share_pw_match: "Passwörter stimmen überein", share_pw_mismatch: "Passwörter stimmen nicht überein",
     people_title: "Wer darf was?", people_add: "Person hinzufügen", people_add_btn: "Hinzufügen", people_remove: "Zugriff entfernen", people_none: "Noch niemand außer dir – wer nicht hinzugefügt ist, hat keine Rechte.", people_legend: "Sehen = nur ansehen · Abhaken = ansehen und abhaken · Bearbeiten = auch hinzufügen, ändern, löschen. Wer nicht in der Liste steht, hat keinen Zugriff; Admins dürfen immer alles.",
@@ -580,6 +581,7 @@ const TEXTS = {
     share_30d: "30 days",
     share_forever: "until revoked",
     share_create: "Create link",
+    share_approve: "Additions need approval", share_approve_help: "Items added via the link appear in the list only after your okay.", pending_title: "Waiting for approval", pending_ok: "Accept", pending_no: "Discard",
     p_view: "View", p_columns_sub: "tap lists to add them", p_wide_sub: "use the full screen width", p_order_done: "Done ordering", app_install_guide: "Install / instructions",
     share_password2: "Repeat password", share_pw_match: "Passwords match", share_pw_mismatch: "Passwords do not match",
     people_title: "Who may do what?", people_add: "Add person", people_add_btn: "Add", people_remove: "Remove access", people_none: "Nobody but you yet – whoever is not added has no rights.", people_legend: "View = look only · Check off = view and check off · Edit = also add, change, delete. Whoever is not listed has no access; admins may always do everything.",
@@ -838,6 +840,7 @@ const TEXTS = {
     share_30d: "30 jours",
     share_forever: "jusqu'à révocation",
     share_create: "Créer un lien",
+    share_approve: "Ajouts à valider", share_approve_help: "Les articles ajoutés via le lien n'apparaissent qu'après ton accord.", pending_title: "En attente de validation", pending_ok: "Accepter", pending_no: "Rejeter",
     p_view: "Affichage", p_columns_sub: "touche des listes pour les ajouter", p_wide_sub: "utiliser toute la largeur", p_order_done: "Ordre terminé", app_install_guide: "Installer / instructions",
     share_password2: "Répéter le mot de passe", share_pw_match: "Les mots de passe correspondent", share_pw_mismatch: "Les mots de passe ne correspondent pas",
     people_title: "Qui peut faire quoi ?", people_add: "Ajouter une personne", people_add_btn: "Ajouter", people_remove: "Retirer l'accès", people_none: "Personne d'autre que toi – qui n'est pas ajouté n'a aucun droit.", people_legend: "Voir = consulter · Cocher = voir et cocher · Modifier = aussi ajouter, changer, supprimer. Qui n'est pas listé n'a pas accès ; les admins peuvent toujours tout.",
@@ -1096,6 +1099,7 @@ const TEXTS = {
     share_30d: "30 días",
     share_forever: "hasta revocarlo",
     share_create: "Crear enlace",
+    share_approve: "Añadir requiere aprobación", share_approve_help: "Lo añadido por el enlace aparece en la lista solo tras tu aprobación.", pending_title: "Pendiente de aprobación", pending_ok: "Aceptar", pending_no: "Descartar",
     p_view: "Vista", p_columns_sub: "toca listas para añadirlas", p_wide_sub: "usar todo el ancho", p_order_done: "Orden listo", app_install_guide: "Instalar / instrucciones",
     share_password2: "Repetir contraseña", share_pw_match: "Las contraseñas coinciden", share_pw_mismatch: "Las contraseñas no coinciden",
     people_title: "¿Quién puede hacer qué?", people_add: "Añadir persona", people_add_btn: "Añadir", people_remove: "Quitar acceso", people_none: "Nadie más que tú – quien no esté añadido no tiene permisos.", people_legend: "Ver = solo mirar · Marcar = ver y marcar · Editar = también añadir, cambiar, borrar. Quien no aparece no tiene acceso; los admins siempre pueden todo.",
@@ -1354,6 +1358,7 @@ const TEXTS = {
     share_30d: "30 giorni",
     share_forever: "fino alla revoca",
     share_create: "Crea link",
+    share_approve: "Aggiunte da approvare", share_approve_help: "Gli articoli aggiunti tramite link compaiono nella lista solo dopo il tuo ok.", pending_title: "In attesa di approvazione", pending_ok: "Accetta", pending_no: "Scarta",
     p_view: "Vista", p_columns_sub: "tocca le liste per aggiungerle", p_wide_sub: "usa tutta la larghezza", p_order_done: "Ordine fatto", app_install_guide: "Installa / istruzioni",
     share_password2: "Ripeti password", share_pw_match: "Le password coincidono", share_pw_mismatch: "Le password non coincidono",
     people_title: "Chi può fare cosa?", people_add: "Aggiungi persona", people_add_btn: "Aggiungi", people_remove: "Togli accesso", people_none: "Nessuno oltre a te – chi non è aggiunto non ha permessi.", people_legend: "Vedere = solo guardare · Spuntare = vedere e spuntare · Modificare = anche aggiungere, cambiare, eliminare. Chi non è in elenco non ha accesso; gli admin possono sempre tutto.",
@@ -1612,6 +1617,7 @@ const TEXTS = {
     share_30d: "30 dni",
     share_forever: "do odwołania",
     share_create: "Utwórz link",
+    share_approve: "Dodawanie wymaga zgody", share_approve_help: "Produkty dodane przez link pojawią się na liście dopiero po twojej zgodzie.", pending_title: "Czeka na zatwierdzenie", pending_ok: "Przyjmij", pending_no: "Odrzuć",
     p_view: "Widok", p_columns_sub: "dotknij listy, aby je dodać", p_wide_sub: "cała szerokość ekranu", p_order_done: "Kolejność gotowa", app_install_guide: "Zainstaluj / instrukcja",
     share_password2: "Powtórz hasło", share_pw_match: "Hasła są zgodne", share_pw_mismatch: "Hasła nie są zgodne",
     people_title: "Kto może co?", people_add: "Dodaj osobę", people_add_btn: "Dodaj", people_remove: "Usuń dostęp", people_none: "Na razie tylko ty – kto nie jest dodany, nie ma uprawnień.", people_legend: "Podgląd = tylko oglądanie · Odhaczanie = podgląd i odhaczanie · Edycja = także dodawanie, zmiany, usuwanie. Kogo nie ma na liście, nie ma dostępu; admini mogą zawsze wszystko.",
@@ -2387,6 +2393,9 @@ const STYLE = `
   .sharegrid .srow2 > input { flex:1 1 160px; max-width:100%; }
   .qrbox { width:170px; height:170px; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:8px; box-sizing:border-box; }
   .qrbox svg { width:100%; height:100%; } .qrbox .qrph { font-size:2rem; opacity:.35; } .qrbox small { color:#777; font-size:.72rem; text-align:center; }
+  .pendbox { margin:4px 12px 8px; padding:6px 10px; border-radius:10px; background:color-mix(in srgb, var(--warning-color,#ff9800) 12%, transparent); }
+  .pendrow { display:flex; align-items:center; gap:6px; padding:5px 0; } .pendrow .pt { flex:1; min-width:0; }
+  .pendrow small { display:block; color:var(--secondary-text-color); font-size:.74rem; } .pendrow .btn2 { height:30px; padding:0 12px; }
   .prow { display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--divider-color,#e0e0e0); flex-wrap:wrap; }
   .prow .pn { flex:1 1 100px; min-width:0; } .prow .pn small { display:block; color:var(--secondary-text-color); font-size:.72rem; }
   .pctl { display:flex; align-items:center; gap:2px; flex:none; margin-left:auto; } .prow .seg button { padding:4px 9px; }
@@ -4156,6 +4165,18 @@ class SmartListsCard extends HTMLElement {
     const done = visible.filter((i) => i.checked);
     const out = [];
     if (this._sel) out.push(this._selBar(d, visible));
+    // über einen Link hinzugefügt, wartet auf Freigabe: ✓ übernehmen / ✕ verwerfen
+    if (d.pending && d.pending.length) {
+      const decide = async (pid, approve) => {
+        try { await this._call("share_pending", { pending_id: pid, approve }); } catch (err) { this._error = (err && err.message) || t.error; }
+        this._load();
+      };
+      out.push(h("div", { class: "pendbox" }, h("div", { class: "group-title" }, `⏳ ${t.pending_title} · ${d.pending.length}`),
+        d.pending.map((pi) => h("div", { class: "pendrow" },
+          h("span", { class: "pt" }, pi.text, h("small", {}, `🔗 ${pi.by || "?"}`)),
+          h("button", { class: "btn2 primary", type: "button", title: t.pending_ok, "aria-label": `${t.pending_ok}: ${pi.text}`, onclick: () => decide(pi.id, true) }, "✓"),
+          h("button", { class: "btn2", type: "button", title: t.pending_no, "aria-label": `${t.pending_no}: ${pi.text}`, onclick: () => decide(pi.id, false) }, "✕")))));
+    }
     const mode = this._noCats && this._sortMode === "category" ? "added" : this._sortMode;
     const byName = (a, b) => a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
     const rows = [];
@@ -6175,6 +6196,7 @@ class SmartListsCard extends HTMLElement {
     const d = this._data;
     const status = h("span", { class: "ok2" });
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    let approve = false;
     let check = "off", add = false, notes = false, password = "", password2 = "", hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
     let url = null, lastId = null;
     const lang = this._hass.language;
@@ -6214,7 +6236,8 @@ class SmartListsCard extends HTMLElement {
       fill(body,
         h("div", { class: "sharegrid" }, qr, h("div", {},
           this._setRow(t.share_mode, seg(check, checkOpts, (v) => { check = v; url = null; draw(); }), check === "soft" ? t.share_mode_help : null),
-          this._setRow(t.share_add, this._switch(add, (v) => { add = v; url = null; }, t.share_add), mayAdd ? null : t.share_add_locked),
+          this._setRow(t.share_add, this._switch(add, (v) => { add = v; url = null; draw(); }, t.share_add), mayAdd ? null : t.share_add_locked),
+          add ? this._setRow(t.share_approve, this._switch(approve, (v) => { approve = v; url = null; }, t.share_approve), t.share_approve_help) : null,
           this._setRow(t.share_notes, this._switch(notes, (v) => { notes = v; url = null; }, t.share_notes), t.share_notes_help),
           this._setRow(t.share_password, h("input", { class: "search2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
             placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } }), t.share_password_help),
@@ -6249,7 +6272,7 @@ class SmartListsCard extends HTMLElement {
     const create = async () => {
       if (!pwOk()) { status.textContent = "✗ " + t.share_pw_mismatch; return; }
       try {
-        const r = await this._call("share_create", { check, add, hours, notes, password: password || null });
+        const r = await this._call("share_create", { check, add, hours, notes, approve: add && approve, password: password || null });
         url = (r.base || base()) + r.path;
         lastId = r.id;
         password = ""; password2 = "";

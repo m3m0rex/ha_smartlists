@@ -3,6 +3,25 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.9.20] – 2026-11-15
+
+### Added
+
+- **"Additions need approval"** (optional per link, when *May add items* is on): items added via the link wait in
+  a box "⏳ Waiting for approval" at the top of your list with ✓ accept / ✕ discard; only accepted items land in the
+  list (marked "🔗 added by Max"). Visitors see their own suggestions as "waiting for approval" on the shared page.
+
+### Security
+
+- **Share link passwords: lockout after 10 wrong attempts** within 15 minutes – the link answers "too many" for
+  15 minutes (on top of the existing slowdown). Guessing a password by brute force is no longer practical.
+- **Password check no longer blocks Home Assistant:** the PBKDF2 check runs in a background thread, and a correct
+  password is remembered for 10 minutes so the page's refresh every 20 s does not recompute it each time.
+- **Password needed only once per device:** after the right password the device keeps an access key (not the
+  password) until the link expires or is revoked – no more asking again in every new tab or after a restart.
+- **Stricter Content-Security-Policy on the shared page:** only the page's own script may run (sha256 hash instead of
+  `'unsafe-inline'`), so even injected markup could not execute code.
+
 ## [3.9.19] – 2026-11-15
 
 ### Changed

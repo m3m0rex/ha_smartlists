@@ -183,7 +183,8 @@ layout: columns
 - **Shopping mode** (cart icon): screen stays on, checked items are hidden, large rows (or the normal size –
   *For me → Shopping and scanning → Large rows*). **Tap anywhere on a row to check it off**, not only the
   box. Editing is locked so a slip cannot rename anything: no item menu, no edit, no quantity stepper, no
-  dragging. Every check-off shows an **Undo** bar at the bottom for 3 seconds; ↶ in the header undoes the last
+  dragging. Optionally **long press deletes** (*For me → Shopping and scanning → Long press deletes*), also with an
+  undo bar. Every check-off shows an **Undo** bar at the bottom for 3 seconds; ↶ in the header undoes the last
   change as well. A bar shows **All | REWE · 4 | Lidl · 2 …** – tap a store
   to see only its items. If stores are linked to zones (*General settings → Global → Stores & zones*), the store
   whose zone you are in is selected automatically. Items without `@store` are shown as well (on by

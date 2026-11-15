@@ -15,9 +15,18 @@ plan is also the calendar **SmartLists Meal plan** in Home Assistant.
 
 Toolbar buttons:
 
-- **📲 Save as app** – puts a **SmartLists icon on the phone's home screen** that opens one list directly
-  (optionally straight in **shopping mode**), full screen like an app – no extra app to install. Pick the list,
-  then follow the steps shown: Android/Chrome *⋮ → Add to Home screen / Install app* (or the *Install* button),
+The toolbar is kept short so it fits on phones: **☰ SmartLists ＋ ◫ 📊 ⚙** (📊 only if *Statistics and
+expenses* is switched on).
+
+- **◫ View** – a small menu:
+  - *Several lists side by side* – tap as many lists as you like; they appear in columns (up to 3, or 4 in wide
+    layout, more wrap into further rows). Drag items between them with the mouse (Ctrl = copy).
+  - *Wide layout* – use the full screen width.
+  - *Change order of the lists* – ◀ ▶ on each chip moves a list; with the mouse you can also drag a chip onto
+    another. The order applies to the chips and the columns and is remembered per browser.
+- **📲 Save as app** – in the **gear of a list** (*Install / instructions*). Puts a **SmartLists icon on the phone's
+  home screen** that opens that list directly (optionally straight in **shopping mode**), full screen like an app – no
+  extra app to install. Follow the steps shown: Android/Chrome *⋮ → Add to Home screen / Install app* (or the *Install* button),
   iPhone/Safari *Share → Add to Home Screen*. Several icons for different lists are possible. The button is
   hidden inside the Home Assistant companion app and when the page already runs as an app. Behind it: on this
   page SmartLists points the browser to its own web-app manifest (`/smartlists?app=1&list=…&shopping=1`); on
@@ -25,11 +34,6 @@ Toolbar buttons:
   browser.
 - **+** – create an own list (you are the owner, see [[Own lists and sharing]]). Lists that are not
   shared with you are not shown.
-- **Side by side** – tap as many lists as you like; they appear in columns (up to 3, or 4 in wide layout,
-  more wrap into further rows). Drag items between them with the mouse (Ctrl = copy).
-- **Order** (⇅) – ◀ ▶ on each chip moves a list; with the mouse you can also drag a chip onto another.
-  The order applies to the chips and the columns and is remembered per browser.
-- **Wide** – use the full screen width.
 - **⚙ Settings** – the general settings (each list's own settings are in the gear of its card): *For me* (your controls), *Global* (naming
   convention, remembered categories, voice & automations, connected devices, backup, controls for
   everyone – admins) and *This list* (sharing, details).

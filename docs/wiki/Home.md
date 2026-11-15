@@ -13,8 +13,10 @@ real `todo.*` entity, so the companion app's To-do list widget can show it – s
 
 **New in 3.9:** share links through a Quick Tunnel or your own proxy (your HA address stays private), optional
 extras (notes, meal plan), tap the whole row in shopping mode with 3 s undo, app icon for the home screen,
-suggestions per list, **plain lists** that remember nothing, categories off per list, and app lists to take over
-under *Repairs*. See the [changelog](https://github.com/m3m0rex/ha_smartlists/blob/main/CHANGELOG.md).
+suggestions per list, **plain lists** that remember nothing, categories off per list, app lists to take over
+under *Repairs*, offline shopping, Template widget text, Cloudflare Tunnel with a fixed address, a new share window
+with password, notes and "Who may do what?", a shared page with search, sorting and offers, long press deletes in
+shopping mode, statistics reset, a dashboard with one sub-page per list and a tidier toolbar. See the [changelog](https://github.com/m3m0rex/ha_smartlists/blob/main/CHANGELOG.md).
 
 > ℹ️ **The HA SmartLists Android app is not published yet.** SmartLists works fully without it (Home Assistant,
 > card, sidebar page, official Home Assistant app and widgets). Pages and sections about the app – pairing,

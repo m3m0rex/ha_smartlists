@@ -43,13 +43,17 @@ dashboards, with voice assistants, in automations and in the HA SmartLists app.
 | ⌨️ **One input field** | Quantity, unit, price, store, person and tag are recognised while typing – by default `@store`, `*person`, `#tag`; the characters can be changed or switched off (naming convention). Suggestions and "bought often" per list. |
 | 🗂️ **Categories** | Sorted like in the store – keyword packs in 6 languages, remembered corrections, aisle order per store; can be switched off per list. |
 | 🛒 **Shopping mode** | Large rows (optional), tap the whole row to check off with a 3-second undo, store bar, store picked by zone. |
-| 🔗 **Share** | With people in Home Assistant or via **link / QR code** – optionally through a Quick Tunnel or your own proxy, so your HA address stays private. |
+| 🔗 **Share** | With people in Home Assistant ("Who may do what?") or via **link / QR code** – optional password, notes on/off, through a Cloudflare Tunnel or your own proxy so your HA address stays private. |
 | 📲 **As an app** | Save the sidebar page as an icon on the phone's home screen – opens a list straight in shopping mode. |
 
 **New in 3.9:** share links via Cloudflare Quick Tunnel or your own proxy · notes and meal plan as optional
 *Extras* · shopping mode: tap the whole row, 3-second undo · app icon for the home screen · suggestions and
 "bought often" per list · **plain lists** that remember nothing (e.g. hardware store) · categories off per list ·
-app lists not yet taken over show up under *Repairs* · *Configure* of the integration links to the settings page.
+app lists not yet taken over show up under *Repairs* · *Configure* of the integration links to the settings page ·
+**offline shopping** with later sync · formatted text for the Android **Template widget** · Cloudflare Tunnel with a
+**fixed address** · new **share window** with optional **password**, notes and "Who may do what?" · shared page with
+search, sorting, offers and "shared until" · **long press deletes** in shopping mode (optional) · reset/bulk-delete
+statistics and expenses · shopping **dashboard with one sub-page per list** · tidier toolbar with a **View** menu.
 
 ## Features
 
@@ -99,13 +103,17 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 - **Select several items** to move, copy, check off or delete them at once; prices typed into the item
   text (`Milk 2 l 1,19€ @REWE`) are recognised.
 - **Meal plan** (optional, *Settings → Global → Extras*; also as a tab on the sidebar page) with a calendar entity and optional **Mealie** import, **history per item**, a one-click
-  **shopping dashboard**, **diagnostics** download and hints under **Repairs**.
+  **shopping dashboard** (one sub-page per list), **diagnostics** download and hints under **Repairs**.
 - **Sharing:** with people in Home Assistant (view, check off, edit) or **via link / QR code** – only this list,
   limited in time, revocable. Links can go through a **Cloudflare Quick Tunnel, a Cloudflare Tunnel with a fixed address on your own domain or
   your own proxy** instead of
   your Home Assistant address, so nobody you share with learns that address – see the
   [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers#share-without-revealing-your-home-assistant-address).
-  Tap 👥 *shared* in a list's header to see who it is shared with:
+  The share window (gear of the list) has the QR code, *May check off: No · Yes · Soft*, *May add items*, *Show notes*,
+  an optional **password** (entered twice) and the validity, plus **"Who may do what?"** for people in Home Assistant
+  (only people you add get access). People opening a link enter their name once, so your list shows "marked by Max
+  (link)"; the shared page has search, sorting, offers and shows how long it is still shared. While a link is active
+  the header shows 🌐 *shared on the web*; tap 👥 *shared* to see who it is shared with:
 
   <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Share window with QR code, permissions and expiry" width="620">
 
@@ -143,14 +151,13 @@ page and the HA SmartLists app.
 
 After setup there is a **SmartLists** entry in the HA sidebar: all to-do lists (combined lists first)
 as tabs, each shown like the card (badges, categories, stepper, search, shopping mode) – no dashboard
-needed. The toolbar switches between **one list** and **several lists side by side** (any number, wrapping
-into rows; order adjustable) and between
-normal and **wide** layout; with several lists you can **drag items** from one list to another with the
+needed. The toolbar is kept short (☰ ＋ ◫ 📊 ⚙): **◫ View** switches between **one list** and **several lists side
+by side** (any number, wrapping into rows), turns on the **wide** layout and changes the order of the lists; with several lists you can **drag items** from one list to another with the
 mouse (Ctrl = copy). Home Assistant's built-in to-do page shows items as plain text only
 ("Milch 2 l @REWE"). Hide the entry like any other via *Edit sidebar*.
 
-📲 **As an app on the home screen, without installing anything:** the phone button in the toolbar saves an
-icon that opens a list directly – optionally straight in shopping mode, full screen (*Install* in Chrome,
+📲 **As an app on the home screen, without installing anything:** in the gear of a list, *Install / instructions*
+saves an icon that opens that list directly – optionally straight in shopping mode, full screen (*Install* in Chrome,
 *Share → Add to Home Screen* in Safari). See the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Sidebar-page).
 
 <table>

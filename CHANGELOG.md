@@ -3,6 +3,33 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.9.19] – 2026-11-15
+
+### Changed
+
+- **"Who may do what?"** replaces the long list of people in the share window: only people with access are listed,
+  each with *View · Check off · Edit* and ✕ to remove access; *＋ Add person* picks from everyone else. Whoever is not
+  added has no rights; owner and admins are shown with "all rights".
+- Shared page: **footer shows how long the list is still shared** ("Shared until 26.11.2026, 14:33 (10 days left)"
+  or "until the link is revoked") and a **sort** choice next to the search: category (store order), store, A–Z or as
+  added – remembered on that device.
+- Share window: the row is now called **"May check off: No · Yes · Soft"**.
+- **Tidier toolbar on the SmartLists page** (fits on phones): ☰ SmartLists ＋ ◫ 📊 ⚙. **◫ View** opens a small menu
+  with switches *Several lists side by side* and *Wide layout* and *Change order of the lists*. **📲 Save as app**
+  moved into the settings of a list (gear of the list → *Install / instructions*), since the icon always opens that list.
+- Shared page greets by name ("Hello Anna · change") instead of "you are Anna".
+- Shared page: sorting is a round button with a small menu (✓ at the current choice) instead of a select box.
+- Share link password has to be **entered twice**; "✓ Passwords match" / "✗ do not match" is shown and the link can
+  only be created when both are the same.
+
+## [3.9.18] – 2026-11-15
+
+### Fixed
+
+- Share window in the list settings: in the narrow column the password field squeezed its label into one letter
+  per line. The settings now move below the QR code when there is not enough room, and long labels wrap normally.
+- Share help text no longer says "without notes" – notes can be allowed per link since 3.9.17.
+
 ## [3.9.17] – 2026-11-15
 
 ### Added

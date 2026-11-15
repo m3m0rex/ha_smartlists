@@ -43,7 +43,7 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
 | ⌨️ **Ein Eingabefeld** | Menge, Einheit, Preis, Markt, Person und Schlagwort werden beim Tippen erkannt – standardmäßig `@Markt`, `*Person`, `#Schlagwort`; die Zeichen lassen sich ändern oder abschalten (Namenskonvention). Vorschläge und „häufig gekauft“ je Liste. |
 | 🗂️ **Kategorien** | Sortiert wie im Laden – Wortlisten in 6 Sprachen, gemerkte Korrekturen, Gang-Reihenfolge je Markt; je Liste abschaltbar. |
 | 🛒 **Einkaufsmodus** | Große Zeilen (wählbar), ganze Zeile antippen zum Abhaken mit 3 s Rückgängig, Markt-Leiste, Markt per Zone. |
-| 🔗 **Teilen** | Mit Personen in Home Assistant oder per **Link / QR-Code** – auf Wunsch über Quick Tunnel oder eigenen Proxy, damit deine HA-Adresse privat bleibt. |
+| 🔗 **Teilen** | Mit Personen in Home Assistant („Wer darf was?“) oder per **Link / QR-Code** – optional mit Passwort und Notizen, über Cloudflare-Tunnel oder eigenen Proxy, damit deine HA-Adresse privat bleibt. |
 | 📲 **Als App** | Die SmartLists-Seite als Symbol auf den Startbildschirm legen – öffnet eine Liste direkt im Einkaufsmodus. |
 
 ## Funktionen
@@ -70,7 +70,7 @@ To-do-Ansicht, auf Dashboards, mit Sprachassistenten, in Automationen und auch i
 
 ## Gemeinsames Gedächtnis
 
-Neu in 3.9: Teilen-Links über Cloudflare Quick Tunnel oder eigenen Proxy (deine HA-Adresse bleibt privat), Notizen und Wochenplan als optionale *Extras*, im Einkaufsmodus die ganze Zeile antippen (3 s Rückgängig), App-Symbol für den Startbildschirm, Vorschläge und „häufig gekauft“ je Liste, **einfache Listen** ohne Gedächtnis (z. B. Baumarkt), Kategorien je Liste abschaltbar, noch nicht übernommene App-Listen unter *Reparaturen*.
+Neu in 3.9: Teilen-Links über Cloudflare Quick Tunnel oder eigenen Proxy (deine HA-Adresse bleibt privat), Notizen und Wochenplan als optionale *Extras*, im Einkaufsmodus die ganze Zeile antippen (3 s Rückgängig), App-Symbol für den Startbildschirm, Vorschläge und „häufig gekauft“ je Liste, **einfache Listen** ohne Gedächtnis (z. B. Baumarkt), Kategorien je Liste abschaltbar, noch nicht übernommene App-Listen unter *Reparaturen*, **Offline-Einkauf** mit späterem Abgleich, fertig gestalteter Text fürs Android-**Template-Widget**, Cloudflare-Tunnel mit **fester Adresse**, neues **Teilen-Fenster** mit optionalem **Passwort**, Notizen und „Wer darf was?“, geteilte Seite mit Suche, Sortierung, Angeboten und „geteilt bis“, im Einkaufsmodus optional **lange drücken = löschen**, Statistik und Buchungen zurücksetzen bzw. mehrere löschen, Einkaufs-**Dashboard mit Unterseite je Liste**, aufgeräumte Leiste mit Menü **Ansicht**.
 
 Neu in 3.5: vorhandene To-do-Listen (Einkaufsliste, Local To-do …) mit allen Artikeln in eigene SmartLists-Listen übernehmen – einzeln oder zusammen; die alten Listen bleiben unverändert, löschen kannst du sie danach selbst.
 
@@ -105,7 +105,12 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
   befristet, jederzeit zurückziehbar. Links laufen auf Wunsch über einen **Cloudflare Quick Tunnel, einen Cloudflare
   Tunnel mit fester Adresse auf deiner eigenen Domain oder einen eigenen Proxy** statt über die Adresse deines Home Assistant – wer den Link bekommt, erfährt sie nicht (siehe
   [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers#share-without-revealing-your-home-assistant-address)).
-  👥 *geteilt* im Kopf einer Liste antippen zeigt, mit wem sie geteilt ist:
+  Das Teilen-Fenster (Zahnrad der Liste) hat QR-Code, *Darf abhaken: Nein · Ja · Soft*, *Darf hinzufügen*, *Notizen
+  zeigen*, ein optionales **Passwort** (zweimal eingeben) und die Gültigkeit, dazu **„Wer darf was?“** für Personen in
+  Home Assistant (nur wer hinzugefügt ist, hat Zugriff). Wer einen Link öffnet, gibt einmal seinen Namen an – in deiner
+  Liste steht dann „von Max markiert (Link)“; die geteilte Seite hat Suche, Sortierung, Angebote und zeigt, wie lange
+  sie noch geteilt ist. Solange ein Link gilt, steht im Kopf 🌐 *im Internet geteilt*; 👥 *geteilt* antippen zeigt, mit
+  wem sie geteilt ist:
 
   <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Teilen-Fenster mit QR-Code, Rechten und Gültigkeit" width="620">
 
@@ -142,12 +147,12 @@ Seite und in der HA-SmartLists-App.
 
 Nach dem Einrichten gibt es links in HA den Eintrag **SmartLists**: alle To-do-Listen (kombinierte
 zuerst) als Reiter, jede wie in der Karte (Badges, Kategorien, Stepper, Suche, Einkaufsmodus) – ohne
-Dashboard. Oben rechts schaltest du zwischen **einer Liste** und **mehreren nebeneinander** (beliebig viele, mit Umbruch; Reihenfolge änderbar) sowie
-zwischen normaler und **breiter** Ansicht; bei mehreren Listen ziehst du Artikel mit der Maus in eine
+Dashboard. Die Leiste oben ist kurz (☰ ＋ ◫ 📊 ⚙): **◫ Ansicht** schaltet zwischen **einer Liste** und **mehreren
+nebeneinander** (beliebig viele, mit Umbruch), auf **breite** Ansicht und ändert die Reihenfolge der Listen; bei mehreren Listen ziehst du Artikel mit der Maus in eine
 andere Liste (Strg = kopieren). Die eingebaute To-do-Seite von HA zeigt Artikel nur als Text.
 
-📲 **Als App auf dem Startbildschirm, ohne etwas zu installieren:** der Handy-Knopf oben speichert ein Symbol,
-das eine Liste direkt öffnet – auf Wunsch gleich im Einkaufsmodus, im Vollbild (*Installieren* in Chrome,
+📲 **Als App auf dem Startbildschirm, ohne etwas zu installieren:** im Zahnrad einer Liste speichert *Installieren /
+Anleitung* ein Symbol, das genau diese Liste öffnet – auf Wunsch gleich im Einkaufsmodus, im Vollbild (*Installieren* in Chrome,
 *Teilen → Zum Home-Bildschirm* in Safari). Siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Sidebar-page).
 
 <table>

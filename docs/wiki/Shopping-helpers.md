@@ -41,22 +41,31 @@ under *General settings → Global → Sharing and permissions*: admins only, ad
 may allow at most, the longest validity for users without admin rights, and sees – and can revoke – the
 active links of all lists.
 
-- Options when creating – **allowed**: *view only* (default), *“soft” check* (the person can mark items; you see
-  "✓ marked from outside" but the item stays open until you check it off), *“soft” check and add*, or *check off
-  and add*; **valid** for 2 hours, 1 day, 7 days, 30 days or until revoked. Items added via a link are marked
+- **The share window:** QR code on the left (after creating), on the right **May check off: No · Yes · Soft**
+  (*soft*: the person can mark items; you see "✓ marked by Max (link)" but the item stays open until you check it
+  off), **May add items**, **Show notes** (notes of the items appear on the shared page; offers always do), an
+  optional **password** (entered twice; stored only as a PBKDF2 hash, wrong attempts are slowed down) and **valid**
+  for 2 hours, 1 day, 7 days, 30 days or until revoked. Below: the link with *Copy*, *Share*, *Revoke*, the active
+  links, and for own lists **"Who may do what?"** – only people you add have access (*view · check off · edit*,
+  ✕ removes access); owner and admins always have all rights. Items added via a link are marked
   **🔗 added via link** in your list. Admins set the highest level allowed for users without admin rights
   (*Sharing and permissions → A link may at most*).
 - People opening a link that allows checking off or adding have to enter their **first name** first (required,
   remembered long-term on their device – browser storage plus a cookie for the share pages only, about 400 days;
   changeable on the page). It shows in your list as "marked by Max (link)" / "added by Max via link" and in the item
   history, so you can tell several friends with the same link apart.
+- **The shared page** greets the person by name ("Hello Anna · change"), has the add field at the top, a 🔍 search,
+  a sort menu (*category · store · A–Z · added*, remembered on that device), shows offers (store, price, valid until),
+  "🔗 added by Max", and in the footer how long the list is still shared ("Shared until … (10 days left)"). It does
+  not reload while someone is typing.
 - As long as a link is valid, the list header shows **🌐 shared on the web** (tap it to see or revoke the links).
 - You get the link and a **QR code** once; copy or share it. The list shows active links with expiry
   and how often they were opened; **revoke** any time.
 - **Security:** the link contains a random 256-bit key; only its SHA-256 hash is stored, so even
   someone reading `.storage` cannot rebuild a link. Without login only two addresses are reachable
   (`/smartlists-share/<key>` and `/api/smartlists/share/<key>`); they return the list name and the
-  items with checkmarks – no notes, no prices, no entities, no users, nothing else from Home Assistant. Since
+  items with checkmarks – no notes (unless allowed for the link), no remembered prices, no entities, no users, nothing
+  else from Home Assistant. Since
   3.9.9 the page shows the items like the card: name, quantity, store/person/tag badges in your colours and
   category groups in store order.
   Writing is limited (30 actions per minute, 120 characters), wrong keys are answered slowly, the page
@@ -169,8 +178,9 @@ The product name comes from SmartLists' own memory or a lookup service (only the
 4 days"), *not bought for a while* (with ＋ to put it back on the list), shares per category and store.
 **Bought means checked off** (since 3.9.11) – items that were only put on the list do not count; checking off and
 reopening right away (mistap, undo) does not count either. Check-offs from the item history are added once after the
-update. Admins can remove wrong items (×) from the
-history, and single expense bookings can be deleted under *Bookings* (admins all, others their own).
+update. Admins can remove wrong items (×) from the history, **tick several and remove them** or **reset the statistics**
+completely (purchases and rhythm – suggestions while typing stay). Under *Bookings* single, **selected** or **all**
+expense bookings can be deleted (admins all, others their own).
 
 ## Meal plan
 
@@ -197,5 +207,7 @@ list are kept.
 ## Shopping dashboard
 
 *General settings → Global → Voice, backup, defaults → Create dashboard* adds a dashboard *Shopping
-dashboard* to the sidebar with all lists, the meal plan calendar and statistics. It is a normal dashboard
+dashboard* to the sidebar with **one sub-page per list** (its own address, e.g. `/smartlists-shopping/einkauf`;
+combined lists first, more than 12 lists share a page "More"), plus the meal plan calendar and statistics if they
+are switched on. Creating it again updates it (and replaces your own changes to it). It is a normal dashboard
 afterwards – edit or delete it like any other.

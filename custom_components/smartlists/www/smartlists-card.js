@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.9.17";
+const CARD_VERSION = "3.9.19";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -312,7 +312,7 @@ const TEXTS = {
     share_view: "nur ansehen",
     share_soft: "„soft“ abhaken (bleibt offen)",
     share_check: "richtig abhaken",
-    share_mode: "Erlaubt",
+    share_mode: "Darf abhaken",
     share_mode_help: "„soft“: Du siehst, was markiert wurde – der Artikel bleibt in deiner Liste offen. Was über den Link hinzukommt, ist in deiner Liste mit 🔗 markiert.",
     share_add: "Darf hinzufügen",
     share_valid: "Gültig",
@@ -322,6 +322,9 @@ const TEXTS = {
     share_30d: "30 Tage",
     share_forever: "bis zum Widerruf",
     share_create: "Link erstellen",
+    p_view: "Ansicht", p_columns_sub: "Listen antippen, um sie dazuzunehmen", p_wide_sub: "ganze Bildschirmbreite nutzen", p_order_done: "Reihenfolge fertig", app_install_guide: "Installieren / Anleitung",
+    share_password2: "Passwort wiederholen", share_pw_match: "Passwörter stimmen überein", share_pw_mismatch: "Passwörter stimmen nicht überein",
+    people_title: "Wer darf was?", people_add: "Person hinzufügen", people_add_btn: "Hinzufügen", people_remove: "Zugriff entfernen", people_none: "Noch niemand außer dir – wer nicht hinzugefügt ist, hat keine Rechte.", people_legend: "Sehen = nur ansehen · Abhaken = ansehen und abhaken · Bearbeiten = auch hinzufügen, ändern, löschen. Wer nicht in der Liste steht, hat keinen Zugriff; Admins dürfen immer alles.",
     shop_longpress_delete: "Lange drücken löscht", shop_longpress_delete_help: "Im Einkaufsmodus einen Artikel lange drücken, um ihn zu löschen (Rückgängig unten).",
     share_title: "Teilen „{name}“", share_seg_no: "Nein", share_seg_yes: "Ja", share_seg_soft: "Soft", share_notes: "Notizen zeigen", share_notes_help: "Die Notiz eines Artikels erscheint auf der geteilten Seite (Angebote immer).", share_password: "Passwort", share_password_ph: "optional", share_password_help: "Wer den Link öffnet, muss es eingeben. Wird nur verschlüsselt gespeichert.", share_qr_hint: "QR-Code erscheint nach dem Erstellen", share_add_locked: "nur mit „Ja“ oder „Soft“ (Grenze des Admins)", share_people: "Personen in Home Assistant", share_in_ha: "in Home Assistant", share_people_moved: "Personen und Rechte stehen im Teilen-Fenster.",
     stats_reset: "Statistik zurücksetzen", stats_reset_sel: "Ausgewählte aus der Statistik nehmen", stats_reset_all_q: "Alle Käufe und den Kaufrhythmus vergessen? Vorschläge beim Tippen bleiben erhalten. Ausgaben sind davon getrennt.", stats_reset_sel_q: "{n} Artikel aus der Statistik nehmen (Käufe und Rhythmus)?", exp_delete_sel: "Ausgewählte löschen", exp_delete_all: "Alle Buchungen löschen", exp_delete_mine: "Alle meine Buchungen löschen", exp_delete_sel_q: "{n} Buchungen löschen?", exp_delete_all_q: "Alle Buchungen löschen? Die Ausgaben-Übersicht beginnt dann bei 0.",
@@ -348,7 +351,7 @@ const TEXTS = {
     share_copy: "Link kopieren",
     share_send: "Teilen …",
     share: "Teilen per Link",
-    share_help: "Für Personen ohne Home-Assistant-Konto. Sie sehen nur diese Liste (ohne Notizen) – sonst nichts aus Home Assistant. Standard: nur ansehen.",
+    share_help: "Für Personen ohne Home-Assistant-Konto. Sie sehen nur diese Liste (Notizen nur, wenn du sie freigibst) – sonst nichts aus Home Assistant. Standard: nur ansehen.",
     barcode_lookup: "Strichcodes online nachschlagen",
     barcode_lookup_help: "Open Food Facts, es wird nur die Nummer gesendet. Aus: nur schon bekannte Codes.",
     tab_stats: "Statistik",
@@ -567,7 +570,7 @@ const TEXTS = {
     share_view: "view only",
     share_soft: "“soft” check (stays open)",
     share_check: "really check off",
-    share_mode: "Allowed",
+    share_mode: "May check off",
     share_mode_help: "“soft”: you see what was marked – the item stays open in your list. Items added via the link are marked with 🔗 in your list.",
     share_add: "May add",
     share_valid: "Valid",
@@ -577,6 +580,9 @@ const TEXTS = {
     share_30d: "30 days",
     share_forever: "until revoked",
     share_create: "Create link",
+    p_view: "View", p_columns_sub: "tap lists to add them", p_wide_sub: "use the full screen width", p_order_done: "Done ordering", app_install_guide: "Install / instructions",
+    share_password2: "Repeat password", share_pw_match: "Passwords match", share_pw_mismatch: "Passwords do not match",
+    people_title: "Who may do what?", people_add: "Add person", people_add_btn: "Add", people_remove: "Remove access", people_none: "Nobody but you yet – whoever is not added has no rights.", people_legend: "View = look only · Check off = view and check off · Edit = also add, change, delete. Whoever is not listed has no access; admins may always do everything.",
     shop_longpress_delete: "Long press deletes", shop_longpress_delete_help: "In shopping mode, long-press an item to delete it (undo at the bottom).",
     share_title: "Share “{name}”", share_seg_no: "No", share_seg_yes: "Yes", share_seg_soft: "Soft", share_notes: "Show notes", share_notes_help: "An item's note appears on the shared page (offers always do).", share_password: "Password", share_password_ph: "optional", share_password_help: "Whoever opens the link has to enter it. Stored only as a hash.", share_qr_hint: "QR code appears after creating", share_add_locked: "only with “Yes” or “Soft” (admin limit)", share_people: "People in Home Assistant", share_in_ha: "in Home Assistant", share_people_moved: "People and permissions are in the share window.",
     stats_reset: "Reset statistics", stats_reset_sel: "Remove selected from statistics", stats_reset_all_q: "Forget all purchases and buying rhythms? Suggestions while typing stay. Expenses are separate.", stats_reset_sel_q: "Remove {n} items from the statistics (purchases and rhythm)?", exp_delete_sel: "Delete selected", exp_delete_all: "Delete all bookings", exp_delete_mine: "Delete all my bookings", exp_delete_sel_q: "Delete {n} bookings?", exp_delete_all_q: "Delete all bookings? The expenses overview starts at 0 again.",
@@ -603,7 +609,7 @@ const TEXTS = {
     share_copy: "Copy link",
     share_send: "Share …",
     share: "Share via link",
-    share_help: "For people without a Home Assistant account. They only see this list (without notes) – nothing else from Home Assistant. Default: view only.",
+    share_help: "For people without a Home Assistant account. They only see this list (notes only if you allow them) – nothing else from Home Assistant. Default: view only.",
     barcode_lookup: "Look up barcodes online",
     barcode_lookup_help: "Open Food Facts, only the number is sent. Off: only codes already known.",
     tab_stats: "Statistics",
@@ -822,7 +828,7 @@ const TEXTS = {
     share_view: "lecture seule",
     share_soft: "cocher « soft » (reste ouvert)",
     share_check: "vraiment cocher",
-    share_mode: "Autorisé",
+    share_mode: "Peut cocher",
     share_mode_help: "« soft » : tu vois ce qui a été marqué – l'article reste ouvert dans ta liste. Ce qui est ajouté via le lien est marqué 🔗 dans ta liste.",
     share_add: "Peut ajouter",
     share_valid: "Validité",
@@ -832,6 +838,9 @@ const TEXTS = {
     share_30d: "30 jours",
     share_forever: "jusqu'à révocation",
     share_create: "Créer un lien",
+    p_view: "Affichage", p_columns_sub: "touche des listes pour les ajouter", p_wide_sub: "utiliser toute la largeur", p_order_done: "Ordre terminé", app_install_guide: "Installer / instructions",
+    share_password2: "Répéter le mot de passe", share_pw_match: "Les mots de passe correspondent", share_pw_mismatch: "Les mots de passe ne correspondent pas",
+    people_title: "Qui peut faire quoi ?", people_add: "Ajouter une personne", people_add_btn: "Ajouter", people_remove: "Retirer l'accès", people_none: "Personne d'autre que toi – qui n'est pas ajouté n'a aucun droit.", people_legend: "Voir = consulter · Cocher = voir et cocher · Modifier = aussi ajouter, changer, supprimer. Qui n'est pas listé n'a pas accès ; les admins peuvent toujours tout.",
     shop_longpress_delete: "Appui long supprime", shop_longpress_delete_help: "En mode courses, appui long sur un article pour le supprimer (annuler en bas).",
     share_title: "Partager « {name} »", share_seg_no: "Non", share_seg_yes: "Oui", share_seg_soft: "Soft", share_notes: "Afficher les notes", share_notes_help: "La note d'un article apparaît sur la page partagée (les promos toujours).", share_password: "Mot de passe", share_password_ph: "facultatif", share_password_help: "Qui ouvre le lien doit le saisir. Stocké uniquement sous forme de hachage.", share_qr_hint: "Le QR code apparaît après la création", share_add_locked: "seulement avec « Oui » ou « Soft » (limite de l'admin)", share_people: "Personnes dans Home Assistant", share_in_ha: "dans Home Assistant", share_people_moved: "Personnes et droits sont dans la fenêtre de partage.",
     stats_reset: "Réinitialiser les statistiques", stats_reset_sel: "Retirer la sélection des statistiques", stats_reset_all_q: "Oublier tous les achats et rythmes d'achat ? Les suggestions à la saisie restent. Les dépenses sont à part.", stats_reset_sel_q: "Retirer {n} articles des statistiques (achats et rythme) ?", exp_delete_sel: "Supprimer la sélection", exp_delete_all: "Supprimer toutes les opérations", exp_delete_mine: "Supprimer toutes mes opérations", exp_delete_sel_q: "Supprimer {n} opérations ?", exp_delete_all_q: "Supprimer toutes les opérations ? L'aperçu des dépenses repart de 0.",
@@ -858,7 +867,7 @@ const TEXTS = {
     share_copy: "Copier le lien",
     share_send: "Partager …",
     share: "Partager par lien",
-    share_help: "Pour les personnes sans compte Home Assistant. Elles ne voient que cette liste (sans notes) – rien d'autre de Home Assistant. Par défaut : lecture seule.",
+    share_help: "Pour les personnes sans compte Home Assistant. Elles ne voient que cette liste (notes seulement si tu les autorises) – rien d'autre de Home Assistant. Par défaut : lecture seule.",
     barcode_lookup: "Rechercher les codes-barres en ligne",
     barcode_lookup_help: "Open Food Facts, seul le numéro est envoyé. Désactivé : uniquement les codes déjà connus.",
     tab_stats: "Statistiques",
@@ -1077,7 +1086,7 @@ const TEXTS = {
     share_view: "solo ver",
     share_soft: "marcar «soft» (sigue abierto)",
     share_check: "marcar de verdad",
-    share_mode: "Permitido",
+    share_mode: "Puede marcar",
     share_mode_help: "«soft»: ves lo que se ha marcado – el artículo sigue abierto en tu lista. Lo añadido por el enlace se marca con 🔗 en tu lista.",
     share_add: "Puede añadir",
     share_valid: "Validez",
@@ -1087,6 +1096,9 @@ const TEXTS = {
     share_30d: "30 días",
     share_forever: "hasta revocarlo",
     share_create: "Crear enlace",
+    p_view: "Vista", p_columns_sub: "toca listas para añadirlas", p_wide_sub: "usar todo el ancho", p_order_done: "Orden listo", app_install_guide: "Instalar / instrucciones",
+    share_password2: "Repetir contraseña", share_pw_match: "Las contraseñas coinciden", share_pw_mismatch: "Las contraseñas no coinciden",
+    people_title: "¿Quién puede hacer qué?", people_add: "Añadir persona", people_add_btn: "Añadir", people_remove: "Quitar acceso", people_none: "Nadie más que tú – quien no esté añadido no tiene permisos.", people_legend: "Ver = solo mirar · Marcar = ver y marcar · Editar = también añadir, cambiar, borrar. Quien no aparece no tiene acceso; los admins siempre pueden todo.",
     shop_longpress_delete: "Pulsación larga borra", shop_longpress_delete_help: "En modo compra, mantén pulsado un artículo para borrarlo (deshacer abajo).",
     share_title: "Compartir «{name}»", share_seg_no: "No", share_seg_yes: "Sí", share_seg_soft: "Soft", share_notes: "Mostrar notas", share_notes_help: "La nota de un artículo aparece en la página compartida (las ofertas siempre).", share_password: "Contraseña", share_password_ph: "opcional", share_password_help: "Quien abra el enlace tendrá que introducirla. Solo se guarda como hash.", share_qr_hint: "El código QR aparece al crearlo", share_add_locked: "solo con «Sí» o «Soft» (límite del admin)", share_people: "Personas en Home Assistant", share_in_ha: "en Home Assistant", share_people_moved: "Personas y permisos están en la ventana de compartir.",
     stats_reset: "Restablecer estadísticas", stats_reset_sel: "Quitar la selección de las estadísticas", stats_reset_all_q: "¿Olvidar todas las compras y ritmos de compra? Las sugerencias al escribir se mantienen. Los gastos van aparte.", stats_reset_sel_q: "¿Quitar {n} artículos de las estadísticas (compras y ritmo)?", exp_delete_sel: "Borrar selección", exp_delete_all: "Borrar todos los movimientos", exp_delete_mine: "Borrar todos mis movimientos", exp_delete_sel_q: "¿Borrar {n} movimientos?", exp_delete_all_q: "¿Borrar todos los movimientos? El resumen de gastos vuelve a 0.",
@@ -1113,7 +1125,7 @@ const TEXTS = {
     share_copy: "Copiar enlace",
     share_send: "Compartir …",
     share: "Compartir por enlace",
-    share_help: "Para personas sin cuenta de Home Assistant. Solo ven esta lista (sin notas) – nada más de Home Assistant. Predeterminado: solo ver.",
+    share_help: "Para personas sin cuenta de Home Assistant. Solo ven esta lista (notas solo si las permites) – nada más de Home Assistant. Predeterminado: solo ver.",
     barcode_lookup: "Buscar códigos de barras en línea",
     barcode_lookup_help: "Open Food Facts, solo se envía el número. Desactivado: solo códigos ya conocidos.",
     tab_stats: "Estadísticas",
@@ -1332,7 +1344,7 @@ const TEXTS = {
     share_view: "solo visualizzazione",
     share_soft: "spunta «soft» (resta aperto)",
     share_check: "spunta davvero",
-    share_mode: "Consentito",
+    share_mode: "Può spuntare",
     share_mode_help: "«soft»: vedi cosa è stato segnato – l'articolo resta aperto nella tua lista. Ciò che viene aggiunto tramite il link è segnato con 🔗 nella tua lista.",
     share_add: "Può aggiungere",
     share_valid: "Validità",
@@ -1342,6 +1354,9 @@ const TEXTS = {
     share_30d: "30 giorni",
     share_forever: "fino alla revoca",
     share_create: "Crea link",
+    p_view: "Vista", p_columns_sub: "tocca le liste per aggiungerle", p_wide_sub: "usa tutta la larghezza", p_order_done: "Ordine fatto", app_install_guide: "Installa / istruzioni",
+    share_password2: "Ripeti password", share_pw_match: "Le password coincidono", share_pw_mismatch: "Le password non coincidono",
+    people_title: "Chi può fare cosa?", people_add: "Aggiungi persona", people_add_btn: "Aggiungi", people_remove: "Togli accesso", people_none: "Nessuno oltre a te – chi non è aggiunto non ha permessi.", people_legend: "Vedere = solo guardare · Spuntare = vedere e spuntare · Modificare = anche aggiungere, cambiare, eliminare. Chi non è in elenco non ha accesso; gli admin possono sempre tutto.",
     shop_longpress_delete: "Pressione lunga elimina", shop_longpress_delete_help: "In modalità spesa tieni premuto un articolo per eliminarlo (annulla in basso).",
     share_title: "Condividi «{name}»", share_seg_no: "No", share_seg_yes: "Sì", share_seg_soft: "Soft", share_notes: "Mostra note", share_notes_help: "La nota di un articolo compare nella pagina condivisa (le offerte sempre).", share_password: "Password", share_password_ph: "facoltativa", share_password_help: "Chi apre il link deve inserirla. Salvata solo come hash.", share_qr_hint: "Il codice QR appare dopo la creazione", share_add_locked: "solo con «Sì» o «Soft» (limite dell'admin)", share_people: "Persone in Home Assistant", share_in_ha: "in Home Assistant", share_people_moved: "Persone e permessi sono nella finestra di condivisione.",
     stats_reset: "Azzera statistiche", stats_reset_sel: "Togli la selezione dalle statistiche", stats_reset_all_q: "Dimenticare tutti gli acquisti e i ritmi d'acquisto? I suggerimenti mentre scrivi restano. Le spese sono separate.", stats_reset_sel_q: "Togliere {n} articoli dalle statistiche (acquisti e ritmo)?", exp_delete_sel: "Elimina selezionati", exp_delete_all: "Elimina tutte le registrazioni", exp_delete_mine: "Elimina tutte le mie registrazioni", exp_delete_sel_q: "Eliminare {n} registrazioni?", exp_delete_all_q: "Eliminare tutte le registrazioni? Il riepilogo spese riparte da 0.",
@@ -1368,7 +1383,7 @@ const TEXTS = {
     share_copy: "Copia link",
     share_send: "Condividi …",
     share: "Condividi tramite link",
-    share_help: "Per persone senza account Home Assistant. Vedono solo questa lista (senza note) – nient'altro di Home Assistant. Predefinito: solo visualizzazione.",
+    share_help: "Per persone senza account Home Assistant. Vedono solo questa lista (note solo se le consenti) – nient'altro di Home Assistant. Predefinito: solo visualizzazione.",
     barcode_lookup: "Cerca codici a barre online",
     barcode_lookup_help: "Open Food Facts, viene inviato solo il numero. Disattivato: solo codici già noti.",
     tab_stats: "Statistiche",
@@ -1587,7 +1602,7 @@ const TEXTS = {
     share_view: "tylko podgląd",
     share_soft: "odhaczanie „soft” (pozostaje otwarte)",
     share_check: "naprawdę odhaczaj",
-    share_mode: "Dozwolone",
+    share_mode: "Może odhaczać",
     share_mode_help: "„soft”: widzisz, co zostało oznaczone – produkt pozostaje otwarty na twojej liście. To, co dodano przez link, jest na twojej liście oznaczone 🔗.",
     share_add: "Może dodawać",
     share_valid: "Ważność",
@@ -1597,6 +1612,9 @@ const TEXTS = {
     share_30d: "30 dni",
     share_forever: "do odwołania",
     share_create: "Utwórz link",
+    p_view: "Widok", p_columns_sub: "dotknij listy, aby je dodać", p_wide_sub: "cała szerokość ekranu", p_order_done: "Kolejność gotowa", app_install_guide: "Zainstaluj / instrukcja",
+    share_password2: "Powtórz hasło", share_pw_match: "Hasła są zgodne", share_pw_mismatch: "Hasła nie są zgodne",
+    people_title: "Kto może co?", people_add: "Dodaj osobę", people_add_btn: "Dodaj", people_remove: "Usuń dostęp", people_none: "Na razie tylko ty – kto nie jest dodany, nie ma uprawnień.", people_legend: "Podgląd = tylko oglądanie · Odhaczanie = podgląd i odhaczanie · Edycja = także dodawanie, zmiany, usuwanie. Kogo nie ma na liście, nie ma dostępu; admini mogą zawsze wszystko.",
     shop_longpress_delete: "Długie przytrzymanie usuwa", shop_longpress_delete_help: "W trybie zakupów przytrzymaj produkt, aby go usunąć (cofnij na dole).",
     share_title: "Udostępnij „{name}”", share_seg_no: "Nie", share_seg_yes: "Tak", share_seg_soft: "Soft", share_notes: "Pokaż notatki", share_notes_help: "Notatka produktu pojawi się na udostępnionej stronie (promocje zawsze).", share_password: "Hasło", share_password_ph: "opcjonalnie", share_password_help: "Kto otworzy link, musi je wpisać. Zapisywane tylko jako hash.", share_qr_hint: "Kod QR pojawi się po utworzeniu", share_add_locked: "tylko z „Tak” lub „Soft” (limit admina)", share_people: "Osoby w Home Assistant", share_in_ha: "w Home Assistant", share_people_moved: "Osoby i uprawnienia są w oknie udostępniania.",
     stats_reset: "Wyzeruj statystyki", stats_reset_sel: "Usuń zaznaczone ze statystyk", stats_reset_all_q: "Zapomnieć wszystkie zakupy i rytmy zakupów? Podpowiedzi podczas pisania zostaną. Wydatki są osobno.", stats_reset_sel_q: "Usunąć {n} produktów ze statystyk (zakupy i rytm)?", exp_delete_sel: "Usuń zaznaczone", exp_delete_all: "Usuń wszystkie wpisy", exp_delete_mine: "Usuń wszystkie moje wpisy", exp_delete_sel_q: "Usunąć {n} wpisów?", exp_delete_all_q: "Usunąć wszystkie wpisy? Przegląd wydatków zacznie się od 0.",
@@ -1623,7 +1641,7 @@ const TEXTS = {
     share_copy: "Kopiuj link",
     share_send: "Udostępnij …",
     share: "Udostępnij przez link",
-    share_help: "Dla osób bez konta Home Assistant. Widzą tylko tę listę (bez notatek) – nic więcej z Home Assistant. Domyślnie: tylko podgląd.",
+    share_help: "Dla osób bez konta Home Assistant. Widzą tylko tę listę (notatki tylko, jeśli na to pozwolisz) – nic więcej z Home Assistant. Domyślnie: tylko podgląd.",
     barcode_lookup: "Wyszukuj kody kreskowe online",
     barcode_lookup_help: "Open Food Facts, wysyłany jest tylko numer. Wyłączone: tylko już znane kody.",
     tab_stats: "Statystyki",
@@ -2360,9 +2378,19 @@ const STYLE = `
   .statrow .bar2 { grid-column:1/-1; height:5px; border-radius:3px; background:var(--divider-color,#ddd); overflow:hidden; }
   .statrow .bar2 i { display:block; height:100%; background:var(--sl-accent); }
   .qr { display:grid; place-items:center; margin:8px 0; } .qr svg { width:180px; height:180px; border-radius:8px; }
-  .sharegrid { display:grid; grid-template-columns:170px minmax(0,1fr); gap:6px 18px; align-items:start; }
+  /* QR links, Einstellungen rechts – in schmalen Spalten (Listen-Fenster) rutschen die Einstellungen unter den QR-Code */
+  .sharegrid { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:flex-start; }
+  .sharegrid > .qrbox { flex:0 0 170px; }
+  .sharegrid > div:last-child { flex:1 1 280px; min-width:0; }
+  .sharegrid .srow2 { flex-wrap:wrap; }
+  .sharegrid .srow2 > .sl { flex:1 1 150px; min-width:140px; }
+  .sharegrid .srow2 > input { flex:1 1 160px; max-width:100%; }
   .qrbox { width:170px; height:170px; border-radius:12px; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:8px; box-sizing:border-box; }
   .qrbox svg { width:100%; height:100%; } .qrbox .qrph { font-size:2rem; opacity:.35; } .qrbox small { color:#777; font-size:.72rem; text-align:center; }
+  .prow { display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--divider-color,#e0e0e0); flex-wrap:wrap; }
+  .prow .pn { flex:1 1 100px; min-width:0; } .prow .pn small { display:block; color:var(--secondary-text-color); font-size:.72rem; }
+  .pctl { display:flex; align-items:center; gap:2px; flex:none; margin-left:auto; } .prow .seg button { padding:4px 9px; }
+  .pav { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:.8rem; flex:none; }
   .seg { display:inline-flex; border:1px solid var(--divider-color,#ccc); border-radius:18px; overflow:hidden; }
   .seg button { border:0; background:none; color:inherit; font:inherit; font-size:.82rem; padding:4px 12px; cursor:pointer; }
   .seg button.on { background:color-mix(in srgb, var(--sl-accent) 35%, transparent); color:var(--primary-text-color); font-weight:600; }
@@ -4749,6 +4777,11 @@ class SmartListsCard extends HTMLElement {
       || (rights.share_who === "owners" && d.own && d.own.role === "owner")
       || (rights.share_who === "editors" && (!d.own || ["owner", "editor"].includes(d.own.role))));
     // ein Teilen-Fenster: Link + Personen in Home Assistant; ohne Link-Recht nur die Personen (wie bisher)
+    // 📲 als App auf dem Startbildschirm – nur auf der Seite /smartlists (dort wird das Manifest gesetzt)
+    if (d && d.type !== "notes" && window.__smartlistsPanel && !slStandalone() && !slCompanion())
+      right.push(this._sec("📲", t.app_title, t.app_lead, [h("div", { class: "acts", style: "justify-content:flex-start" },
+        h("button", { class: "btn2 primary", type: "button", onclick: () => window.dispatchEvent(new CustomEvent("smartlists-app-dialog", { detail: { list: this._config.entity } })) },
+          "📲 " + t.app_install_guide))]));
     if (mayLink) right.push(this._shareLinkSection(canPeople));
     if (canPeople) left.push(this._sharing(mayLink));
     return { left, right };
@@ -6142,7 +6175,7 @@ class SmartListsCard extends HTMLElement {
     const d = this._data;
     const status = h("span", { class: "ok2" });
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
-    let check = "off", add = false, notes = false, password = "", hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
+    let check = "off", add = false, notes = false, password = "", password2 = "", hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
     let url = null, lastId = null;
     const lang = this._hass.language;
     // Grenzen des Admins für Nicht-Admins (Global → Teilen und Rechte)
@@ -6161,6 +6194,14 @@ class SmartListsCard extends HTMLElement {
       l.add ? t.share_add : null, l.notes ? t.share_notes : null, l.password ? "🔒" : null].filter(Boolean).join(" · ");
     const people = h("div");
     if (withPeople) this._peopleRows(people, status);
+    const pwHint = h("span");
+    const pwOk = () => !password || password === password2;
+    const pwState = () => {
+      fill(pwHint, !password && !password2 ? "" : pwOk() ? h("span", { style: "color:var(--success-color,#43a047)" }, "✓ " + t.share_pw_match)
+        : h("span", { style: "color:var(--error-color,#db4437)" }, "✗ " + t.share_pw_mismatch));
+      const btn = body.querySelector && body.querySelector("button.mkLink");
+      if (btn) btn.disabled = !pwOk();
+    };
     const draw = () => {
       const qr = h("div", { class: "qrbox" });
       if (url) { try { qr.innerHTML = qrSvg(url, 4); } catch (e) { qr.textContent = "🔗"; } }
@@ -6175,8 +6216,11 @@ class SmartListsCard extends HTMLElement {
           this._setRow(t.share_mode, seg(check, checkOpts, (v) => { check = v; url = null; draw(); }), check === "soft" ? t.share_mode_help : null),
           this._setRow(t.share_add, this._switch(add, (v) => { add = v; url = null; }, t.share_add), mayAdd ? null : t.share_add_locked),
           this._setRow(t.share_notes, this._switch(notes, (v) => { notes = v; url = null; }, t.share_notes), t.share_notes_help),
-          this._setRow(t.share_password, h("input", { class: "search2", style: "width:170px;margin:0", type: "password", autocomplete: "new-password",
-            placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; } }), t.share_password_help),
+          this._setRow(t.share_password, h("input", { class: "search2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
+            placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } }), t.share_password_help),
+          // Passwort zur Sicherheit ein zweites Mal – erst wenn beide gleich sind, lässt sich der Link erstellen
+          this._setRow(t.share_password2, h("input", { class: "search2 pw2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
+            value: password2, "aria-label": t.share_password2, oninput: (e) => { password2 = e.target.value; pwState(); } }), pwHint),
           this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { hours = e.target.value ? Number(e.target.value) : null; } },
             [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]]
               .filter(([v]) => !maxHours || (v !== "" && v <= maxHours)).map(([v, l]) =>
@@ -6188,7 +6232,7 @@ class SmartListsCard extends HTMLElement {
             url ? h("button", { class: "btn2", type: "button", onclick: async () => { try { await navigator.clipboard.writeText(url); status.textContent = "✓ " + t.share_copied; } catch (e) { status.textContent = url; } } }, t.share_copy) : null,
             url && navigator.share ? h("button", { class: "btn2", type: "button", onclick: () => navigator.share({ title: d ? d.name : "SmartLists", url }).catch(() => {}) }, t.share_send) : null,
             url && lastId ? h("button", { class: "btn2 danger", type: "button", onclick: async () => { links = (await this._call("share_revoke", { link_id: lastId })).links; url = null; lastId = null; draw(); } }, t.share_revoke) : null,
-            url ? null : h("button", { class: "btn2 primary", type: "button", onclick: create }, "🔗 " + t.share_create),
+            url ? null : h("button", { class: "btn2 primary mkLink", type: "button", onclick: create }, "🔗 " + t.share_create),
             status))),
         d && d.type === "combined" ? h("div", { class: "shelp", style: "padding:6px 0" }, "⚠️ " + t.share_combined) : null,
         h("div", { class: "shelp", style: "padding:4px 0" }, pub.public_mode === "ha" ? "ℹ️ " + t.share_leak
@@ -6198,15 +6242,17 @@ class SmartListsCard extends HTMLElement {
           iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; if (l.id === lastId) { url = null; lastId = null; } draw(); }, "danger"),
           `${l.expired ? "⚠️ " + t.share_expired : l.expires ? `${t.share_until} ${fmtDate(l.expires)}` : t.share_forever} · ${l.opens}× ${t.share_opened}`
           + (l.base && l.base !== pub.public_base ? ` · ⚠️ ${t.share_old_address}` : ""))),
-        withPeople ? h("div", { class: "grp" }, t.share_people) : null,
+        withPeople ? h("div", { class: "grp" }, "👥 " + t.people_title) : null,
         withPeople ? people : null);
+      pwState();
     };
     const create = async () => {
+      if (!pwOk()) { status.textContent = "✗ " + t.share_pw_mismatch; return; }
       try {
         const r = await this._call("share_create", { check, add, hours, notes, password: password || null });
         url = (r.base || base()) + r.path;
         lastId = r.id;
-        password = "";
+        password = ""; password2 = "";
         ({ links, ...pub } = { ...pub, ...(await this._call("share_links", {})) });
         status.textContent = "";
         draw();
@@ -6215,23 +6261,42 @@ class SmartListsCard extends HTMLElement {
     this._call("share_links", {}).then((r) => { ({ links, ...pub } = { ...pub, ...r }); draw(); }).catch((err) => fill(body, h("div", { class: "shelp" }, (err && err.message) || t.error)));
     return this._sec("🔗", t.share_title.replace("{name}", d ? d.name : ""), t.share_help, [body]);
   }
-  // Personen in Home Assistant (eigene Listen): je Person Rolle wählen – im Teilen-Fenster
+  // „Wer darf was?“ (eigene Listen): nur Personen mit Zugriff, je Person Sehen · Abhaken · Bearbeiten, ✕ entfernt den Zugriff.
+  // Wer nicht hinzugefügt ist, hat keine Rechte. Besitzer und Admins dürfen immer alles.
   _peopleRows(box, status) {
     const t = this._t;
     const own = this._data.own;
     fill(box, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
+    let users = [];
+    const setRole = async (u, role) => {
+      try { await this._call("share", { user_id: u.id, role }); status.textContent = "✓ " + t.saved; await this._load(); own.shares = (this._data.own && this._data.own.shares) || own.shares; draw(); }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    const avatar = (u) => h("span", { class: "pav", style: `background:${hashColor(u.name || u.id)}` }, String(u.name || "?").trim().charAt(0).toUpperCase());
+    const draw = () => {
+      const shares = own.shares || {};
+      const owner = users.find((u) => u.id === own.owner_id);
+      const admins = users.filter((u) => u.is_admin && u.id !== own.owner_id);
+      const members = users.filter((u) => !u.is_admin && u.id !== own.owner_id && shares[u.id]);
+      const rest = users.filter((u) => !u.is_admin && u.id !== own.owner_id && !shares[u.id]);
+      const roleSeg = (u) => h("div", { class: "seg", role: "radiogroup", "aria-label": u.name }, [["viewer", t.role_viewer], ["checker", t.role_checker], ["editor", t.role_editor]]
+        .map(([v, l]) => h("button", { type: "button", role: "radio", "aria-checked": String(shares[u.id] === v), class: shares[u.id] === v ? "on" : "", onclick: () => setRole(u, v) }, l)));
+      let pick = "";
+      const sel = h("select", { "aria-label": t.people_add, onchange: (e) => { pick = e.target.value; } },
+        h("option", { value: "" }, "＋ " + t.people_add + " …"), rest.map((u) => h("option", { value: u.id }, u.name)));
+      fill(box,
+        owner ? h("div", { class: "prow" }, avatar(owner), h("span", { class: "pn" }, owner.name, h("small", {}, t.role_owner)), h("span", { class: "shelp" }, t.role_all)) : null,
+        ...admins.map((u) => h("div", { class: "prow" }, avatar(u), h("span", { class: "pn" }, u.name, h("small", {}, t.admin)), h("span", { class: "shelp" }, t.role_all))),
+        ...members.map((u) => h("div", { class: "prow" }, avatar(u), h("span", { class: "pn" }, u.name),
+          h("span", { class: "pctl" }, roleSeg(u), iconBtn(ICON.close, `${t.people_remove}: ${u.name}`, () => setRole(u, null), "danger")))),
+        members.length ? null : h("div", { class: "shelp", style: "padding:6px 0" }, t.people_none),
+        rest.length ? h("div", { class: "acts", style: "justify-content:flex-start" }, sel,
+          h("button", { class: "btn2 primary", type: "button", onclick: () => { const u = rest.find((x) => x.id === pick); if (u) setRole(u, "checker"); } }, t.people_add_btn)) : null,
+        h("div", { class: "shelp", style: "padding:6px 0 0" }, t.people_legend));
+    };
     (async () => {
-      let users = [];
-      try { users = (await this._call("users", {}, false)).users; } catch (e) { fill(box, t.error); return; }
-      const others = users.filter((u) => u.id !== own.owner_id);
-      if (!others.length) { fill(box, h("div", { class: "shelp" }, t.no_users)); return; }
-      fill(box, ...others.map((u) => this._setRow(h("span", {}, badge({ kind: "person", value: u.name, label: u.name }), " ", h("span", { class: "shelp" }, t.share_in_ha)),
-        u.is_admin ? h("span", { class: "val" }, t.role_all)
-          : h("select", { "aria-label": u.name, onchange: async (e) => {
-            try { await this._call("share", { user_id: u.id, role: e.target.value || null }); status.textContent = "✓ " + t.saved; await this._load(); }
-            catch (err) { status.textContent = (err && err.message) || t.error; }
-          } }, [["", t.role_none], ["viewer", t.role_viewer], ["checker", t.role_checker], ["editor", t.role_editor]].map(([v, l]) =>
-            h("option", { value: v, selected: (own.shares[u.id] || "") === v }, l))))));
+      try { users = (await this._call("users", {}, false)).users || []; } catch (e) { fill(box, t.error); return; }
+      draw();
     })();
   }
 
@@ -6670,6 +6735,18 @@ const PANEL_STYLE = `
   .toolbar button { background:none; border:none; color:inherit; width:40px; height:40px; border-radius:50%; cursor:pointer;
     display:flex; align-items:center; justify-content:center; }
   .toolbar button:hover, .toolbar button.on { background:rgba(255,255,255,.18); }
+  .viewpop { position:fixed; top:58px; right:12px; z-index:6; width:270px; max-width:calc(100vw - 24px); box-sizing:border-box;
+    background:var(--card-background-color,#fff); color:var(--primary-text-color); border:1px solid var(--divider-color,#ddd);
+    border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.35); padding:6px 0; }
+  .viewpop h5 { margin:6px 14px 4px; font-size:.72rem; color:var(--secondary-text-color); font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+  .vopt { display:flex; align-items:center; gap:12px; padding:9px 14px; font-size:.9rem; cursor:pointer; width:100%; box-sizing:border-box;
+    background:none; border:0; color:inherit; font-family:inherit; text-align:left; }
+  .vopt > span:first-child { flex:1; } .vopt small { display:block; color:var(--secondary-text-color); font-size:.74rem; }
+  .vopt:hover, .vbtn.on { background:var(--secondary-background-color,#f2f2f2); }
+  .vsw { position:relative; width:36px; height:20px; flex:none; } .vsw input { position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; }
+  .vsw i { position:absolute; inset:0; border-radius:10px; background:var(--disabled-color,#bdbdbd); transition:background .15s; }
+  .vsw i::after { content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s; }
+  .vsw input:checked + i { background:var(--primary-color,#03a9f4); } .vsw input:checked + i::after { left:18px; }
   .ptabs { display:flex; gap:4px; padding:0 12px; overflow-x:auto; scrollbar-width:none; position:sticky; top:56px; z-index:3;
     background:var(--app-header-background-color, var(--primary-color)); }
   .ptab { flex:none; background:none; border:none; border-bottom:2px solid transparent; padding:10px 14px; font:inherit; font-size:.95rem; cursor:pointer;
@@ -6853,15 +6930,6 @@ class SmartListsPanel extends HTMLElement {
       const t = this._t;
       this._menuBtn = h("button", { type: "button", "aria-label": "Menu", title: "Menu",
         onclick: () => this.dispatchEvent(new Event("hass-toggle-menu", { bubbles: true, composed: true })) }, svg(ICON_MENU, 24));
-      this._colBtn = h("button", { type: "button", title: t.p_columns, "aria-label": t.p_columns,
-        onclick: () => { this._prefs.columns = !this._prefs.columns; this._save(); this._render(); } }, svg(ICON_COLUMNS, 22));
-      this._wideBtn = h("button", { type: "button", title: t.p_wide, "aria-label": t.p_wide,
-        onclick: () => { this._prefs.wide = !this._prefs.wide; this._save(); this._render(); } }, svg(ICON_WIDE, 22));
-      // 📲 Als App speichern – nicht in der Home-Assistant-App und nicht, wenn schon als App geöffnet
-      this._appBtn = h("button", { type: "button", title: t.app_title, "aria-label": t.app_title, onclick: () => this._appDialog() }, svg(ICON_PHONE, 22));
-      this._appBtn.hidden = slStandalone() || slCompanion();
-      this._orderBtn = h("button", { type: "button", title: t.p_order, "aria-label": t.p_order,
-        onclick: () => { this._ordering = !this._ordering; this._render(); } }, svg(ICON.sort, 22));
       this._newBtn = h("button", { type: "button", title: this._t.new_list, "aria-label": this._t.new_list, onclick: () => this._newList() }, svg(ICON.plus, 22));
       // Einstellungen: dieselbe Ansicht wie im Zahnrad der Karte, aber auf der ganzen Seite
       this._gearBtn = h("button", { type: "button", title: t.p_settings, "aria-label": t.p_settings,
@@ -6870,8 +6938,13 @@ class SmartListsPanel extends HTMLElement {
         onclick: () => { this._settingsOpen = this._settingsOpen === "stats" ? false : "stats"; this._render(); } }, svg(ICON.chart, 22));
       // Tabs wie in Home Assistant: Listen | Wochenplan
       this._tabsEl = h("div", { class: "ptabs", role: "tablist" });
-      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._appBtn, this._newBtn, this._orderBtn, this._colBtn, this._wideBtn, this._statsBtn, this._gearBtn),
-        this._tabsEl, this._chipsEl, this._hintEl, this._contentEl);
+      // aufgeräumt (Handy): Spalten, Breite und Reihenfolge stecken im Menü „Ansicht“; 📲 im Zahnrad der Liste
+      this._viewBtn = h("button", { type: "button", title: t.p_view, "aria-label": t.p_view, "aria-haspopup": "true",
+        onclick: (e) => { e.stopPropagation(); this._viewOpen = !this._viewOpen; this._renderView(); } }, svg(ICON_COLUMNS, 22));
+      this._viewEl = h("div", { class: "viewpop", role: "menu", hidden: true, onclick: (e) => e.stopPropagation() });
+      document.addEventListener("click", () => { if (this._viewOpen) { this._viewOpen = false; this._renderView(); } });
+      this._root = h("div", {}, h("div", { class: "toolbar" }, this._menuBtn, h("span", { class: "title" }, "SmartLists"), this._newBtn, this._viewBtn, this._statsBtn, this._gearBtn),
+        this._viewEl, this._tabsEl, this._chipsEl, this._hintEl, this._contentEl);
       this.shadowRoot.replaceChildren(h("style", {}, PANEL_STYLE), this._root);
     }
     this._menuBtn.hidden = !this._narrow;
@@ -6888,9 +6961,8 @@ class SmartListsPanel extends HTMLElement {
     this._statsBtn.hidden = !statsOn;
     if (!statsOn && this._settingsOpen === "stats") this._settingsOpen = false;
     this._statsBtn.classList.toggle("on", this._settingsOpen === "stats");
-    [this._newBtn, this._orderBtn, this._colBtn, this._wideBtn].forEach((b) => { b.hidden = !!this._settingsOpen || tab === "plan"; });
-    this._orderBtn.classList.toggle("on", !!this._ordering);
-    this._orderBtn.setAttribute("aria-pressed", String(!!this._ordering));
+    [this._newBtn, this._viewBtn].forEach((b) => { b.hidden = !!this._settingsOpen || tab === "plan"; });
+    this._viewBtn.classList.toggle("on", !!(this._viewOpen || this._ordering));
     if (this._settingsOpen) {
       // Allgemeine Einstellungen (Für mich / Global / Auswertung). Was nur eine Liste betrifft, steht im Zahnrad der Karte.
       if (!lists.some((l) => l.e === this._settingsEntity)) this._settingsEntity = sel[0] || (lists[0] && lists[0].e);
@@ -6919,10 +6991,7 @@ class SmartListsPanel extends HTMLElement {
       if (this._contentEl.firstChild !== this._planCard) fill(this._contentEl, this._planCard);
       return;
     }
-    this._colBtn.classList.toggle("on", this._prefs.columns);
-    this._wideBtn.classList.toggle("on", this._prefs.wide);
-    this._colBtn.setAttribute("aria-pressed", String(this._prefs.columns));
-    this._wideBtn.setAttribute("aria-pressed", String(this._prefs.wide));
+    this._renderView();
     const width = this._prefs.wide || this._prefs.columns ? "w-wide" : "w-normal";
     [this._chipsEl, this._hintEl].forEach((e) => { e.className = e.className.split(" ")[0] + " " + width; });
     const chip = (l, i, group) => {
@@ -6997,8 +7066,32 @@ class SmartListsPanel extends HTMLElement {
     if (current.length !== cards.length || current.some((n, i) => n !== cards[i])) fill(this._contentEl, ...cards);
     if (this._startShop && !this._wantList) this._startShop = false;  // nur beim Start als App
   }
-  connectedCallback() { this._attached = true; if (this._effSel) this._syncApp(this._effSel); }
-  disconnectedCallback() { this._attached = false; slRestoreHeadLinks(this._headKeep); this._headKeep = {}; }
+  // Menü „Ansicht“: mehrere Listen nebeneinander, breite Ansicht, Reihenfolge der Listen
+  _renderView() {
+    if (!this._viewEl) return;
+    const t = this._t;
+    this._viewEl.hidden = !this._viewOpen;
+    if (!this._viewOpen) return;
+    const sw = (on, label, sub, fn) => h("label", { class: "vopt" }, h("span", {}, label, sub ? h("small", {}, sub) : null),
+      h("span", { class: "vsw" }, h("input", { type: "checkbox", checked: !!on, "aria-label": label, onchange: (e) => fn(e.target.checked) }), h("i")));
+    fill(this._viewEl, h("h5", {}, t.p_view),
+      sw(this._prefs.columns, t.p_columns, t.p_columns_sub, (v) => { this._prefs.columns = v; this._save(); this._render(); }),
+      sw(this._prefs.wide, t.p_wide, t.p_wide_sub, (v) => { this._prefs.wide = v; this._save(); this._render(); }),
+      h("button", { type: "button", class: `vopt vbtn ${this._ordering ? "on" : ""}`, onclick: () => { this._ordering = !this._ordering; this._viewOpen = false; this._render(); } },
+        h("span", {}, this._ordering ? t.p_order_done : t.p_order), svg(ICON.sort, 18)));
+  }
+  connectedCallback() {
+    this._attached = true; if (this._effSel) this._syncApp(this._effSel);
+    window.__smartlistsPanel = this;  // die Karte bietet „Als App speichern“ nur auf dieser Seite an
+    if (!this._onAppReq) {
+      this._onAppReq = (e) => this._appDialog(e.detail && e.detail.list);
+      window.addEventListener("smartlists-app-dialog", this._onAppReq);
+    }
+  }
+  disconnectedCallback() {
+    this._attached = false; slRestoreHeadLinks(this._headKeep); this._headKeep = {};
+    if (window.__smartlistsPanel === this) window.__smartlistsPanel = null;
+  }
   // Manifest der Seite: „Installieren“/„Zum Startbildschirm“ öffnet direkt die gewählte Liste
   _syncApp(sel) {
     if (this._attached === false) return;
@@ -7010,10 +7103,10 @@ class SmartListsPanel extends HTMLElement {
     slSetHeadLink("apple-touch-icon", "/smartlists-files/brand/icon@2x.png", this._headKeep);
   }
   // 📲 Als App auf dem Startbildschirm speichern: Liste und Einkaufsmodus wählen, dann installieren bzw. Anleitung
-  _appDialog() {
+  _appDialog(preset) {
     const t = this._t;
     const lists = this._lists().filter((l) => !l.notes);
-    const prefs = { list: (this._prefs.app && this._prefs.app.list) || (this._effSel || [])[0] || (lists[0] && lists[0].e) || "", shopping: !(this._prefs.app && this._prefs.app.shopping === false) };
+    const prefs = { list: preset || (this._prefs.app && this._prefs.app.list) || (this._effSel || [])[0] || (lists[0] && lists[0].e) || "", shopping: !(this._prefs.app && this._prefs.app.shopping === false) };
     const platform = slPlatform();
     const apply = () => {
       this._prefs.app = { ...prefs }; this._save(); this._syncApp(this._effSel || []);

@@ -721,7 +721,7 @@ class OwnTodoListEntity(_AccessMixin, TodoListEntity):
         # Liste übernommen → deren Entitäts-ID weiterverwenden (Automationen, Dashboards und die App passen weiter)
         self.entity_id = self.data.get("entity_id") or f"todo.ha_smartlists_list_{slugify(title) or 'list'}"
         if self.grouped:
-            # ein Gerät je Besitzer („Eigene Listen – Julian“) mit allen seinen Listen
+            # ein Gerät je Besitzer („Eigene Listen – Peter“) mit allen seinen Listen
             self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, f"owner_{subentry.subentry_id}")}, name=subentry.title,
                                                 manufacturer="SmartLists", model=_MODEL.get((hass.config.language or "en").split("-")[0], _MODEL["en"])[0],
                                                 configuration_url="homeassistant://smartlists")

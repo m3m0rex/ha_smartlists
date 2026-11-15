@@ -114,6 +114,11 @@ Gilt für alle Listen und alle HA-Benutzer, gespeichert in `.storage/smartlists.
 
   <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Teilen-Fenster mit QR-Code, Rechten und Gültigkeit" width="620">
 
+  <table><tr>
+<td width="60%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share-window.png" alt="Teilen-Fenster: QR-Code, Darf abhaken, Darf hinzufügen, Freigabe, Notizen, Passwort, Wer darf was?"><br><sub>Teilen-Fenster – Rechte, Passwort und „Wer darf was?“ (Bild englisch).</sub></td>
+<td width="40%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/shared-page.png" alt="Geteilte Seite: Begrüßung, Suche, Sortierung, Angebot, Freigabe, geteilt bis"><br><sub>Geteilte Seite für Leute ohne Konto.</sub></td>
+</tr></table>
+
 - **Einstellungen an einem Ort:** Bereiche *Für mich*, *Global* (Admins) und *Auswertung*, dazu ein Fenster je Liste:
 
   <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/settings.svg" alt="Allgemeine Einstellungen mit Bereichen und zwei Spalten">
@@ -232,7 +237,7 @@ Ordner `custom_components/smartlists` nach `/config/custom_components/smartlists
 
 ## Einrichtung
 
-<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup-assistant.svg" alt="Einrichtungs-Assistent – Schritt Schreibweise" width="460"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup-de.gif" alt="Einrichtungs-Assistent: Listen, Märkte, Schreibweise, Sprache, Personen, Extras, Fertig" width="560"></p>
 
 Beim ersten Öffnen führt ein **Einrichtungs-Assistent** Admins durch Listen, Märkte, Schreibweise,
 Sprache, Personen und Extras – siehe [Wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).

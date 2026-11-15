@@ -173,7 +173,7 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
     @classmethod
     @callback
     def async_get_supported_subentry_types(cls, config_entry: ConfigEntry) -> dict[str, type[ConfigSubentryFlow]]:
-        # eigene Listen: ein Unter-Eintrag je Besitzer („Eigene Listen · Julian“), siehe own_groups.py
+        # eigene Listen: ein Unter-Eintrag je Besitzer („Eigene Listen · Peter“), siehe own_groups.py
         return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow}
 
     @staticmethod

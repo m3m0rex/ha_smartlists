@@ -98,5 +98,5 @@ def test_source_label_modes():
     e = types.SimpleNamespace(_sources=["todo.a", "todo.b", "todo.c"], _label_colors={"todo.b": "#123456"})
     assert color(e, "todo.a") != color(e, "todo.c") and color(e, "todo.b") == "#123456"
     assert label(make("list"), "todo.angebote") == "HA Smartlists Angebote"
-    names["todo.dash"] = "- Admin Julian"
-    assert label(make("list"), "todo.dash") == "Admin Julian"          # führendes Minus weg
+    names["todo.dash"] = "- Admin Peter"
+    assert label(make("list"), "todo.dash") == "Admin Peter"          # führendes Minus weg

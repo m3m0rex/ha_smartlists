@@ -33,7 +33,7 @@ action `smartlists.add_template` does the same in automations.
 
 ## Share via link / QR code
 
-<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Share window with QR code" width="620">
+<img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share-window.png" alt="Share window" width="620"> <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/shared-page.png" alt="Shared page" width="300">
 
 *Gear of the list (settings of this list) → Share via link*. Who may create links is decided by an admin
 under *General settings → Global → Sharing and permissions*: admins only, admins and the list's owner

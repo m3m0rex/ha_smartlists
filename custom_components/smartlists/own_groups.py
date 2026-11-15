@@ -1,4 +1,4 @@
-"""Eigene Listen, gruppiert je Besitzer: ein Unter-Eintrag „Eigene Listen · Julian“ (Typ own_lists) mit
+"""Eigene Listen, gruppiert je Besitzer: ein Unter-Eintrag „Eigene Listen · Peter“ (Typ own_lists) mit
 
     owner: HA-Benutzer-ID des Besitzers
     lists: {list_id: {"title": "Angebote", "shares": {benutzer_id: rolle}, ["entity_id": …]}}

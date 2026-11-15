@@ -117,6 +117,11 @@ Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
 
   <img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share.svg" alt="Share window with QR code, permissions and expiry" width="620">
 
+  <table><tr>
+<td width="60%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/share-window.png" alt="Share window: QR code, may check off, may add, approval, notes, password, who may do what"><br><sub>Share window – rights, password and "Who may do what?".</sub></td>
+<td width="40%" valign="top"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/shared-page.png" alt="Shared page: greeting, search, sorting, offer, pending approval, shared until"><br><sub>Shared page for people without an account.</sub></td>
+</tr></table>
+
 - **Settings in one place:** general settings with areas (*For me*, *Global* for admins, *Insights*) and a
   separate settings window per list – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Settings).
 
@@ -242,7 +247,7 @@ Home Assistant.
 
 ## Setup
 
-<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup-assistant.svg" alt="Setup assistant – notation step" width="460"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/m3m0rex/ha_smartlists/main/docs/images/setup.gif" alt="Setup assistant: lists, stores, notation, language, people, extras, done" width="560"></p>
 
 On first opening, a **setup assistant** guides admins through lists, stores, notation, language,
 people and extras – see the [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Setup#setup-assistant).

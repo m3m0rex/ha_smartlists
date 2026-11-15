@@ -322,6 +322,8 @@ const TEXTS = {
     share_30d: "30 Tage",
     share_forever: "bis zum Widerruf",
     share_create: "Link erstellen",
+    store_new: "Markt", store_remove: "Aus der Auswahl nehmen", stores_none: "Noch keine Märkte. Mit „＋ Markt“ hinzufügen oder einfach @REWE an einen Artikel schreiben.", store_add_help2: "Name des Markts, z. B. EDEKA. Er steht dann beim Eintippen zur Auswahl; eine Zone kannst du danach verknüpfen.",
+    look_none: "Noch keine Märkte oder Personen in Benutzung.", look_none_q: "Nichts gefunden.", look_tag_kind: "Schlagwörter stellst du oben unter „Je Art“ ein – das gilt für alle.",
     freq_edit: "Häufig gekauft bearbeiten", freq_remove: "Aus „Häufig gekauft“ nehmen", freq_removed: "entfernt", freq_reset: "Alle zurücksetzen", freq_reset_q: "„Häufig gekauft“ dieser Liste zurücksetzen? Andere Listen, Kategorien und die Statistik bleiben.", freq_done: "„Häufig gekauft“ zurückgesetzt",
     ui_lang: "Sprache", ui_lang_help: "Sprache von SmartLists – auch anders als Home Assistant.", ui_lang_auto: "Wie Home Assistant", naming_all_used: "Jede Art hat schon ein Zeichen.", pub_help_show: "Anleitung anzeigen", look_changed: "angepasst", nt_pick: "Bitte mindestens ein Ziel antippen.",
     share_approve: "Hinzufügen braucht Freigabe", share_approve_help: "Über den Link Hinzugefügtes erscheint erst nach deinem Okay in der Liste.", pending_title: "Wartet auf Freigabe", pending_ok: "Übernehmen", pending_no: "Verwerfen",
@@ -583,6 +585,8 @@ const TEXTS = {
     share_30d: "30 days",
     share_forever: "until revoked",
     share_create: "Create link",
+    store_new: "Store", store_remove: "Remove from selection", stores_none: "No stores yet. Add one with “＋ Store” or just write @REWE on an item.", store_add_help2: "Name of the store, e.g. EDEKA. It is then offered while typing; you can link a zone afterwards.",
+    look_none: "No stores or people in use yet.", look_none_q: "Nothing found.", look_tag_kind: "Tags are set above under “Per kind” – that applies to all of them.",
     freq_edit: "Edit frequently bought", freq_remove: "Remove from “Frequently bought”", freq_removed: "removed", freq_reset: "Reset all", freq_reset_q: "Reset “Frequently bought” of this list? Other lists, categories and statistics stay.", freq_done: "“Frequently bought” reset",
     ui_lang: "Language", ui_lang_help: "Language of SmartLists – can differ from Home Assistant.", ui_lang_auto: "Like Home Assistant", naming_all_used: "Every kind already has a character.", pub_help_show: "Show instructions", look_changed: "customised", nt_pick: "Please tap at least one target.",
     share_approve: "Additions need approval", share_approve_help: "Items added via the link appear in the list only after your okay.", pending_title: "Waiting for approval", pending_ok: "Accept", pending_no: "Discard",
@@ -844,6 +848,8 @@ const TEXTS = {
     share_30d: "30 jours",
     share_forever: "jusqu'à révocation",
     share_create: "Créer un lien",
+    store_new: "Magasin", store_remove: "Retirer de la sélection", stores_none: "Pas encore de magasins. Ajoute-en avec « ＋ Magasin » ou écris simplement @REWE sur un article.", store_add_help2: "Nom du magasin, p. ex. EDEKA. Il est ensuite proposé pendant la saisie ; tu peux lier une zone ensuite.",
+    look_none: "Aucun magasin ni personne utilisé pour l'instant.", look_none_q: "Rien trouvé.", look_tag_kind: "Les étiquettes se règlent plus haut sous « Par type » – cela vaut pour toutes.",
     freq_edit: "Modifier « Achetés souvent »", freq_remove: "Retirer de « Achetés souvent »", freq_removed: "retiré", freq_reset: "Tout réinitialiser", freq_reset_q: "Réinitialiser « Achetés souvent » pour cette liste ? Les autres listes, les catégories et les statistiques restent.", freq_done: "« Achetés souvent » réinitialisé",
     ui_lang: "Langue", ui_lang_help: "Langue de SmartLists – peut différer de Home Assistant.", ui_lang_auto: "Comme Home Assistant", naming_all_used: "Chaque type a déjà un caractère.", pub_help_show: "Afficher les instructions", look_changed: "personnalisé", nt_pick: "Touche au moins une cible.",
     share_approve: "Ajouts à valider", share_approve_help: "Les articles ajoutés via le lien n'apparaissent qu'après ton accord.", pending_title: "En attente de validation", pending_ok: "Accepter", pending_no: "Rejeter",
@@ -1105,6 +1111,8 @@ const TEXTS = {
     share_30d: "30 días",
     share_forever: "hasta revocarlo",
     share_create: "Crear enlace",
+    store_new: "Tienda", store_remove: "Quitar de la selección", stores_none: "Aún no hay tiendas. Añade una con «＋ Tienda» o escribe @REWE en un artículo.", store_add_help2: "Nombre de la tienda, p. ej. EDEKA. Se ofrecerá al escribir; después puedes vincular una zona.",
+    look_none: "Todavía no se usan tiendas ni personas.", look_none_q: "No se encontró nada.", look_tag_kind: "Las etiquetas se ajustan arriba en «Por tipo»; vale para todas.",
     freq_edit: "Editar «Comprados a menudo»", freq_remove: "Quitar de «Comprados a menudo»", freq_removed: "quitado", freq_reset: "Restablecer todo", freq_reset_q: "¿Restablecer «Comprados a menudo» de esta lista? Las demás listas, las categorías y las estadísticas se mantienen.", freq_done: "«Comprados a menudo» restablecido",
     ui_lang: "Idioma", ui_lang_help: "Idioma de SmartLists – puede ser distinto del de Home Assistant.", ui_lang_auto: "Como Home Assistant", naming_all_used: "Cada tipo ya tiene un carácter.", pub_help_show: "Mostrar instrucciones", look_changed: "personalizado", nt_pick: "Toca al menos un destino.",
     share_approve: "Añadir requiere aprobación", share_approve_help: "Lo añadido por el enlace aparece en la lista solo tras tu aprobación.", pending_title: "Pendiente de aprobación", pending_ok: "Aceptar", pending_no: "Descartar",
@@ -1366,6 +1374,8 @@ const TEXTS = {
     share_30d: "30 giorni",
     share_forever: "fino alla revoca",
     share_create: "Crea link",
+    store_new: "Negozio", store_remove: "Togli dalla selezione", stores_none: "Ancora nessun negozio. Aggiungine uno con «＋ Negozio» o scrivi @REWE su un articolo.", store_add_help2: "Nome del negozio, ad es. EDEKA. Verrà proposto durante la digitazione; poi puoi collegare una zona.",
+    look_none: "Ancora nessun negozio o persona in uso.", look_none_q: "Nessun risultato.", look_tag_kind: "Le etichette si impostano sopra in «Per tipo» – vale per tutte.",
     freq_edit: "Modifica «Acquistati spesso»", freq_remove: "Togli da «Acquistati spesso»", freq_removed: "tolto", freq_reset: "Azzera tutto", freq_reset_q: "Azzerare «Acquistati spesso» di questa lista? Le altre liste, le categorie e le statistiche restano.", freq_done: "«Acquistati spesso» azzerato",
     ui_lang: "Lingua", ui_lang_help: "Lingua di SmartLists – può essere diversa da Home Assistant.", ui_lang_auto: "Come Home Assistant", naming_all_used: "Ogni tipo ha già un carattere.", pub_help_show: "Mostra istruzioni", look_changed: "personalizzato", nt_pick: "Tocca almeno una destinazione.",
     share_approve: "Aggiunte da approvare", share_approve_help: "Gli articoli aggiunti tramite link compaiono nella lista solo dopo il tuo ok.", pending_title: "In attesa di approvazione", pending_ok: "Accetta", pending_no: "Scarta",
@@ -1627,6 +1637,8 @@ const TEXTS = {
     share_30d: "30 dni",
     share_forever: "do odwołania",
     share_create: "Utwórz link",
+    store_new: "Sklep", store_remove: "Usuń z wyboru", stores_none: "Brak sklepów. Dodaj sklep przez „＋ Sklep” albo wpisz @REWE przy produkcie.", store_add_help2: "Nazwa sklepu, np. EDEKA. Będzie proponowana przy wpisywaniu; strefę możesz połączyć później.",
+    look_none: "Nie używasz jeszcze sklepów ani osób.", look_none_q: "Nic nie znaleziono.", look_tag_kind: "Tagi ustawiasz wyżej w „Wg rodzaju” – dotyczy wszystkich.",
     freq_edit: "Edytuj „Często kupowane”", freq_remove: "Usuń z „Często kupowane”", freq_removed: "usunięto", freq_reset: "Resetuj wszystko", freq_reset_q: "Zresetować „Często kupowane” tej listy? Inne listy, kategorie i statystyki pozostaną.", freq_done: "Zresetowano „Często kupowane”",
     ui_lang: "Język", ui_lang_help: "Język SmartLists – może być inny niż w Home Assistant.", ui_lang_auto: "Jak Home Assistant", naming_all_used: "Każdy rodzaj ma już znak.", pub_help_show: "Pokaż instrukcję", look_changed: "zmienione", nt_pick: "Wybierz co najmniej jeden cel.",
     share_approve: "Dodawanie wymaga zgody", share_approve_help: "Produkty dodane przez link pojawią się na liście dopiero po twojej zgodzie.", pending_title: "Czeka na zatwierdzenie", pending_ok: "Przyjmij", pending_no: "Odrzuć",
@@ -2256,7 +2268,8 @@ function badge(tag, look = SL_LOOK) {
   if (!look || typeof look !== "object") look = SL_LOOK; // auch bei tags.map(badge) (2. Argument = Index)
   const kind = tag.kind === "store" || tag.kind === "person" ? tag.kind : "tag";
   const k = { ...BADGE_DEFAULTS[kind], ...((look.kinds || {})[kind] || {}) };
-  const v = (look.values || {})[`${kind}:${String(tag.value).toLowerCase()}`] || {};
+  // Schlagwörter sehen alle gleich aus (Einstellung „Je Art“); einzeln anpassen nur Märkte und Personen
+  const v = kind === "tag" ? {} : (look.values || {})[`${kind}:${String(tag.value).toLowerCase()}`] || {};
   const label = (kind === "store" && v.label) || tag.label || tag.value;
   const color = v.color || (kind === "store" ? tag.color || k.color || hashColor(String(tag.value)) : tag.color || k.color);
   const text = v.text || k.text; // eigene Schriftfarbe (optional)
@@ -5271,7 +5284,7 @@ class SmartListsCard extends HTMLElement {
         draw();
       } catch (err) { status.textContent = (err && err.message) || t.error; }
     }, 400);
-    const sample = { store: { kind: "store", value: "REWE", label: "REWE", color: "#cc071e" }, person: { kind: "person", value: "Anna", label: "Anna" }, tag: { kind: "tag", value: "bio", label: "bio" } };
+    const sample = { store: { kind: "store", value: "\u0000rewe", label: "REWE", color: "#cc071e" }, person: { kind: "person", value: "\u0000anna", label: "Anna" }, tag: { kind: "tag", value: "bio", label: "bio" } };
     // Farbwähler: beim Ziehen nur die Vorschau ändern (Wähler bleibt offen), gespeichert wird beim Schließen/Bestätigen
     const colorInput = (value, onlive, oncommit, label) => h("input", { type: "color", value: value || "#888888", "aria-label": label, title: label,
       oninput: (e) => onlive(e.target.value), onchange: (e) => oncommit(e.target.value) });
@@ -5304,7 +5317,10 @@ class SmartListsCard extends HTMLElement {
     const listEl = h("div");
     const drawValues = () => {
       const q = searchKey(query);
-      const rows = tags.filter((x) => !q || searchKey(x.label + " " + x.value).includes(q)).slice(0, 60);
+      // nur Märkte/Personen, die benutzt werden oder angepasst sind (Schlagwörter: oben „Je Art“ – gilt für alle)
+      const rows = tags.filter((x) => x.kind !== "tag" && (x.count > 0 || x.favorite || Object.keys(look.values[x.key] || {}).length))
+        .filter((x) => !q || searchKey(x.label + " " + x.value).includes(q)).slice(0, 60);
+      if (!rows.length) return fill(listEl, h("div", { class: "shelp" }, q ? t.look_none_q : t.look_none));
       fill(listEl, ...rows.map((x) => {
         const cur = look.values[x.key] || {};
         let prevV = null;
@@ -5352,10 +5368,12 @@ class SmartListsCard extends HTMLElement {
           const rules = (this._cfg && this._cfg.tag_rules) || [];
           const rule = rules.find((r) => v.startsWith(r.prefix));
           const kind = rule ? rule.kind : "store";
+          if (kind === "tag") { status.textContent = t.look_tag_kind; return; }  // Schlagwörter: oben „Je Art“
           const value = (rule ? v.slice(rule.prefix.length) : v).trim();
           if (!value) return;
           const key = `${kind}:${value.toLowerCase()}`;
           if (!tags.some((x) => x.key === key)) tags = [{ key, kind, value, label: value, color: null, count: 0, custom: {} }, ...tags];
+          if (kind === "store") this._call("favorite_store", { store: value }, false).catch(() => {});  // auch unter Märkte & Zonen
           look = { ...look, values: { ...look.values, [key]: { color: kind === "store" ? "#1747b5" : "#7b61ff" } } };
           query = ""; draw(); save();
         } }, "＋ " + t.look_add)));
@@ -5425,14 +5443,20 @@ class SmartListsCard extends HTMLElement {
       const zs = zones();
       const nameOf = (id) => { const hit = zs.find(([z]) => z === id); return hit ? hit[1] : this._hass.states[id] ? id : `⚠️ ${id}`; };
       // je Markt beliebig viele Zonen (Filialen): Chips mit ×, dazu Auswahl „＋ Zone“
-      fill(body, ...stores.map((st) => {
+      // nur die Märkte des Haushalts (Einrichtung, benutzt, mit Zone); weitere über „＋ Markt“
+      fill(body, stores.length ? null : h("div", { class: "shelp" }, t.stores_none), ...stores.map((st) => {
         const linked = st.zones || (st.zone ? [st.zone] : []);
         const hasOrder = !!(((this._cfg && this._cfg.store_order) || {})[st.key]);
         return h("div", { class: "storecard" },
           h("div", { class: "sthead" }, badge({ kind: "store", value: st.value, label: st.label, color: st.color }),
             h("span", { class: "stinfo" }, linked.length ? `📍 ${linked.length} ${t.zone_count}` : t.zone_none, hasOrder ? ` · 🛤️ ${t.aisle} ✓` : ""),
             h("button", { class: "linkbtn", type: "button",
-              onclick: () => this._aisleEditor(body, st, linked, () => this._call("stores", {}, false).then((r) => draw(r.stores))) }, "🛤️ " + t.aisle)),
+              onclick: () => this._aisleEditor(body, st, linked, () => this._call("stores", {}, false).then((r) => draw(r.stores))) }, "🛤️ " + t.aisle),
+            // aus der Auswahl nehmen – nur, solange der Markt nicht benutzt wird und keine Zone hat (sonst taucht er ohnehin wieder auf)
+            st.favorite && !st.count && !linked.length ? iconBtn(ICON.close, `${t.store_remove}: ${st.label}`, async () => {
+              try { draw((await this._call("favorite_store", { store: st.value, remove: true }, false)).stores); }
+              catch (err) { status.textContent = (err && err.message) || t.error; }
+            }, "danger") : null),
           h("div", { class: "stzones" },
             linked.map((z) => h("div", { class: "stzone" }, h("span", {}, "📍 ", nameOf(z)),
               iconBtn(ICON.close, `${t.zone_unlink}: ${nameOf(z)}`, () => link(st.key, linked.filter((x) => x !== z)), "danger"))),
@@ -5446,9 +5470,11 @@ class SmartListsCard extends HTMLElement {
         h("div", { class: "acts" }, status,
           h("a", { class: "btn2", href: "/config/zone", target: "_top", style: "display:inline-flex;align-items:center;text-decoration:none" }, t.zone_manage),
           h("button", { class: "btn2", type: "button", onclick: async () => {
-            const store = await slDialog(this.shadowRoot, { title: t.store_add, text: t.store_add_help, input: true, placeholder: "REWE", ok: t.create, cancel: t.cancel });
-            if (store) createZone(store);
-          } }, "＋ " + t.store_add)));
+            const store = await slDialog(this.shadowRoot, { title: t.store_new, text: t.store_add_help2, input: true, placeholder: "EDEKA", ok: t.pack_add, cancel: t.cancel });
+            if (!store) return;
+            try { draw((await this._call("favorite_store", { store }, false)).stores); status.textContent = "✓ " + store.replace(/^@/, ""); }
+            catch (err) { status.textContent = (err && err.message) || t.error; }
+          } }, "＋ " + t.store_new)));
     };
     this._call("stores", {}, false).then((r) => draw(r.stores)).catch(() => fill(body, t.error));
     return this._sec("📍", t.stores, t.stores_help, [body]);

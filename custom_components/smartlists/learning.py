@@ -420,20 +420,39 @@ class Learning:
         self._changed()
         return current
 
+    @callback
+    def set_favorite_store(self, value: str, remove: bool = False) -> list[str]:
+        """Markt zur Auswahl des Haushalts hinzufügen (z. B. später noch @EDEKA) bzw. wieder entfernen."""
+        value = str(value).strip().lstrip("@")[:30]
+        if not value:
+            raise ValueError("Bitte einen Marktnamen angeben")
+        favs = [v for v in self.automation.get("favorite_stores") or [] if str(v).lower() != value.lower()]
+        if not remove:
+            if len(favs) >= 30:
+                raise ValueError("Höchstens 30 Märkte")
+            favs.append(value)
+        self.automation["favorite_stores"] = favs
+        self._changed()
+        return favs
+
     def stores(self) -> list[dict[str, Any]]:
-        """Bekannte Märkte: schon benutzte (@REWE in Artikeln) + bekannte Ketten + verknüpfte."""
+        """Märkte des Haushalts: in der Einrichtung gewählte bzw. später hinzugefügte, schon benutzte (@REWE in
+        Artikeln) und mit einer Zone verknüpfte. Bekannte Ketten, die niemand nutzt, erscheinen hier nicht."""
         out: dict[str, dict[str, Any]] = {}
-        for t in self.tag_history.values():
-            if t.get("kind") == "store" and t.get("value"):
-                label, color = itemtext.store_display(str(t["value"]))
-                out.setdefault(str(t["value"]).lower(), {"value": t["value"], "label": label, "color": color, "count": int(t.get("count", 0))})
-        for key, (label, color) in itemtext.KNOWN_STORES.items():
-            out.setdefault(key.lower(), {"value": label, "label": label, "color": color, "count": 0})
-        for key in self.store_zones:
-            out.setdefault(key, {"value": key, "label": key, "color": None, "count": 0})
+        favorites = {str(v).lower() for v in self.automation.get("favorite_stores") or []}
         for value in self.automation.get("favorite_stores") or []:  # in der Einrichtung gewählt
             label, color = itemtext.store_display(str(value))
             out.setdefault(str(value).lower(), {"value": value, "label": label, "color": color, "count": 0})
+        for t in self.tag_history.values():
+            if t.get("kind") == "store" and t.get("value") and int(t.get("count", 0)) > 0:
+                label, color = itemtext.store_display(str(t["value"]))
+                e = out.setdefault(str(t["value"]).lower(), {"value": t["value"], "label": label, "color": color, "count": 0})
+                e["count"] += int(t.get("count", 0))
+        for key in self.store_zones:
+            label, color = itemtext.store_display(key)
+            out.setdefault(key, {"value": key, "label": label, "color": color, "count": 0})
+        for e in out.values():
+            e["favorite"] = str(e["value"]).lower() in favorites
         zones = self.store_zones
         # "zone" (erste) bleibt für ältere Karten/App erhalten, "zones" = alle
         rows = [{**v, "key": k, "zones": zones.get(k, []), "zone": (zones.get(k) or [None])[0]} for k, v in out.items()]
@@ -715,8 +734,12 @@ class Learning:
         for t in self.tag_history.values():
             if t.get("kind") and t.get("value"):
                 add(t["kind"], str(t["value"]), int(t.get("count", 0)))
-        for label, _ in itemtext.KNOWN_STORES.values():
-            add("store", label)
+        favorites = [str(v) for v in self.automation.get("favorite_stores") or []]
+        for value in favorites:  # gewählte Märkte (Einrichtung / Märkte & Zonen) – ungenutzte bekannte Ketten nicht
+            add("store", value)
+        favs = {v.lower() for v in favorites}
+        for e in out.values():
+            e["favorite"] = e["kind"] == "store" and e["value"].lower() in favs
         for key in self.appearance.get("values", {}):
             kind, _, value = key.partition(":")
             add(kind, value)

@@ -20,12 +20,19 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 - **Long press in shopping mode asks before deleting** (same confirmation as the delete button).
 - **Badges & colours → individual badges:** compact rows (badge + count); ✎ opens the settings of that badge,
   ● marks badges that were customised.
+- **Tags are styled once for all** (*Per kind*); individual settings are only for stores and people. The list of
+  individual badges shows only the household's stores (chosen in the setup assistant, used or customised) and
+  people in use – no more unused known chains.
+- **Stores & zones shows only your stores** (from the setup assistant, used in items or linked to a zone).
+  *＋ Store* adds another one later (e.g. EDEKA); unused ones can be removed with ✕.
 - **Stores & zones:** one card per store with its zones listed below, ✕ to unlink, aisle order as a link and a
   full-width "＋ Zone" picker.
 - **Cloudflare Tunnel:** the step-by-step help is collapsed until you tap "Show instructions".
 
 ### Fixed
 
+- **Badges & colours:** the *Per kind* preview showed an individually customised badge instead of the kind's
+  colours (e.g. tag preview stayed grey after choosing *filled* with red/yellow).
 - **Naming convention:** each kind (store, person, tag) can only have one character – duplicate kinds can no
   longer be selected in the UI and are rejected by the server.
 

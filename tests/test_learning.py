@@ -378,3 +378,19 @@ def test_reset_frequent_per_list_and_single():
     assert "Brot" in names(learning.suggest("", [], 10, {"todo.einkauf"}))
     learning.reset_frequent(None, ["Milch"])  # „aus allen Listen“: überall
     assert "Milch" not in names(learning.suggest("", [], 10, None))
+
+
+def test_stores_only_household():
+    """Märkte & Zonen / Badges: nur gewählte, benutzte oder mit Zone verknüpfte Märkte – keine ungenutzten Ketten."""
+    learning = _learning()
+    learning.automation["favorite_stores"] = ["REWE", "ALDI"]
+    learning.record("Milch @dm", "todo.einkauf")
+    keys = {s["key"] for s in learning.stores()}
+    assert keys == {"rewe", "aldi", "dm"}
+    assert next(s for s in learning.stores() if s["key"] == "rewe")["favorite"]
+    learning.set_favorite_store("@EDEKA")
+    assert "edeka" in {s["key"] for s in learning.stores()}
+    learning.set_favorite_store("edeka", remove=True)
+    assert "edeka" not in {s["key"] for s in learning.stores()}
+    overview = {t["key"] for t in learning.tag_overview() if t["kind"] == "store"}
+    assert "store:kaufland" not in overview and {"store:rewe", "store:dm"} <= overview

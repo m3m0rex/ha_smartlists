@@ -3,6 +3,13 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.9.24] – 2026-11-15
+
+### Changed
+
+- **Shared page: softly checked items get their own section** "✓ Marked" between the open items and "Done", so the
+  open list only shows what still needs to be bought.
+
 ## [3.9.23] – 2026-11-15
 
 ### Fixed

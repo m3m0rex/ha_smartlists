@@ -432,8 +432,23 @@ def ws_automation(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/set_automation", vol.Required("settings"): dict})
 @callback
 def ws_set_automation(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    allowed = {"voice_default_list", "auto_due_list"}
-    _learning(hass).set_automation({k: v for k, v in msg["settings"].items() if k in allowed})
+    from .barcode import PROVIDERS
+
+    raw = msg["settings"]
+    settings: dict[str, Any] = {k: raw[k] for k in ("voice_default_list", "auto_due_list") if isinstance(raw.get(k), str)}
+    # Strichcodes: Nachschlagen an/aus, Dienste in Reihenfolge, eigener Dienst (fehlten bisher → wurden nie gespeichert)
+    if isinstance(raw.get("barcode_lookup"), bool):
+        settings["barcode_lookup"] = raw["barcode_lookup"]
+    if isinstance(raw.get("barcode_providers"), list):
+        settings["barcode_providers"] = list(dict.fromkeys(p for p in raw["barcode_providers"] if p in PROVIDERS))
+    for key in ("barcode_custom_url", "barcode_custom_field"):
+        if isinstance(raw.get(key), str):
+            settings[key] = raw[key].strip()[:300]
+    url = settings.get("barcode_custom_url")
+    if url and not url.startswith("https://"):
+        connection.send_error(msg["id"], "invalid", "Eigener Dienst: Adresse muss mit https:// beginnen.")
+        return
+    _learning(hass).set_automation(settings)
     connection.send_result(msg["id"], {"settings": _learning(hass).automation})
 
 

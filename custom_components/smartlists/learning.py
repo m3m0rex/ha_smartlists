@@ -365,10 +365,11 @@ class Learning:
     @callback
     def set_automation(self, settings: dict[str, Any]) -> None:
         keep = {k: self.automation.get(k) for k in ("store_zones", "rights", "favorite_stores", "setup_done", "features", "migrated_lists",
-                                                    "bought_backfilled")}
+                                                    "bought_backfilled", "barcode_lookup", "barcode_providers",
+                                                    "barcode_custom_url", "barcode_custom_field")}
         self.automation = {k: v for k, v in settings.items() if v not in (None, "", [], {})}
         for k, v in keep.items():  # Markt-Zonen und Rechte nicht versehentlich mitlöschen
-            if v and k not in settings:
+            if (v or v is False) and k not in settings:
                 self.automation[k] = v
         self._changed()
 

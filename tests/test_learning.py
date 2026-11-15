@@ -394,3 +394,13 @@ def test_stores_only_household():
     assert "edeka" not in {s["key"] for s in learning.stores()}
     overview = {t["key"] for t in learning.tag_overview() if t["kind"] == "store"}
     assert "store:kaufland" not in overview and {"store:rewe", "store:dm"} <= overview
+
+
+def test_set_automation_keeps_barcode_settings():
+    """Strichcode-Dienste bleiben gespeichert, auch wenn danach z. B. nur die Sprach-Liste geändert wird."""
+    learning = _learning()
+    learning.set_automation({"barcode_providers": ["obf", "off"], "barcode_lookup": False})
+    learning.set_automation({"voice_default_list": "todo.einkauf"})
+    assert learning.automation["barcode_providers"] == ["obf", "off"]
+    assert learning.automation["barcode_lookup"] is False
+    assert learning.automation["voice_default_list"] == "todo.einkauf"

@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.9.23] – 2026-11-15
+
+### Fixed
+
+- **Barcode lookup settings were not saved:** choosing other services (Open Beauty Facts, Open Pet Food Facts,
+  Open Products Facts, UPCitemdb, own service), their order and the on/off switch reset after reloading – only the
+  default Open Food Facts seemed to work. They are now stored and kept when other automation settings change.
+
 ## [3.9.22] – 2026-11-15
 
 ### Changed

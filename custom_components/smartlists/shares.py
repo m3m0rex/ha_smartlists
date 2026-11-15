@@ -69,6 +69,30 @@ def _hash(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 
+MAX_PASSWORD = 100
+
+
+def _pw_hash(password: str, salt: str) -> str:
+    return hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt), 120_000).hex()
+
+
+def make_password(password: str) -> dict[str, str]:
+    """Passwort eines Links: nur Salz + PBKDF2-Hash gespeichert."""
+    salt = secrets.token_hex(16)
+    return {"salt": salt, "hash": _pw_hash(password, salt)}
+
+
+def check_password(link: dict[str, Any], given: str | None) -> bool:
+    pw = link.get("pw")
+    if not pw:
+        return True
+    if not given or len(given) > MAX_PASSWORD:
+        return False
+    import hmac
+
+    return hmac.compare_digest(_pw_hash(given, pw["salt"]), pw["hash"])
+
+
 class Shares:
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
@@ -97,7 +121,7 @@ class Shares:
 
     @callback
     def create(self, entity_id: str, user_id: str, check: str = "off", add: bool = False, hours: int | None = 168,
-               base: str | None = None) -> dict[str, Any]:
+               base: str | None = None, notes: bool = False, password: str | None = None) -> dict[str, Any]:
         """Neuer Link. hours = Gültigkeit (z. B. 2, 24, 168, 720), None = unbegrenzt bis zum Widerruf.
         base = öffentliche Adresse (Tunnel/Proxy, siehe public.py) – gemerkt, um später zu zeigen, wenn sich die
         Tunnel-Adresse geändert hat und der Link deshalb nicht mehr geht. None = Adresse von Home Assistant."""
@@ -111,7 +135,11 @@ class Shares:
         now = int(time.time())
         self.links[h] = {"entity_id": entity_id, "check": check, "add": bool(add),
                          "expires": now + int(hours) * 3600 if hours else None, "created": now,
-                         "created_by": user_id, "opens": 0, "soft": {}, "base": base}
+                         "created_by": user_id, "opens": 0, "soft": {}, "base": base, "notes": bool(notes)}
+        if password:
+            if len(password) > MAX_PASSWORD:
+                raise ValueError("Passwort zu lang")
+            self.links[h]["pw"] = make_password(password)
         self._save()
         return {"id": h[:16], "token": token, **self.describe(h)}
 
@@ -119,7 +147,8 @@ class Shares:
         link = self.links[h]
         return {"id": h[:16], "entity_id": link["entity_id"], "check": link["check"], "add": link["add"],
                 "expires": link["expires"], "created": link["created"], "opens": link.get("opens", 0),
-                "expired": bool(link["expires"] and link["expires"] < time.time()), "base": link.get("base")}
+                "expired": bool(link["expires"] and link["expires"] < time.time()), "base": link.get("base"),
+                "notes": bool(link.get("notes")), "password": bool(link.get("pw"))}
 
     @callback
     def revoke_all(self) -> int:
@@ -246,6 +275,9 @@ class ShareApiView(HomeAssistantView):
         h, link = found
         if not shares.allow_read(h):
             return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
+        if not check_password(link, request.headers.get("X-Share-Password")):
+            await asyncio.sleep(0.6)  # Raten bremsen
+            return web.json_response({"error": "password"}, status=401, headers=SECURITY_HEADERS)
         shares.count_open(h)
         lang = str(request.query.get("lang") or "")[:5]
         return web.json_response(await self._payload(hass, shares, link, lang), headers=SECURITY_HEADERS)
@@ -256,6 +288,7 @@ class ShareApiView(HomeAssistantView):
         state = hass.states.get(link["entity_id"])
         items = await lists.raw_items(hass, link["entity_id"]) if state else []
         soft = link.get("soft") or {}
+        added = shares.added_via_link(link["entity_id"]) if shares is not None else {}  # uid → Name
         name = state.attributes.get("friendly_name", "") if state else ""
         # Darstellung wie in der Karte: Name, Menge, Badges (Markt/Person/Schlagwort in den Farben des Haushalts) und
         # Kategorie-Gruppen. Alles stammt aus dem Artikeltext selbst – weiterhin keine Notizen, Preise, Entitäten
@@ -269,6 +302,8 @@ class ShareApiView(HomeAssistantView):
         for i in items:
             entry = {"uid": i["uid"], "text": i["text"], "checked": bool(i["checked"]), "soft": i["uid"] in soft,
                      "soft_by": _mark(soft.get(i["uid"]))[1] if i["uid"] in soft else ""}
+            if i["uid"] in added:
+                entry["added_by"] = added[i["uid"]] or "?"  # über einen Link hinzugefügt (auch auf der geteilten Seite zeigen)
             if learning is not None:
                 try:
                     info = learning.describe(i["text"])
@@ -285,6 +320,8 @@ class ShareApiView(HomeAssistantView):
                     from .itemtext import split_offer
 
                     _note, offer, _raw = split_offer(i.get("note"))
+                    if link.get("notes") and _note.strip():
+                        entry["note"] = _note.strip()[:500]  # nur wenn beim Link erlaubt; Angebots-Zeile nie
                     if offer:
                         entry["offer"] = {k: offer.get(k) for k in ("store", "store_label", "color", "price", "old_price",
                                                                      "discount", "valid_until", "expired")}
@@ -311,6 +348,9 @@ class ShareApiView(HomeAssistantView):
         h, link = found
         if not shares.allow_write(h):
             return web.json_response({"error": "too_many"}, status=429, headers=SECURITY_HEADERS)
+        if not check_password(link, request.headers.get("X-Share-Password")):
+            await asyncio.sleep(0.6)
+            return web.json_response({"error": "password"}, status=401, headers=SECURITY_HEADERS)
         if (request.content_length or 0) > MAX_BODY:
             return web.json_response({"error": "too_large"}, status=413, headers=SECURITY_HEADERS)
         try:
@@ -385,12 +425,12 @@ class SharePageView(HomeAssistantView):
 
 
 SHARE_TEXTS = {
-    "de": {"open": "offen", "done": "erledigt", "add": "Hinzufügen", "placeholder": "Artikel hinzufügen …", "gone": "Dieser Link ist abgelaufen oder wurde widerrufen.", "until": "gültig bis", "soft": "von dir markiert", "error": "Das hat nicht geklappt – bitte neu laden.", "name_ask": "Wie heißt du?", "name_help": "Bitte gib deinen Namen an. Er erscheint bei dem, was du markierst oder hinzufügst – so sieht man, von wem es kommt. Er wird nur auf diesem Gerät gemerkt.", "name_ph": "Vorname", "name_go": "Weiter", "name_skip": "ohne Namen weiter", "you": "du bist", "anon": "ohne Namen", "change": "ändern", "offer": "Angebot", "offer_expired": "abgelaufen"},
-    "en": {"open": "open", "done": "done", "add": "Add", "placeholder": "Add an item …", "gone": "This link has expired or was revoked.", "until": "valid until", "soft": "marked by you", "error": "That did not work – please reload.", "name_ask": "What's your name?", "name_help": "Please enter your name. It is shown with what you mark or add – so everyone sees who it came from. It is only remembered on this device.", "name_ph": "First name", "name_go": "Continue", "name_skip": "continue without a name", "you": "you are", "anon": "without a name", "change": "change", "offer": "Offer", "offer_expired": "expired"},
-    "fr": {"open": "à faire", "done": "fait", "add": "Ajouter", "placeholder": "Ajouter un article …", "gone": "Ce lien a expiré ou a été révoqué.", "until": "valable jusqu'au", "soft": "marqué par toi", "error": "Ça n'a pas marché – recharge la page.", "name_ask": "Comment t'appelles-tu ?", "name_help": "Ton nom apparaît avec ce que tu coches ou ajoutes – on voit ainsi de qui ça vient. Il n'est retenu que sur cet appareil.", "name_ph": "Prénom", "name_go": "Continuer", "name_skip": "continuer sans nom", "you": "tu es", "anon": "sans nom", "change": "modifier", "offer": "Promo", "offer_expired": "expiré"},
-    "es": {"open": "pendientes", "done": "hecho", "add": "Añadir", "placeholder": "Añadir artículo …", "gone": "Este enlace ha caducado o se ha revocado.", "until": "válido hasta", "soft": "marcado por ti", "error": "No ha funcionado – recarga la página.", "name_ask": "¿Cómo te llamas?", "name_help": "Tu nombre aparece con lo que marcas o añades – así se ve de quién viene. Solo se guarda en este dispositivo.", "name_ph": "Nombre", "name_go": "Continuar", "name_skip": "continuar sin nombre", "you": "eres", "anon": "sin nombre", "change": "cambiar", "offer": "Oferta", "offer_expired": "caducada"},
-    "it": {"open": "da fare", "done": "fatto", "add": "Aggiungi", "placeholder": "Aggiungi un articolo …", "gone": "Questo link è scaduto o è stato revocato.", "until": "valido fino al", "soft": "segnato da te", "error": "Non ha funzionato – ricarica la pagina.", "name_ask": "Come ti chiami?", "name_help": "Il tuo nome compare con ciò che segni o aggiungi – così si vede da chi arriva. Viene ricordato solo su questo dispositivo.", "name_ph": "Nome", "name_go": "Continua", "name_skip": "continua senza nome", "you": "sei", "anon": "senza nome", "change": "cambia", "offer": "Offerta", "offer_expired": "scaduta"},
-    "pl": {"open": "do kupienia", "done": "zrobione", "add": "Dodaj", "placeholder": "Dodaj produkt …", "gone": "Ten link wygasł lub został cofnięty.", "until": "ważny do", "soft": "oznaczone przez ciebie", "error": "Nie udało się – odśwież stronę.", "name_ask": "Jak masz na imię?", "name_help": "Twoje imię pojawi się przy tym, co oznaczysz lub dodasz – widać wtedy, od kogo to jest. Zapamiętywane tylko na tym urządzeniu.", "name_ph": "Imię", "name_go": "Dalej", "name_skip": "dalej bez imienia", "you": "jesteś", "anon": "bez imienia", "change": "zmień", "offer": "Promocja", "offer_expired": "wygasła"},
+    "de": {"open": "offen", "done": "erledigt", "add": "Hinzufügen", "placeholder": "Artikel hinzufügen …", "gone": "Dieser Link ist abgelaufen oder wurde widerrufen.", "until": "gültig bis", "soft": "von dir markiert", "error": "Das hat nicht geklappt – bitte neu laden.", "name_ask": "Wie heißt du?", "name_help": "Bitte gib deinen Namen an. Er erscheint bei dem, was du markierst oder hinzufügst – so sieht man, von wem es kommt. Er wird nur auf diesem Gerät gemerkt.", "name_ph": "Vorname", "name_go": "Weiter", "name_skip": "ohne Namen weiter", "you": "du bist", "anon": "ohne Namen", "change": "ändern", "offer": "Angebot", "offer_expired": "abgelaufen", "pw_help": "Diese Liste ist mit einem Passwort geschützt.", "pw_ph": "Passwort", "pw_wrong": "Passwort falsch – bitte noch einmal.", "pw_ask": "Passwort eingeben", "added_by": "von {name} hinzugefügt", "you_short": "dir", "search": "Suchen", "search_ph": "Artikel suchen …", "no_hits": "Nichts gefunden."},
+    "en": {"open": "open", "done": "done", "add": "Add", "placeholder": "Add an item …", "gone": "This link has expired or was revoked.", "until": "valid until", "soft": "marked by you", "error": "That did not work – please reload.", "name_ask": "What's your name?", "name_help": "Please enter your name. It is shown with what you mark or add – so everyone sees who it came from. It is only remembered on this device.", "name_ph": "First name", "name_go": "Continue", "name_skip": "continue without a name", "you": "you are", "anon": "without a name", "change": "change", "offer": "Offer", "offer_expired": "expired", "pw_help": "This list is protected with a password.", "pw_ph": "Password", "pw_wrong": "Wrong password – please try again.", "pw_ask": "Enter password", "added_by": "added by {name}", "you_short": "you", "search": "Search", "search_ph": "Search items …", "no_hits": "Nothing found."},
+    "fr": {"open": "à faire", "done": "fait", "add": "Ajouter", "placeholder": "Ajouter un article …", "gone": "Ce lien a expiré ou a été révoqué.", "until": "valable jusqu'au", "soft": "marqué par toi", "error": "Ça n'a pas marché – recharge la page.", "name_ask": "Comment t'appelles-tu ?", "name_help": "Ton nom apparaît avec ce que tu coches ou ajoutes – on voit ainsi de qui ça vient. Il n'est retenu que sur cet appareil.", "name_ph": "Prénom", "name_go": "Continuer", "name_skip": "continuer sans nom", "you": "tu es", "anon": "sans nom", "change": "modifier", "offer": "Promo", "offer_expired": "expiré", "pw_help": "Cette liste est protégée par un mot de passe.", "pw_ph": "Mot de passe", "pw_wrong": "Mot de passe incorrect – réessaie.", "pw_ask": "Saisir le mot de passe", "added_by": "ajouté par {name}", "you_short": "toi", "search": "Rechercher", "search_ph": "Rechercher un article …", "no_hits": "Rien trouvé."},
+    "es": {"open": "pendientes", "done": "hecho", "add": "Añadir", "placeholder": "Añadir artículo …", "gone": "Este enlace ha caducado o se ha revocado.", "until": "válido hasta", "soft": "marcado por ti", "error": "No ha funcionado – recarga la página.", "name_ask": "¿Cómo te llamas?", "name_help": "Tu nombre aparece con lo que marcas o añades – así se ve de quién viene. Solo se guarda en este dispositivo.", "name_ph": "Nombre", "name_go": "Continuar", "name_skip": "continuar sin nombre", "you": "eres", "anon": "sin nombre", "change": "cambiar", "offer": "Oferta", "offer_expired": "caducada", "pw_help": "Esta lista está protegida con contraseña.", "pw_ph": "Contraseña", "pw_wrong": "Contraseña incorrecta – inténtalo de nuevo.", "pw_ask": "Introduce la contraseña", "added_by": "añadido por {name}", "you_short": "ti", "search": "Buscar", "search_ph": "Buscar artículo …", "no_hits": "No se encontró nada."},
+    "it": {"open": "da fare", "done": "fatto", "add": "Aggiungi", "placeholder": "Aggiungi un articolo …", "gone": "Questo link è scaduto o è stato revocato.", "until": "valido fino al", "soft": "segnato da te", "error": "Non ha funzionato – ricarica la pagina.", "name_ask": "Come ti chiami?", "name_help": "Il tuo nome compare con ciò che segni o aggiungi – così si vede da chi arriva. Viene ricordato solo su questo dispositivo.", "name_ph": "Nome", "name_go": "Continua", "name_skip": "continua senza nome", "you": "sei", "anon": "senza nome", "change": "cambia", "offer": "Offerta", "offer_expired": "scaduta", "pw_help": "Questa lista è protetta da password.", "pw_ph": "Password", "pw_wrong": "Password errata – riprova.", "pw_ask": "Inserisci la password", "added_by": "aggiunto da {name}", "you_short": "te", "search": "Cerca", "search_ph": "Cerca articolo …", "no_hits": "Nessun risultato."},
+    "pl": {"open": "do kupienia", "done": "zrobione", "add": "Dodaj", "placeholder": "Dodaj produkt …", "gone": "Ten link wygasł lub został cofnięty.", "until": "ważny do", "soft": "oznaczone przez ciebie", "error": "Nie udało się – odśwież stronę.", "name_ask": "Jak masz na imię?", "name_help": "Twoje imię pojawi się przy tym, co oznaczysz lub dodasz – widać wtedy, od kogo to jest. Zapamiętywane tylko na tym urządzeniu.", "name_ph": "Imię", "name_go": "Dalej", "name_skip": "dalej bez imienia", "you": "jesteś", "anon": "bez imienia", "change": "zmień", "offer": "Promocja", "offer_expired": "wygasła", "pw_help": "Ta lista jest chroniona hasłem.", "pw_ph": "Hasło", "pw_wrong": "Złe hasło – spróbuj ponownie.", "pw_ask": "Wpisz hasło", "added_by": "dodane przez {name}", "you_short": "ciebie", "search": "Szukaj", "search_ph": "Szukaj produktu …", "no_hits": "Nic nie znaleziono."},
 }
 
 SHARE_PAGE = """<!doctype html><html lang="__LANG__"><head><meta charset="utf-8">
@@ -409,14 +449,17 @@ h1{font-size:1.3rem;margin:8px 4px 2px}.sub{color:var(--m);font-size:.85rem;marg
 .row small{color:var(--a);font-size:.75rem;margin-left:auto}
 .add{display:flex;gap:8px;margin-top:12px}.add input{flex:1;height:42px;border-radius:10px;border:1px solid var(--d);background:var(--card);color:var(--t);padding:0 12px;font:inherit}
 .add button:disabled{opacity:.45}.add button{height:42px;border-radius:21px;border:none;background:var(--a);color:#fff;padding:0 18px;font:inherit;font-weight:600}
-.sub a{color:var(--a);text-decoration:none}.ask{font-weight:600;font-size:1.05rem;margin:14px 4px 2px}.msg{padding:24px;text-align:center;color:var(--m)}h2{font-size:.8rem;text-transform:uppercase;color:var(--m);margin:16px 6px 6px}
+.sub a{color:var(--a);text-decoration:none}.top{display:flex;align-items:center;gap:8px}.top h1{flex:1}
+.sbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--d);background:var(--card);font-size:1.05rem;cursor:pointer;margin-top:6px}.sbtn.on{border-color:var(--a)}
+.search input{width:100%;box-sizing:border-box;height:42px;border-radius:10px;border:1px solid var(--d);background:var(--card);color:var(--t);padding:0 12px;font:inherit;margin:4px 0 8px}
+.top-add{margin:0 0 12px}.ask{font-weight:600;font-size:1.05rem;margin:14px 4px 2px}.msg{padding:24px;text-align:center;color:var(--m)}h2{font-size:.8rem;text-transform:uppercase;color:var(--m);margin:16px 6px 6px}
 h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--m);margin:14px 6px 6px;font-weight:600}h3:first-of-type{margin-top:4px}
 .nm{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}.q{color:var(--t);white-space:nowrap;margin-left:auto;padding-left:8px}
 .tag{font-size:.7rem;font-weight:700;padding:1px 7px;border-radius:4px;white-space:nowrap;letter-spacing:.02em}
 .tag.store{color:#fff}.tag.person{background:color-mix(in srgb,#7b61ff 15%,transparent);color:#7b61ff;font-weight:600;border-radius:9px}
 .tag.tag{background:var(--d);color:var(--m);font-weight:600;border-radius:9px}.tag.s-filled.person,.tag.s-filled.tag{border-radius:4px}
 .tag.s-outline{background:none!important;border:1px solid currentColor;padding:0 6px}.tag.s-text{background:none!important;padding:0 2px}
-.row.done .tag{opacity:.55}
+.row.done .tag{opacity:.55}.nt{font-size:.8rem;color:var(--m);white-space:pre-line}
 .nmw{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.offer{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.8rem;color:var(--m)}
 .offer .ol{color:#e6a700;font-weight:600}.offer b{color:var(--t)}.offer s{opacity:.7}.offer.exp{opacity:.6}
 </style></head><body><main id="app"><div class="msg">…</div></main>
@@ -428,7 +471,7 @@ var app=document.getElementById("app");
 function el(tag,attrs,kids){var e=document.createElement(tag);for(var k in attrs||{}){if(k==="text")e.textContent=attrs[k];else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k]);}(kids||[]).forEach(function(c){if(c)e.appendChild(c)});return e}
 function fail(){app.replaceChildren(el("div",{class:"msg",text:T.gone}))}
 /* Name der Person (freiwillig, nur auf diesem Gerät gemerkt): erscheint in der Liste als „von Max markiert (Link)“ */
-var NK="smartlists-share-name",asking=false;
+var NK="smartlists-share-name",asking=false,searchOpen=false,query="";
 /* langfristig merken: localStorage und zusätzlich ein Cookie (400 Tage, nur für die Teilen-Seiten) – manche Browser
    leeren den Speicher einer Seite nach einiger Zeit, dann hilft das jeweils andere */
 var CP=location.pathname.replace(/[^/]*$/,"");
@@ -437,7 +480,21 @@ function getName(){var v=null;try{v=localStorage.getItem(NK)}catch(e){}if(!v){v=
 function setName(v){try{localStorage.setItem(NK,v)}catch(e){}
   document.cookie="smartlists_share_name="+encodeURIComponent(v)+"; Max-Age=34560000; Path="+CP+"; SameSite=Lax"+(location.protocol==="https:"?"; Secure":"")}
 var cur=null;
-function call(body){if(body&&!getName()){if(cur)ask(cur);return Promise.reject("name")}if(body)body.name=getName();return fetch(api,body?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}:{}).then(function(r){if(r.status===404)throw "gone";if(!r.ok)throw "err";return r.json()})}
+/* Passwort (falls der Link eins hat): nur für diese Sitzung gemerkt */
+var PK="smartlists-share-pw:"+token;
+function getPw(){try{return sessionStorage.getItem(PK)||""}catch(e){return ""}}
+function setPw(v){try{sessionStorage.setItem(PK,v)}catch(e){}}
+function askPw(wrong){
+  var inp=el("input",{type:"password",placeholder:T.pw_ph,maxlength:"100","aria-label":T.pw_ask,autocomplete:"current-password"});
+  var go=el("button",{type:"button",text:T.name_go});
+  var done=function(){var v=inp.value;if(!v)return;setPw(v);load()};
+  go.addEventListener("click",done);inp.addEventListener("keydown",function(e){if(e.key==="Enter")done()});
+  app.replaceChildren(el("h1",{text:"🔒 SmartLists"}),el("p",{class:"ask",text:T.pw_ask}),
+    wrong?el("p",{class:"sub",style:"color:#d93025",text:T.pw_wrong}):el("p",{class:"sub",text:T.pw_help}),el("div",{class:"add"},[inp,go]));
+  setTimeout(function(){inp.focus()},30)}
+function call(body){if(body&&!getName()){if(cur)ask(cur);return Promise.reject("name")}if(body)body.name=getName();
+  var hd={"X-Share-Password":getPw()};if(body)hd["Content-Type"]="application/json";
+  return fetch(api,body?{method:"POST",headers:hd,body:JSON.stringify(body)}:{headers:hd}).then(function(r){if(r.status===404)throw "gone";if(r.status===401)throw "password";if(!r.ok)throw "err";return r.json()})}
 /* Badges wie in der Karte: Markt gefüllt in Markenfarbe, Person/Schlagwort dezent – mit den Farben des Haushalts */
 var DEF={store:{style:"filled",icon:""},person:{style:"soft",icon:"👤"},tag:{style:"soft",icon:"#"}};
 function hashColor(s){var x=0;s=String(s).toLowerCase();for(var k=0;k<s.length;k++)x=(x*31+s.charCodeAt(k))>>>0;return "hsl("+(x%360)+" 55% 42%)"}
@@ -449,7 +506,10 @@ function badge(t,look){look=look||{};var kind=t.kind==="store"||t.kind==="person
   if(color){if(k.style==="filled"){b.style.background=color;b.style.color=tx||textOn(color)}else if(k.style==="soft"){b.style.background="color-mix(in srgb, "+color+" 18%, transparent)";b.style.color=tx||color}else b.style.color=tx||color}
   else if(tx)b.style.color=tx;return b}
 function draw(d){cur=d;
-  var open=d.items.filter(function(i){return !i.checked}),done=d.items.filter(function(i){return i.checked});
+  /* Suche (🔍 klappt das Feld auf): filtert nach Name, Text und Notiz */
+  var norm=function(x){return String(x||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")};
+  var hit=function(i){return !query||norm((i.name||"")+" "+i.text+" "+(i.note||"")).indexOf(norm(query))>=0};
+  var open=d.items.filter(function(i){return !i.checked&&hit(i)}),done=d.items.filter(function(i){return i.checked&&hit(i)});
   var row=function(i){var can=d.check!=="off";var box=el("input",{type:"checkbox"});box.checked=i.checked||i.soft;box.disabled=!can;
     box.addEventListener("change",function(){call({action:box.checked?"check":"uncheck",uid:i.uid}).then(draw,function(e){e==="gone"?fail():e==="name"?0:alert(T.error)})});
     var name=el("span",{class:"nm"},[el("span",{text:i.name||i.text})].concat((i.tags||[]).map(function(t){return badge(t,d.look)})));
@@ -464,6 +524,11 @@ function draw(d){cur=d;
     if(extra)name=el("span",{class:"nmw"},[name,extra]);
     return el("label",{class:"row"+(i.checked?" done":i.soft?" soft":"")},[box,name,i.soft&&!i.checked?el("small",{text:"✓ "+(i.soft_by&&i.soft_by!==getName()?i.soft_by:T.soft)}):null,
       i.qty?el("span",{class:"q",text:i.qty+(i.unit?" "+i.unit:"")}):null])};
+  var row0=row;row=function(i){var r=row0(i);
+    if(i.added_by&&!i.checked){var ab=el("span",{class:"nt",text:"🔗 "+T.added_by.replace("{name}",i.added_by===getName()?T.you_short:i.added_by)}),w0=r.querySelector(".nmw");
+      if(w0)w0.append(ab);else{var nm0=r.querySelector(".nm");w0=el("span",{class:"nmw"});nm0.replaceWith(w0);w0.append(nm0,ab)}}
+    if(i.note){var nt=el("span",{class:"nt",text:i.note}),w=r.querySelector(".nmw");
+    if(w)w.append(nt);else{var nm=r.querySelector(".nm");w=el("span",{class:"nmw"});nm.replaceWith(w);w.append(nm,nt)}}return r};
   /* nach Kategorie gruppiert (Reihenfolge wie im Markt), sofern die Liste so sortiert ist */
   var body=[];
   if(d.categories&&d.categories.length){
@@ -475,11 +540,18 @@ function draw(d){cur=d;
   var sub=el("p",{class:"sub"},[el("span",{text:open.length+" "+T.open+(d.expires?" · "+T.until+" "+new Date(d.expires*1000).toLocaleDateString():"")}),
     interact&&me?el("span",{text:" · "+T.you+" "+me+" · "}):null,
     interact&&me?el("a",{href:"#",text:T.change,onclick:function(e){e.preventDefault();ask(d)}}):null]);
-  var kids=[el("h1",{text:d.name}),sub].concat(body);
+  var sbtn=el("button",{type:"button",class:"sbtn"+(searchOpen?" on":""),"aria-label":T.search,title:T.search,text:"🔍",onclick:function(){searchOpen=!searchOpen;if(!searchOpen)query="";draw(d);if(searchOpen){var f=app.querySelector(".search input");if(f)f.focus()}}});
+  var kids=[el("div",{class:"top"},[el("h1",{text:d.name}),sbtn]),sub];
+  if(searchOpen){var sf=el("input",{type:"search",placeholder:T.search_ph,"aria-label":T.search,value:query});
+    sf.addEventListener("input",function(){query=sf.value;var pos=sf.selectionStart;draw(d);var f=app.querySelector(".search input");if(f){f.focus();try{f.setSelectionRange(pos,pos)}catch(e){}}});
+    kids.push(el("div",{class:"search"},[sf]))}
+  /* Hinzufügen oben, direkt unter der Überschrift */
   if(d.add){var inp=el("input",{placeholder:T.placeholder,maxlength:"120","aria-label":T.placeholder});
     var send=function(){var v=inp.value.trim();if(!v)return;call({action:"add",text:v}).then(function(x){inp.value="";draw(x)},function(e){e==="gone"?fail():e==="name"?0:alert(T.error)})};
     inp.addEventListener("keydown",function(e){if(e.key==="Enter")send()});
-    kids.push(el("div",{class:"add"},[inp,el("button",{type:"button",text:T.add,onclick:send})]))}
+    kids.push(el("div",{class:"add top-add"},[inp,el("button",{type:"button",text:T.add,onclick:send})]))}
+  if(query&&!open.length&&!done.length)kids.push(el("div",{class:"msg",text:T.no_hits}));
+  kids=kids.concat(body);
   if(done.length){kids.push(el("h2",{text:T.done+" · "+done.length}));kids.push(el("div",{class:"card"},done.map(row)))}
   app.replaceChildren.apply(app,kids)}
 function ask(d){asking=true;
@@ -494,10 +566,10 @@ function ask(d){asking=true;
     el("div",{class:"add"},[inp,go]));
   setTimeout(function(){inp.focus()},30)}
 function show(d){if(asking)return;if((d.check!=="off"||d.add)&&!getName())ask(d);else draw(d)}
-function load(){call().then(show,fail)}
+function load(){call().then(show,function(e){if(e==="password"){var had=!!getPw();askPw(had)}else fail()})}
 /* Hintergrund-Aktualisierung nicht, während jemand tippt (sonst wäre die Eingabe weg) */
 function typing(){var a=document.activeElement,inp=app.querySelector(".add input");return (a&&a.tagName==="INPUT")||(inp&&inp.value.trim())}
-load();setInterval(function(){if(!document.hidden&&!asking&&!typing())call().then(function(d){if(!typing())show(d)},function(){})},20000);
+load();setInterval(function(){if(!document.hidden&&!asking&&!typing()&&!app.querySelector("input[type=password]"))call().then(function(d){if(!typing())show(d)},function(){})},20000);
 })();
 </script></body></html>"""
 

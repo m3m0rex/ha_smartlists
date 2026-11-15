@@ -1043,6 +1043,8 @@ def _public_info(hass: HomeAssistant) -> dict[str, Any]:
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/share_create", vol.Required("entity_id"): str,
                                   vol.Optional("check", default="off"): vol.In(["off", "soft", "on"]),
                                   vol.Optional("add", default=False): bool,
+                                  vol.Optional("notes", default=False): bool,
+                                  vol.Optional("password"): vol.Any(vol.All(str, vol.Length(max=100)), None),
                                   vol.Optional("hours"): vol.Any(vol.All(int, vol.Range(min=1, max=24 * 365)), None)})
 @callback
 def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
@@ -1065,7 +1067,8 @@ def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnect
         connection.send_error(msg["id"], "public_unavailable", str(err))
         return
     try:
-        link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, check, add, hours=hours, base=base)
+        link = hass.data[DOMAIN]["shares"].create(msg["entity_id"], connection.user.id, check, add, hours=hours, base=base,
+                                                   notes=msg["notes"], password=(msg.get("password") or "").strip() or None)
     except ValueError as err:
         connection.send_error(msg["id"], "invalid", str(err))
         return

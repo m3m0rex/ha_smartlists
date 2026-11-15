@@ -276,3 +276,29 @@ def test_share_payload_includes_offer_but_not_note():
     offer = d["items"][0]["offer"]
     assert offer["price"] == 4.29 and offer["valid_until"] == "2099-11-14" and offer["store_label"]
     assert "große Flasche" not in str(d)
+
+
+def test_share_password_and_bulk_resets():
+    import types
+
+    from smartlists.extras import Extras
+    from smartlists.shares import check_password, make_password
+
+    link = {"pw": make_password("geheim")}
+    assert check_password(link, "geheim") and not check_password(link, "falsch") and not check_password(link, None)
+    assert check_password({}, None)  # ohne Passwort offen
+    assert "geheim" not in str(link)
+
+    learning = _learning()
+    learning.record_bought("Milch", "todo.a")
+    learning.record_bought("Brot", "todo.a")
+    assert learning.reset_stats(["Milch"]) == 1 and "bought" in learning.history["brot"]
+    assert learning.reset_stats() == 1 and not any(e.get("bought") for e in learning.history.values())
+
+    ex = Extras(types.SimpleNamespace(data={}))
+    ex.expenses = [{"t": 1, "amount": 1.0, "name": "A", "user": "u1"}, {"t": 2, "amount": 2.0, "name": "B", "user": "u2"},
+                   {"t": 3, "amount": 3.0, "name": "C", "user": "u1"}]
+    first = ex.expense_id(ex.expenses[0])
+    assert ex.delete_expenses([first], "u2") == 0  # fremde Buchung: nein
+    assert ex.delete_expenses([first]) == 1
+    assert ex.delete_expenses(None, "u1") == 1 and [e["name"] for e in ex.expenses] == ["B"]

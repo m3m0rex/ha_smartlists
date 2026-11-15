@@ -3,6 +3,29 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.9.17] – 2026-11-15
+
+### Added
+
+- **New share window:** QR code on the left, on the right *May check off* (No · Yes · Soft), *May add items*,
+  **Show notes**, an optional **password**, *Valid for*, then the link with *Copy*, *Share* and *Revoke*; below the
+  active links and – for own lists – the **people in Home Assistant** with their role, all in one place.
+- **Password for share links:** whoever opens the link has to enter it (stored only as a PBKDF2 hash; wrong attempts
+  are slowed down). **Notes** can be shown on the shared page per link (offers are always shown).
+- **Shared page:** 🔍 search (expands at the top), the add field is now at the top, and items added via a link
+  show "🔗 added by Max" there too.
+- **Shopping mode: long press deletes** (optional, *For me → Shopping and scanning*), with an undo bar.
+- **Shopping dashboard with one sub-page per list** (*Create dashboard*): every list gets its own view with its
+  own address (`/smartlists-shopping/einkauf`, …), combined lists first, plus meal plan and statistics if switched
+  on; more than 12 lists share a view "More". Creating it again updates it.
+- **Statistics and expenses:** select several entries and remove them, or reset completely – *Reset statistics*
+  (purchases and rhythm; suggestions stay) and *Delete all bookings* (admins: all, others: their own).
+
+### Fixed
+
+- Card with several lists in tabs (`layout: tabs`, e.g. the old shopping dashboard): choosing another tab did not
+  change the list shown.
+
 ## [3.9.16] – 2026-11-14
 
 ### Fixed

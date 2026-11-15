@@ -50,6 +50,7 @@ USER_SETTINGS: dict[str, Any] = {
     "shop_keep_awake": bool,
     "shop_large": bool,
     "shop_tap_row": bool,
+    "shop_longpress_delete": bool,  # Einkaufsmodus: lange drücken = löschen (mit Rückgängig)
     "shop_untagged": bool,
     "shop_auto_store": bool,
     # Strichcode: in welche Liste ("" = die Liste der Karte) und ob direkt hinzufügen oder ins Eingabefeld

@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.9.20";
+const CARD_VERSION = "3.9.21";
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -322,6 +322,8 @@ const TEXTS = {
     share_30d: "30 Tage",
     share_forever: "bis zum Widerruf",
     share_create: "Link erstellen",
+    freq_edit: "Häufig gekauft bearbeiten", freq_remove: "Aus „Häufig gekauft“ nehmen", freq_removed: "entfernt", freq_reset: "Alle zurücksetzen", freq_reset_q: "„Häufig gekauft“ dieser Liste zurücksetzen? Andere Listen, Kategorien und die Statistik bleiben.", freq_done: "„Häufig gekauft“ zurückgesetzt",
+    ui_lang: "Sprache", ui_lang_help: "Sprache von SmartLists – auch anders als Home Assistant.", ui_lang_auto: "Wie Home Assistant", naming_all_used: "Jede Art hat schon ein Zeichen.", pub_help_show: "Anleitung anzeigen", look_changed: "angepasst", nt_pick: "Bitte mindestens ein Ziel antippen.",
     share_approve: "Hinzufügen braucht Freigabe", share_approve_help: "Über den Link Hinzugefügtes erscheint erst nach deinem Okay in der Liste.", pending_title: "Wartet auf Freigabe", pending_ok: "Übernehmen", pending_no: "Verwerfen",
     p_view: "Ansicht", p_columns_sub: "Listen antippen, um sie dazuzunehmen", p_wide_sub: "ganze Bildschirmbreite nutzen", p_order_done: "Reihenfolge fertig", app_install_guide: "Installieren / Anleitung",
     share_password2: "Passwort wiederholen", share_pw_match: "Passwörter stimmen überein", share_pw_mismatch: "Passwörter stimmen nicht überein",
@@ -581,6 +583,8 @@ const TEXTS = {
     share_30d: "30 days",
     share_forever: "until revoked",
     share_create: "Create link",
+    freq_edit: "Edit frequently bought", freq_remove: "Remove from “Frequently bought”", freq_removed: "removed", freq_reset: "Reset all", freq_reset_q: "Reset “Frequently bought” of this list? Other lists, categories and statistics stay.", freq_done: "“Frequently bought” reset",
+    ui_lang: "Language", ui_lang_help: "Language of SmartLists – can differ from Home Assistant.", ui_lang_auto: "Like Home Assistant", naming_all_used: "Every kind already has a character.", pub_help_show: "Show instructions", look_changed: "customised", nt_pick: "Please tap at least one target.",
     share_approve: "Additions need approval", share_approve_help: "Items added via the link appear in the list only after your okay.", pending_title: "Waiting for approval", pending_ok: "Accept", pending_no: "Discard",
     p_view: "View", p_columns_sub: "tap lists to add them", p_wide_sub: "use the full screen width", p_order_done: "Done ordering", app_install_guide: "Install / instructions",
     share_password2: "Repeat password", share_pw_match: "Passwords match", share_pw_mismatch: "Passwords do not match",
@@ -840,6 +844,8 @@ const TEXTS = {
     share_30d: "30 jours",
     share_forever: "jusqu'à révocation",
     share_create: "Créer un lien",
+    freq_edit: "Modifier « Achetés souvent »", freq_remove: "Retirer de « Achetés souvent »", freq_removed: "retiré", freq_reset: "Tout réinitialiser", freq_reset_q: "Réinitialiser « Achetés souvent » pour cette liste ? Les autres listes, les catégories et les statistiques restent.", freq_done: "« Achetés souvent » réinitialisé",
+    ui_lang: "Langue", ui_lang_help: "Langue de SmartLists – peut différer de Home Assistant.", ui_lang_auto: "Comme Home Assistant", naming_all_used: "Chaque type a déjà un caractère.", pub_help_show: "Afficher les instructions", look_changed: "personnalisé", nt_pick: "Touche au moins une cible.",
     share_approve: "Ajouts à valider", share_approve_help: "Les articles ajoutés via le lien n'apparaissent qu'après ton accord.", pending_title: "En attente de validation", pending_ok: "Accepter", pending_no: "Rejeter",
     p_view: "Affichage", p_columns_sub: "touche des listes pour les ajouter", p_wide_sub: "utiliser toute la largeur", p_order_done: "Ordre terminé", app_install_guide: "Installer / instructions",
     share_password2: "Répéter le mot de passe", share_pw_match: "Les mots de passe correspondent", share_pw_mismatch: "Les mots de passe ne correspondent pas",
@@ -1099,6 +1105,8 @@ const TEXTS = {
     share_30d: "30 días",
     share_forever: "hasta revocarlo",
     share_create: "Crear enlace",
+    freq_edit: "Editar «Comprados a menudo»", freq_remove: "Quitar de «Comprados a menudo»", freq_removed: "quitado", freq_reset: "Restablecer todo", freq_reset_q: "¿Restablecer «Comprados a menudo» de esta lista? Las demás listas, las categorías y las estadísticas se mantienen.", freq_done: "«Comprados a menudo» restablecido",
+    ui_lang: "Idioma", ui_lang_help: "Idioma de SmartLists – puede ser distinto del de Home Assistant.", ui_lang_auto: "Como Home Assistant", naming_all_used: "Cada tipo ya tiene un carácter.", pub_help_show: "Mostrar instrucciones", look_changed: "personalizado", nt_pick: "Toca al menos un destino.",
     share_approve: "Añadir requiere aprobación", share_approve_help: "Lo añadido por el enlace aparece en la lista solo tras tu aprobación.", pending_title: "Pendiente de aprobación", pending_ok: "Aceptar", pending_no: "Descartar",
     p_view: "Vista", p_columns_sub: "toca listas para añadirlas", p_wide_sub: "usar todo el ancho", p_order_done: "Orden listo", app_install_guide: "Instalar / instrucciones",
     share_password2: "Repetir contraseña", share_pw_match: "Las contraseñas coinciden", share_pw_mismatch: "Las contraseñas no coinciden",
@@ -1358,6 +1366,8 @@ const TEXTS = {
     share_30d: "30 giorni",
     share_forever: "fino alla revoca",
     share_create: "Crea link",
+    freq_edit: "Modifica «Acquistati spesso»", freq_remove: "Togli da «Acquistati spesso»", freq_removed: "tolto", freq_reset: "Azzera tutto", freq_reset_q: "Azzerare «Acquistati spesso» di questa lista? Le altre liste, le categorie e le statistiche restano.", freq_done: "«Acquistati spesso» azzerato",
+    ui_lang: "Lingua", ui_lang_help: "Lingua di SmartLists – può essere diversa da Home Assistant.", ui_lang_auto: "Come Home Assistant", naming_all_used: "Ogni tipo ha già un carattere.", pub_help_show: "Mostra istruzioni", look_changed: "personalizzato", nt_pick: "Tocca almeno una destinazione.",
     share_approve: "Aggiunte da approvare", share_approve_help: "Gli articoli aggiunti tramite link compaiono nella lista solo dopo il tuo ok.", pending_title: "In attesa di approvazione", pending_ok: "Accetta", pending_no: "Scarta",
     p_view: "Vista", p_columns_sub: "tocca le liste per aggiungerle", p_wide_sub: "usa tutta la larghezza", p_order_done: "Ordine fatto", app_install_guide: "Installa / istruzioni",
     share_password2: "Ripeti password", share_pw_match: "Le password coincidono", share_pw_mismatch: "Le password non coincidono",
@@ -1617,6 +1627,8 @@ const TEXTS = {
     share_30d: "30 dni",
     share_forever: "do odwołania",
     share_create: "Utwórz link",
+    freq_edit: "Edytuj „Często kupowane”", freq_remove: "Usuń z „Często kupowane”", freq_removed: "usunięto", freq_reset: "Resetuj wszystko", freq_reset_q: "Zresetować „Często kupowane” tej listy? Inne listy, kategorie i statystyki pozostaną.", freq_done: "Zresetowano „Często kupowane”",
+    ui_lang: "Język", ui_lang_help: "Język SmartLists – może być inny niż w Home Assistant.", ui_lang_auto: "Jak Home Assistant", naming_all_used: "Każdy rodzaj ma już znak.", pub_help_show: "Pokaż instrukcję", look_changed: "zmienione", nt_pick: "Wybierz co najmniej jeden cel.",
     share_approve: "Dodawanie wymaga zgody", share_approve_help: "Produkty dodane przez link pojawią się na liście dopiero po twojej zgodzie.", pending_title: "Czeka na zatwierdzenie", pending_ok: "Przyjmij", pending_no: "Odrzuć",
     p_view: "Widok", p_columns_sub: "dotknij listy, aby je dodać", p_wide_sub: "cała szerokość ekranu", p_order_done: "Kolejność gotowa", app_install_guide: "Zainstaluj / instrukcja",
     share_password2: "Powtórz hasło", share_pw_match: "Hasła są zgodne", share_pw_mismatch: "Hasła nie są zgodne",
@@ -1741,6 +1753,14 @@ const offSnapKey = (e) => `smartlists-offline:${e}`;
 const offQueueKey = (e) => `smartlists-queue:${e}`;
 function offLoad(key, fallback) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
 function offSave(key, value) { try { if (value == null || (Array.isArray(value) && !value.length)) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* voll */ } }
+
+/* Sprache der SmartLists-Oberfläche: eigene Wahl (Für mich → Sprache, auf dem Gerät gemerkt) oder die von Home Assistant */
+const SL_LANGS = ["de", "en", "fr", "es", "it", "pl"];
+function slLang(hass) {
+  try { const v = localStorage.getItem("smartlists-ui-lang"); if (v && SL_LANGS.includes(v)) return v; } catch (e) { /* */ }
+  const l = ((hass && hass.language) || "en").slice(0, 2);
+  return SL_LANGS.includes(l) ? l : "en";
+}
 
 function parseText(text, rules, stores, typed = false) {
   const [rest, tags] = splitTags(text || "", rules, stores);
@@ -2266,6 +2286,7 @@ const STYLE = `
   button.badge { border:none; font:inherit; font-size:.7rem; cursor:pointer; line-height:inherit; }
   button.badge:hover { filter:brightness(1.1); }
   .badge.combined { background:var(--info-color,#2196f3); }
+  .pubhelp summary { cursor:pointer; color:var(--sl-accent); font-size:.85rem; padding:4px 0; }
   .pubsteps { margin:4px 0 8px; padding-left:20px; line-height:1.5; } .pubsteps li { margin:2px 0; }
   .badge.offline { background:color-mix(in srgb, var(--warning-color,#ff9800) 25%, transparent); color:var(--warning-color,#ff9800); font-weight:600; }
   .badge.public { background:color-mix(in srgb, var(--warning-color,#ff9800) 22%, transparent); color:var(--warning-color,#ff9800); font-weight:600; }
@@ -2316,6 +2337,8 @@ const STYLE = `
   .fchip { border:1px solid var(--divider-color,#ddd); background:none; border-radius:16px; padding:4px 10px; font:inherit; font-size:.82rem;
     white-space:nowrap; cursor:pointer; color:var(--primary-text-color); }
   .fchip:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
+  .fchip.fedit { color:var(--secondary-text-color); padding:4px 8px; }
+  .fchip.del { border-style:dashed; } .fchip.del:hover, .fchip.warn { color:var(--error-color,#db4437); border-color:var(--error-color,#db4437); }
 
   .locked { display:flex; align-items:center; gap:8px; padding:4px 16px 12px; color:var(--secondary-text-color); font-size:.85rem; }
   .group { padding:2px 0; }
@@ -2396,6 +2419,14 @@ const STYLE = `
   .pendbox { margin:4px 12px 8px; padding:6px 10px; border-radius:10px; background:color-mix(in srgb, var(--warning-color,#ff9800) 12%, transparent); }
   .pendrow { display:flex; align-items:center; gap:6px; padding:5px 0; } .pendrow .pt { flex:1; min-width:0; }
   .pendrow small { display:block; color:var(--secondary-text-color); font-size:.74rem; } .pendrow .btn2 { height:30px; padding:0 12px; }
+  .ntiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:8px; margin:6px 0 10px; }
+  .ntile { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; border:1px solid var(--divider-color,#ddd);
+    background:var(--card-background-color,#fff); color:inherit; font:inherit; text-align:left; cursor:pointer; min-height:52px; box-sizing:border-box; }
+  .ntile.on { border-color:var(--sl-accent); background:color-mix(in srgb, var(--sl-accent) 12%, transparent); }
+  .ntile.add { border-style:dashed; color:var(--sl-accent); }
+  .ntile .ni { font-size:1.3rem; width:26px; text-align:center; flex:none; } .ntile .nn { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .ntile .nn small { display:block; color:var(--secondary-text-color); font-size:.72rem; overflow:hidden; text-overflow:ellipsis; }
+  .ntile .nc { color:var(--sl-accent); font-weight:700; width:14px; }
   .prow { display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--divider-color,#e0e0e0); flex-wrap:wrap; }
   .prow .pn { flex:1 1 100px; min-width:0; } .prow .pn small { display:block; color:var(--secondary-text-color); font-size:.72rem; }
   .pctl { display:flex; align-items:center; gap:2px; flex:none; margin-left:auto; } .prow .seg button { padding:4px 9px; }
@@ -2435,11 +2466,20 @@ const STYLE = `
   .tag.s-outline { background:none !important; border:1px solid currentColor; padding:0 6px; }
   .tag.s-text { background:none !important; padding:0 2px; }
   .look-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .vrow { border-top:1px solid var(--divider-color,#e0e0e0); }
+  .vhead { display:flex; align-items:center; gap:10px; width:100%; background:none; border:0; color:inherit; font:inherit; padding:8px 2px; cursor:pointer; text-align:left; }
+  .vhead .sl { flex:1; display:flex; align-items:center; gap:8px; } .vhead small { color:var(--secondary-text-color); }
+  .vmark { color:var(--sl-accent); font-size:.6rem; } .vchev { color:var(--secondary-text-color); width:20px; text-align:center; }
+  .vbody { padding:0 2px 10px; flex-wrap:wrap; justify-content:flex-end; }
   .look-row input[type=color] { width:36px; height:30px; padding:0 2px; border:1px solid var(--divider-color,#ddd); border-radius:8px; background:none; cursor:pointer; flex:none; }
   .look-row input.icon { width:46px; text-align:center; height:30px; }
   .look-row select { width:auto !important; }
   .zchips { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; align-items:center; }
   .srow2.storerow { flex-wrap:wrap; align-items:flex-start; }
+  .storecard { border:1px solid var(--divider-color,#e0e0e0); border-radius:12px; padding:10px 12px; margin:8px 0; }
+  .sthead { display:flex; align-items:center; gap:10px; flex-wrap:wrap; } .stinfo { flex:1; color:var(--secondary-text-color); font-size:.82rem; }
+  .stzones { margin-top:6px; } .stzone { display:flex; align-items:center; gap:6px; padding:3px 0 3px 4px; font-size:.9rem; } .stzone > span { flex:1; }
+  .stadd { margin-top:6px; width:100%; border-style:dashed !important; }
   .storerow .sl { flex:0 0 auto; min-width:90px; }
   .storerow .sl small { white-space:nowrap; margin-top:4px; }
   .storerow .zchips { flex:1 1 240px; }
@@ -2812,7 +2852,7 @@ class SmartListsCard extends HTMLElement {
     return { entity: e || "todo.einkaufsliste" };
   }
 
-  get _lang() { return ((this._hass && this._hass.language) || "de").slice(0, 2); }
+  get _lang() { return slLang(this._hass); }
   get _t() { return TEXTS[this._lang] || TEXTS.en; }
   get _isAdmin() { return !this._hass.user || this._hass.user.is_admin; }
   _call(type, extra = {}, withEntity = true) {
@@ -3434,6 +3474,9 @@ class SmartListsCard extends HTMLElement {
       const r = await this._call("user_settings", {}, false);
       this._houseUi = r.defaults || {};
       this._userUi = r.settings || {};
+      // gewählte Sprache auch für dieses Gerät merken (gilt dann sofort überall, auch auf der Seite)
+      const ul = this._userUi.ui_language;
+      try { if (ul && ul !== "auto") localStorage.setItem("smartlists-ui-lang", ul); else if (ul === "auto") localStorage.removeItem("smartlists-ui-lang"); } catch (e) { /* */ }
     } catch (e) { this._houseUi = {}; this._userUi = {}; }
     this._loadUi();
     if (this._data) this._renderList();
@@ -3595,8 +3638,7 @@ class SmartListsCard extends HTMLElement {
     // Einkaufsmodus: kein Menü/Bearbeiten per Geste – optional „lange drücken = löschen“ (mit Rückgängig, ohne Nachfrage)
     if (this._shopping) {
       if (!ui.shop_longpress_delete || !(it.permissions && it.permissions.delete)) return;
-      this._longPress(el, row, () => this._change(`${it.name} ${this._t.deleted}`, "remove_items", { uids: [it.uid] },
-        () => async () => { await this._call("add_item", { text: it.text, note: it.note || "", checked: it.checked }); }, { snack: true, snackMs: 4000 }));
+      this._longPress(el, row, () => this._deleteItems([it]));  // mit Nachfrage
       return;
     }
     if (ui.press_gesture === "off") return;
@@ -4086,8 +4128,30 @@ class SmartListsCard extends HTMLElement {
     const items = (this._frequent || []).slice(0, 8);
     const show = this._config.show_frequent && !this._plain && this._config.show_add && items.length && this._data && this._data.permissions.add && !this._draft.text.trim();
     if (!show) return fill(el, );
+    const t = this._t, d = this._data;
+    const canReset = this._isAdmin || !d.own || d.own.role === "owner";
+    // ✎: einzelne Artikel mit ✕ aus „häufig gekauft“ dieser Liste nehmen oder alles zurücksetzen
+    const reset = async (names) => {
+      if (!names && !(await slDialog(this.shadowRoot, { title: t.freq_reset, text: t.freq_reset_q, ok: t.freq_reset, cancel: t.cancel, danger: true }))) return;
+      try {
+        await this._call("reset_frequent", names ? { names } : {});
+        if (!names) this._freqEdit = false;
+        this._showSnack(names ? `${names[0]} – ${t.freq_removed}` : t.freq_done, null, 3000);
+      } catch (e) { this._showSnack((e && e.message) || t.error, null, 4000); }
+      this._loadFrequent();
+    };
+    if (this._freqEdit) {
+      return fill(el, h("div", { class: "frequent editing" },
+        h("span", { class: "lbl" }, t.frequent),
+        items.map((s) => h("button", { class: "fchip del", type: "button", title: `${t.freq_remove}: ${s.name}`, "aria-label": `${t.freq_remove}: ${s.name}`,
+          onmousedown: (e) => e.preventDefault(), onclick: () => reset([s.name]) }, "✕ ", s.name)),
+        canReset ? h("button", { class: "fchip warn", type: "button", onclick: () => reset(null) }, "↺ " + t.freq_reset) : null,
+        h("button", { class: "fchip", type: "button", onclick: () => { this._freqEdit = false; this._renderFrequent(); } }, "✓ " + t.done)));
+    }
     fill(el, h("div", { class: "frequent" },
       h("span", { class: "lbl" }, this._t.frequent),
+      h("button", { class: "fchip fedit", type: "button", title: t.freq_edit, "aria-label": t.freq_edit,
+        onmousedown: (e) => e.preventDefault(), onclick: () => { this._freqEdit = true; this._renderFrequent(); } }, "✎"),
       items.map((s) => h("button", { class: "fchip", type: "button", title: s.category_label,
         onmousedown: (e) => e.preventDefault(), onclick: () => this._submit(s.name) },
         // fällig nach eurem Rhythmus → ⏰ vorne, Tooltip mit Abstand
@@ -4591,6 +4655,7 @@ class SmartListsCard extends HTMLElement {
       { g: "me", id: "shop", label: t.a_shop, sub: t.a_me_sub, kw: [t.shop, t.scan, t.scan_target], build: () => [
         this._sec("", t.shop, null, this._controls(scope, "shop")),
         this._sec("", t.scan, null, this._controls(scope, "scan"))] },
+      { g: "me", id: "lang", label: t.ui_lang, sub: t.ui_lang_help, kw: [t.ui_lang, "language", "Sprache"], build: () => [this._langSection()] },
       { g: "me", id: "notify", label: t.notify, sub: t.a_me_sub, kw: [t.notify_to, t.notify_quiet], build: () => [this._notifySection()] },
     ];
     const global = !this._isAdmin ? [] : [
@@ -4706,7 +4771,8 @@ class SmartListsCard extends HTMLElement {
           [["ha", t.pub_ha], ["tunnel", t.pub_tunnel], ["named", t.pub_named], ["proxy", t.pub_proxy]].map(([v, l]) => h("option", { value: v, selected: mode === v }, l)))),
         h("div", { class: "shelp", style: "padding:4px 0" }, mode === "ha" ? "ℹ️ " + t.pub_ha_help : mode === "tunnel" ? t.pub_tunnel_help : mode === "named" ? t.pub_named_help : fmt(t.pub_proxy_help, { port })),
         // feste Adresse: Anleitung Schritt für Schritt (Cloudflare-Menüs heißen je nach Konto leicht anders)
-        mode === "named" ? h("ol", { class: "shelp pubsteps" }, t.pub_named_steps.split("\n").map((x) => h("li", {}, fmt(x, { port })))) : null,
+        mode === "named" ? h("details", { class: "pubhelp" }, h("summary", {}, "❓ " + t.pub_help_show),
+          h("ol", { class: "shelp pubsteps" }, t.pub_named_steps.split("\n").map((x) => h("li", {}, fmt(x, { port }))))) : null,
         viaCf(mode) && !st.cloudflared ? cfHint() : null,
         viaCf(mode) && st.cloudflared ? h("div", { class: "shelp" }, "✓ cloudflared: " + st.cloudflared) : null,
         mode === "named" ? this._setRow(t.pub_token, h("input", { class: "search2", style: "width:240px;margin:0", type: "password", autocomplete: "off",
@@ -5011,8 +5077,9 @@ class SmartListsCard extends HTMLElement {
     };
     const drawRules = () => fill(rulesEl, ...rules.map((r, i) => h("div", { class: "rule2" },
       h("input", { class: "char", value: r.prefix, maxlength: "1", "aria-label": t.char, oninput: (e) => { r.prefix = e.target.value.trim(); drawExample(); } }),
-      h("select", { "aria-label": t.kind, onchange: (e) => { r.kind = e.target.value; drawExample(); } },
-        cfg.tag_kinds.map((k) => h("option", { value: k, selected: k === r.kind }, t["kind_" + k]))),
+      // jede Art (Markt/Person/Schlagwort) nur einmal – schon vergebene Arten sind hier nicht wählbar
+      h("select", { "aria-label": t.kind, onchange: (e) => { r.kind = e.target.value; drawRules(); drawExample(); } },
+        cfg.tag_kinds.map((k) => h("option", { value: k, selected: k === r.kind, disabled: k !== r.kind && rules.some((o) => o !== r && o.kind === k) }, t["kind_" + k]))),
       iconBtn(ICON.close, t.delete, () => { rules.splice(i, 1); drawRules(); drawExample(); }, "danger"))));
     drawRules(); drawExample();
     const save = async () => {
@@ -5026,8 +5093,10 @@ class SmartListsCard extends HTMLElement {
     return this._sec("#", t.naming, t.naming_help, [rulesEl, exampleEl,
       h("div", { class: "acts" }, status,
         h("button", { class: "btn2", type: "button", onclick: () => {
+          const kind = cfg.tag_kinds.find((k) => !rules.some((r) => r.kind === k));
+          if (!kind) { status.textContent = t.naming_all_used; return; }
           const free = [...cfg.allowed_prefixes].find((c) => !rules.some((r) => r.prefix === c));
-          rules.push({ prefix: free || "", kind: "tag" }); drawRules(); drawExample(); } }, "+ " + t.add_rule),
+          rules.push({ prefix: free || "", kind }); drawRules(); drawExample(); } }, "+ " + t.add_rule),
         h("button", { class: "btn2 primary", type: "button", onclick: save }, t.save))]);
   }
 
@@ -5248,9 +5317,15 @@ class SmartListsCard extends HTMLElement {
           drawValues(); save();
         };
         const preview = { kind: x.kind, value: x.value, label: x.kind === "store" ? (cur.label || x.label) : x.label, color: x.kind === "store" ? x.color : null };
-        return h("div", { class: "srow2" },
-          (prevV = h("div", { class: "sl" }, badge(preview, look), x.count ? h("small", {}, `${x.count}×`) : null)),
-          h("div", { class: "look-row" },
+        // kompakt: Badge und Anzahl; ✎ klappt die Einstellungen dieses Badges auf; ● = angepasst
+        const open = this._lookOpen === x.key;
+        const head = h("button", { type: "button", class: `vhead ${open ? "on" : ""}`, "aria-expanded": String(open),
+          onclick: () => { this._lookOpen = open ? null : x.key; drawValues(); } },
+          (prevV = h("span", { class: "sl" }, badge(preview, look), x.count ? h("small", {}, `${x.count}×`) : null)),
+          Object.keys(cur).length ? h("span", { class: "vmark", title: t.look_changed }, "●") : null, h("span", { class: "vchev" }, open ? "▴" : "✎"));
+        if (!open) return h("div", { class: "vrow" }, head);
+        return h("div", { class: "vrow open" }, head,
+          h("div", { class: "look-row vbody" },
             x.kind === "store" ? h("input", { class: "search2", style: "width:110px;margin:0", value: cur.label || "", placeholder: x.label, "aria-label": `${x.label}: ${t.look_label}`, title: t.look_label,
               onchange: (e) => setV({ label: e.target.value.trim() || null }) }) : null,
             colorInput(cur.color || (x.kind === "store" ? x.color : null),
@@ -5352,16 +5427,16 @@ class SmartListsCard extends HTMLElement {
       // je Markt beliebig viele Zonen (Filialen): Chips mit ×, dazu Auswahl „＋ Zone“
       fill(body, ...stores.map((st) => {
         const linked = st.zones || (st.zone ? [st.zone] : []);
-        return h("div", { class: "srow2 storerow" },
-          h("div", { class: "sl" }, badge({ kind: "store", value: st.value, label: st.label, color: st.color }),
-            h("small", {}, linked.length ? `${linked.length} ${t.zone_count}` : t.zone_none),
-            h("button", { class: "btn2", type: "button", style: "height:28px;padding:0 10px;margin-top:4px;font-size:.8rem",
-              onclick: () => this._aisleEditor(body, st, linked, () => this._call("stores", {}, false).then((r) => draw(r.stores))) },
-              "🛤️ " + t.aisle + (((this._cfg && this._cfg.store_order) || {})[st.key] ? " ✓" : ""))),
-          h("div", { class: "zchips" },
-            linked.map((z) => h("span", { class: "zchip" }, "📍 ", nameOf(z),
-              h("button", { type: "button", title: t.zone_unlink, "aria-label": `${t.zone_unlink}: ${nameOf(z)}`, onclick: () => link(st.key, linked.filter((x) => x !== z)) }, "×"))),
-            h("select", { "aria-label": `${st.label}: ${t.zone_add}`, onchange: (e) => {
+        const hasOrder = !!(((this._cfg && this._cfg.store_order) || {})[st.key]);
+        return h("div", { class: "storecard" },
+          h("div", { class: "sthead" }, badge({ kind: "store", value: st.value, label: st.label, color: st.color }),
+            h("span", { class: "stinfo" }, linked.length ? `📍 ${linked.length} ${t.zone_count}` : t.zone_none, hasOrder ? ` · 🛤️ ${t.aisle} ✓` : ""),
+            h("button", { class: "linkbtn", type: "button",
+              onclick: () => this._aisleEditor(body, st, linked, () => this._call("stores", {}, false).then((r) => draw(r.stores))) }, "🛤️ " + t.aisle)),
+          h("div", { class: "stzones" },
+            linked.map((z) => h("div", { class: "stzone" }, h("span", {}, "📍 ", nameOf(z)),
+              iconBtn(ICON.close, `${t.zone_unlink}: ${nameOf(z)}`, () => link(st.key, linked.filter((x) => x !== z)), "danger"))),
+            h("select", { class: "stadd", "aria-label": `${st.label}: ${t.zone_add}`, onchange: (e) => {
               const v = e.target.value; e.target.value = "";
               if (v === "__new") createZone(st.label); else if (v) link(st.key, [...linked, v]);
             } }, h("option", { value: "" }, "＋ " + t.zone_add),
@@ -5418,6 +5493,27 @@ class SmartListsCard extends HTMLElement {
   _refreshPanel() { window.dispatchEvent(new CustomEvent("smartlists-lists-changed")); }
   // Extras (Notizen, Wochenplan): an, solange die Integration nichts anderes meldet
   _feat(name) { const f = this._cfg && this._cfg.features; return !f || f[name] !== false; }
+
+  // Für mich → Sprache: SmartLists in einer anderen Sprache als Home Assistant (für diesen Benutzer)
+  _langSection() {
+    const t = this._t;
+    const status = h("span", { class: "ok2" });
+    const names = { auto: t.ui_lang_auto, de: "Deutsch", en: "English", fr: "Français", es: "Español", it: "Italiano", pl: "Polski" };
+    const cur = (this._userUi && this._userUi.ui_language) || "auto";
+    const pick = async (v) => {
+      try {
+        await this._call("set_user_settings", { settings: { ...(this._userUi || {}), ui_language: v } }, false);
+        this._userUi = { ...(this._userUi || {}), ui_language: v };
+        try { if (v === "auto") localStorage.removeItem("smartlists-ui-lang"); else localStorage.setItem("smartlists-ui-lang", v); } catch (e) { /* */ }
+        status.textContent = "✓";
+        // alles mit der neuen Sprache neu zeichnen (Texte kommen über this._t)
+        this._render(); if (this._renderSettings) this._renderSettings();
+        window.dispatchEvent(new CustomEvent("smartlists-lists-changed"));
+      } catch (err) { status.textContent = (err && err.message) || t.error; }
+    };
+    return this._sec("🌐", t.ui_lang, t.ui_lang_help, [h("div", { class: "chips" },
+      Object.entries(names).map(([v, l]) => h("button", { type: "button", class: `chip2 ${cur === v ? "on" : ""}`, "aria-pressed": String(cur === v), onclick: () => pick(v) }, l))), status]);
+  }
 
   // Global → Extras: optionale Bereiche, die Einsteiger nicht brauchen (im Assistenten standardmäßig aus)
   _extrasSection() {
@@ -6016,15 +6112,25 @@ class SmartListsCard extends HTMLElement {
       const box = h("div", {});
       const err = h("div", { class: "shelp" });
       const fields = {};
+      const picked = new Set();
+      const has = (id) => cur.targets.some((x) => x.id === id);
+      const tiles = (items) => h("div", { class: "ntiles" }, items.map((it) => {
+        const key = it.kind + "|" + it.id, on = picked.has(key);
+        const lab = targetLabel(it), icon = lab.split(" ")[0];
+        return h("button", { type: "button", class: `ntile ${on ? "on" : ""}`, "aria-pressed": String(on),
+          onclick: () => { if (on) picked.delete(key); else picked.add(key); drawBox(); } },
+          h("span", { class: "ni" }, icon), h("span", { class: "nn" }, lab.slice(icon.length).trim(), it.sub ? h("small", {}, it.sub) : null), h("span", { class: "nc" }, on ? "✓" : ""));
+      }));
       const drawBox = () => {
         const tabs = [["service", t.nt_service], ["entity", t.nt_entity], ...(customAllowed ? [["custom", t.nt_custom]] : [])];
         fields.select = null; fields.id = null; fields.data = null;
         fill(box,
           h("div", { class: "chips", style: "margin-bottom:10px" }, tabs.map(([k, l]) => h("button", { type: "button", class: `chip2 ${kind === k ? "on" : ""}`, onclick: () => { kind = k; drawBox(); } }, l))),
-          kind === "service" ? (services.length ? (fields.select = h("select", { "aria-label": t.nt_service, style: "width:100%" },
-            services.map((sv) => h("option", { value: "notify." + sv }, targetLabel({ kind: "service", id: "notify." + sv }))))) : h("p", { class: "shelp" }, t.nt_no_services)) : null,
-          kind === "entity" ? (entities.length ? (fields.select = h("select", { "aria-label": t.nt_entity, style: "width:100%" },
-            entities.map((e) => h("option", { value: e.id }, `${e.name} (${e.id})`)))) : h("p", { class: "shelp" }, t.nt_no_entities)) : null,
+          // Geräte/Dienste als Kacheln – mehrere antippen, dann einmal hinzufügen; schon gewählte sind ausgeblendet
+          kind === "service" ? (services.filter((sv) => !has("notify." + sv)).length ? tiles(services.filter((sv) => !has("notify." + sv)).map((sv) => ({ id: "notify." + sv, kind: "service" })))
+            : h("p", { class: "shelp" }, t.nt_no_services)) : null,
+          kind === "entity" ? (entities.filter((e) => !has(e.id)).length ? tiles(entities.filter((e) => !has(e.id)).map((e) => ({ id: e.id, kind: "entity", sub: e.id })))
+            : h("p", { class: "shelp" }, t.nt_no_entities)) : null,
           kind === "custom" ? [
             (fields.id = h("input", { placeholder: "telegram_bot.send_message", "aria-label": t.nt_custom, style: "width:100%;box-sizing:border-box" })),
             (fields.data = h("textarea", { rows: "4", placeholder: '{"target": 123456789}', "aria-label": "JSON", style: "width:100%;box-sizing:border-box;margin-top:8px;font-family:monospace" })),
@@ -6041,8 +6147,13 @@ class SmartListsCard extends HTMLElement {
             try { data = fields.data.value.trim() ? JSON.parse(fields.data.value) : {}; } catch (e) { err.textContent = t.pack_bad_json; return; }
             if (!/^[a-z0-9_]+\.[a-z0-9_]+$/.test(fields.id.value.trim())) { err.textContent = t.nt_bad_service; return; }
             target = { kind, id: fields.id.value.trim(), data };
-          } else if (fields.select) target = { kind, id: fields.select.value };
-          else return;
+          } else {
+            const many = [...picked].map((k) => { const i = k.indexOf("|"); return { kind: k.slice(0, i), id: k.slice(i + 1) }; });
+            if (!many.length) { err.textContent = t.nt_pick; return; }
+            dlg.remove();
+            await save({ targets: [...cur.targets, ...many] });
+            return;
+          }
           dlg.remove();
           await save({ targets: [...cur.targets, target] });
         } }, t.nt_add)]);
@@ -6052,9 +6163,11 @@ class SmartListsCard extends HTMLElement {
       fill(body,
         // Ziele: beliebig viele – Companion-App, andere notify-Dienste (Telegram, E-Mail …), notify-Entitäten, eigene Dienste
         h("div", { class: "grp" }, t.notify_to),
-        h("div", { class: "chips" }, cur.targets.map((x, i) => h("span", { class: "chip2 on" }, targetLabel(x),
-          h("button", { type: "button", class: "xdel", "aria-label": t.delete, title: t.delete, onclick: () => save({ targets: cur.targets.filter((_, j) => j !== i) }) }, "×"))),
-          h("button", { type: "button", class: "chip2", onclick: () => addTarget() }, "＋ " + t.nt_add)),
+        h("div", { class: "ntiles" }, cur.targets.map((x, i) => {
+          const lab = targetLabel(x), icon = lab.split(" ")[0];
+          return h("div", { class: "ntile on" }, h("span", { class: "ni" }, icon), h("span", { class: "nn" }, lab.slice(icon.length).trim()),
+            iconBtn(ICON.close, t.delete, () => save({ targets: cur.targets.filter((_, j) => j !== i) }), "danger"));
+        }), h("button", { type: "button", class: "ntile add", onclick: () => addTarget() }, h("span", { class: "ni" }, "＋"), h("span", { class: "nn" }, t.nt_add))),
         cur.targets.length ? null : h("div", { class: "shelp" }, t.nt_none),
         this._setRow(t.notify_added, this._switch(cur.added, (v) => save({ added: v }), t.notify_added)),
         this._setRow(t.notify_checked, this._switch(cur.checked, (v) => save({ checked: v }), t.notify_checked)),
@@ -6654,7 +6767,7 @@ class SmartListsCardEditor extends HTMLElement {
     this._hass = hass;
     if (this._form) { this._form.hass = hass; if (relabel) this._form.schema = this._schema(); }
   }
-  get _lang() { return ((this._hass && this._hass.language) || "de").slice(0, 2); }
+  get _lang() { return slLang(this._hass); }
   get _t() { return TEXTS[this._lang] || TEXTS.en; }
 
   // Einfach: nur das Wichtigste. Erweitert: alle Abschnitte. Merkt sich die Wahl im Browser.
@@ -6891,7 +7004,7 @@ class SmartListsPanel extends HTMLElement {
     this._hass.callWS({ type: "smartlists/app_lists" }).then((r) => { this._appLists = r.lists.filter((l) => !l.connected); this._render(); })
       .catch(() => { this._appLists = []; });
   }
-  get _t() { return TEXTS[((this._hass && this._hass.language) || "de").slice(0, 2)] || TEXTS.en; }
+  get _t() { return TEXTS[slLang(this._hass)] || TEXTS.en; }
   async _newList() {
     const t = this._t;
     const name = await slDialog(this.shadowRoot, { title: t.new_list, text: t.new_list_help, input: true, placeholder: t.new_list_placeholder, ok: t.create, cancel: t.cancel });

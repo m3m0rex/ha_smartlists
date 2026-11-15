@@ -50,7 +50,8 @@ USER_SETTINGS: dict[str, Any] = {
     "shop_keep_awake": bool,
     "shop_large": bool,
     "shop_tap_row": bool,
-    "shop_longpress_delete": bool,  # Einkaufsmodus: lange drücken = löschen (mit Rückgängig)
+    "shop_longpress_delete": bool,
+    "ui_language": ("auto", "de", "en", "fr", "es", "it", "pl"),  # Sprache der Oberfläche (auch anders als HA)  # Einkaufsmodus: lange drücken = löschen (mit Rückgängig)
     "shop_untagged": bool,
     "shop_auto_store": bool,
     # Strichcode: in welche Liste ("" = die Liste der Karte) und ob direkt hinzufügen oder ins Eingabefeld
@@ -503,6 +504,37 @@ class Learning:
         self._changed(categories=True)
 
     @callback
+    def reset_frequent(self, scope: set[str] | None, names: list[str] | None = None) -> int:
+        """„Häufig gekauft“ einer Liste zurücksetzen (names = nur diese Artikel, None = alle).
+        scope = Listen der Liste (wie bei Vorschlägen); None (Liste zeigt Vorschläge aus allen Listen) = überall.
+        Andere Listen behalten ihre Zählung; Kategorien und Statistik (Käufe) bleiben."""
+        keys = None if names is None else {normalize(self.parse(n).name) for n in names}
+        n = 0
+        for key, entry in self.history.items():
+            if keys is not None and key not in keys:
+                continue
+            if not scoped_count(entry, scope):
+                continue
+            if scope is None:
+                entry["count"] = 0
+                entry["lists"] = {}
+                entry.pop("off", None)
+            else:
+                per_list = dict(entry.get("lists") or {})
+                if not per_list and int(entry.get("count", 0)) > 0:
+                    per_list["*"] = int(entry.get("count", 0))  # alter Verlauf ohne Liste: gilt sonst überall
+                removed = sum(int(v) for k, v in per_list.items() if k in scope)
+                per_list = {k: v for k, v in per_list.items() if k not in scope}
+                entry["lists"] = per_list
+                entry["count"] = max(0, int(entry.get("count", 0)) - removed)
+                if "*" in per_list:  # „überall“-Zählung für diese Listen ausblenden
+                    entry["off"] = sorted(set(entry.get("off") or []) | scope)
+            n += 1
+        if n:
+            self._changed()
+        return n
+
+    @callback
     def clear_history(self) -> None:
         """Verlauf (Vorschläge, häufig gekauft, Tag-Verlauf) löschen – Kategorien bleiben."""
         self.history.clear()
@@ -706,8 +738,9 @@ def scoped_count(entry: dict[str, Any], scope: set[str] | None) -> int:
         return total
     per_list = entry.get("lists")
     if not isinstance(per_list, dict) or not per_list:
-        return total
-    return sum(int(v) for k, v in per_list.items() if k == "*" or k in scope)
+        return total if "lists" not in entry else 0
+    off = set(entry.get("off") or ())  # Listen, in denen „häufig gekauft“ zurückgesetzt wurde
+    return sum(int(v) for k, v in per_list.items() if (k == "*" and not (scope & off)) or k in scope)
 
 
 def validate_appearance(raw: Any) -> dict[str, Any]:

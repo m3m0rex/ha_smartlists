@@ -36,7 +36,8 @@ def test_custom_rules_and_validation():
     rules = t.validate_rules([{"prefix": "!", "kind": "store"}])
     p = t.parse("Brot !REWE @alt", rules)
     assert p.name == "Brot @alt" and p.tags[0]["label"] == "REWE"
-    for bad in ([{"prefix": "a", "kind": "store"}], [{"prefix": "!", "kind": "store"}, {"prefix": "!", "kind": "tag"}]):
+    for bad in ([{"prefix": "a", "kind": "store"}], [{"prefix": "!", "kind": "store"}, {"prefix": "!", "kind": "tag"}],
+                [{"prefix": "#", "kind": "tag"}, {"prefix": "!", "kind": "tag"}]):
         try:
             t.validate_rules(bad)
         except ValueError:

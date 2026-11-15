@@ -84,6 +84,7 @@ def validate_rules(rules: Any) -> list[dict[str, str]]:
     if not isinstance(rules, list):
         raise ValueError("Regeln müssen eine Liste sein")
     seen: set[str] = set()
+    kinds: set[str] = set()
     clean: list[dict[str, str]] = []
     for rule in rules:
         prefix = str(rule.get("prefix", "")).strip()
@@ -94,7 +95,10 @@ def validate_rules(rules: Any) -> list[dict[str, str]]:
             raise ValueError(f"Unbekannte Art '{kind}'")
         if prefix in seen:
             raise ValueError(f"Zeichen '{prefix}' ist doppelt vergeben")
+        if kind in kinds:
+            raise ValueError(f"Für jede Art nur ein Zeichen ('{kind}' ist doppelt)")
         seen.add(prefix)
+        kinds.add(kind)
         clean.append({"prefix": prefix, "kind": kind})
     return clean
 

@@ -349,3 +349,32 @@ def test_share_pending_approval_store():
     assert [p["text"] for p in sh.pending_for("todo.a")] == ["Chips"]
     assert sh.take_pending("todo.a", "p1")["by"] == "Max" and sh.pending_for("todo.a") == []
     assert sh.create("todo.a", "u1", "off", False, 24, approve=True)["approve"] is False  # ohne Hinzufügen kein Sinn
+
+
+def test_reset_frequent_per_list_and_single():
+    """„Häufig gekauft“ je Liste zurücksetzen bzw. einzelne Artikel entfernen – andere Listen behalten ihre Zählung."""
+    from smartlists.learning import scoped_count
+
+    learning = _learning()
+    learning.history["senf"] = {"name": "Senf", "count": 3, "last": int(time.time())}  # von vor 3.9.4 (gilt überall)
+    for _ in range(3):
+        learning.record("Milch", "todo.einkauf")
+        learning.record("Milch", "todo.tier")
+        learning.record("Brot", "todo.einkauf")
+    names = lambda r: {s["name"] for s in r["suggestions"]}  # noqa: E731
+    assert {"Milch", "Brot", "Senf"} <= names(learning.suggest("", [], 10, {"todo.einkauf"}))
+
+    assert learning.reset_frequent({"todo.einkauf"}, ["Milch"]) == 1  # einzeln
+    assert names(learning.suggest("", [], 10, {"todo.einkauf"})) >= {"Brot", "Senf"}
+    assert "Milch" not in names(learning.suggest("", [], 10, {"todo.einkauf"}))
+    assert "Milch" in names(learning.suggest("", [], 10, {"todo.tier"}))
+
+    learning.reset_frequent({"todo.einkauf"})  # alles in dieser Liste
+    assert names(learning.suggest("", [], 10, {"todo.einkauf"})) == set()
+    assert {"Milch", "Senf"} <= names(learning.suggest("", [], 10, {"todo.tier"}))  # andere Liste unberührt
+    assert scoped_count(learning.history["senf"], {"todo.tier"}) == 3
+    for _ in range(2):  # danach wieder neu lernen
+        learning.record("Brot", "todo.einkauf")
+    assert "Brot" in names(learning.suggest("", [], 10, {"todo.einkauf"}))
+    learning.reset_frequent(None, ["Milch"])  # „aus allen Listen“: überall
+    assert "Milch" not in names(learning.suggest("", [], 10, None))

@@ -3,6 +3,32 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.9.21] – 2026-11-15
+
+### Added
+
+- **Language of SmartLists independent of Home Assistant** (*For me → Language*): German, English, French,
+  Spanish, Italian or Polish – or "Like Home Assistant". Saved per user and remembered on the device.
+- **Notification targets as tiles:** devices and notify services are shown as tappable tiles with icon; several
+  can be selected at once and added together. Targets already added are hidden from the picker.
+- **"Frequently bought" per list:** ✎ next to the chips lets you remove single items (✕) or reset the whole row for
+  this list ("Reset all", admins and the list owner). Other lists, categories and statistics are not affected; items
+  come back once they are added again a few times. Lists set to "suggestions from all lists" reset everywhere.
+
+### Changed
+
+- **Long press in shopping mode asks before deleting** (same confirmation as the delete button).
+- **Badges & colours → individual badges:** compact rows (badge + count); ✎ opens the settings of that badge,
+  ● marks badges that were customised.
+- **Stores & zones:** one card per store with its zones listed below, ✕ to unlink, aisle order as a link and a
+  full-width "＋ Zone" picker.
+- **Cloudflare Tunnel:** the step-by-step help is collapsed until you tap "Show instructions".
+
+### Fixed
+
+- **Naming convention:** each kind (store, person, tag) can only have one character – duplicate kinds can no
+  longer be selected in the UI and are rejected by the server.
+
 ## [3.9.20] – 2026-11-15
 
 ### Added

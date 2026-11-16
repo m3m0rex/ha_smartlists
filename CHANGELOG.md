@@ -14,6 +14,12 @@ Fourth pre-release of 4.0.
   items go to, e.g. your own source list. Without `add_to` the default list of the combined list is used as before.
   Both can be set in the visual editor.
 
+### Changed
+
+- **Offers card: tidier visual editor.** Only title, list and stores are shown at the top; everything else sits in
+  the sections "Appearance", "All offers", "Watch list & notifications" and "Advanced". Options that only do something
+  with SmartLists are hidden when SmartLists is not installed.
+
 ## [4.0.0-beta.3] – 2026-11-16
 
 Third pre-release of 4.0.

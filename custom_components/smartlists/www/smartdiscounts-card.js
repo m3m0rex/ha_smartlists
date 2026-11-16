@@ -36,7 +36,7 @@ const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: tr
 const STORES = [["rewe", "REWE", "#cc071e"], ["edeka", "EDEKA", "#f5c400"], ["lidl", "Lidl", "#0050aa"], ["aldi_sued", "ALDI Süd", "#00a0e0"], ["aldi_nord", "ALDI Nord", "#1a4d9f"], ["aldi", "ALDI", "#00549f"],
   ["norma", "Norma", "#d40f14"], ["penny", "Penny", "#cd1414"], ["kaufland", "Kaufland", "#e10915"], ["netto", "Netto", "#ffd400"], ["rossmann", "Rossmann", "#c3002d"], ["dm", "dm", "#002878"], ["globus", "Globus", "#f39200"]];
 // Feldnamen der Angebote: der erste vorhandene zählt (je Quelle mit `map:` überschreibbar)
-const FIELDS = { name: ["product", "title", "name", "product_name", "description"], price: ["price", "discount_price", "offer_price", "price_euro", "current_price"],
+const FIELDS = { name: ["product", "title", "name", "product_name", "description"], price: ["price", "new_price", "discount_price", "offer_price", "sale_price", "price_euro", "current_price"],
   old_price: ["old_price", "regular_price", "original_price", "was_price", "oldPrice", "base_price_old"], image: ["picture_link", "image_url", "image", "picture", "img", "thumbnail"],
   until: ["valid_until", "end_date", "valid_to", "until", "valid_through", "validTo"], unit: ["price_per_unit", "base_price", "unit_price", "grundpreis"], category: ["category", "categories", "group"], discount: ["discount", "discount_percent", "savings"], brand: ["brand", "manufacturer"], store: ["store", "market", "retailer", "advertiser"] };
 const LIST_ATTRS = ["discounts", "offers", "deals", "items", "results", "products"];

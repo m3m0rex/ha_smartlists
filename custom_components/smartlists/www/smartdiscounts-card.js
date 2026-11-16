@@ -20,7 +20,7 @@ const TEXTS = {
     until: "bis", today: "nur noch heute", expired: "abgelaufen", add: "Auf die Liste", added: "✓ auf der Liste", all: "alle", less: "weniger", on_list: "steht auf deiner Liste", best: "günstigster", item: "Artikel",
     no_hits: "Nichts gefunden.", all_cats: "Alle Kategorien", error: "Das hat nicht geklappt.", attached: "Angebot gewählt", stand: "Stand", in_offer: "im Angebot", without: "ohne Angebot",
     e_title: "Titel", e_list: "Einkaufsliste (To-do)", e_match: "Artikel passt zum Angebot, wenn", m_word: "ganzes Wort im Namen (Butter ≠ Butterkeks)", m_exact: "nur genau dieses Wort", m_part: "Teil des Namens",
-    e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)",
+    e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)", e_view: "Darstellung „Alle Angebote“", v_tiles: "Kacheln", v_list: "Liste mit kleinen Bildern",
     e_sources: "Quellen werden automatisch erkannt. Eigene Sensoren und Feld-Zuordnung: im Code-Editor unter „sources“ (siehe README)." },
   en: { title: "Offers", tab_list: "My list", tab_all: "All offers", search: "Search offers …", no_sources: "No offer sensors found. Install e.g. FaserF's REWE, EDEKA or Lidl integration or add your own sensor under \"sources\".",
     no_list: "No list selected – set a to-do list under \"list\" to match offers against it.", list_empty: "The list is empty.", none: "no offer", offers: "offers", offer1: "offer",
@@ -28,10 +28,10 @@ const TEXTS = {
     until: "until", today: "today only", expired: "expired", add: "Add to list", added: "✓ on the list", all: "all", less: "less", on_list: "is on your list", best: "cheapest", item: "Item",
     no_hits: "Nothing found.", all_cats: "All categories", error: "That did not work.", attached: "offer selected", stand: "as of", in_offer: "on offer", without: "no offer",
     e_title: "Title", e_list: "Shopping list (to-do)", e_match: "Item matches an offer if", m_word: "whole word in the name (butter ≠ butter biscuit)", m_exact: "exactly this word only", m_part: "part of the name",
-    e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)",
+    e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)", e_view: "\"All offers\" layout", v_tiles: "Tiles", v_list: "List with small images",
     e_sources: "Sources are detected automatically. Own sensors and field mapping: in the code editor under \"sources\" (see README)." },
 };
-const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, sources: "auto" };
+const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", sources: "auto" };
 // bekannte Märkte: Erkennung über entity_id / Namen der Quelle, Farbe des Badges
 const STORES = [["rewe", "REWE", "#cc071e"], ["edeka", "EDEKA", "#f5c400"], ["lidl", "Lidl", "#0050aa"], ["aldi_sued", "ALDI Süd", "#00a0e0"], ["aldi_nord", "ALDI Nord", "#1a4d9f"], ["aldi", "ALDI", "#00549f"],
   ["norma", "Norma", "#d40f14"], ["penny", "Penny", "#cd1414"], ["kaufland", "Kaufland", "#e10915"], ["netto", "Netto", "#ffd400"], ["rossmann", "Rossmann", "#c3002d"], ["dm", "dm", "#002878"], ["globus", "Globus", "#f39200"]];
@@ -124,8 +124,19 @@ const STYLE = `
   .btn.pri { background:var(--sd-accent); border-color:var(--sd-accent); color:var(--text-primary-color,#fff); font-weight:600; }
   .btn.done { color:var(--sd-ok); border-color:color-mix(in srgb, var(--sd-ok) 50%, transparent); }
   input.search, select.cat { width:100%; box-sizing:border-box; height:40px; border-radius:10px; border:1px solid transparent; background:var(--secondary-background-color,#f2f2f2); color:var(--primary-text-color); padding:0 12px; font:inherit; }
-  .filters { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,180px); gap:8px; }
-  @container (max-width: 480px) { .filters { grid-template-columns:1fr !important; } }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; }
+  .filters .search { flex:1 1 180px; width:auto; } .filters .cat { flex:1 1 140px; width:auto; max-width:220px; }
+  .vbtn { width:40px; height:40px; padding:0; font-size:1.1rem; flex:none; color:var(--primary-text-color); }
+  @container (max-width: 480px) { .filters .search { flex-basis:100%; } .filters .cat { max-width:none; flex:1 1 0; } }
+  .lrow { display:flex; align-items:center; gap:10px; padding:7px 2px; border-bottom:1px solid var(--divider-color,#e0e0e0); }
+  .lrow:last-child { border-bottom:0; }
+  .lrow .n { flex:1; min-width:0; font-size:.9rem; overflow-wrap:anywhere; }
+  .lrow .n small { display:block; color:var(--secondary-text-color); font-size:.74rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lrow .pr { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .lrow .pr b { display:block; } .lrow .pr s { color:var(--secondary-text-color); font-size:.72rem; }
+  .lrow .pr .pct { color:var(--error-color,#db4437); font-weight:800; font-size:.72rem; margin-left:4px; }
+  .lrow .plus { width:34px; height:34px; padding:0; font-size:1.1rem; flex:none; }
+  .compact .lrow { padding:4px 2px; }
   .shelf h4 { margin:12px 0 6px; font-size:.84rem; display:flex; gap:8px; align-items:center; font-weight:500; }
   .shelf h4 small { color:var(--secondary-text-color); } .shelf h4 .sp { flex:1; }
   .shelf h4 button { background:none; border:0; color:var(--sd-accent); font:inherit; font-size:.8rem; cursor:pointer; }
@@ -166,6 +177,8 @@ class SmartDiscountsCard extends HTMLElement {
     this._sel = {};       // Artikel-UID → gewähltes Angebot
     this._open = new Set();
     this._query = ""; this._cat = "";
+    this._view = this._config.all_view === "list" ? "list" : "tiles";
+    try { const v = localStorage.getItem("smartdiscounts-view"); if (v === "list" || v === "tiles") this._view = v; } catch (e) { /* */ }
     if (!this.shadowRoot) { this._card = h("div", { class: "wrap" }); this.attachShadow({ mode: "open" }).append(h("style", {}, STYLE), h("ha-card", {}, this._card)); }
     this._sig = null;
     if (this._hass) this._refresh(true);
@@ -352,6 +365,19 @@ class SmartDiscountsCard extends HTMLElement {
         h("div", { class: "x" }, [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : ""].filter(Boolean).join(" · ") || " "),
         c.list ? h("button", { type: "button", class: "btn", onclick: (e) => this._add(o, e.currentTarget) }, "＋ " + t.add) : null);
     };
+    // Listen-Darstellung: kleine Bilder, eine Zeile je Angebot
+    const row = (o) => {
+      const mine = onList(o);
+      const sub = [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : "", o.category].filter(Boolean).join(" · ");
+      return h("div", { class: "lrow", title: o.name },
+        c.show_images ? h("div", { class: "thumb", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image ? null : "🏷️") : null,
+        h("div", { class: "n" }, mine ? h("span", { title: t.on_list }, "📝 ") : null, o.name, sub ? h("small", {}, sub) : null),
+        h("div", { class: "pr" }, h("b", {}, this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null, o.pct ? h("span", { class: "pct" }, `−${o.pct}%`) : null),
+        c.list ? h("button", { type: "button", class: "btn plus", title: t.add, "aria-label": `${t.add}: ${o.name}`, onclick: (e) => this._add(o, e.currentTarget) }, "＋") : null);
+    };
+    const asList = this._view === "list";
+    const toggle = h("button", { type: "button", class: "btn vbtn", title: asList ? t.v_tiles : t.v_list, "aria-label": asList ? t.v_tiles : t.v_list,
+      onclick: () => { this._view = asList ? "tiles" : "list"; try { localStorage.setItem("smartdiscounts-view", this._view); } catch (e) { /* */ } this._render(); } }, asList ? "▦" : "☰");
     const shelves = stores.map((s) => {
       const all = shown.filter((o) => o.store === s);
       if (!all.length) return null;
@@ -361,9 +387,9 @@ class SmartDiscountsCard extends HTMLElement {
       const list = open ? sorted : sorted.slice(0, c.max_per_store);
       return h("div", { class: "shelf" }, h("h4", {}, this._storeBadge(all[0]), h("small", {}, `${all.length} ${t.offers}`), h("span", { class: "sp" }),
         all.length > c.max_per_store && !q && !this._cat ? h("button", { type: "button", onclick: () => { if (open) this._open.delete(s); else this._open.add(s); this._render(); } }, open ? t.less : `${t.all} →`) : null),
-        h("div", { class: `rail ${open ? "open" : ""}` }, list.map(tile)));
+        asList ? h("div", { class: "lrows" }, list.map(row)) : h("div", { class: `rail ${open ? "open" : ""}` }, list.map(tile)));
     });
-    return h("div", {}, h("div", { class: "filters", style: catSel ? null : "grid-template-columns:1fr" }, search, catSel), shown.length ? shelves : h("div", { class: "msg" }, t.no_hits), this._foot());
+    return h("div", {}, h("div", { class: "filters" }, search, catSel, toggle), shown.length ? shelves : h("div", { class: "msg" }, t.no_hits), this._foot());
   }
   _foot() {
     const ts = this._sources().map((s) => this._hass.states[s.entity].last_updated).filter(Boolean).sort().pop();
@@ -394,7 +420,7 @@ class SmartDiscountsCard extends HTMLElement {
     btn.disabled = true;
     try {
       await this._hass.callService("todo", "add_item", { item: o.name, description: this._offerNote(o) }, { entity_id: this._config.list });
-      btn.textContent = this._t.added; btn.classList.add("done");
+      btn.textContent = btn.classList.contains("plus") ? "✓" : this._t.added; btn.classList.add("done");
       this._sig = null; await this._loadList();
     } catch (e) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; }
   }
@@ -412,10 +438,11 @@ class SmartDiscountsCardEditor extends HTMLElement {
       { name: "list", selector: { entity: { domain: "todo" } } },
       { name: "match", selector: { select: { mode: "dropdown", options: [["word", t.m_word], ["exact", t.m_exact], ["part", t.m_part]].map(([value, label]) => ({ value, label })) } } },
       { name: "default_tab", selector: { select: { mode: "dropdown", options: [["list", t.tab_list], ["all", t.tab_all]].map(([value, label]) => ({ value, label })) } } },
+      { name: "all_view", selector: { select: { mode: "dropdown", options: [["tiles", t.v_tiles], ["list", t.v_list]].map(([value, label]) => ({ value, label })) } } },
       { type: "grid", name: "", schema: [b("show_images"), b("compact"), b("show_unit_price"), b("show_valid_until"), b("hide_without_offer")] },
       { name: "max_per_store", selector: { number: { min: 3, max: 100, mode: "box" } } },
     ];
-    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
+    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, all_view: t.e_view, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
       show_valid_until: t.e_until, hide_without_offer: t.e_hide_none, max_per_store: t.e_max };
     if (!this._form) {
       this._form = document.createElement("ha-form");

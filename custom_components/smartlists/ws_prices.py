@@ -112,29 +112,28 @@ def ws_stats(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     connection.send_result(msg["id"], stats(_learning(hass), _extras(hass), msg["days"]))
 
 
-async def _watch_payload(hass: HomeAssistant, admin: bool = True) -> dict[str, Any]:
+async def _watch_payload(hass: HomeAssistant) -> dict[str, Any]:
     from .notify import async_get_notifier
 
     extras, notifier = _extras(hass), await async_get_notifier(hass)
     return {"names": list(extras.watch), "notify": bool(extras.watch_settings.get("notify")),
             "targets": list(extras.watch_settings.get("targets") or []),
             # woraus man wählen kann: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten
-            # die Ziele stellt nur ein Admin ein – anderen Benutzern die Dienste gar nicht erst nennen
-            "services": notifier.services() if admin else [], "entities": notifier.entities() if admin else []}
+            "services": notifier.services(), "entities": notifier.entities()}
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch"})
 @websocket_api.async_response
 async def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Merkliste des Haushalts (Produkte, bei denen man auf ein Angebot wartet) und ihre Benachrichtigung."""
-    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.is_admin))
+    connection.send_result(msg["id"], await _watch_payload(hass))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("names"): [str], vol.Optional("add"): str,
                                   vol.Optional("remove"): str, vol.Optional("notify"): bool, vol.Optional("targets"): [dict]})
 @websocket_api.async_response
 async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen; Benachrichtigung nur für Admins."""
+    """Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen, Benachrichtigung und ihre Ziele (alle Benutzer)."""
     extras = _extras(hass)
     names = list(msg["names"]) if "names" in msg else list(extras.watch)
     if msg.get("add"):
@@ -142,15 +141,12 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
     if msg.get("remove"):
         names = [n for n in names if n.lower() != msg["remove"].strip().lower()]
     settings = {k: msg[k] for k in ("notify", "targets") if k in msg}
-    if settings and not connection.user.is_admin:
-        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Die Benachrichtigung stellt ein Admin ein.")
-        return
     extras.set_watch(names, settings or None)
     if settings.get("notify"):
         from .offers import async_check_watch
 
         await async_check_watch(hass)
-    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.is_admin))
+    connection.send_result(msg["id"], await _watch_payload(hass))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/categorize", vol.Required("names"): [str], vol.Optional("language"): str})
@@ -160,3 +156,21 @@ def ws_categorize(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
     learning = _learning(hass)
     connection.send_result(msg["id"], {"map": {name: learning.resolve(name)[0] for name in msg["names"][:3000]},
                                        "categories": learning.categories.as_list(msg.get("language"))})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_sources", vol.Required("sources"): [dict]})
+@callback
+def ws_watch_sources(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Eigene Angebots-Quellen einer Karte (sources: mit Feld-Zuordnung) für die Hintergrund-Prüfung der Merkliste merken.
+    Die Karte meldet sie von selbst; übernommen wird nur von Admins (sie richten die Karte ein), je Sensor der neueste Stand."""
+    extras = _extras(hass)
+    if connection.user.is_admin:
+        from .offers import clean_sources
+
+        new = clean_sources(msg["sources"])
+        keep = [s for s in (extras.watch_settings.get("sources") or []) if not any(n["entity"] == s["entity"] for n in new)]
+        merged = [*keep, *new][-20:]
+        if merged != (extras.watch_settings.get("sources") or []):
+            extras.watch_settings["sources"] = merged
+            extras.set_watch(None, {})
+    connection.send_result(msg["id"], {"sources": len(extras.watch_settings.get("sources") or [])})

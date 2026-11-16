@@ -214,3 +214,25 @@ def test_watch_list_and_offer_matching():
     offers = [{"name": "Melitta Filterkaffee", "price": 5.49, "until": None, "store": "EDEKA"}, {"name": "Dallmayr Prodomo Kaffee", "price": 4.99, "until": None, "store": "Lidl"},
               {"name": "Butterkeks", "price": 0.99, "until": None, "store": "REWE"}]
     assert [o["store"] for o in deals_for(offers, "Kaffee")] == ["Lidl", "EDEKA"] and deals_for(offers, "Butter") == []
+
+
+def test_offers_from_own_sources():
+    """Eigene Quellen mit Feld-Zuordnung (wie in der Karte) werden auch im Hintergrund gelesen."""
+    import types
+
+    from smartlists.offers import clean_sources, collect
+
+    def st(entity_id, attrs):
+        return types.SimpleNamespace(entity_id=entity_id, attributes=attrs)
+
+    states = [st("sensor.rewe_1", {"friendly_name": "REWE", "discounts": [{"product": "Kaffee Gold", "price": "4,99 €", "valid_until": "2999-01-01"}, {"product": "Alt", "price": "1 €", "valid_until": "2000-01-01"}]}),
+              st("sensor.mein_markt", {"results": [{"product": {"name": "Filterkaffee"}, "prices": {"current": 3.49}, "validity": {"to": "2999-02-02"}}]}),
+              st("sensor.temperatur", {"unit": "°C"})]
+    hass = types.SimpleNamespace(states=types.SimpleNamespace(async_all=lambda domain: states))
+    src = clean_sources([{"entity": "sensor.mein_markt", "attribute": "results", "store": "Kaufland", "color": "#fff",
+                          "map": {"name": "product.name", "price": "prices.current", "until": "validity.to", "image": "x", "bogus": "y"}},
+                         {"entity": "light.x", "store": "nein"}, "kaputt", {"entity": "sensor.ohne_angaben"}])
+    assert src == [{"entity": "sensor.mein_markt", "attribute": "results", "store": "Kaufland", "map": {"name": "product.name", "price": "prices.current", "until": "validity.to"}}]
+    assert collect(hass) == [{"name": "Kaffee Gold", "price": 4.99, "until": "2999-01-01", "store": "REWE"}]
+    assert collect(hass, src) == [{"name": "Kaffee Gold", "price": 4.99, "until": "2999-01-01", "store": "REWE"},
+                                  {"name": "Filterkaffee", "price": 3.49, "until": "2999-02-02", "store": "Kaufland"}]

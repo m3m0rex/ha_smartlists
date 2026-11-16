@@ -25,6 +25,15 @@ Fourth pre-release of 4.0.
 - **The offer hint in the shopping list shows more:** the store as a badge, the price, "until 21.11." and how many
   further offers there are – instead of only "from 1,99 €".
 
+- **Watch list: own offer sensors are checked in the background too.** A card with its own `sources:` (field mapping)
+  reports them to SmartLists once – an admin has to open the card – and the 30-minute check then uses them.
+- **Watch list: every user can switch the notification on and choose its targets**, not only admins.
+- **Offers card: "Merge" is only offered for entries that are really the same** – same text apart from the count, same
+  badges, same note – so nothing gets lost. And "already on the list" now compares the whole text including the size:
+  "Cola 1,5 l" is not "Cola 2 l".
+- **Offers card: at most 20 offers per store** before "all →" (`max_per_store`, 1–20; the "0 = no limit" from earlier
+  in this beta is gone).
+
 ### Security and performance
 
 - **Offers card: notifications only go to `notify.*` services.** Before, a service of any domain could be entered in
@@ -35,7 +44,6 @@ Fourth pre-release of 4.0.
 - **Offers card:** the visual editor no longer rebuilds itself on every state change in Home Assistant, categories are
   only requested again when the offers change, and tiles outside the visible area are skipped while drawing.
 - **Offers card without SmartLists:** a number at the end of an entry ("Cola Zero 4") is no longer read as the count.
-- The notify services of the household are only listed for admins in the watch list settings.
 
 ### Changed
 
@@ -74,7 +82,6 @@ Third pre-release of 4.0.
 - **Offers card: notification targets are picked from a list** in the visual editor (`notify_targets:` – phones, notify
   services and notify entities, several possible) instead of typing a service name; `notify_service:` still works.
   From beta 4 the list looks like Home Assistant's entity picker: search, icon, name and id per row, a check mark.
-- **Offers card: `max_per_store: 0`** shows all offers of a store without the "all →" step.
 - **Offers card: `show_list_tab: false`** hides the "My list" tab – e.g. for a leaflet-style card on a wall tablet.
 
 ### Fixed

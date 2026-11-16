@@ -5698,8 +5698,8 @@ class SmartListsCard extends HTMLElement {
       fill(box, w.names.length ? h("div", { class: "chips", style: "display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px" }, w.names.map((n) =>
           h("button", { type: "button", class: "chip", title: t.delete, "aria-label": `${t.delete}: ${n}`, onclick: () => set({ remove: n }) }, `⭐ ${n} ✕`)))
         : h("div", { class: "shelp" }, t.wl_empty),
-        this._isAdmin ? this._setRow(t.wl_notify, this._switch(!!w.notify, (v) => set({ notify: v }), t.wl_notify), t.wl_notify_help) : null,
-        this._isAdmin && w.notify ? targets : null, h("div", { class: "srow" }, status));
+        this._setRow(t.wl_notify, this._switch(!!w.notify, (v) => set({ notify: v }), t.wl_notify), t.wl_notify_help),
+        w.notify ? targets : null, h("div", { class: "srow" }, status));
     };
     this._call("watch", {}, false).then(draw).catch((e) => { slWarn("watch", e); fill(box, h("div", { class: "shelp" }, t.error)); });
     return this._sec("", "⭐ " + t.wl_title, t.wl_help, [box]);

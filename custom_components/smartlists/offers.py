@@ -76,24 +76,63 @@ def _store_label(entity_id: str, attrs: dict[str, Any]) -> str:
     return next((label for k, label in STORES if k in key), str(attrs.get("friendly_name") or entity_id.split(".", 1)[-1]))
 
 
-def collect(hass: HomeAssistant) -> list[dict[str, Any]]:
-    """Alle gültigen Angebote aller Sensoren, die eine Angebotsliste in einem Attribut haben."""
-    today, out = date.today().isoformat(), []
-    for state in hass.states.async_all("sensor"):
-        rows = next((state.attributes[a] for a in LIST_ATTRS if isinstance(state.attributes.get(a), list)), None)
-        if not rows:
+def _get(obj: Any, path: str) -> Any:
+    """„product.name“ / „images.0.url“ – wie die Feld-Zuordnung (map:) der Karte."""
+    for key in str(path).split("."):
+        if isinstance(obj, dict):
+            obj = obj.get(key)
+        elif isinstance(obj, list) and key.isdigit() and int(key) < len(obj):
+            obj = obj[int(key)]
+        else:
+            return None
+    return obj
+
+
+def clean_sources(raw: Any) -> list[dict[str, Any]]:
+    """Eigene Quellen aus einer Karte (sources: mit entity/attribute/store/map) – nur was die Prüfung braucht."""
+    out: list[dict[str, Any]] = []
+    for src in raw if isinstance(raw, list) else []:
+        if not isinstance(src, dict) or not re.fullmatch(r"sensor\.[a-z0-9_]+", str(src.get("entity") or "")):
             continue
-        label = _store_label(state.entity_id, state.attributes)
+        clean: dict[str, Any] = {"entity": src["entity"]}
+        for key in ("attribute", "store"):
+            if isinstance(src.get(key), str) and src[key].strip():
+                clean[key] = src[key].strip()[:80]
+        fields = {f: str(v)[:80] for f, v in (src.get("map") or {}).items() if f in FIELDS and isinstance(v, str) and v.strip()} if isinstance(src.get("map"), dict) else {}
+        if fields:
+            clean["map"] = fields
+        if len(clean) > 1 and not any(x["entity"] == clean["entity"] for x in out):
+            out.append(clean)
+    return out[:20]
+
+
+def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    """Alle gültigen Angebote: Sensoren mit einer Angebotsliste in einem Attribut (automatisch erkannt) und
+    eigene Quellen mit Feld-Zuordnung, wie sie in einer Angebots-Karte eingetragen sind."""
+    today, out = date.today().isoformat(), []
+    own = {s["entity"]: s for s in (custom or [])}
+    states = {s.entity_id: s for s in hass.states.async_all("sensor")}
+    for entity_id, state in states.items():
+        src = own.get(entity_id, {})
+        rows = _get(state.attributes, src["attribute"]) if src.get("attribute") else next(
+            (state.attributes[a] for a in LIST_ATTRS if isinstance(state.attributes.get(a), list)), None)
+        if not isinstance(rows, list) or not rows:
+            continue
+        label, fmap = src.get("store") or _store_label(entity_id, state.attributes), src.get("map") or {}
+
+        def pick(row: dict[str, Any], field: str) -> Any:
+            return _get(row, fmap[field]) if field in fmap else _pick(row, field)
+
         for row in rows:
             if not isinstance(row, dict):
                 continue
-            name, price = _pick(row, "name"), num(_pick(row, "price"))
+            name, price = pick(row, "name"), num(pick(row, "price"))
             if not name or price is None:
                 continue
-            until = str(_pick(row, "until") or "")[:10] or None
+            until = str(pick(row, "until") or "")[:10] or None
             if until and re.fullmatch(r"\d{4}-\d\d-\d\d", until) and until < today:
                 continue
-            out.append({"name": str(name), "price": price, "until": until, "store": str(_pick(row, "store") or label)})
+            out.append({"name": str(name), "price": price, "until": until, "store": str(pick(row, "store") or label)})
     return out
 
 
@@ -110,7 +149,7 @@ async def async_check_watch(hass: HomeAssistant) -> int:
     extras = hass.data.get(DOMAIN, {}).get("extras")
     if extras is None or not extras.watch or not extras.watch_settings.get("notify"):
         return 0
-    offers = collect(hass)
+    offers = collect(hass, extras.watch_settings.get("sources"))
     fresh = [(term, o) for term in extras.watch for o in deals_for(offers, term) if _key(term, o) not in extras.watch_seen]
     if not fresh:
         return 0

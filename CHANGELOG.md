@@ -21,7 +21,8 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 
 - **New dashboard card `custom:smartdiscounts-card`:** supermarket offers matched with your shopping list. For every
   open item it shows the matching offers per store (cheapest marked ★), "Pick cheapest" or "only REWE" selects for the
-  whole list, "Apply to list" attaches store, price and validity to the items. Second tab: all offers per store with
+  whole list, "Apply to list" attaches store, price and validity to the items. Offers are shown as price chips side
+  by side or one per row with a small image (☰ switches). Second tab: all offers per store with
   search and categories – as tiles or as a list with small images (☰ switches); wide cards show a table of
   items × stores.
 - **Works with any sensor** that has a list of offers in an attribute – FaserF's REWE/EDEKA/Lidl/ALDI/Norma

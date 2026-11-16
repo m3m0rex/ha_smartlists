@@ -20,7 +20,7 @@ const TEXTS = {
     until: "bis", today: "nur noch heute", expired: "abgelaufen", add: "Auf die Liste", added: "✓ auf der Liste", all: "alle", less: "weniger", on_list: "steht auf deiner Liste", best: "günstigster", item: "Artikel",
     no_hits: "Nichts gefunden.", all_cats: "Alle Kategorien", error: "Das hat nicht geklappt.", attached: "Angebot gewählt", stand: "Stand", in_offer: "im Angebot", without: "ohne Angebot",
     e_title: "Titel", e_list: "Einkaufsliste (To-do)", e_match: "Artikel passt zum Angebot, wenn", m_word: "ganzes Wort im Namen (Butter ≠ Butterkeks)", m_exact: "nur genau dieses Wort", m_part: "Teil des Namens",
-    e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)", e_view: "Darstellung „Alle Angebote“", v_tiles: "Kacheln", v_list: "Liste mit kleinen Bildern",
+    e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)", e_view: "Darstellung „Alle Angebote“", v_tiles: "Kacheln", v_list: "Liste mit kleinen Bildern", e_lview: "Darstellung „Meine Liste“", v_chips: "Preise nebeneinander", v_rows: "ein Angebot je Zeile",
     e_sources: "Quellen werden automatisch erkannt. Eigene Sensoren und Feld-Zuordnung: im Code-Editor unter „sources“ (siehe README)." },
   en: { title: "Offers", tab_list: "My list", tab_all: "All offers", search: "Search offers …", no_sources: "No offer sensors found. Install e.g. FaserF's REWE, EDEKA or Lidl integration or add your own sensor under \"sources\".",
     no_list: "No list selected – set a to-do list under \"list\" to match offers against it.", list_empty: "The list is empty.", none: "no offer", offers: "offers", offer1: "offer",
@@ -28,10 +28,10 @@ const TEXTS = {
     until: "until", today: "today only", expired: "expired", add: "Add to list", added: "✓ on the list", all: "all", less: "less", on_list: "is on your list", best: "cheapest", item: "Item",
     no_hits: "Nothing found.", all_cats: "All categories", error: "That did not work.", attached: "offer selected", stand: "as of", in_offer: "on offer", without: "no offer",
     e_title: "Title", e_list: "Shopping list (to-do)", e_match: "Item matches an offer if", m_word: "whole word in the name (butter ≠ butter biscuit)", m_exact: "exactly this word only", m_part: "part of the name",
-    e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)", e_view: "\"All offers\" layout", v_tiles: "Tiles", v_list: "List with small images",
+    e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)", e_view: "\"All offers\" layout", v_tiles: "Tiles", v_list: "List with small images", e_lview: "\"My list\" layout", v_chips: "Prices side by side", v_rows: "One offer per row",
     e_sources: "Sources are detected automatically. Own sensors and field mapping: in the code editor under \"sources\" (see README)." },
 };
-const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", sources: "auto" };
+const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", list_view: "chips", sources: "auto" };
 // bekannte Märkte: Erkennung über entity_id / Namen der Quelle, Farbe des Badges
 const STORES = [["rewe", "REWE", "#cc071e"], ["edeka", "EDEKA", "#f5c400"], ["lidl", "Lidl", "#0050aa"], ["aldi_sued", "ALDI Süd", "#00a0e0"], ["aldi_nord", "ALDI Nord", "#1a4d9f"], ["aldi", "ALDI", "#00549f"],
   ["norma", "Norma", "#d40f14"], ["penny", "Penny", "#cd1414"], ["kaufland", "Kaufland", "#e10915"], ["netto", "Netto", "#ffd400"], ["rossmann", "Rossmann", "#c3002d"], ["dm", "dm", "#002878"], ["globus", "Globus", "#f39200"]];
@@ -137,6 +137,22 @@ const STYLE = `
   .lrow .pr .pct { color:var(--error-color,#db4437); font-weight:800; font-size:.72rem; margin-left:4px; }
   .lrow .plus { width:34px; height:34px; padding:0; font-size:1.1rem; flex:none; }
   .compact .lrow { padding:4px 2px; }
+  .plan .ph { display:flex; align-items:center; gap:8px; } .plan .ph b { flex:1; }
+  .vbtn.sm { width:32px; height:32px; font-size:.95rem; }
+  .orows { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
+  .orow { display:flex; align-items:center; gap:10px; width:100%; text-align:left; font:inherit; color:var(--primary-text-color); cursor:pointer; padding:6px 8px; box-sizing:border-box;
+    border:1px solid var(--divider-color,#ddd); border-radius:10px; background:var(--secondary-background-color,#f6f6f6); }
+  .orow.best { border-color:color-mix(in srgb, var(--sd-ok) 60%, transparent); }
+  .orow.sel { border-color:var(--sd-accent); box-shadow:0 0 0 1px var(--sd-accent) inset; }
+  .orow .radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--secondary-text-color); flex:none; display:grid; place-items:center; font-size:.7rem; color:var(--text-primary-color,#fff); box-sizing:border-box; }
+  .orow .radio.on { background:var(--sd-accent); border-color:var(--sd-accent); }
+  .thumb.sm { width:34px; height:34px; border-radius:8px; font-size:.9rem; }
+  .orow .n { flex:1; min-width:0; font-size:.88rem; overflow-wrap:anywhere; }
+  .orow .n small { display:block; color:var(--secondary-text-color); font-size:.72rem; margin-top:1px; }
+  .orow .pr { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .orow .pr b { display:block; } .orow.best .pr b { color:var(--sd-ok); }
+  .orow .pr s { color:var(--secondary-text-color); font-size:.72rem; } .orow .pr .pct { color:var(--error-color,#db4437); font-weight:800; font-size:.72rem; margin-left:4px; }
+  .compact .orow { padding:3px 8px; }
   .shelf h4 { margin:12px 0 6px; font-size:.84rem; display:flex; gap:8px; align-items:center; font-weight:500; }
   .shelf h4 small { color:var(--secondary-text-color); } .shelf h4 .sp { flex:1; }
   .shelf h4 button { background:none; border:0; color:var(--sd-accent); font:inherit; font-size:.8rem; cursor:pointer; }
@@ -179,6 +195,8 @@ class SmartDiscountsCard extends HTMLElement {
     this._query = ""; this._cat = "";
     this._view = this._config.all_view === "list" ? "list" : "tiles";
     try { const v = localStorage.getItem("smartdiscounts-view"); if (v === "list" || v === "tiles") this._view = v; } catch (e) { /* */ }
+    this._lview = this._config.list_view === "rows" ? "rows" : "chips";
+    try { const v = localStorage.getItem("smartdiscounts-list-view"); if (v === "rows" || v === "chips") this._lview = v; } catch (e) { /* */ }
     if (!this.shadowRoot) { this._card = h("div", { class: "wrap" }); this.attachShadow({ mode: "open" }).append(h("style", {}, STYLE), h("ha-card", {}, this._card)); }
     this._sig = null;
     if (this._hass) this._refresh(true);
@@ -299,6 +317,17 @@ class SmartDiscountsCard extends HTMLElement {
       h("b", {}, this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null,
       h("span", { class: "x" }, o.name), extra ? h("span", { class: "x" }, extra) : null);
   }
+  // „Meine Liste“ als Zeilen: ein Angebot je Zeile mit kleinem Bild, antippen wählt es
+  _offerRow(item, o, best) {
+    const t = this._t, c = this._config, sel = this._sel[item.uid] && this._sel[item.uid].id === o.id;
+    const sub = [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : ""].filter(Boolean).join(" · ");
+    return h("button", { type: "button", class: `orow ${sel ? "sel" : ""} ${best ? "best" : ""}`, "aria-pressed": String(!!sel), title: o.name,
+      onclick: () => { if (sel) delete this._sel[item.uid]; else this._sel[item.uid] = o; this._render(); } },
+      h("span", { class: `radio ${sel ? "on" : ""}` }, sel ? "✓" : ""),
+      c.show_images ? h("span", { class: "thumb sm", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image ? null : "🏷️") : null,
+      h("span", { class: "n" }, o.name, h("small", {}, this._storeBadge(o), sub ? ` ${sub}` : "")),
+      h("span", { class: "pr" }, h("b", {}, best ? "★ " : "", this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null, o.pct ? h("span", { class: "pct" }, `−${o.pct}%`) : null));
+  }
   _renderList(stores) {
     const t = this._t, c = this._config;
     if (!c.list || !this._hass.states[c.list]) return h("div", { class: "msg" }, t.no_list);
@@ -310,7 +339,10 @@ class SmartDiscountsCard extends HTMLElement {
     const cover = stores.map((s) => [s, hit.filter((r) => r.offers.some((o) => o.store === s)).length]).filter(([, n]) => n).sort((a, b) => b[1] - a[1]);
     const choose = (fn) => { this._sel = {}; hit.forEach((r) => { const o = fn(r); if (o) this._sel[r.it.uid] = o; }); this._render(); };
     const isCheapest = hit.length && hit.every((r) => this._sel[r.it.uid] && this._sel[r.it.uid].id === r.offers[0].id);
-    const plan = h("div", { class: "plan" }, h("b", {}, "💡 " + t.on_offer.replace("{n}", hit.length).replace("{m}", items.length)),
+    const asRows = this._lview === "rows";
+    const toggle = h("button", { type: "button", class: "btn vbtn sm", title: asRows ? t.v_chips : t.v_rows, "aria-label": asRows ? t.v_chips : t.v_rows,
+      onclick: () => { this._lview = asRows ? "chips" : "rows"; try { localStorage.setItem("smartdiscounts-list-view", this._lview); } catch (e) { /* */ } this._render(); } }, asRows ? "▤" : "☰");
+    const plan = h("div", { class: "plan" }, h("div", { class: "ph" }, h("b", {}, "💡 " + t.on_offer.replace("{n}", hit.length).replace("{m}", items.length)), hit.length ? toggle : null),
       hit.length ? h("div", { class: "chips" },
         h("button", { type: "button", class: `chip ${isCheapest ? "on" : ""}`, onclick: () => choose((r) => r.offers[0]) }, "★ " + t.cheapest),
         cover.map(([s, n]) => { const col = (this._all.find((o) => o.store === s) || {}).color;
@@ -321,15 +353,16 @@ class SmartDiscountsCard extends HTMLElement {
       if (!offers.length && c.hide_without_offer) return null;
       const img = sel ? sel.image : offers[0] && offers[0].image;
       return h("div", { class: "it" },
-        h("div", { class: "top" }, c.show_images ? h("div", { class: "thumb", style: img ? `background-image:url("${String(img).replace(/"/g, "%22")}");background-color:#fff` : null }, img ? null : "🛒") : null,
+        h("div", { class: "top" }, c.show_images && !asRows ? h("div", { class: "thumb", style: img ? `background-image:url("${String(img).replace(/"/g, "%22")}");background-color:#fff` : null }, img ? null : "🛒") : null,
           h("div", { class: "n" }, it.name || it.text, sel ? [" ", this._storeBadge(sel)] : null, sel ? h("small", {}, sel.name) : it.text !== it.name ? h("small", {}, it.text) : null),
           sel ? h("span", { class: "st ok" }, this._money(sel.price)) : this._attached(it) ? h("span", { class: "st ok" }, "🏷️ " + t.attached)
             : h("span", { class: "st" }, offers.length ? `${offers.length} ${offers.length > 1 ? t.offers : t.offer1}` : t.none)),
-        offers.length ? h("div", { class: "prices" }, offers.map((o, i) => this._priceChip(it, o, i === 0 && offers.length > 1))) : null);
+        !offers.length ? null : asRows ? h("div", { class: "orows" }, offers.map((o, i) => this._offerRow(it, o, i === 0 && offers.length > 1)))
+          : h("div", { class: "prices" }, offers.map((o, i) => this._priceChip(it, o, i === 0 && offers.length > 1))));
     };
     // breite Karte: Tabelle Artikel × Märkte
     const mstores = cover.map(([s]) => s);
-    const mx = h("div", { class: `mx ${mstores.length > 1 ? "has" : ""}`, style: `grid-template-columns:minmax(150px,1.4fr) repeat(${mstores.length}, minmax(110px,1fr))` },
+    const mx = h("div", { class: `mx ${mstores.length > 1 && !asRows ? "has" : ""}`, style: `grid-template-columns:minmax(150px,1.4fr) repeat(${mstores.length}, minmax(110px,1fr))` },
       h("div", { class: "hd l" }, t.item), mstores.map((s) => h("div", { class: "hd" }, this._storeBadge(this._all.find((o) => o.store === s)))),
       rows.filter((r) => r.offers.length || !c.hide_without_offer).map((r) => [h("div", { class: "l" }, r.it.name || r.it.text),
         mstores.map((s) => { const o = r.offers.find((x) => x.store === s);
@@ -438,11 +471,12 @@ class SmartDiscountsCardEditor extends HTMLElement {
       { name: "list", selector: { entity: { domain: "todo" } } },
       { name: "match", selector: { select: { mode: "dropdown", options: [["word", t.m_word], ["exact", t.m_exact], ["part", t.m_part]].map(([value, label]) => ({ value, label })) } } },
       { name: "default_tab", selector: { select: { mode: "dropdown", options: [["list", t.tab_list], ["all", t.tab_all]].map(([value, label]) => ({ value, label })) } } },
+      { name: "list_view", selector: { select: { mode: "dropdown", options: [["chips", t.v_chips], ["rows", t.v_rows]].map(([value, label]) => ({ value, label })) } } },
       { name: "all_view", selector: { select: { mode: "dropdown", options: [["tiles", t.v_tiles], ["list", t.v_list]].map(([value, label]) => ({ value, label })) } } },
       { type: "grid", name: "", schema: [b("show_images"), b("compact"), b("show_unit_price"), b("show_valid_until"), b("hide_without_offer")] },
       { name: "max_per_store", selector: { number: { min: 3, max: 100, mode: "box" } } },
     ];
-    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, all_view: t.e_view, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
+    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, list_view: t.e_lview, all_view: t.e_view, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
       show_valid_until: t.e_until, hide_without_offer: t.e_hide_none, max_per_store: t.e_max };
     if (!this._form) {
       this._form = document.createElement("ha-form");

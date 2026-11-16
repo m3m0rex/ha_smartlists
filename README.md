@@ -95,7 +95,7 @@ recommend the integrations by [FaserF](https://github.com/FaserF) – many thank
 | 🔵 | [ha-lidl](https://github.com/FaserF/ha-lidl) | Lidl Plus: weekly offers, coupons and digital receipts |
 | ⚪ | [ha-aldi](https://github.com/FaserF/ha-aldi) | ALDI Süd and ALDI Nord: weekly flyers |
 | 🔴 | [ha-norma](https://github.com/FaserF/ha-norma) | Norma: weekly discounts and flyer offers |
-| 🔴 | [ha-penny](https://github.com/FaserF/ha-penny) | PENNY: digital receipts (eBons) and loyalty points |
+| 🔴 | *[ha-penny](https://github.com/FaserF/ha-penny)* | *PENNY: digital receipts (eBons) and loyalty points – no flyer offers so far* |
 
 SmartLists is an independent project and not affiliated with FaserF or the stores mentioned.
 

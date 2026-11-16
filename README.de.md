@@ -95,7 +95,7 @@ empfehlen wir die Integrationen von [FaserF](https://github.com/FaserF) – viel
 | 🔵 | [ha-lidl](https://github.com/FaserF/ha-lidl) | Lidl Plus: Wochenangebote, Coupons und digitale Kassenbons |
 | ⚪ | [ha-aldi](https://github.com/FaserF/ha-aldi) | ALDI Süd und ALDI Nord: Wochenprospekte |
 | 🔴 | [ha-norma](https://github.com/FaserF/ha-norma) | Norma: Wochenangebote und Prospekt |
-| 🔴 | [ha-penny](https://github.com/FaserF/ha-penny) | PENNY: digitale Kassenbons (eBons) und Treuepunkte |
+| 🔴 | *[ha-penny](https://github.com/FaserF/ha-penny)* | *PENNY: digitale Kassenbons (eBons) und Treuepunkte – bisher ohne Prospekt-Angebote* |
 
 SmartLists ist ein eigenständiges Projekt und nicht mit FaserF oder den genannten Märkten verbunden.
 

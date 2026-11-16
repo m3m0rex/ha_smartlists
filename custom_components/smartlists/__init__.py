@@ -46,6 +46,8 @@ PLATFORMS: list[Platform] = [Platform.TODO, Platform.SENSOR, Platform.CALENDAR]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 # eigener Pfad, damit er sich nicht mit der Seitenleisten-Seite /smartlists überschneidet
 CARD_URL = "/smartlists-files/smartlists-card.js"
+# Angebots-Karte (custom:smartdiscounts-card) – wird mit ausgeliefert, läuft aber auch ohne SmartLists (eigenes Repository)
+DISCOUNTS_URL = "/smartlists-files/smartdiscounts-card.js"
 PANEL_URL_PATH = DOMAIN
 
 
@@ -87,6 +89,7 @@ async def _async_register_card(hass: HomeAssistant) -> None:
 
     try:
         await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(path), True),
+                                                     StaticPathConfig(DISCOUNTS_URL, str(path.with_name("smartdiscounts-card.js")), True),
                                                      # Symbole für „Als App auf dem Startbildschirm“ (pwa.py)
                                                      StaticPathConfig(BRAND_URL, str(Path(__file__).parent / "brand"), True)])
     except RuntimeError:
@@ -95,6 +98,7 @@ async def _async_register_card(hass: HomeAssistant) -> None:
     version = (await async_get_integration(hass, DOMAIN)).version
     hass.data[DOMAIN]["card_url"] = f"{CARD_URL}?v={version}"
     add_extra_js_url(hass, hass.data[DOMAIN]["card_url"])
+    add_extra_js_url(hass, f"{DISCOUNTS_URL}?v={version}")
 
 
 async def _async_register_panel(hass: HomeAssistant) -> None:

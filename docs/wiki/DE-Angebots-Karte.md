@@ -37,7 +37,7 @@ von Home Assistant.
 | `sources` | `auto` | `auto` oder eine Liste von Quellen (siehe unten) |
 | `match` | `word` | `word` (Butter ≠ Butterkeks), `exact`, `part` |
 | `default_tab` | `list` | `list`, `all` oder `watch` |
-| `list_view` | `chips` | „Meine Liste“: `chips` (Preise nebeneinander, auf breiten Karten eine Tabelle) oder `rows` |
+| `list_view` | `chips` | „Meine Liste“: `chips` (Preise nebeneinander), `rows` (ein Angebot je Zeile), `compact` (eine Zeile je Artikel) oder `table` (Märkte als Spalten) – in der Karte umschaltbar |
 | `all_view` | `tiles` | „Alle Angebote“ als `tiles` (Kacheln) oder `list` (Liste mit kleinen Bildern) |
 | `show_images` | `true` | Produktbilder |
 | `compact` | `false` | kompakte Zeilen |

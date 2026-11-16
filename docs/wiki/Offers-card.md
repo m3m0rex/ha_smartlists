@@ -34,7 +34,7 @@ The card speaks German, English, French, Spanish, Italian and Polish and follows
 | `sources` | `auto` | `auto`, or a list of sources (see below) |
 | `match` | `word` | `word` (butter ≠ butter biscuit), `exact`, `part` |
 | `default_tab` | `list` | `list`, `all` or `watch` |
-| `list_view` | `chips` | "My list": `chips` (prices side by side, a table on wide cards) or `rows` |
+| `list_view` | `chips` | "My list": `chips` (prices side by side), `rows` (one offer per row), `compact` (one line per item) or `table` (stores as columns) – switchable in the card |
 | `all_view` | `tiles` | "All offers" as `tiles` or as a `list` with small images |
 | `show_images` | `true` | Product images |
 | `compact` | `false` | Compact rows |

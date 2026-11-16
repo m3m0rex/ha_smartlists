@@ -52,7 +52,7 @@ const CARD_DEFAULTS = {
   sort: "category",
   show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
   show_undo: true, show_import: true, show_settings: true,
-  show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
+  show_title: true, show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
   drag_drop: true, show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
   show_completed: true, collapse_completed: true,
   start_shopping: false,
@@ -103,7 +103,7 @@ const PACK_TEMPLATE = {
 const UI_DEFAULTS = {
   press_gesture: "long", press_target: "row", press_result: "menu", menu_actions: MENU_ACTIONS, row_buttons: true,
   shop_hide_checked: true, shop_keep_awake: true, shop_large: true, shop_tap_row: true,
-  shop_auto_store: true, shop_untagged: true,
+  shop_auto_store: true, shop_untagged: true, shop_finish: "shopping",
   scan_target: "", scan_mode: "input",
 };
 // Dienste zum Nachschlagen von Strichcodes (gleiche IDs wie barcode.py)
@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    shop_finish: "Knopf „Einkauf beendet“", shop_finish_shopping: "nur im Einkaufsmodus", shop_finish_always: "immer", shop_finish_never: "nie", l_show_title: "Name der Liste", share_password_on: "Mit Passwort schützen",
     add_placeholder: "z. B. 2 kg Äpfel {store}", add_ph_store: "Markt", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
     done: "Erledigt", clear: "Erledigte entfernen", own: "Eigene Liste", combined: "Kombiniert", foreign: "Fremd",
     empty: "Nichts zu besorgen 🎉", no_add: "Hinzufügen ist für diese Liste gesperrt.", open: "offen",
@@ -390,6 +391,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    shop_finish: "\"Shopping done\" button", shop_finish_shopping: "only in shopping mode", shop_finish_always: "always", shop_finish_never: "never", l_show_title: "List name", share_password_on: "Protect with a password",
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
     done: "Done", clear: "Clear completed", own: "Own list", combined: "Combined", foreign: "Foreign",
     empty: "Nothing to buy 🎉", no_add: "Adding is disabled for this list.", open: "open",
@@ -653,6 +655,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    shop_finish: "Bouton « Courses terminées »", shop_finish_shopping: "seulement en mode courses", shop_finish_always: "toujours", shop_finish_never: "jamais", l_show_title: "Nom de la liste", share_password_on: "Protéger par mot de passe",
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
     done: "Terminé", clear: "Supprimer les terminés", own: "Liste propre", combined: "Combinée", foreign: "Externe",
     empty: "Rien à acheter 🎉", no_add: "L'ajout est désactivé pour cette liste.", open: "à faire",
@@ -916,6 +919,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    shop_finish: "Botón «Compra terminada»", shop_finish_shopping: "solo en modo compra", shop_finish_always: "siempre", shop_finish_never: "nunca", l_show_title: "Nombre de la lista", share_password_on: "Proteger con contraseña",
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
     done: "Hecho", clear: "Quitar completados", own: "Lista propia", combined: "Combinada", foreign: "Ajena",
     empty: "Nada que comprar 🎉", no_add: "Añadir está desactivado para esta lista.", open: "pendientes",
@@ -1179,6 +1183,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    shop_finish: "Pulsante «Spesa finita»", shop_finish_shopping: "solo in modalità spesa", shop_finish_always: "sempre", shop_finish_never: "mai", l_show_title: "Nome della lista", share_password_on: "Proteggi con password",
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
     done: "Fatto", clear: "Rimuovi completati", own: "Lista propria", combined: "Combinata", foreign: "Esterna",
     empty: "Niente da comprare 🎉", no_add: "L'aggiunta è disattivata per questa lista.", open: "da fare",
@@ -1442,6 +1447,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    shop_finish: "Przycisk „Zakupy zakończone”", shop_finish_shopping: "tylko w trybie zakupów", shop_finish_always: "zawsze", shop_finish_never: "nigdy", l_show_title: "Nazwa listy", share_password_on: "Chroń hasłem",
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
     done: "Zrobione", clear: "Usuń zrobione", own: "Własna lista", combined: "Połączona", foreign: "Obca",
     empty: "Nic do kupienia 🎉", no_add: "Dodawanie jest wyłączone dla tej listy.", open: "do kupienia",
@@ -2304,6 +2310,14 @@ const STYLE = `
   button.badge { border:none; font:inherit; font-size:.7rem; cursor:pointer; line-height:inherit; }
   button.badge:hover { filter:brightness(1.1); }
   .badge.combined { background:var(--info-color,#2196f3); }
+  /* schmale Karte (Handy): „Kombiniert“ / „privat“ / „geteilt“ nur als Symbol, der Text steht im Tooltip */
+  .head { container-type:inline-size; }
+  .badge .bi { display:none; } .badge .bi.on { display:inline; }
+  @container (max-width: 480px) {
+    .head .badge .bt { display:none; } .head .badge .bi { display:inline; }
+    .head .badge.combined, .head .badge.own { padding:2px 6px; }
+  }
+  .head .grow { flex:1 1 0; }
   .pubhelp summary { cursor:pointer; color:var(--sl-accent); font-size:.85rem; padding:4px 0; }
   .pubsteps { margin:4px 0 8px; padding-left:20px; line-height:1.5; } .pubsteps li { margin:2px 0; }
   .badge.offline { background:color-mix(in srgb, var(--warning-color,#ff9800) 25%, transparent); color:var(--warning-color,#ff9800); font-weight:600; }
@@ -2321,6 +2335,9 @@ const STYLE = `
   .go { border:none; border-radius:8px; background:var(--sl-accent); color:var(--text-primary-color,#fff);
     padding:0 14px; cursor:pointer; display:flex; align-items:center; }
   .go:disabled { opacity:.45; cursor:default; }
+  /* Strichcode-Knopf: gleiche Größe und Form wie „+“, aber neutral – „+“ bleibt die Hauptaktion */
+  .add-row .scanbtn { width:auto; height:auto; min-width:46px; padding:0 12px; border-radius:8px; background:var(--secondary-background-color,#f2f2f2); color:var(--primary-text-color); }
+  .add-row .scanbtn svg { width:22px; height:22px; }
   .preview { display:flex; flex-wrap:wrap; align-items:center; gap:6px; min-height:24px; margin-top:6px; font-size:.82rem; color:var(--secondary-text-color); }
   .preview:empty { display:none; }
   .catchip { display:inline-flex; align-items:center; gap:4px; border:1px dashed var(--divider-color,#ccc); background:none; border-radius:12px;
@@ -2392,7 +2409,8 @@ const STYLE = `
   .main { flex:1; min-width:0; }
   .name-line { display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0; }
   /* Lange Namen hart umbrechen statt die Spalten zu verschieben */
-  .iname { overflow-wrap:anywhere; word-break:break-word; hyphens:auto; min-width:0; }
+  .iname { overflow-wrap:anywhere; hyphens:auto; min-width:min(100%, 14ch); }
+  /* Der Name behält mindestens ~14 Zeichen Breite: vorher rutschen die Badges in die nächste Zeile */
   .row.checked .iname { text-decoration:line-through; color:var(--secondary-text-color); }
   .row.checked .tag { opacity:.55; }
   .chip { font-size:.72rem; padding:1px 7px; border-radius:9px; background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); white-space:nowrap; }
@@ -3176,13 +3194,13 @@ class SmartListsCard extends HTMLElement {
     // Trefferzahl schon hier, der Kopf wird vor der Liste gezeichnet
     this._hitCount = this._searchQuery ? d.items.filter((i) => this._passesFilters(i) && this._matches(i, d)).length : 0;
     fill(this._headEl, 
-      h("div", { class: "title" }, this._config.title || d.name),
-      d.type === "combined" ? h("span", { class: "badge combined" }, t.combined) : null,
+      this._config.show_title === false ? h("span", { class: "grow" }) : h("div", { class: "title" }, this._config.title || d.name),
+      d.type === "combined" ? h("span", { class: "badge combined", title: t.combined, "aria-label": t.combined }, h("span", { class: "bi" }, "🔗"), h("span", { class: "bt" }, t.combined)) : null,
       // Antippen: mit wem die Liste geteilt ist (nur Anzeige; ändern im Zahnrad der Liste).
       // „privat“ nur, solange auch kein Link aktiv ist – sonst wäre das irreführend
       d.own && !(d.own.role === "owner" && !Object.keys(d.own.shares || {}).length && d.links) ? h("button", { type: "button", class: "badge own", title: `${t.owner}: ${d.own.owner || "?"} – ${t.sharing}`,
         "aria-haspopup": "dialog", onclick: () => this._sharedWithDialog(d) },
-        d.own.role === "owner" ? (Object.keys(d.own.shares || {}).length ? `👥 ${t.shared}` : `🔒 ${t.private}`) : `👤 ${d.own.owner || "?"} · ${t["role_" + d.own.role]}`) : null,
+        ...(d.own.role === "owner" ? (Object.keys(d.own.shares || {}).length ? [h("span", { class: "bi on" }, "👥"), h("span", { class: "bt" }, ` ${t.shared}`)] : [h("span", { class: "bi on" }, "🔒"), h("span", { class: "bt" }, ` ${t.private}`)]) : [`👤 ${d.own.owner || "?"} · ${t["role_" + d.own.role]}`])) : null,
       // Solange ein Teilen-Link gilt, ist die Liste im Internet erreichbar – deutlich zeigen; antippen = Links verwalten
       d.links ? h("button", { type: "button", class: "badge public", title: t.link_shared_help.replace("{n}", d.links),
         "aria-label": t.link_shared_help.replace("{n}", d.links), onclick: () => this._listDialog() },
@@ -4317,7 +4335,7 @@ class SmartListsCard extends HTMLElement {
       const openSum = sumOf(open), cartSum = sumOf(inTrip);
       out.push(h("div", { class: "sumbar" }, h("span", {}, t.price_sum, " ", h("small", {}, `${t.open} ${fmtMoney(openSum, this._hass.language)}${cartSum ? ` · ${t.in_cart} ${fmtMoney(cartSum, this._hass.language)}` : ""}`)),
         h("b", {}, fmtMoney(openSum + cartSum, this._hass.language)),
-        done.length && d.permissions.toggle ? h("button", { class: "btn2", type: "button", style: "height:30px", onclick: () => this._finishShopping(done.length) }, "✓ " + t.trip_done) : null));
+        done.length && d.permissions.toggle && this._showFinish() ? h("button", { class: "btn2", type: "button", style: "height:30px", onclick: () => this._finishShopping(done.length) }, "✓ " + t.trip_done) : null));
     }
 
     const hideDone = this._shopping && this._ui.shop_hide_checked;
@@ -4644,6 +4662,7 @@ class SmartListsCard extends HTMLElement {
       sw("shop_hide_checked"), sw("shop_keep_awake"), sw("shop_large", t.shop_large_help), sw("shop_tap_row"),
       sw("shop_longpress_delete", t.shop_longpress_delete_help),
       sw("shop_auto_store", t.shop_auto_store_help), sw("shop_untagged", t.shop_untagged_help),
+      this._setRow(t.shop_finish, sel("shop_finish", [["shopping", "shop_finish_shopping"], ["always", "shop_finish_always"], ["never", "shop_finish_never"]]), null, differs("shop_finish")),
     ];
     parts.scan = [
       this._setRow(t.scan_target, h("select", { "aria-label": t.scan_target, onchange: (e) => save({ scan_target: e.target.value }) },
@@ -5582,6 +5601,11 @@ class SmartListsCard extends HTMLElement {
     return order ? [...order, ...base.filter((c) => !order.includes(c))] : base;
   }
   // „Einkauf beendet“: Summe im Wagen auf 0 – optional alles wieder offen für den nächsten Einkauf
+  // Knopf in der Summenleiste: Standard nur im Einkaufsmodus (Einstellungen → Einkaufen und Scannen)
+  _showFinish() {
+    const mode = this._ui.shop_finish || "shopping";
+    return mode === "always" || (mode === "shopping" && !!this._shopping);
+  }
   _finishShopping(doneCount) {
     const t = this._t;
     const run = async (reopen) => {
@@ -6341,7 +6365,7 @@ class SmartListsCard extends HTMLElement {
     const status = h("span", { class: "ok2" });
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
     let approve = false;
-    let check = "off", add = false, notes = false, password = "", password2 = "", hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
+    let check = "off", add = false, notes = false, password = "", password2 = "", usePw = false, hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
     let url = null, lastId = null;
     const lang = this._hass.language;
     // Grenzen des Admins für Nicht-Admins (Global → Teilen und Rechte)
@@ -6383,11 +6407,14 @@ class SmartListsCard extends HTMLElement {
           this._setRow(t.share_add, this._switch(add, (v) => { add = v; url = null; draw(); }, t.share_add), mayAdd ? null : t.share_add_locked),
           add ? this._setRow(t.share_approve, this._switch(approve, (v) => { approve = v; url = null; }, t.share_approve), t.share_approve_help) : null,
           this._setRow(t.share_notes, this._switch(notes, (v) => { notes = v; url = null; }, t.share_notes), t.share_notes_help),
+          this._setRow(t.share_password_on, this._switch(usePw, (v) => { usePw = v; if (!v) { password = ""; password2 = ""; } url = null; draw(); }, t.share_password_on), t.share_password_help),
+          ...(usePw ? [
           this._setRow(t.share_password, h("input", { class: "search2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
-            placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } }), t.share_password_help),
+            placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } })),
           // Passwort zur Sicherheit ein zweites Mal – erst wenn beide gleich sind, lässt sich der Link erstellen
           this._setRow(t.share_password2, h("input", { class: "search2 pw2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
             value: password2, "aria-label": t.share_password2, oninput: (e) => { password2 = e.target.value; pwState(); } }), pwHint),
+          ] : []),
           this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { hours = e.target.value ? Number(e.target.value) : null; } },
             [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]]
               .filter(([v]) => !maxHours || (v !== "" && v <= maxHours)).map(([v, l]) =>
@@ -6419,7 +6446,7 @@ class SmartListsCard extends HTMLElement {
         const r = await this._call("share_create", { check, add, hours, notes, approve: add && approve, password: password || null });
         url = (r.base || base()) + r.path;
         lastId = r.id;
-        password = ""; password2 = "";
+        password = ""; password2 = ""; usePw = false;
         ({ links, ...pub } = { ...pub, ...(await this._call("share_links", {})) });
         status.textContent = "";
         draw();
@@ -6848,7 +6875,7 @@ class SmartListsCardEditor extends HTMLElement {
       ]),
       section("header", "mdi:page-layout-header",
         [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-      section("input", "mdi:plus-box-outline", [b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan")]),
+      section("input", "mdi:plus-box-outline", [b("show_title"), b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan")]),
       section("list", "mdi:format-list-bulleted",
         [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_prices"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
       section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),

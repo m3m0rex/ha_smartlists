@@ -12,8 +12,19 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Sizes without a space are recognised:** "Milk 1l", "Potatoes 2,5kg" or "Yoghurt 4x 150g" are now quantity + unit,
   just like "1 l" (kg, g, mg, l, ml, cl).
 
+- **List name can be hidden** (card option "List name") – handy when the dashboard already has a heading.
+- **"Shopping done" button is configurable** (Settings → Shopping and scanning): only in shopping mode (new default),
+  always or never.
+
 ### Changed
 
+- **Phone: icons instead of text in the header** – 🔗 for combined lists, 🔒 private / 👥 shared; the text is in the
+  tooltip. Wide cards keep the text.
+- **Barcode button has the same size as "+"**, in a neutral colour.
+- **Item names no longer wrap after a few letters:** badges move below the name before the name gets squeezed.
+- **Sharing: password fields only appear after switching on "Protect with a password".**
+- **For developers:** the card is now edited in `src/card/` (15 parts) and assembled with
+  `python scripts/build_card.py`; a test checks that the shipped file is up to date.
 - **Share-link passwords** are hashed with 600,000 PBKDF2 rounds (previously 120,000). Existing links keep working
   unchanged.
 - **Errors are no longer swallowed silently:** failed actions via the card or a shared link now appear in the

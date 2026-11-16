@@ -54,6 +54,7 @@ USER_SETTINGS: dict[str, Any] = {
     "ui_language": ("auto", "de", "en", "fr", "es", "it", "pl"),  # Sprache der Oberfläche (auch anders als HA)  # Einkaufsmodus: lange drücken = löschen (mit Rückgängig)
     "shop_untagged": bool,
     "shop_auto_store": bool,
+    "shop_finish": ("shopping", "always", "never"),  # Knopf „Einkauf beendet“ in der Summenleiste
     # Strichcode: in welche Liste ("" = die Liste der Karte) und ob direkt hinzufügen oder ins Eingabefeld
     "scan_target": "entity",
     "scan_mode": ("input", "add"),

@@ -77,6 +77,7 @@ UI_BUILTIN: dict[str, Any] = {
     "shop_longpress_delete": False,
     "shop_untagged": True,
     "shop_auto_store": True,
+    "shop_finish": "shopping",
     "scan_target": "",
     "scan_mode": "input",
 }

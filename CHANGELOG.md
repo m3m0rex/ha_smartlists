@@ -3,6 +3,16 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.5] – 2026-11-16
+
+Fifth pre-release of 4.0.
+
+### Changed
+
+- **Offers card: unit prices (€/kg, €/l) are easier to read in "My list".** They now sit on their own line below the
+  price in the tile, row and table views (also in the table on narrow cards), and the lowest unit price among the offers
+  for an item is shown in green. Offers without a unit price look as before.
+
 ## [4.0.0-beta.4] – 2026-11-16
 
 Fourth pre-release of 4.0.

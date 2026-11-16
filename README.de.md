@@ -59,6 +59,8 @@ Die Karten werden automatisch geladen – eine Dashboard-Ressource ist nicht nö
 | `custom:smartlists-card` | Liste, Einkaufsmodus, Einstellungen | [Wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card) |
 | `custom:smartdiscounts-card` | Angebote, abgeglichen mit der Liste | [Wiki → Angebots-Karte](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Angebots-Karte) |
 
+Angebots-Sensoren für die Angebots-Karte liefert z. B. die REWE-Integration [ha-rewe](https://github.com/FaserF/ha-rewe) von FaserF (eigenständiges Projekt).
+
 ```yaml
 type: custom:smartlists-card
 entity: todo.einkauf

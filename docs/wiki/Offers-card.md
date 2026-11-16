@@ -8,8 +8,8 @@ included in SmartLists 4.0 and also runs **without SmartLists** – then it is i
 
 ## What you need
 
-At least one sensor with a list of offers in an attribute, e.g. from FaserF's integrations for REWE, EDEKA, Lidl,
-ALDI or Norma. Your own REST, template or scrape sensors work as well.
+At least one sensor with a list of offers in an attribute, e.g. from FaserF's REWE integration
+[ha-rewe](https://github.com/FaserF/ha-rewe). Any other sensor with such a list (EDEKA, Lidl, ALDI …) works too. Your own REST, template or scrape sensors work as well.
 
 ## Set up
 

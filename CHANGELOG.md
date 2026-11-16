@@ -120,8 +120,9 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
   by side or one per row with a small image (☰ switches). Second tab: all offers per store with
   search and categories – as tiles or as a list with small images (☰ switches); wide cards show a table of
   items × stores.
-- **Works with any sensor** that has a list of offers in an attribute – FaserF's REWE/EDEKA/Lidl/ALDI/Norma
-  integrations are detected automatically, own sensors too (field names are recognised or set with `map:`).
+- **Works with any sensor** that has a list of offers in an attribute – e.g. FaserF's REWE integration
+  [ha-rewe](https://github.com/FaserF/ha-rewe) is detected automatically, own sensors too (field names are
+  recognised or set with `map:`).
 - **Also available on its own** (repository `ha_smartdiscounts-card`): it only needs a to-do list, not SmartLists.
 - **Watch list** (third tab ⭐): products you are waiting to see on offer – from `watch:` in the configuration, from a
   to-do list (`watch_list:`, the same on all devices) or stored on the device. With `notify: true` Home Assistant

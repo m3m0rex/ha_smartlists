@@ -59,6 +59,8 @@ The cards are loaded automatically – no dashboard resource needed. Requires Ho
 | `custom:smartlists-card` | List, shopping mode, settings | [Wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card) |
 | `custom:smartdiscounts-card` | Offers matched with the list | [Wiki → Offers card](https://github.com/m3m0rex/ha_smartlists/wiki/Offers-card) |
 
+Offer sensors for the offers card come e.g. from FaserF's REWE integration [ha-rewe](https://github.com/FaserF/ha-rewe) (an independent project).
+
 ```yaml
 type: custom:smartlists-card
 entity: todo.shopping

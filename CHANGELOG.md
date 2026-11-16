@@ -88,7 +88,8 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Item names no longer wrap after a few letters:** badges move below the name before the name gets squeezed.
 - **Sharing: password fields only appear after switching on "Protect with a password".**
 - **For developers:** the card is now edited in `src/card/` (15 parts) and assembled with
-  `python scripts/build_card.py`; a test checks that the shipped file is up to date.
+  `python scripts/build_card.py`; a test checks that the shipped file is up to date. The WebSocket commands moved
+  from one 1,700-line file into `ws_*.py` by area, with tests for registration, permissions and the main flows.
 - **Share-link passwords** are hashed with 600,000 PBKDF2 rounds (previously 120,000). Existing links keep working
   unchanged.
 - **Errors are no longer swallowed silently:** failed actions via the card or a shared link now appear in the

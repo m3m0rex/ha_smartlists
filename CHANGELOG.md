@@ -14,6 +14,9 @@ Fourth pre-release of 4.0.
   items go to, e.g. your own source list. Without `add_to` the default list of the combined list is used as before.
   Both can be set in the visual editor.
 
+- **Offers card: choose the tabs and their order** (`tabs: [all, watch]`, in the editor with drag to reorder). With only
+  one tab the tab bar disappears. `show_list_tab: false` from beta 3 still works.
+
 ### Changed
 
 - **Offers card: tiles run top to bottom** in a grid instead of one row with a sideways scroll bar. The old behaviour

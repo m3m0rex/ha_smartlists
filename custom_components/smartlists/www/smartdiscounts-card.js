@@ -452,16 +452,18 @@ class SmartDiscountsCard extends HTMLElement {
     // Wie viele Artikel der Liste hat welcher Markt im Angebot?
     const cover = stores.map((s) => [s, hit.filter((r) => r.offers.some((o) => o.store === s)).length]).filter(([, n]) => n).sort((a, b) => b[1] - a[1]);
     const choose = (fn) => { this._sel = {}; hit.forEach((r) => { const o = fn(r); if (o) this._sel[r.it.uid] = o; }); this._render(); };
+    const clear = () => { this._sel = {}; this._render(); };  // noch einmal antippen hebt die Auswahl wieder auf
     const isCheapest = hit.length && hit.every((r) => this._sel[r.it.uid] && this._sel[r.it.uid].id === r.offers[0].id);
     const asRows = this._lview === "rows";
     const toggle = h("button", { type: "button", class: "btn vbtn sm", title: asRows ? t.v_chips : t.v_rows, "aria-label": asRows ? t.v_chips : t.v_rows,
       onclick: () => { this._lview = asRows ? "chips" : "rows"; try { localStorage.setItem("smartdiscounts-list-view", this._lview); } catch (e) { /* */ } this._render(); } }, asRows ? "▤" : "☰");
     const plan = h("div", { class: "plan" }, h("div", { class: "ph" }, h("b", {}, "💡 " + t.on_offer.replace("{n}", hit.length).replace("{m}", items.length)), hit.length ? toggle : null),
       hit.length ? h("div", { class: "chips" },
-        h("button", { type: "button", class: `chip ${isCheapest ? "on" : ""}`, onclick: () => choose((r) => r.offers[0]) }, "★ " + t.cheapest),
+        h("button", { type: "button", class: `chip ${isCheapest ? "on" : ""}`, "aria-pressed": String(!!isCheapest),
+          onclick: () => (isCheapest ? clear() : choose((r) => r.offers[0])) }, "★ " + t.cheapest),
         cover.map(([s, n]) => { const col = (this._all.find((o) => o.store === s) || {}).color;
           const on = hit.some((r) => r.offers.some((o) => o.store === s)) && hit.every((r) => { const o = r.offers.find((x) => x.store === s); return o ? this._sel[r.it.uid] && this._sel[r.it.uid].id === o.id : !this._sel[r.it.uid]; });
-          return h("button", { type: "button", class: `chip ${on ? "on" : ""}`, onclick: () => choose((r) => r.offers.find((o) => o.store === s)) }, h("span", { class: "dot", style: `background:${col}` }), `${t.only.replace("{store}", s)} · ${n}`); })) : null);
+          return h("button", { type: "button", class: `chip ${on ? "on" : ""}`, "aria-pressed": String(!!on), onclick: () => (on ? clear() : choose((r) => r.offers.find((o) => o.store === s))) }, h("span", { class: "dot", style: `background:${col}` }), `${t.only.replace("{store}", s)} · ${n}`); })) : null);
     const line = (r) => {
       const { it, offers } = r, sel = this._sel[it.uid];
       if (!offers.length && c.hide_without_offer) return null;

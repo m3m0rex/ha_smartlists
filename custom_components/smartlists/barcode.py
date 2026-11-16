@@ -2,7 +2,7 @@
 
 Reihenfolge: zuerst der eigene Speicher (schon einmal gefundene Codes), dann die im Haushalt gewählten
 Dienste nacheinander (Einstellung automation["barcode_providers"], Standard: Open Food Facts). Gesendet wird
-immer nur der Code, ohne Konto. barcode_lookup = False → nur eigener Speicher.
+immer nur der Code, ohne Konto. Nur wenn barcode_lookup = True (Standard: aus) – sonst nur eigener Speicher.
 
 Eigener Dienst: automation["barcode_custom_url"] mit {code}, z. B. https://example.org/api/{code}, und
 automation["barcode_custom_field"] = Pfad zum Namen in der JSON-Antwort, z. B. "product.title" oder
@@ -73,7 +73,8 @@ async def async_lookup(hass: HomeAssistant, code: str) -> dict[str, Any]:
     if code in extras.barcodes:
         hit = extras.barcodes[code]
         return {"code": code, "found": True, "source": "memory", **{k: hit.get(k) for k in ("name", "brand", "quantity")}}
-    if settings.get("barcode_lookup") is False:
+    # nach außen geht nur etwas, wenn die Online-Suche ausdrücklich eingeschaltet ist (Standard: aus)
+    if settings.get("barcode_lookup") is not True:
         return {"code": code, "found": False, "source": "off"}
     lang = (hass.config.language or "en").split("-")[0]
     order = [p for p in (settings.get("barcode_providers") or DEFAULT_PROVIDERS) if p in PROVIDERS]

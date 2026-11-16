@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    scan_off: "Noch nicht bekannt. Die Online-Suche ist aus – einschalten unter Einstellungen → Global → „Strichcodes online nachschlagen“.",
     kind_count: "Anzahl (2×)", kind_size: "Größe (1 l)", kind_offer: "Angebots-Hinweis",
     wl_send_to: "Senden an", wl_add_target: "Ziel hinzufügen", wl_search: "Durchsuchen", wl_hass: "In Home Assistant", wl_hass_sub: "Benachrichtigung in der Seitenleiste", wl_grp_dev: "Smartphones & Tablets", wl_grp_other: "Weitere Dienste", wl_none: "Keine", wl_done: "Fertig", wl_n: "{n} ausgewählt", wl_no_target: "Kein Ziel gewählt – es wird nichts gesendet.",
     wl_menu: "Auf die Merkliste", wl_added: "steht auf der Merkliste", wl_title: "Merkliste", wl_help: "Produkte, bei denen du auf ein Angebot wartest. Hinzufügen: im Menü eines Artikels oder in der Angebots-Karte.", wl_empty: "Noch nichts gemerkt.", wl_notify: "Benachrichtigen, wenn etwas davon im Angebot ist", wl_notify_help: "Home Assistant prüft alle 30 Minuten – auch wenn kein Dashboard geöffnet ist – und meldet jedes Angebot einmal.", wl_service: "Zusätzlich senden an (z. B. notify.mobile_app_…)", ph_low: "Günstigster Preis bisher", tpl_suggest: "Häufig gekauft – antippen zum Hinzufügen:", tpl_from_done: "Aus Erledigtem", tpl_clean: "Aufzählungszeichen und Nummern entfernt",
@@ -371,7 +372,7 @@ const TEXTS = {
     share: "Teilen per Link",
     share_help: "Für Personen ohne Home-Assistant-Konto. Sie sehen nur diese Liste (Notizen nur, wenn du sie freigibst) – sonst nichts aus Home Assistant. Standard: nur ansehen.",
     barcode_lookup: "Strichcodes online nachschlagen",
-    barcode_lookup_help: "Open Food Facts, es wird nur die Nummer gesendet. Aus: nur schon bekannte Codes.",
+    barcode_lookup_help: "Open Food Facts, es wird nur die Nummer gesendet. Aus (Standard): nur schon bekannte Codes, nichts geht nach außen.",
     tab_stats: "Statistik",
     l_show_templates: "Vorlagen-Knopf (📋)",
     l_show_scan: "Strichcode-Knopf",
@@ -401,6 +402,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    scan_off: "Not known yet. The online lookup is off – turn it on under Settings → Global → \"Look up barcodes online\".",
     kind_count: "Count (2×)", kind_size: "Size (1 l)", kind_offer: "Offer hint",
     wl_send_to: "Send to", wl_add_target: "Add target", wl_search: "Search", wl_hass: "In Home Assistant", wl_hass_sub: "Notification in the sidebar", wl_grp_dev: "Smartphones & tablets", wl_grp_other: "Other services", wl_none: "None", wl_done: "Done", wl_n: "{n} selected", wl_no_target: "No target selected – nothing is sent.",
     wl_menu: "Add to watch list", wl_added: "is on the watch list", wl_title: "Watch list", wl_help: "Products you are waiting to see on offer. Add them from an item's menu or in the offers card.", wl_empty: "Nothing here yet.", wl_notify: "Notify when one of them is on offer", wl_notify_help: "Home Assistant checks every 30 minutes – even with no dashboard open – and reports every offer once.", wl_service: "Also send to (e.g. notify.mobile_app_…)", ph_low: "Lowest price so far", tpl_suggest: "Bought often – tap to add:", tpl_from_done: "From checked items", tpl_clean: "Bullets and numbers removed",
@@ -645,7 +647,7 @@ const TEXTS = {
     share: "Share via link",
     share_help: "For people without a Home Assistant account. They only see this list (notes only if you allow them) – nothing else from Home Assistant. Default: view only.",
     barcode_lookup: "Look up barcodes online",
-    barcode_lookup_help: "Open Food Facts, only the number is sent. Off: only codes already known.",
+    barcode_lookup_help: "Open Food Facts, only the number is sent. Off (default): only codes already known, nothing leaves Home Assistant.",
     tab_stats: "Statistics",
     l_show_templates: "Templates button (📋)",
     l_show_scan: "Barcode button",
@@ -675,6 +677,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    scan_off: "Pas encore connu. La recherche en ligne est désactivée – active-la dans Réglages → Global → « Rechercher les codes-barres en ligne ».",
     kind_count: "Nombre (2×)", kind_size: "Taille (1 l)", kind_offer: "Indication de promo",
     wl_send_to: "Envoyer à", wl_add_target: "Ajouter une cible", wl_search: "Rechercher", wl_hass: "Dans Home Assistant", wl_hass_sub: "Notification dans la barre latérale", wl_grp_dev: "Smartphones et tablettes", wl_grp_other: "Autres services", wl_none: "Aucune", wl_done: "Terminé", wl_n: "{n} sélectionnée(s)", wl_no_target: "Aucune cible choisie – rien n'est envoyé.",
     wl_menu: "Ajouter aux produits surveillés", wl_added: "est surveillé", wl_title: "Produits surveillés", wl_help: "Produits dont tu attends une promo. Ajoute-les depuis le menu d'un article ou dans la carte des promos.", wl_empty: "Rien pour l'instant.", wl_notify: "Notifier quand l'un d'eux est en promo", wl_notify_help: "Home Assistant vérifie toutes les 30 minutes – même sans tableau de bord ouvert – et signale chaque promo une fois.", wl_service: "Envoyer aussi à (p. ex. notify.mobile_app_…)", ph_low: "Prix le plus bas jusqu'ici", tpl_suggest: "Souvent achetés – touche pour ajouter :", tpl_from_done: "Depuis les articles cochés", tpl_clean: "Puces et numéros retirés",
@@ -919,7 +922,7 @@ const TEXTS = {
     share: "Partager par lien",
     share_help: "Pour les personnes sans compte Home Assistant. Elles ne voient que cette liste (notes seulement si tu les autorises) – rien d'autre de Home Assistant. Par défaut : lecture seule.",
     barcode_lookup: "Rechercher les codes-barres en ligne",
-    barcode_lookup_help: "Open Food Facts, seul le numéro est envoyé. Désactivé : uniquement les codes déjà connus.",
+    barcode_lookup_help: "Open Food Facts, seul le numéro est envoyé. Désactivé (par défaut) : uniquement les codes déjà connus, rien ne sort.",
     tab_stats: "Statistiques",
     l_show_templates: "Bouton modèles (📋)",
     l_show_scan: "Bouton code-barres",
@@ -949,6 +952,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    scan_off: "Aún no conocido. La búsqueda en línea está desactivada: actívala en Ajustes → Global → «Buscar códigos de barras en línea».",
     kind_count: "Cantidad (2×)", kind_size: "Tamaño (1 l)", kind_offer: "Aviso de oferta",
     wl_send_to: "Enviar a", wl_add_target: "Añadir destino", wl_search: "Buscar", wl_hass: "En Home Assistant", wl_hass_sub: "Notificación en la barra lateral", wl_grp_dev: "Smartphones y tabletas", wl_grp_other: "Otros servicios", wl_none: "Ninguno", wl_done: "Listo", wl_n: "{n} seleccionado(s)", wl_no_target: "Ningún destino elegido – no se envía nada.",
     wl_menu: "Añadir al seguimiento", wl_added: "está en seguimiento", wl_title: "Seguimiento", wl_help: "Productos de los que esperas una oferta. Añádelos desde el menú de un artículo o en la tarjeta de ofertas.", wl_empty: "Aún no hay nada.", wl_notify: "Avisar cuando alguno esté en oferta", wl_notify_help: "Home Assistant comprueba cada 30 minutos – aunque no haya ningún panel abierto – y avisa una vez por oferta.", wl_service: "Enviar también a (p. ej. notify.mobile_app_…)", ph_low: "Precio más bajo hasta ahora", tpl_suggest: "Comprados a menudo – toca para añadir:", tpl_from_done: "De lo ya marcado", tpl_clean: "Viñetas y números eliminados",
@@ -1193,7 +1197,7 @@ const TEXTS = {
     share: "Compartir por enlace",
     share_help: "Para personas sin cuenta de Home Assistant. Solo ven esta lista (notas solo si las permites) – nada más de Home Assistant. Predeterminado: solo ver.",
     barcode_lookup: "Buscar códigos de barras en línea",
-    barcode_lookup_help: "Open Food Facts, solo se envía el número. Desactivado: solo códigos ya conocidos.",
+    barcode_lookup_help: "Open Food Facts, solo se envía el número. Desactivado (por defecto): solo códigos ya conocidos, nada sale al exterior.",
     tab_stats: "Estadísticas",
     l_show_templates: "Botón de plantillas (📋)",
     l_show_scan: "Botón de código de barras",
@@ -1223,6 +1227,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    scan_off: "Non ancora noto. La ricerca online è disattivata: attivala in Impostazioni → Globale → «Cerca codici a barre online».",
     kind_count: "Numero (2×)", kind_size: "Formato (1 l)", kind_offer: "Segnalazione offerta",
     wl_send_to: "Invia a", wl_add_target: "Aggiungi destinazione", wl_search: "Cerca", wl_hass: "In Home Assistant", wl_hass_sub: "Notifica nella barra laterale", wl_grp_dev: "Smartphone e tablet", wl_grp_other: "Altri servizi", wl_none: "Nessuna", wl_done: "Fatto", wl_n: "{n} selezionate", wl_no_target: "Nessuna destinazione scelta – non viene inviato nulla.",
     wl_menu: "Aggiungi ai prodotti seguiti", wl_added: "è tra i prodotti seguiti", wl_title: "Prodotti seguiti", wl_help: "Prodotti di cui aspetti un'offerta. Aggiungili dal menu di un articolo o nella scheda offerte.", wl_empty: "Ancora niente.", wl_notify: "Avvisa quando uno è in offerta", wl_notify_help: "Home Assistant controlla ogni 30 minuti – anche senza dashboard aperta – e segnala ogni offerta una volta.", wl_service: "Invia anche a (ad es. notify.mobile_app_…)", ph_low: "Prezzo più basso finora", tpl_suggest: "Comprati spesso – tocca per aggiungere:", tpl_from_done: "Dagli articoli spuntati", tpl_clean: "Punti elenco e numeri rimossi",
@@ -1467,7 +1472,7 @@ const TEXTS = {
     share: "Condividi tramite link",
     share_help: "Per persone senza account Home Assistant. Vedono solo questa lista (note solo se le consenti) – nient'altro di Home Assistant. Predefinito: solo visualizzazione.",
     barcode_lookup: "Cerca codici a barre online",
-    barcode_lookup_help: "Open Food Facts, viene inviato solo il numero. Disattivato: solo codici già noti.",
+    barcode_lookup_help: "Open Food Facts, viene inviato solo il numero. Disattivato (predefinito): solo codici già noti, nulla esce.",
     tab_stats: "Statistiche",
     l_show_templates: "Pulsante modelli (📋)",
     l_show_scan: "Pulsante codice a barre",
@@ -1497,6 +1502,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    scan_off: "Jeszcze nieznany. Wyszukiwanie online jest wyłączone – włącz je w Ustawienia → Globalne → „Wyszukuj kody kreskowe online”.",
     kind_count: "Liczba (2×)", kind_size: "Wielkość (1 l)", kind_offer: "Wskazówka promocji",
     wl_send_to: "Wyślij do", wl_add_target: "Dodaj cel", wl_search: "Szukaj", wl_hass: "W Home Assistant", wl_hass_sub: "Powiadomienie w pasku bocznym", wl_grp_dev: "Smartfony i tablety", wl_grp_other: "Inne usługi", wl_none: "Żaden", wl_done: "Gotowe", wl_n: "Wybrano: {n}", wl_no_target: "Nie wybrano celu – nic nie zostanie wysłane.",
     wl_menu: "Dodaj do obserwowanych", wl_added: "jest obserwowany", wl_title: "Obserwowane", wl_help: "Produkty, na których promocję czekasz. Dodaj je z menu produktu lub w karcie promocji.", wl_empty: "Jeszcze nic.", wl_notify: "Powiadom, gdy któryś jest w promocji", wl_notify_help: "Home Assistant sprawdza co 30 minut – także bez otwartego dashboardu – i zgłasza każdą promocję raz.", wl_service: "Wyślij też do (np. notify.mobile_app_…)", ph_low: "Najniższa cena do tej pory", tpl_suggest: "Często kupowane – dotknij, aby dodać:", tpl_from_done: "Z odhaczonych", tpl_clean: "Usunięto punktory i numery",
@@ -1741,7 +1747,7 @@ const TEXTS = {
     share: "Udostępnij przez link",
     share_help: "Dla osób bez konta Home Assistant. Widzą tylko tę listę (notatki tylko, jeśli na to pozwolisz) – nic więcej z Home Assistant. Domyślnie: tylko podgląd.",
     barcode_lookup: "Wyszukuj kody kreskowe online",
-    barcode_lookup_help: "Open Food Facts, wysyłany jest tylko numer. Wyłączone: tylko już znane kody.",
+    barcode_lookup_help: "Open Food Facts, wysyłany jest tylko numer. Wyłączone (domyślnie): tylko już znane kody, nic nie wychodzi na zewnątrz.",
     tab_stats: "Statystyki",
     l_show_templates: "Przycisk szablonów (📋)",
     l_show_scan: "Przycisk kodu kreskowego",
@@ -5259,7 +5265,7 @@ class SmartListsCard extends HTMLElement {
       newName: t.w_combine_default, stores: ["REWE", "LIDL"].filter(() => this._lang === "de"),
       rules: { store: rules0.store ?? "@", person: rules0.person ?? "*", tag: rules0.tag ?? "#" },
       packs: packs.filter((p) => p.active).map((p) => p.id), shares: {},
-      notify: services.find((x) => x.startsWith("mobile_app_")) || "", voice: true, prices: true, barcode: true, share: false,
+      notify: services.find((x) => x.startsWith("mobile_app_")) || "", voice: true, prices: true, barcode: false, share: false,
       // Extras: beim ersten Einrichten aus (aufgeräumt für Einsteiger), beim erneuten Starten wie eingestellt
       notes: !(this._cfg && this._cfg.setup_needed) && !!(this._cfg && this._cfg.features && this._cfg.features.notes),
       mealplan: !(this._cfg && this._cfg.setup_needed) && !!(this._cfg && this._cfg.features && this._cfg.features.mealplan),
@@ -6505,7 +6511,8 @@ class SmartListsCard extends HTMLElement {
     const t = this._t;
     try {
       const r = await this._call("barcode", { code }, false);
-      if (!r.found) { this._toast(`${code}: ${t.scan_unknown}`); return; }
+      // Online-Suche aus (Standard): sagen, wo man sie einschaltet – sonst wirkt der Scanner kaputt
+      if (!r.found) { this._toast(`${code}: ${r.source === "off" ? t.scan_off : t.scan_unknown}`); return; }
       const text = [r.name, r.brand && !r.name.toLowerCase().includes(r.brand.toLowerCase()) ? `(${r.brand})` : ""].filter(Boolean).join(" ");
       // Einstellung „Für mich → Scanner“: Ziel-Liste und ob direkt hinzufügen oder erst ins Eingabefeld
       const target = (this._ui && this._ui.scan_target) || this._config.entity;
@@ -7047,7 +7054,7 @@ class SmartListsCard extends HTMLElement {
       fill(body,
         this._setRow(t.auto_voice_default_list, pick("voice_default_list"), t.auto_voice_help),
         this._setRow(t.auto_auto_due_list, pick("auto_due_list"), t.auto_due_help),
-        this._setRow(t.barcode_lookup, this._switch(cur.barcode_lookup !== false, async (on) => {
+        this._setRow(t.barcode_lookup, this._switch(cur.barcode_lookup === true, async (on) => {
           try { await this._call("set_automation", { settings: { ...cur, barcode_lookup: on } }, false); cur.barcode_lookup = on; status.textContent = "✓ " + t.saved; }
           catch (err) { status.textContent = (err && err.message) || t.error; }
         }, t.barcode_lookup), t.barcode_lookup_help),

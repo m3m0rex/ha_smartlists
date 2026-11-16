@@ -9,6 +9,10 @@ Fifth pre-release of 4.0.
 
 ### Changed
 
+- **The online barcode lookup is now off by default.** Nothing is sent to Open Food Facts unless *Look up barcodes
+  online* is switched on (Settings → Global, or in the setup wizard). If you never set this switch, the lookup was on
+  until now and is off after the update – switch it on once to keep it. The scanner tells you where when it meets an
+  unknown code.
 - **Offers card: unit prices (€/kg, €/l) are easier to read in "My list".** They now sit on their own line below the
   price in the tile, row and table views (also in the table on narrow cards), and the lowest unit price among the offers
   for an item is shown in green. Offers without a unit price look as before.
@@ -29,8 +33,9 @@ Fifth pre-release of 4.0.
 - **Changing the owner of an own list could lose the entity's name, icon and area** when it was the previous owner's
   only list: the previous owner's group was removed before the entity had been moved to the new one. The order is now
   the same as in the migration of old lists (move first, then remove).
-- **SECURITY.md said the integration makes no outbound requests.** That was wrong: the barcode lookup (on by default)
-  asks Open Food Facts, and the optional tunnel starts `cloudflared`. The text now says so; there is no telemetry.
+- **SECURITY.md said the integration makes no outbound requests.** That was wrong: the barcode lookup (on by default until now)
+  could ask Open Food Facts, and the optional tunnel starts `cloudflared`. The text now names both; both are off by
+  default and there is no telemetry.
 - **"Move" and "Copy" were missing in "Select several"** until the move dialog of a single item had been opened once.
   The target lists are now loaded when the selection starts.
 - **Notes stay visible while selecting several items.** In "Select several" the rows showed the badges but not the note.

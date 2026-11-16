@@ -323,7 +323,7 @@
       newName: t.w_combine_default, stores: ["REWE", "LIDL"].filter(() => this._lang === "de"),
       rules: { store: rules0.store ?? "@", person: rules0.person ?? "*", tag: rules0.tag ?? "#" },
       packs: packs.filter((p) => p.active).map((p) => p.id), shares: {},
-      notify: services.find((x) => x.startsWith("mobile_app_")) || "", voice: true, prices: true, barcode: true, share: false,
+      notify: services.find((x) => x.startsWith("mobile_app_")) || "", voice: true, prices: true, barcode: false, share: false,
       // Extras: beim ersten Einrichten aus (aufgeräumt für Einsteiger), beim erneuten Starten wie eingestellt
       notes: !(this._cfg && this._cfg.setup_needed) && !!(this._cfg && this._cfg.features && this._cfg.features.notes),
       mealplan: !(this._cfg && this._cfg.setup_needed) && !!(this._cfg && this._cfg.features && this._cfg.features.mealplan),

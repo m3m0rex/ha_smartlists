@@ -290,3 +290,36 @@ def test_done_ops_repeat_is_not_executed_twice():
     assert first == again == {"uid": "u1"} and other_user == {"uid": "u2"}
     assert both[0] == both[1] == {"uid": "u3"}
     assert calls == 3 + 2 + 10 and size == 3
+
+
+def test_barcode_lookup_is_off_unless_switched_on():
+    """Nach außen geht nur etwas, wenn die Online-Suche ausdrücklich eingeschaltet ist."""
+    import asyncio
+    import types
+
+    from smartlists import barcode
+    from smartlists.const import DOMAIN
+
+    asked = []
+
+    def session(hass):
+        asked.append(1)
+        raise RuntimeError("kein Netz im Test")
+
+    barcode.async_get_clientsession = session
+    known = {"4000000000001": {"name": "Milch", "brand": "", "quantity": "1 l"}}
+
+    def hass(settings):
+        return types.SimpleNamespace(config=types.SimpleNamespace(language="de"), data={DOMAIN: {
+            "extras": types.SimpleNamespace(barcodes=dict(known)), "learning": types.SimpleNamespace(automation=settings)}})
+
+    for settings in ({}, {"barcode_lookup": False}, {"barcode_lookup": None}):
+        assert asyncio.run(barcode.async_lookup(hass(settings), "4999999999999")) == {"code": "4999999999999", "found": False, "source": "off"}
+    assert not asked
+    # schon gelernte Codes gehen auch ohne Online-Suche
+    assert asyncio.run(barcode.async_lookup(hass({}), "4000000000001"))["source"] == "memory" and not asked
+    try:
+        asyncio.run(barcode.async_lookup(hass({"barcode_lookup": True}), "4999999999999"))
+    except RuntimeError:
+        pass
+    assert asked == [1]

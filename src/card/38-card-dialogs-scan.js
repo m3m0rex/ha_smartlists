@@ -382,7 +382,8 @@
     const t = this._t;
     try {
       const r = await this._call("barcode", { code }, false);
-      if (!r.found) { this._toast(`${code}: ${t.scan_unknown}`); return; }
+      // Online-Suche aus (Standard): sagen, wo man sie einschaltet – sonst wirkt der Scanner kaputt
+      if (!r.found) { this._toast(`${code}: ${r.source === "off" ? t.scan_off : t.scan_unknown}`); return; }
       const text = [r.name, r.brand && !r.name.toLowerCase().includes(r.brand.toLowerCase()) ? `(${r.brand})` : ""].filter(Boolean).join(" ");
       // Einstellung „Für mich → Scanner“: Ziel-Liste und ob direkt hinzufügen oder erst ins Eingabefeld
       const target = (this._ui && this._ui.scan_target) || this._config.entity;

@@ -201,7 +201,7 @@
       fill(body,
         this._setRow(t.auto_voice_default_list, pick("voice_default_list"), t.auto_voice_help),
         this._setRow(t.auto_auto_due_list, pick("auto_due_list"), t.auto_due_help),
-        this._setRow(t.barcode_lookup, this._switch(cur.barcode_lookup !== false, async (on) => {
+        this._setRow(t.barcode_lookup, this._switch(cur.barcode_lookup === true, async (on) => {
           try { await this._call("set_automation", { settings: { ...cur, barcode_lookup: on } }, false); cur.barcode_lookup = on; status.textContent = "✓ " + t.saved; }
           catch (err) { status.textContent = (err && err.message) || t.error; }
         }, t.barcode_lookup), t.barcode_lookup_help),

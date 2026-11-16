@@ -446,7 +446,7 @@
     const search = h("input", { type: "search", class: "search2", placeholder: t.a_search, "aria-label": t.a_search,
       oninput: (e) => { const q = searchKey(e.target.value); btns.forEach(([b, key]) => { b.hidden = !!q && !key.includes(q); }); } });
     const nav = h("nav", { class: "snav", "aria-label": t.settings }, search,
-      group("me", t.tab_me), group("global", t.tab_house, t.admin_only_short), group("stats", t.g_stats),
+      group("me", t.tab_me), group("global", t.tab_house, t.admin_only_short), group("stats", t.g_stats), group("info", t.a_info),
       h("div", { class: "ver" }, h("span", {}, `SmartLists ${this._version || CARD_VERSION}`),
         h("a", { href: "https://ha-smartlists.com/", target: "_blank", rel: "noopener" }, "Website"), " · ",
         h("a", { href: "https://github.com/m3m0rex/ha_smartlists/wiki", target: "_blank", rel: "noopener" }, "Wiki")));

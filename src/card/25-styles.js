@@ -110,6 +110,7 @@ const STYLE = `
   .subline { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin-top:3px; }
   .subline .note { margin:0; }
   .stepcol { display:flex; justify-content:flex-end; }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:4px 16px; font-size:.9rem; } .kv span { color:var(--secondary-text-color); }
   /* Kategorie als getönter Balken */
   .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;
     background:color-mix(in srgb, var(--cc) 16%, transparent); color:var(--cc); font-size:.9rem; font-weight:700; text-transform:none; letter-spacing:0; }
@@ -422,6 +423,15 @@ const STYLE = `
   .srow2 .sl { flex:1; min-width:0; }
   .srow2 .sl small { display:block; color:var(--secondary-text-color); font-size:.76rem; overflow-wrap:anywhere; }
   .srow2 select { width:180px; flex:none; height:36px; padding:0 10px; }
+  /* 4.0 – schmale Einstellungen (Handy): Beschriftung über dem Feld statt daneben; nichts wird mehr gequetscht oder
+     überlagert (Tunnel-Token, Badges & Farben, lange Auswahllisten). Schalter bleiben rechts neben dem Text. */
+  @container (max-width: 520px) {
+    .srow2 { flex-wrap:wrap; row-gap:6px; }
+    .srow2 > .sl { flex:1 1 60%; min-width:150px; }
+    .srow2 > select, .srow2 > input:not([type=checkbox]):not([type=color]), .srow2 > .look-row, .srow2 > textarea { flex:1 1 100%; width:auto; max-width:100%; min-width:0; }
+    .srow2 > .look-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:flex-start; }
+    .srow2 > .look-row select { flex:1 1 140px; width:auto; }
+  }
   .srow2 .val { color:var(--secondary-text-color); font-size:.85rem; text-align:right; overflow-wrap:anywhere; }
   .grp { font-size:.8rem; font-weight:600; color:var(--secondary-text-color); margin:14px 0 2px; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; }

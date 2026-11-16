@@ -81,19 +81,32 @@
       { g: "global", id: "extras", label: t.x_title, sub: t.x_help, kw: [t.notes, t.mp_title, t.x_notes, t.x_mealplan, t.x_stats, t.stats, t.exp], build: () => [this._extrasSection()] },
       { g: "global", id: "devices", label: t.a_devices, sub: t.devices_help, kw: [t.devices, t.notes, t.app_list], build: () => [this._devicesSection(), this._notesSection()] },
       { g: "global", id: "rights", label: t.a_rights, sub: t.a_rights_sub, kw: [t.share, t.rights_who, t.pub_title, t.pub_tunnel, t.pub_proxy, "cloudflared", "tunnel", "proxy"], build: () => [this._rightsShareSection(), this._publicSection(), this._rightsOtherSection()] },
-      { g: "global", id: "data", label: t.a_data, sub: t.a_global_sub, kw: [t.automation, t.backup, t.barcode_providers, t.ui_house, t.w_restart], build: () => [
-        this._automationSection(), this._exportImport(),
-        this._sec("", t.mg_title, t.mg_sub, [h("button", { class: "btn2", type: "button", onclick: () => this._migrateDialog() }, "📥 " + t.mg_title + " …")]),
-        this._sec("", t.w_restart, t.w_restart_sub, [h("div", { class: "acts", style: "justify-content:flex-start" },
-          h("button", { class: "btn2", type: "button", onclick: () => this._setupWizard() }, t.w_restart),
-          h("button", { class: "btn2 danger", type: "button", onclick: () => this._resetDialog() }, t.rs_title + " …"))]),
+      // 4.0: „Sprache, Sichern, Standard“ ist aufgeteilt – Einrichtung, Zurücksetzen und Dashboard stehen unter „Info“ (ganz unten)
+      { g: "global", id: "auto", label: t.a_auto, sub: t.a_global_sub, kw: [t.automation, t.barcode_providers, t.barcode_lookup, "assist"], build: () => [this._automationSection()] },
+      { g: "global", id: "backup", label: t.backup, sub: t.a_global_sub, kw: [t.backup, t.mg_title, "export", "import"], build: () => [
+        this._exportImport(),
+        this._sec("", t.mg_title, t.mg_sub, [h("button", { class: "btn2", type: "button", onclick: () => this._migrateDialog() }, "📥 " + t.mg_title + " …")])] },
+      { g: "global", id: "house", label: t.ui_house, sub: t.scope_help_household, kw: [t.ui_house, t.reset], build: () => [
+        this._sec("", t.ui_house, null, [...this._controls("household"), reset("household")])] },
+    ];
+    const link = (label, href) => h("a", { class: "btn2", href, target: "_blank", rel: "noopener", style: "text-decoration:none;display:inline-flex;align-items:center" }, label);
+    const REPO = "https://github.com/m3m0rex/ha_smartlists";
+    const info = [{ g: "info", id: "info", label: t.a_info, sub: t.a_info_sub, kw: [t.info_version, t.w_restart, t.rs_title, t.db_title, t.info_help, "version", "setup"], build: () => [
+      this._sec("", t.info_version, null, [h("div", { class: "kv" },
+        h("span", {}, "SmartLists"), h("b", {}, this._version || CARD_VERSION),
+        this._version && this._version !== CARD_VERSION ? [h("span", {}, t.card || "Card"), h("b", {}, CARD_VERSION)] : null,
+        h("span", {}, "Home Assistant"), h("b", {}, (this._hass.config && this._hass.config.version) || "–"))]),
+      this._sec("", t.info_help, null, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
+        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, REPO + "/issues"), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
+      ...(!this._isAdmin ? [] : [
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
-        this._sec("", t.ui_house, t.scope_help_household, [...this._controls("household"), reset("household")])] },
-    ];
+        this._sec("", t.w_restart, t.w_restart_sub, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
+          h("button", { class: "btn2", type: "button", onclick: () => this._setupWizard() }, t.w_restart),
+          h("button", { class: "btn2 danger", type: "button", onclick: () => this._resetDialog() }, t.rs_title + " …"))])])] }];
     // Statistik und Ausgaben: optionales Extra (Einstellungen → Extras)
     const stats = !this._feat("stats") ? [] : [{ g: "stats", id: "stats", label: t.a_stats, sub: null, kw: [t.stats, t.exp], build: () => [this._statsSection(), this._expensesSection()] }];
-    return [...me, ...global, ...stats];
+    return [...me, ...global, ...stats, ...info];
   }
 
   // Global → Teilen und Rechte: was Benutzer ohne Admin-Rechte dürfen
@@ -489,7 +502,7 @@
       const txt = ["Milch 2 l", p.store && `${p.store}REWE`, p.person && `${p.person}Anna`, p.tag && `${p.tag}bio`].filter(Boolean).join(" ");
       const parsed = parseText(txt, rules.filter((r) => r.prefix), cfg.known_stores);
       fill(exampleEl, h("code", {}, txt), h("span", { class: "arrow" }, "→"), h("b", {}, parsed.name),
-        h("span", { class: "qtycol" }, `${fmtQty(parsed.quantity)} ${parsed.unit}`), parsed.tags.map(badge));
+        h("span", { class: "sizechip" }, `${fmtQty(parsed.quantity)} ${parsed.unit}`), parsed.tags.map(badge));
     };
     const drawRules = () => fill(rulesEl, ...rules.map((r, i) => h("div", { class: "rule2" },
       h("input", { class: "char", value: r.prefix, maxlength: "1", "aria-label": t.char, oninput: (e) => { r.prefix = e.target.value.trim(); drawExample(); } }),

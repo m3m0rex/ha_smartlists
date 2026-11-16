@@ -17,6 +17,15 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Narrow cards (phone) hide pencil and bin** in each row – edit and delete via the gesture set under
   Settings → Controls. Wide cards keep the buttons.
 
+### Changed – settings
+
+- **"Language, backup, defaults" is split up** into *Voice commands & automations*, *Backup & transfer* and
+  *Controls – default for everyone*. The search still finds the old terms.
+- **New "About" area at the very end:** version, links to the guide, issue tracker and changelog, plus
+  *Create dashboard*, *Run setup again* and *Start over*.
+- **Fixed on phones:** *Badges & colours* (controls overlapped the labels), *Tunnel token* (label squeezed into a
+  narrow column) and cut-off choices under *Sharing and permissions* – labels now sit above the field.
+
 ### Added
 
 - **Sizes without a space are recognised:** "Milk 1l", "Potatoes 2,5kg" or "Yoghurt 4x 150g" are now quantity + unit,

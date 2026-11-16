@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    a_info: "Info", a_info_sub: "Version, Hilfe und neu einrichten", info_version: "Version", info_help: "Hilfe", info_docs: "Anleitung (Wiki)", info_issue: "Fehler melden", info_changelog: "Was ist neu?", a_auto: "Sprachbefehle & Automationen",
     shop_finish: "Knopf „Einkauf beendet“", shop_finish_shopping: "nur im Einkaufsmodus", shop_finish_always: "immer", shop_finish_never: "nie", l_show_title: "Name der Liste", share_password_on: "Mit Passwort schützen",
     add_placeholder: "z. B. 2 kg Äpfel {store}", add_ph_store: "Markt", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
     done: "Erledigt", clear: "Erledigte entfernen", own: "Eigene Liste", combined: "Kombiniert", foreign: "Fremd",
@@ -391,6 +392,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    a_info: "About", a_info_sub: "Version, help and setup", info_version: "Version", info_help: "Help", info_docs: "Guide (wiki)", info_issue: "Report a problem", info_changelog: "What's new?", a_auto: "Voice commands & automations",
     shop_finish: "\"Shopping done\" button", shop_finish_shopping: "only in shopping mode", shop_finish_always: "always", shop_finish_never: "never", l_show_title: "List name", share_password_on: "Protect with a password",
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
     done: "Done", clear: "Clear completed", own: "Own list", combined: "Combined", foreign: "Foreign",
@@ -655,6 +657,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    a_info: "Infos", a_info_sub: "Version, aide et configuration", info_version: "Version", info_help: "Aide", info_docs: "Guide (wiki)", info_issue: "Signaler un problème", info_changelog: "Nouveautés", a_auto: "Commandes vocales et automatisations",
     shop_finish: "Bouton « Courses terminées »", shop_finish_shopping: "seulement en mode courses", shop_finish_always: "toujours", shop_finish_never: "jamais", l_show_title: "Nom de la liste", share_password_on: "Protéger par mot de passe",
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
     done: "Terminé", clear: "Supprimer les terminés", own: "Liste propre", combined: "Combinée", foreign: "Externe",
@@ -919,6 +922,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    a_info: "Información", a_info_sub: "Versión, ayuda y configuración", info_version: "Versión", info_help: "Ayuda", info_docs: "Guía (wiki)", info_issue: "Informar de un problema", info_changelog: "Novedades", a_auto: "Comandos de voz y automatizaciones",
     shop_finish: "Botón «Compra terminada»", shop_finish_shopping: "solo en modo compra", shop_finish_always: "siempre", shop_finish_never: "nunca", l_show_title: "Nombre de la lista", share_password_on: "Proteger con contraseña",
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
     done: "Hecho", clear: "Quitar completados", own: "Lista propia", combined: "Combinada", foreign: "Ajena",
@@ -1183,6 +1187,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    a_info: "Info", a_info_sub: "Versione, aiuto e configurazione", info_version: "Versione", info_help: "Aiuto", info_docs: "Guida (wiki)", info_issue: "Segnala un problema", info_changelog: "Novità", a_auto: "Comandi vocali e automazioni",
     shop_finish: "Pulsante «Spesa finita»", shop_finish_shopping: "solo in modalità spesa", shop_finish_always: "sempre", shop_finish_never: "mai", l_show_title: "Nome della lista", share_password_on: "Proteggi con password",
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
     done: "Fatto", clear: "Rimuovi completati", own: "Lista propria", combined: "Combinata", foreign: "Esterna",
@@ -1447,6 +1452,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    a_info: "Informacje", a_info_sub: "Wersja, pomoc i konfiguracja", info_version: "Wersja", info_help: "Pomoc", info_docs: "Instrukcja (wiki)", info_issue: "Zgłoś problem", info_changelog: "Co nowego?", a_auto: "Polecenia głosowe i automatyzacje",
     shop_finish: "Przycisk „Zakupy zakończone”", shop_finish_shopping: "tylko w trybie zakupów", shop_finish_always: "zawsze", shop_finish_never: "nigdy", l_show_title: "Nazwa listy", share_password_on: "Chroń hasłem",
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
     done: "Zrobione", clear: "Usuń zrobione", own: "Własna lista", combined: "Połączona", foreign: "Obca",
@@ -2416,6 +2422,7 @@ const STYLE = `
   .subline { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin-top:3px; }
   .subline .note { margin:0; }
   .stepcol { display:flex; justify-content:flex-end; }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:4px 16px; font-size:.9rem; } .kv span { color:var(--secondary-text-color); }
   /* Kategorie als getönter Balken */
   .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;
     background:color-mix(in srgb, var(--cc) 16%, transparent); color:var(--cc); font-size:.9rem; font-weight:700; text-transform:none; letter-spacing:0; }
@@ -2728,6 +2735,15 @@ const STYLE = `
   .srow2 .sl { flex:1; min-width:0; }
   .srow2 .sl small { display:block; color:var(--secondary-text-color); font-size:.76rem; overflow-wrap:anywhere; }
   .srow2 select { width:180px; flex:none; height:36px; padding:0 10px; }
+  /* 4.0 – schmale Einstellungen (Handy): Beschriftung über dem Feld statt daneben; nichts wird mehr gequetscht oder
+     überlagert (Tunnel-Token, Badges & Farben, lange Auswahllisten). Schalter bleiben rechts neben dem Text. */
+  @container (max-width: 520px) {
+    .srow2 { flex-wrap:wrap; row-gap:6px; }
+    .srow2 > .sl { flex:1 1 60%; min-width:150px; }
+    .srow2 > select, .srow2 > input:not([type=checkbox]):not([type=color]), .srow2 > .look-row, .srow2 > textarea { flex:1 1 100%; width:auto; max-width:100%; min-width:0; }
+    .srow2 > .look-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:flex-start; }
+    .srow2 > .look-row select { flex:1 1 140px; width:auto; }
+  }
   .srow2 .val { color:var(--secondary-text-color); font-size:.85rem; text-align:right; overflow-wrap:anywhere; }
   .grp { font-size:.8rem; font-weight:600; color:var(--secondary-text-color); margin:14px 0 2px; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; }
@@ -4736,19 +4752,32 @@ class SmartListsCard extends HTMLElement {
       { g: "global", id: "extras", label: t.x_title, sub: t.x_help, kw: [t.notes, t.mp_title, t.x_notes, t.x_mealplan, t.x_stats, t.stats, t.exp], build: () => [this._extrasSection()] },
       { g: "global", id: "devices", label: t.a_devices, sub: t.devices_help, kw: [t.devices, t.notes, t.app_list], build: () => [this._devicesSection(), this._notesSection()] },
       { g: "global", id: "rights", label: t.a_rights, sub: t.a_rights_sub, kw: [t.share, t.rights_who, t.pub_title, t.pub_tunnel, t.pub_proxy, "cloudflared", "tunnel", "proxy"], build: () => [this._rightsShareSection(), this._publicSection(), this._rightsOtherSection()] },
-      { g: "global", id: "data", label: t.a_data, sub: t.a_global_sub, kw: [t.automation, t.backup, t.barcode_providers, t.ui_house, t.w_restart], build: () => [
-        this._automationSection(), this._exportImport(),
-        this._sec("", t.mg_title, t.mg_sub, [h("button", { class: "btn2", type: "button", onclick: () => this._migrateDialog() }, "📥 " + t.mg_title + " …")]),
-        this._sec("", t.w_restart, t.w_restart_sub, [h("div", { class: "acts", style: "justify-content:flex-start" },
-          h("button", { class: "btn2", type: "button", onclick: () => this._setupWizard() }, t.w_restart),
-          h("button", { class: "btn2 danger", type: "button", onclick: () => this._resetDialog() }, t.rs_title + " …"))]),
+      // 4.0: „Sprache, Sichern, Standard“ ist aufgeteilt – Einrichtung, Zurücksetzen und Dashboard stehen unter „Info“ (ganz unten)
+      { g: "global", id: "auto", label: t.a_auto, sub: t.a_global_sub, kw: [t.automation, t.barcode_providers, t.barcode_lookup, "assist"], build: () => [this._automationSection()] },
+      { g: "global", id: "backup", label: t.backup, sub: t.a_global_sub, kw: [t.backup, t.mg_title, "export", "import"], build: () => [
+        this._exportImport(),
+        this._sec("", t.mg_title, t.mg_sub, [h("button", { class: "btn2", type: "button", onclick: () => this._migrateDialog() }, "📥 " + t.mg_title + " …")])] },
+      { g: "global", id: "house", label: t.ui_house, sub: t.scope_help_household, kw: [t.ui_house, t.reset], build: () => [
+        this._sec("", t.ui_house, null, [...this._controls("household"), reset("household")])] },
+    ];
+    const link = (label, href) => h("a", { class: "btn2", href, target: "_blank", rel: "noopener", style: "text-decoration:none;display:inline-flex;align-items:center" }, label);
+    const REPO = "https://github.com/m3m0rex/ha_smartlists";
+    const info = [{ g: "info", id: "info", label: t.a_info, sub: t.a_info_sub, kw: [t.info_version, t.w_restart, t.rs_title, t.db_title, t.info_help, "version", "setup"], build: () => [
+      this._sec("", t.info_version, null, [h("div", { class: "kv" },
+        h("span", {}, "SmartLists"), h("b", {}, this._version || CARD_VERSION),
+        this._version && this._version !== CARD_VERSION ? [h("span", {}, t.card || "Card"), h("b", {}, CARD_VERSION)] : null,
+        h("span", {}, "Home Assistant"), h("b", {}, (this._hass.config && this._hass.config.version) || "–"))]),
+      this._sec("", t.info_help, null, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
+        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, REPO + "/issues"), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
+      ...(!this._isAdmin ? [] : [
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
-        this._sec("", t.ui_house, t.scope_help_household, [...this._controls("household"), reset("household")])] },
-    ];
+        this._sec("", t.w_restart, t.w_restart_sub, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
+          h("button", { class: "btn2", type: "button", onclick: () => this._setupWizard() }, t.w_restart),
+          h("button", { class: "btn2 danger", type: "button", onclick: () => this._resetDialog() }, t.rs_title + " …"))])])] }];
     // Statistik und Ausgaben: optionales Extra (Einstellungen → Extras)
     const stats = !this._feat("stats") ? [] : [{ g: "stats", id: "stats", label: t.a_stats, sub: null, kw: [t.stats, t.exp], build: () => [this._statsSection(), this._expensesSection()] }];
-    return [...me, ...global, ...stats];
+    return [...me, ...global, ...stats, ...info];
   }
 
   // Global → Teilen und Rechte: was Benutzer ohne Admin-Rechte dürfen
@@ -5144,7 +5173,7 @@ class SmartListsCard extends HTMLElement {
       const txt = ["Milch 2 l", p.store && `${p.store}REWE`, p.person && `${p.person}Anna`, p.tag && `${p.tag}bio`].filter(Boolean).join(" ");
       const parsed = parseText(txt, rules.filter((r) => r.prefix), cfg.known_stores);
       fill(exampleEl, h("code", {}, txt), h("span", { class: "arrow" }, "→"), h("b", {}, parsed.name),
-        h("span", { class: "qtycol" }, `${fmtQty(parsed.quantity)} ${parsed.unit}`), parsed.tags.map(badge));
+        h("span", { class: "sizechip" }, `${fmtQty(parsed.quantity)} ${parsed.unit}`), parsed.tags.map(badge));
     };
     const drawRules = () => fill(rulesEl, ...rules.map((r, i) => h("div", { class: "rule2" },
       h("input", { class: "char", value: r.prefix, maxlength: "1", "aria-label": t.char, oninput: (e) => { r.prefix = e.target.value.trim(); drawExample(); } }),
@@ -6839,7 +6868,7 @@ class SmartListsCard extends HTMLElement {
     const search = h("input", { type: "search", class: "search2", placeholder: t.a_search, "aria-label": t.a_search,
       oninput: (e) => { const q = searchKey(e.target.value); btns.forEach(([b, key]) => { b.hidden = !!q && !key.includes(q); }); } });
     const nav = h("nav", { class: "snav", "aria-label": t.settings }, search,
-      group("me", t.tab_me), group("global", t.tab_house, t.admin_only_short), group("stats", t.g_stats),
+      group("me", t.tab_me), group("global", t.tab_house, t.admin_only_short), group("stats", t.g_stats), group("info", t.a_info),
       h("div", { class: "ver" }, h("span", {}, `SmartLists ${this._version || CARD_VERSION}`),
         h("a", { href: "https://ha-smartlists.com/", target: "_blank", rel: "noopener" }, "Website"), " · ",
         h("a", { href: "https://github.com/m3m0rex/ha_smartlists/wiki", target: "_blank", rel: "noopener" }, "Wiki")));

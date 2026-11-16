@@ -1,5 +1,6 @@
 const TEXTS = {
   de: {
+    a_info: "Info", a_info_sub: "Version, Hilfe und neu einrichten", info_version: "Version", info_help: "Hilfe", info_docs: "Anleitung (Wiki)", info_issue: "Fehler melden", info_changelog: "Was ist neu?", a_auto: "Sprachbefehle & Automationen",
     shop_finish: "Knopf „Einkauf beendet“", shop_finish_shopping: "nur im Einkaufsmodus", shop_finish_always: "immer", shop_finish_never: "nie", l_show_title: "Name der Liste", share_password_on: "Mit Passwort schützen",
     add_placeholder: "z. B. 2 kg Äpfel {store}", add_ph_store: "Markt", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
     done: "Erledigt", clear: "Erledigte entfernen", own: "Eigene Liste", combined: "Kombiniert", foreign: "Fremd",
@@ -264,6 +265,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    a_info: "About", a_info_sub: "Version, help and setup", info_version: "Version", info_help: "Help", info_docs: "Guide (wiki)", info_issue: "Report a problem", info_changelog: "What's new?", a_auto: "Voice commands & automations",
     shop_finish: "\"Shopping done\" button", shop_finish_shopping: "only in shopping mode", shop_finish_always: "always", shop_finish_never: "never", l_show_title: "List name", share_password_on: "Protect with a password",
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
     done: "Done", clear: "Clear completed", own: "Own list", combined: "Combined", foreign: "Foreign",
@@ -528,6 +530,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    a_info: "Infos", a_info_sub: "Version, aide et configuration", info_version: "Version", info_help: "Aide", info_docs: "Guide (wiki)", info_issue: "Signaler un problème", info_changelog: "Nouveautés", a_auto: "Commandes vocales et automatisations",
     shop_finish: "Bouton « Courses terminées »", shop_finish_shopping: "seulement en mode courses", shop_finish_always: "toujours", shop_finish_never: "jamais", l_show_title: "Nom de la liste", share_password_on: "Protéger par mot de passe",
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
     done: "Terminé", clear: "Supprimer les terminés", own: "Liste propre", combined: "Combinée", foreign: "Externe",
@@ -792,6 +795,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    a_info: "Información", a_info_sub: "Versión, ayuda y configuración", info_version: "Versión", info_help: "Ayuda", info_docs: "Guía (wiki)", info_issue: "Informar de un problema", info_changelog: "Novedades", a_auto: "Comandos de voz y automatizaciones",
     shop_finish: "Botón «Compra terminada»", shop_finish_shopping: "solo en modo compra", shop_finish_always: "siempre", shop_finish_never: "nunca", l_show_title: "Nombre de la lista", share_password_on: "Proteger con contraseña",
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
     done: "Hecho", clear: "Quitar completados", own: "Lista propia", combined: "Combinada", foreign: "Ajena",
@@ -1056,6 +1060,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    a_info: "Info", a_info_sub: "Versione, aiuto e configurazione", info_version: "Versione", info_help: "Aiuto", info_docs: "Guida (wiki)", info_issue: "Segnala un problema", info_changelog: "Novità", a_auto: "Comandi vocali e automazioni",
     shop_finish: "Pulsante «Spesa finita»", shop_finish_shopping: "solo in modalità spesa", shop_finish_always: "sempre", shop_finish_never: "mai", l_show_title: "Nome della lista", share_password_on: "Proteggi con password",
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
     done: "Fatto", clear: "Rimuovi completati", own: "Lista propria", combined: "Combinata", foreign: "Esterna",
@@ -1320,6 +1325,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    a_info: "Informacje", a_info_sub: "Wersja, pomoc i konfiguracja", info_version: "Wersja", info_help: "Pomoc", info_docs: "Instrukcja (wiki)", info_issue: "Zgłoś problem", info_changelog: "Co nowego?", a_auto: "Polecenia głosowe i automatyzacje",
     shop_finish: "Przycisk „Zakupy zakończone”", shop_finish_shopping: "tylko w trybie zakupów", shop_finish_always: "zawsze", shop_finish_never: "nigdy", l_show_title: "Nazwa listy", share_password_on: "Chroń hasłem",
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
     done: "Zrobione", clear: "Usuń zrobione", own: "Własna lista", combined: "Połączona", foreign: "Obca",

@@ -2256,6 +2256,17 @@ function backdropClose(back, ev) {
 }
 const iconBtn = (path, title, onclick, cls = "") =>
   h("button", { class: `icon-btn ${cls}`, title, "aria-label": title, type: "button", onclick }, svg(path, 18));
+// Anzahl („2×“) und Größe („1 l“, „2,5 kg“) eines Artikels – in der Zeile fest markiert.
+// Mit Einheit ist quantity die Größe und pack_count die Anzahl („Milch 2x 1 l“); ohne Einheit ist quantity die Anzahl.
+const countOf = (it) => {
+  const n = it.unit ? it.pack_count : it.quantity;
+  return n != null && Number(n) !== 1 ? `${fmtQty(n)}×` : "";
+};
+const sizeOf = (it) => (it.unit && it.quantity != null ? `${fmtQty(it.quantity)}\u00a0${it.unit}` : "");
+// Farbe der Kategorie-Balken (eigene Kategorien: aus dem Namen abgeleitet)
+const CAT_COLORS = { obst_gemuese: "#5fae4c", fleisch: "#d9655b", kuehlung: "#4a8fd8", grundnahrung: "#c8973a", backwaren: "#d5964a", getraenke: "#35a3bd",
+  suessigkeiten: "#c56fb0", haushalt: "#7d8f9c", drogerie: "#9b74dc", tiefkuehl: "#5bb6d6", tierbedarf: "#a0855b", sonstiges: "#7d8790" };
+const catColor = (id) => CAT_COLORS[id] || hashColor(String(id || ""));
 const emojiOf = (label) => (label || "").split(" ")[0];
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 function hashColor(s) {
@@ -2382,35 +2393,50 @@ const STYLE = `
      Haken | (Emoji) | Name + Badges | Menge | Einheit | Aktionen */
   /* Alle Zeilen eines Abschnitts teilen sich EIN Raster: jede Spalte ist so breit wie ihr längster
      Eintrag, dazwischen überall derselbe Abstand (--gap) – wie zwischen Menge/Einheit und Stift/Papierkorb. */
-  .items { --gap:12px; display:grid; grid-template-columns:auto minmax(0,1fr) auto auto auto; column-gap:var(--gap); }
-  .items.emoji { grid-template-columns:auto auto minmax(0,1fr) auto auto auto; }
+  .items { --gap:10px; display:grid; grid-template-columns:auto minmax(0,1fr) auto auto; column-gap:var(--gap); }
+  .items.emoji { grid-template-columns:auto auto minmax(0,1fr) auto auto; }
   .items > .full { grid-column:1 / -1; }
   .row { display:grid; grid-template-columns:subgrid; grid-column:1 / -1; align-items:center;
     padding:6px 8px 6px 16px; min-height:40px; }
   @supports not (grid-template-columns: subgrid) {
-    .row { grid-template-columns:22px minmax(0,1fr) 48px 44px 64px; column-gap:var(--gap); }
-    .items.emoji .row { grid-template-columns:22px 20px minmax(0,1fr) 48px 44px 64px; }
+    .row { grid-template-columns:22px minmax(0,1fr) 62px 64px; column-gap:var(--gap); }
+    .items.emoji .row { grid-template-columns:22px 20px minmax(0,1fr) 62px 64px; }
   }
   .qtycol { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--sl-accent); white-space:nowrap; font-size:.9rem; }
   .unitcol { text-align:left; color:var(--secondary-text-color); white-space:nowrap; font-size:.85rem; }
   .row.checked .qtycol { color:var(--secondary-text-color); font-weight:400; }
+  /* 4.0: Anzahl und Größe fest markiert. Anpassbar: --smartlists-qty-color */
+  .qpill, .sizechip { --q: var(--smartlists-qty-color, #e39a1c); color:var(--q); font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; font-size:.86rem; border-radius:8px; }
+  .qpill { background:color-mix(in srgb, var(--q) 18%, transparent); padding:0 7px; }
+  .sizechip { border:1.5px solid color-mix(in srgb, var(--q) 70%, transparent); padding:0 6px; line-height:1.35; }
+  .row.checked .qpill, .row.checked .sizechip { color:var(--secondary-text-color); border-color:var(--divider-color,#ddd); background:none; }
+  .subline { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin-top:3px; }
+  .subline .note { margin:0; }
+  .stepcol { display:flex; justify-content:flex-end; }
+  /* Kategorie als getönter Balken */
+  .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;
+    background:color-mix(in srgb, var(--cc) 16%, transparent); color:var(--cc); font-size:.9rem; font-weight:700; text-transform:none; letter-spacing:0; }
+  .group-title.bar small { color:var(--secondary-text-color); font-weight:400; font-size:.78rem; }
+  /* schmale Karte: Stift/Papierkorb ausblenden – Bearbeiten über die Geste (Einstellungen → Bedienung) */
+  .listwrap { container-type:inline-size; }
+  @container (max-width: 480px) { .listwrap .row:not(.edit) .actions .icon-btn { display:none; } }
   /* Mengen-Stepper − 2 + (wie in der App) */
-  .stepper { display:inline-flex; align-items:center; gap:2px; justify-content:flex-end; }
+  .stepper { display:inline-flex; align-items:center; justify-content:flex-end; border:1px solid var(--divider-color,#ddd); border-radius:16px; }
+  .stepper .sbtn { border:none !important; }
   .stepper .sbtn { width:24px; height:24px; border-radius:50%; border:1px solid var(--divider-color,#ddd); background:none; padding:0;
     display:inline-flex; align-items:center; justify-content:center; color:var(--secondary-text-color); cursor:pointer; flex:none; }
   .stepper .sbtn:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
   .stepper .sval { min-width:1.6em; text-align:center; }
   .shopping .row.large .stepper .sbtn { width:30px; height:30px; }
   .row:hover { background:var(--secondary-background-color,#f6f6f6); }
-  .box { flex:none; width:22px; height:22px; border-radius:6px; border:2px solid var(--secondary-text-color); background:none;
+  .box { flex:none; width:22px; height:22px; border-radius:50%; border:2px solid var(--secondary-text-color); background:none;
     padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:transparent; }
   .box.on { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
   .box:disabled { opacity:.45; cursor:not-allowed; }
   .main { flex:1; min-width:0; }
   .name-line { display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0; }
   /* Lange Namen hart umbrechen statt die Spalten zu verschieben */
-  .iname { overflow-wrap:anywhere; hyphens:auto; min-width:min(100%, 14ch); }
-  /* Der Name behält mindestens ~14 Zeichen Breite: vorher rutschen die Badges in die nächste Zeile */
+  .iname { overflow-wrap:anywhere; hyphens:auto; min-width:0; }
   .row.checked .iname { text-decoration:line-through; color:var(--secondary-text-color); }
   .row.checked .tag { opacity:.55; }
   .chip { font-size:.72rem; padding:1px 7px; border-radius:9px; background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); white-space:nowrap; }
@@ -3155,7 +3181,7 @@ class SmartListsCard extends HTMLElement {
     this._freqEl = h("div");
     this._tplEl = h("div");
     this._msgEl = h("div");
-    this._listEl = h("div");
+    this._listEl = h("div", { class: "listwrap" });
     this._progressEl = h("div");
     this._menuEl = h("div");
     this._moreEl = h("div", { class: "morewrap" });
@@ -4281,7 +4307,7 @@ class SmartListsCard extends HTMLElement {
     const byName = (a, b) => a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
     const rows = [];
     let emoji = false;
-    const grouped = (keyOf, groupsInOrder, labelOf) => {
+    const grouped = (keyOf, groupsInOrder, labelOf, colorOf = () => null) => {
       const groups = new Map();
       for (const it of open) {
         const k = keyOf(it);
@@ -4290,7 +4316,9 @@ class SmartListsCard extends HTMLElement {
       }
       groupsInOrder([...groups.keys()]).forEach((k) => {
         const items = groups.get(k).sort(byName);
-        rows.push(h("div", { class: "group-title full" }, `${labelOf(k)} · ${items.length}`), items.map((i) => this._row(i, d, false)));
+        const color = colorOf(k);
+        rows.push(h("div", { class: "group-title full bar", style: color ? `--cc:${color}` : null }, h("span", { class: "gt" }, labelOf(k)), h("small", {}, String(items.length))),
+          items.map((i) => this._row(i, d, false)));
       });
     };
     if (searching && !visible.length) {
@@ -4310,7 +4338,7 @@ class SmartListsCard extends HTMLElement {
       // wie in der App: Gruppen in fester Markt-Reihenfolge, innerhalb A–Z (im Einkaufsmodus: Gänge des Marktes)
       const order = this._catOrder(d);
       grouped((i) => i.category, (keys) => keys.sort((a, b) => order.indexOf(a) - order.indexOf(b)),
-        (k) => { const c = d.categories.find((x) => x.id === k); return c ? c.label : k; });
+        (k) => { const c = d.categories.find((x) => x.id === k); return c ? c.label : k; }, catColor);
     } else if (mode === "list" && d.type === "combined") {
       const order = d.source_lists || [];
       grouped((i) => i.source || "", (keys) => keys.sort((a, b) => order.indexOf(a) - order.indexOf(b)), (k) => k || "–");
@@ -4373,6 +4401,13 @@ class SmartListsCard extends HTMLElement {
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
     const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
+    const sub = [
+      ...tags.map(badge),
+      // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
+      this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null,
+      !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
+      this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null,
+    ];
     const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
       onclick: (e) => {
         if (this._suppressClick) { this._suppressClick = false; return; }
@@ -4382,26 +4417,21 @@ class SmartListsCard extends HTMLElement {
         onclick: () => this._toggleItem(it) }, svg(ICON.check, shop && ui.shop_large ? 20 : 16)),
       showEmoji ? h("span", { class: "catemoji", title: cat ? cat.label : "" }, cat ? emojiOf(cat.label) : "") : null,
       h("div", { class: "main" },
-        h("div", { class: "name-line" },
-          nameEl,
-          tags.map(badge),
-          // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
-          this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
+        // Zeile 1: Anzahl (gefüllt) · Name · Größe (umrandet) – fest markiert, damit man sie beim Einkaufen sofort sieht
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, nameEl, sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        // Zeile 2: Badges, Herkunft, Preis und Notiz
+        sub.some(Boolean) ? h("div", { class: "subline" }, sub) : null,
         it.offer && this._config.show_offer !== false ? this._offerLine(it, tags) : null,
-        !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
         // über einen geteilten Link: mit dem Namen, den die Person dort angegeben hat („von Max markiert (Link)“)
         it.soft_checked && !it.checked ? h("div", { class: "softchk", title: t.soft_checked_help }, "✓ ",
           it.soft_by ? t.soft_checked_by.replace("{name}", it.soft_by) : t.soft_checked) : null,
         it.link_added && !it.checked ? h("div", { class: "softchk", title: t.link_added_help }, "🔗 ",
-          it.link_by ? t.link_added_by.replace("{name}", it.link_by) : t.link_added) : null,
-        this._config.show_note && it.note ? h("div", { class: "note" }, it.note) : null),
-      h("span", { class: "qtycol" }, p.rename && !shop && it.quantity != null && this._config.show_stepper !== false
+          it.link_by ? t.link_added_by.replace("{name}", it.link_by) : t.link_added) : null),
+      h("span", { class: "stepcol" }, p.rename && !shop && it.quantity != null && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
           h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
-          h("span", { class: "sval" }, qty),
           h("button", { class: "sbtn", type: "button", title: t.qty_more, "aria-label": t.qty_more, onclick: () => this._stepQty(it, 1) }, svg(ICON.plus, 14)))
-        : qty),
-      h("span", { class: "unitcol", title: it.unit || "" }, it.unit || ""),
+        : null),
       h("div", { class: "actions" },
         readonly && !shop ? h("span", { class: "lock-ic", title: t.readonly }, svg(ICON.lock, 16)) : null,
         buttons && p.rename ? iconBtn(ICON.pencil, t.edit, () => { this._editing = it.uid; this._renderList(); }) : null,
@@ -4421,9 +4451,10 @@ class SmartListsCard extends HTMLElement {
       onclick: toggle, onkeydown: (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } } },
       h("span", { class: `box selbox ${on ? "on" : ""}` }, on ? svg(ICON.check, 16) : null),
       showEmoji ? h("span", { class: "catemoji" }, cat ? emojiOf(cat.label) : "") : null,
-      h("div", { class: "main" }, h("div", { class: "name-line" }, h("span", { class: "iname" }, it.name), tags.map(badge))),
-      h("span", { class: "qtycol" }, it.quantity != null ? `${it.pack_count > 1 ? it.pack_count + "× " : ""}${fmtQty(it.quantity)}` : ""),
-      h("span", { class: "unitcol" }, it.unit || ""));
+      h("div", { class: "main" },
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, h("span", { class: "iname" }, it.name), sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        tags.length ? h("div", { class: "subline" }, tags.map(badge)) : null),
+      h("span", { class: "stepcol" }), h("div", { class: "actions" }));
   }
   _startSelect(it) {
     this._sel = new Set(it ? [it.uid] : []);

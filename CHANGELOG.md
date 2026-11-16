@@ -7,6 +7,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enabled for SmartLists.
 
+### Changed – new list design
+
+- **Quantity and size are always highlighted:** the count ("2×") is a filled marker before the name, the size
+  ("1 l", "2,5 kg") an outlined one right after it – no more separate grey columns on the right. The colour can be
+  changed with the theme variable `--smartlists-qty-color`.
+- **Categories are tinted bars** with their own colour instead of small grey headings; checkboxes are round.
+- **Badges, price and note share one line below the name**, so the name gets the full width.
+- **Narrow cards (phone) hide pencil and bin** in each row – edit and delete via the gesture set under
+  Settings → Controls. Wide cards keep the buttons.
+
 ### Added
 
 - **Sizes without a space are recognised:** "Milk 1l", "Potatoes 2,5kg" or "Yoghurt 4x 150g" are now quantity + unit,

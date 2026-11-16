@@ -333,7 +333,7 @@ class SmartListsCard extends HTMLElement {
     this._freqEl = h("div");
     this._tplEl = h("div");
     this._msgEl = h("div");
-    this._listEl = h("div");
+    this._listEl = h("div", { class: "listwrap" });
     this._progressEl = h("div");
     this._menuEl = h("div");
     this._moreEl = h("div", { class: "morewrap" });

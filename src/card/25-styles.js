@@ -87,35 +87,50 @@ const STYLE = `
      Haken | (Emoji) | Name + Badges | Menge | Einheit | Aktionen */
   /* Alle Zeilen eines Abschnitts teilen sich EIN Raster: jede Spalte ist so breit wie ihr längster
      Eintrag, dazwischen überall derselbe Abstand (--gap) – wie zwischen Menge/Einheit und Stift/Papierkorb. */
-  .items { --gap:12px; display:grid; grid-template-columns:auto minmax(0,1fr) auto auto auto; column-gap:var(--gap); }
-  .items.emoji { grid-template-columns:auto auto minmax(0,1fr) auto auto auto; }
+  .items { --gap:10px; display:grid; grid-template-columns:auto minmax(0,1fr) auto auto; column-gap:var(--gap); }
+  .items.emoji { grid-template-columns:auto auto minmax(0,1fr) auto auto; }
   .items > .full { grid-column:1 / -1; }
   .row { display:grid; grid-template-columns:subgrid; grid-column:1 / -1; align-items:center;
     padding:6px 8px 6px 16px; min-height:40px; }
   @supports not (grid-template-columns: subgrid) {
-    .row { grid-template-columns:22px minmax(0,1fr) 48px 44px 64px; column-gap:var(--gap); }
-    .items.emoji .row { grid-template-columns:22px 20px minmax(0,1fr) 48px 44px 64px; }
+    .row { grid-template-columns:22px minmax(0,1fr) 62px 64px; column-gap:var(--gap); }
+    .items.emoji .row { grid-template-columns:22px 20px minmax(0,1fr) 62px 64px; }
   }
   .qtycol { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--sl-accent); white-space:nowrap; font-size:.9rem; }
   .unitcol { text-align:left; color:var(--secondary-text-color); white-space:nowrap; font-size:.85rem; }
   .row.checked .qtycol { color:var(--secondary-text-color); font-weight:400; }
+  /* 4.0: Anzahl und Größe fest markiert. Anpassbar: --smartlists-qty-color */
+  .qpill, .sizechip { --q: var(--smartlists-qty-color, #e39a1c); color:var(--q); font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; font-size:.86rem; border-radius:8px; }
+  .qpill { background:color-mix(in srgb, var(--q) 18%, transparent); padding:0 7px; }
+  .sizechip { border:1.5px solid color-mix(in srgb, var(--q) 70%, transparent); padding:0 6px; line-height:1.35; }
+  .row.checked .qpill, .row.checked .sizechip { color:var(--secondary-text-color); border-color:var(--divider-color,#ddd); background:none; }
+  .subline { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin-top:3px; }
+  .subline .note { margin:0; }
+  .stepcol { display:flex; justify-content:flex-end; }
+  /* Kategorie als getönter Balken */
+  .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;
+    background:color-mix(in srgb, var(--cc) 16%, transparent); color:var(--cc); font-size:.9rem; font-weight:700; text-transform:none; letter-spacing:0; }
+  .group-title.bar small { color:var(--secondary-text-color); font-weight:400; font-size:.78rem; }
+  /* schmale Karte: Stift/Papierkorb ausblenden – Bearbeiten über die Geste (Einstellungen → Bedienung) */
+  .listwrap { container-type:inline-size; }
+  @container (max-width: 480px) { .listwrap .row:not(.edit) .actions .icon-btn { display:none; } }
   /* Mengen-Stepper − 2 + (wie in der App) */
-  .stepper { display:inline-flex; align-items:center; gap:2px; justify-content:flex-end; }
+  .stepper { display:inline-flex; align-items:center; justify-content:flex-end; border:1px solid var(--divider-color,#ddd); border-radius:16px; }
+  .stepper .sbtn { border:none !important; }
   .stepper .sbtn { width:24px; height:24px; border-radius:50%; border:1px solid var(--divider-color,#ddd); background:none; padding:0;
     display:inline-flex; align-items:center; justify-content:center; color:var(--secondary-text-color); cursor:pointer; flex:none; }
   .stepper .sbtn:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
   .stepper .sval { min-width:1.6em; text-align:center; }
   .shopping .row.large .stepper .sbtn { width:30px; height:30px; }
   .row:hover { background:var(--secondary-background-color,#f6f6f6); }
-  .box { flex:none; width:22px; height:22px; border-radius:6px; border:2px solid var(--secondary-text-color); background:none;
+  .box { flex:none; width:22px; height:22px; border-radius:50%; border:2px solid var(--secondary-text-color); background:none;
     padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:transparent; }
   .box.on { background:var(--sl-accent); border-color:var(--sl-accent); color:var(--text-primary-color,#fff); }
   .box:disabled { opacity:.45; cursor:not-allowed; }
   .main { flex:1; min-width:0; }
   .name-line { display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0; }
   /* Lange Namen hart umbrechen statt die Spalten zu verschieben */
-  .iname { overflow-wrap:anywhere; hyphens:auto; min-width:min(100%, 14ch); }
-  /* Der Name behält mindestens ~14 Zeichen Breite: vorher rutschen die Badges in die nächste Zeile */
+  .iname { overflow-wrap:anywhere; hyphens:auto; min-width:0; }
   .row.checked .iname { text-decoration:line-through; color:var(--secondary-text-color); }
   .row.checked .tag { opacity:.55; }
   .chip { font-size:.72rem; padding:1px 7px; border-radius:9px; background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); white-space:nowrap; }

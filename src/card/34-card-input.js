@@ -399,7 +399,7 @@
     const byName = (a, b) => a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
     const rows = [];
     let emoji = false;
-    const grouped = (keyOf, groupsInOrder, labelOf) => {
+    const grouped = (keyOf, groupsInOrder, labelOf, colorOf = () => null) => {
       const groups = new Map();
       for (const it of open) {
         const k = keyOf(it);
@@ -408,7 +408,9 @@
       }
       groupsInOrder([...groups.keys()]).forEach((k) => {
         const items = groups.get(k).sort(byName);
-        rows.push(h("div", { class: "group-title full" }, `${labelOf(k)} · ${items.length}`), items.map((i) => this._row(i, d, false)));
+        const color = colorOf(k);
+        rows.push(h("div", { class: "group-title full bar", style: color ? `--cc:${color}` : null }, h("span", { class: "gt" }, labelOf(k)), h("small", {}, String(items.length))),
+          items.map((i) => this._row(i, d, false)));
       });
     };
     if (searching && !visible.length) {
@@ -428,7 +430,7 @@
       // wie in der App: Gruppen in fester Markt-Reihenfolge, innerhalb A–Z (im Einkaufsmodus: Gänge des Marktes)
       const order = this._catOrder(d);
       grouped((i) => i.category, (keys) => keys.sort((a, b) => order.indexOf(a) - order.indexOf(b)),
-        (k) => { const c = d.categories.find((x) => x.id === k); return c ? c.label : k; });
+        (k) => { const c = d.categories.find((x) => x.id === k); return c ? c.label : k; }, catColor);
     } else if (mode === "list" && d.type === "combined") {
       const order = d.source_lists || [];
       grouped((i) => i.source || "", (keys) => keys.sort((a, b) => order.indexOf(a) - order.indexOf(b)), (k) => k || "–");
@@ -491,6 +493,13 @@
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
     const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
+    const sub = [
+      ...tags.map(badge),
+      // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
+      this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null,
+      !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
+      this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null,
+    ];
     const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
       onclick: (e) => {
         if (this._suppressClick) { this._suppressClick = false; return; }
@@ -500,26 +509,21 @@
         onclick: () => this._toggleItem(it) }, svg(ICON.check, shop && ui.shop_large ? 20 : 16)),
       showEmoji ? h("span", { class: "catemoji", title: cat ? cat.label : "" }, cat ? emojiOf(cat.label) : "") : null,
       h("div", { class: "main" },
-        h("div", { class: "name-line" },
-          nameEl,
-          tags.map(badge),
-          // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
-          this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null),
+        // Zeile 1: Anzahl (gefüllt) · Name · Größe (umrandet) – fest markiert, damit man sie beim Einkaufen sofort sieht
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, nameEl, sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        // Zeile 2: Badges, Herkunft, Preis und Notiz
+        sub.some(Boolean) ? h("div", { class: "subline" }, sub) : null,
         it.offer && this._config.show_offer !== false ? this._offerLine(it, tags) : null,
-        !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
         // über einen geteilten Link: mit dem Namen, den die Person dort angegeben hat („von Max markiert (Link)“)
         it.soft_checked && !it.checked ? h("div", { class: "softchk", title: t.soft_checked_help }, "✓ ",
           it.soft_by ? t.soft_checked_by.replace("{name}", it.soft_by) : t.soft_checked) : null,
         it.link_added && !it.checked ? h("div", { class: "softchk", title: t.link_added_help }, "🔗 ",
-          it.link_by ? t.link_added_by.replace("{name}", it.link_by) : t.link_added) : null,
-        this._config.show_note && it.note ? h("div", { class: "note" }, it.note) : null),
-      h("span", { class: "qtycol" }, p.rename && !shop && it.quantity != null && this._config.show_stepper !== false
+          it.link_by ? t.link_added_by.replace("{name}", it.link_by) : t.link_added) : null),
+      h("span", { class: "stepcol" }, p.rename && !shop && it.quantity != null && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
           h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
-          h("span", { class: "sval" }, qty),
           h("button", { class: "sbtn", type: "button", title: t.qty_more, "aria-label": t.qty_more, onclick: () => this._stepQty(it, 1) }, svg(ICON.plus, 14)))
-        : qty),
-      h("span", { class: "unitcol", title: it.unit || "" }, it.unit || ""),
+        : null),
       h("div", { class: "actions" },
         readonly && !shop ? h("span", { class: "lock-ic", title: t.readonly }, svg(ICON.lock, 16)) : null,
         buttons && p.rename ? iconBtn(ICON.pencil, t.edit, () => { this._editing = it.uid; this._renderList(); }) : null,
@@ -539,9 +543,10 @@
       onclick: toggle, onkeydown: (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } } },
       h("span", { class: `box selbox ${on ? "on" : ""}` }, on ? svg(ICON.check, 16) : null),
       showEmoji ? h("span", { class: "catemoji" }, cat ? emojiOf(cat.label) : "") : null,
-      h("div", { class: "main" }, h("div", { class: "name-line" }, h("span", { class: "iname" }, it.name), tags.map(badge))),
-      h("span", { class: "qtycol" }, it.quantity != null ? `${it.pack_count > 1 ? it.pack_count + "× " : ""}${fmtQty(it.quantity)}` : ""),
-      h("span", { class: "unitcol" }, it.unit || ""));
+      h("div", { class: "main" },
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, h("span", { class: "iname" }, it.name), sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        tags.length ? h("div", { class: "subline" }, tags.map(badge)) : null),
+      h("span", { class: "stepcol" }), h("div", { class: "actions" }));
   }
   _startSelect(it) {
     this._sel = new Set(it ? [it.uid] : []);

@@ -42,6 +42,17 @@ function backdropClose(back, ev) {
 }
 const iconBtn = (path, title, onclick, cls = "") =>
   h("button", { class: `icon-btn ${cls}`, title, "aria-label": title, type: "button", onclick }, svg(path, 18));
+// Anzahl („2×“) und Größe („1 l“, „2,5 kg“) eines Artikels – in der Zeile fest markiert.
+// Mit Einheit ist quantity die Größe und pack_count die Anzahl („Milch 2x 1 l“); ohne Einheit ist quantity die Anzahl.
+const countOf = (it) => {
+  const n = it.unit ? it.pack_count : it.quantity;
+  return n != null && Number(n) !== 1 ? `${fmtQty(n)}×` : "";
+};
+const sizeOf = (it) => (it.unit && it.quantity != null ? `${fmtQty(it.quantity)}\u00a0${it.unit}` : "");
+// Farbe der Kategorie-Balken (eigene Kategorien: aus dem Namen abgeleitet)
+const CAT_COLORS = { obst_gemuese: "#5fae4c", fleisch: "#d9655b", kuehlung: "#4a8fd8", grundnahrung: "#c8973a", backwaren: "#d5964a", getraenke: "#35a3bd",
+  suessigkeiten: "#c56fb0", haushalt: "#7d8f9c", drogerie: "#9b74dc", tiefkuehl: "#5bb6d6", tierbedarf: "#a0855b", sonstiges: "#7d8790" };
+const catColor = (id) => CAT_COLORS[id] || hashColor(String(id || ""));
 const emojiOf = (label) => (label || "").split(" ")[0];
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 function hashColor(s) {

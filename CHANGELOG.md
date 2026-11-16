@@ -16,6 +16,8 @@ Fourth pre-release of 4.0.
 
 ### Changed
 
+- **Offers card: tiles run top to bottom** in a grid instead of one row with a sideways scroll bar. The old behaviour
+  is still available with `tile_flow: scroll`.
 - **Offers card: tidier visual editor.** Only title, list and stores are shown at the top; everything else sits in
   the sections "Appearance", "All offers", "Watch list & notifications" and "Advanced". Options that only do something
   with SmartLists are hidden when SmartLists is not installed.
@@ -47,6 +49,7 @@ Third pre-release of 4.0.
   both selectable in the visual editor, e.g. one card only for REWE and another only for ALDI.
 - **Offers card: notification targets are picked from a list** in the visual editor (`notify_targets:` – phones, notify
   services and notify entities, several possible) instead of typing a service name; `notify_service:` still works.
+  From beta 4 the list looks like Home Assistant's entity picker: search, icon, name and id per row, a check mark.
 - **Offers card: `max_per_store: 0`** shows all offers of a store without the "all →" step.
 - **Offers card: `show_list_tab: false`** hides the "My list" tab – e.g. for a leaflet-style card on a wall tablet.
 

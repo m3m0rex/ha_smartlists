@@ -21,6 +21,9 @@ const STYLE = `
   @container (max-width: 480px) {
     .head .badge .bt { display:none; } .head .badge .bi { display:inline; }
     .head .badge.combined, .head .badge.own { padding:2px 6px; }
+    /* Titel bekommt die ganze erste Zeile, alle Symbole stehen in EINER Zeile darunter (Knöpfe rechts) */
+    .head .title { flex:1 1 100%; }
+    .head .count { margin-right:auto; }
   }
   .head .grow { flex:1 1 0; }
   .pubhelp summary { cursor:pointer; color:var(--sl-accent); font-size:.85rem; padding:4px 0; }
@@ -146,7 +149,7 @@ const STYLE = `
   .softchk { font-size:.74rem; color:var(--sl-accent); }
   .sumbar { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 16px; background:var(--secondary-background-color,#f2f2f2); font-variant-numeric:tabular-nums; }
   .sumbar small { color:var(--secondary-text-color); font-weight:400; }
-  .edit .price-in { width:120px; }
+  .edit .price-in { flex:1 1 150px; min-width:150px; max-width:220px; }
   .tplbar { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; padding:8px 12px 10px; }
   .tcard { position:relative; text-align:left; border:1px solid var(--divider-color,#ddd); border-radius:12px; padding:10px; background:var(--secondary-background-color,#f6f6f6); font:inherit; color:inherit; cursor:pointer; }
   .tcard b { display:block; overflow-wrap:anywhere; } .tcard small { color:var(--secondary-text-color); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }

@@ -81,10 +81,11 @@ It also works without a dashboard: the **SmartLists** page in the sidebar shows 
 
 > The Android app **HA SmartLists** is not published yet. Everything described here works without it.
 
-## Thanks to FaserF
+## Recommended integrations – thanks to FaserF
 
-The offer data does not come from SmartLists but from the integrations by [FaserF](https://github.com/FaserF) – without them there would be
-nothing to show in the offers card. Thank you! All his projects: [hassio-addons.fabiseitz.de](https://hassio-addons.fabiseitz.de/)
+SmartLists does not bring any offer data itself: it shows what sensors in your Home Assistant deliver. For that we
+recommend the integrations by [FaserF](https://github.com/FaserF) – many thanks for this work! All his projects:
+[hassio-addons.fabiseitz.de](https://hassio-addons.fabiseitz.de/)
 
 | | Integration | What it provides |
 |---|---|---|

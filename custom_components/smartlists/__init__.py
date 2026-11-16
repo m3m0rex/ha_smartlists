@@ -160,6 +160,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     entry.async_on_unload(automation.async_setup_due_timer(hass))
     # Hinweise unter Einstellungen → Reparaturen (fehlende Quell-Listen, lange nicht gesehene Geräte)
     entry.async_on_unload(repairs.async_setup_checks(hass, entry))
+    # Merkliste: alle 30 Minuten prüfen, ob etwas davon neu im Angebot ist (nur wenn die Benachrichtigung an ist)
+    from .offers import async_setup_watch_timer
+
+    entry.async_on_unload(async_setup_watch_timer(hass))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True

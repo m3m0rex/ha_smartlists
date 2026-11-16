@@ -37,6 +37,7 @@ To try it without installing: on [ha-smartlists.com](https://ha-smartlists.com/)
 - **Offers card `custom:smartdiscounts-card`:** supermarket offers matched with your list, with a watch list and notifications – also [available on its own](https://github.com/m3m0rex/ha_smartdiscounts-card).
 - **Offers in the shopping list:** a 🏷️ hint on the item, expired offers removed with one tap.
 - **Prices:** choose your currency (or your own symbol), price history per item, automatic fill-in can be switched off.
+- **Watch list:** watch products and get notified as soon as they are on offer – even with no dashboard open.
 - **Sharing:** edit links afterwards – rights, duration, password.
 - **Settings:** restructured, badge order adjustable, better view on the smartphone.
 

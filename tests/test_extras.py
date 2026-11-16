@@ -191,3 +191,23 @@ def test_own_currency_symbol():
     for bad in ("", "1", "a b", "@", "#x", "toolong7", None):
         assert validate_appearance({"currency": "custom", "currency_symbol": bad}) == {"kinds": {}, "values": {}}
     assert currency_symbols({"currency": "custom"}) == ("€", "EUR")
+
+
+def test_watch_list_and_offer_matching():
+    """4.0-beta.2: Merkliste des Haushalts und der Abgleich mit Angeboten (gleiche Regeln wie die Karte)."""
+    import types
+
+    from smartlists.extras import Extras
+    from smartlists.offers import deals_for, matches, num
+
+    ex = Extras(types.SimpleNamespace(data={}))
+    ex.set_watch(["Kaffee", " kaffee ", "Nutella", ""], {"notify": True, "service": " notify.mobile_app_x "})
+    assert ex.watch == ["Kaffee", "Nutella"] and ex.watch_settings == {"notify": True, "service": "notify.mobile_app_x"}
+    ex.mark_watch_seen(["a", "b"])
+    assert ex.watch_seen == ["a", "b"]
+    assert [num(x) for x in ("11,49 €", "1.11 €", "€ 10.98", 5.49, "gratis")] == [11.49, 1.11, 10.98, 5.49, None]
+    assert matches("Kaffee", "Melitta Filterkaffee") and matches("Butter", "Landliebe Butter") and matches("Bananen", "Banane Chiquita")
+    assert not matches("Butter", "Butterkeks") and not matches("", "x")
+    offers = [{"name": "Melitta Filterkaffee", "price": 5.49, "until": None, "store": "EDEKA"}, {"name": "Dallmayr Prodomo Kaffee", "price": 4.99, "until": None, "store": "Lidl"},
+              {"name": "Butterkeks", "price": 0.99, "until": None, "store": "REWE"}]
+    assert [o["store"] for o in deals_for(offers, "Kaffee")] == ["Lidl", "EDEKA"] and deals_for(offers, "Butter") == []

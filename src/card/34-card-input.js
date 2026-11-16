@@ -556,7 +556,7 @@
     // Einkaufsmodus: Tipp irgendwo auf die Zeile hakt ab (nicht nur das kleine Kästchen); Fehltipper fängt
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
-    const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
+    const nameEl = h("span", { class: "iname" }, this._highlight(showName(it.name)));
     const deals = this._config.show_offer_hints !== false && !shop ? this._dealsFor(it) : [];
     // Reihenfolge der Angaben unter dem Namen: Haushalt (Einstellungen → Badges & Farben)
     const part = {
@@ -615,7 +615,7 @@
       h("span", { class: `box selbox ${on ? "on" : ""}` }, on ? svg(ICON.check, 16) : null),
       showEmoji ? h("span", { class: "catemoji" }, cat ? emojiOf(cat.label) : "") : null,
       h("div", { class: "main" },
-        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, h("span", { class: "iname" }, it.name), sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, h("span", { class: "iname" }, showName(it.name)), sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
         tags.length ? h("div", { class: "subline" }, tags.map(badge)) : null),
       h("span", { class: "stepcol" }), h("div", { class: "actions" }));
   }

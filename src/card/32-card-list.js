@@ -389,6 +389,11 @@
       if (!actions.length) body.push(h("div", { class: "empty" }, t.readonly));
       if (d.type !== "notes") body.push(item(ICON.check, t.m_select, () => this._startSelect(it)));
       if (d.type !== "notes") body.push(item(ICON.history, t.ih_title, () => this._openMenu(it, m.row, "history")));
+      // 4.0: Produkt merken – SmartLists meldet, wenn es im Angebot ist (Einstellungen → Preise & Währung)
+      if (d.type !== "notes" && !this._plain && it.name) body.push(item(ICON.star || ICON.check, t.wl_menu, async () => {
+        this._closeMenu();
+        try { await this._call("watch_set", { add: showName(it.name) }, false); this._toast(`⭐ ${showName(it.name)} ${t.wl_added}`); } catch (e) { this._toast((e && e.message) || t.error); }
+      }));
     } else if (m.view === "move" || m.view === "copy") {
       const targets = (this._targets || []).filter((l) => l.entity_id !== this._config.entity && l.can_add
         && (l.type === "notes") === (d.type === "notes"));
@@ -414,7 +419,15 @@
         const priceEl = h("div");
         this._call("price_history", { name: it.name }, false).then((p) => {
           if (!p.entries || !p.entries.length) return;
-          fill(priceEl, h("div", { class: "grp", style: "padding:8px 0 2px" }, "🏷️ " + t.price_log),
+          const pts = [...p.entries].reverse().map((e) => e.price), lo = Math.min(...pts), hi = Math.max(...pts), low = p.entries.reduce((a, e) => (e.price < a.price ? e : a));
+          // kleine Kurve: links der älteste, rechts der neueste Preis
+          const W = 240, H = 44, xy = pts.map((v, i) => `${(pts.length > 1 ? (i / (pts.length - 1)) * (W - 8) : (W - 8) / 2) + 4},${hi > lo ? H - 6 - ((v - lo) / (hi - lo)) * (H - 12) : H / 2}`);
+          const chart = pts.length > 1 ? (() => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            s.setAttribute("viewBox", `0 0 ${W} ${H}`); s.setAttribute("role", "img"); s.setAttribute("aria-label", t.price_log); s.style.cssText = "width:100%;max-width:280px;height:44px;display:block;margin:4px 0";
+            s.innerHTML = `<polyline points="${xy.join(" ")}" fill="none" stroke="var(--primary-color)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` + xy.map((q) => `<circle cx="${q.split(",")[0]}" cy="${q.split(",")[1]}" r="2.6" fill="var(--primary-color)"/>`).join("");
+            return s; })() : null;
+          fill(priceEl, h("div", { class: "grp", style: "padding:8px 0 2px" }, "🏷️ " + t.price_log), chart,
+            h("div", { class: "shelp", style: "padding:0 0 4px" }, `${t.ph_low}: ${fmtMoney(low.price, this._hass.language)}${low.store ? ` · ${low.store}` : ""} · ${fmtT(low.at)}`),
             p.entries.map((e) => h("div", { class: "ih" }, h("span", { class: "a" }, fmtMoney(e.price, this._hass.language)),
               h("span", { class: "w" }, e.source === "paid" ? t.price_paid : t.price_manual,
                 h("small", {}, `${e.store ? e.store + " · " : ""}${fmtT(e.at)}`)))));

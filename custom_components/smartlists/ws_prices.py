@@ -110,3 +110,38 @@ def ws_stats(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     from .extras import stats
 
     connection.send_result(msg["id"], stats(_learning(hass), _extras(hass), msg["days"]))
+
+
+def _watch_payload(hass: HomeAssistant) -> dict[str, Any]:
+    extras = _extras(hass)
+    return {"names": list(extras.watch), "notify": bool(extras.watch_settings.get("notify")), "service": extras.watch_settings.get("service") or ""}
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch"})
+@callback
+def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Merkliste des Haushalts (Produkte, bei denen man auf ein Angebot wartet) und ihre Benachrichtigung."""
+    connection.send_result(msg["id"], _watch_payload(hass))
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("names"): [str], vol.Optional("add"): str,
+                                  vol.Optional("remove"): str, vol.Optional("notify"): bool, vol.Optional("service"): str})
+@websocket_api.async_response
+async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen; Benachrichtigung nur für Admins."""
+    extras = _extras(hass)
+    names = list(msg["names"]) if "names" in msg else list(extras.watch)
+    if msg.get("add"):
+        names.append(msg["add"])
+    if msg.get("remove"):
+        names = [n for n in names if n.lower() != msg["remove"].strip().lower()]
+    settings = {k: msg[k] for k in ("notify", "service") if k in msg}
+    if settings and not connection.user.is_admin:
+        connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Die Benachrichtigung stellt ein Admin ein.")
+        return
+    extras.set_watch(names, settings or None)
+    if settings.get("notify"):
+        from .offers import async_check_watch
+
+        await async_check_watch(hass)
+    connection.send_result(msg["id"], _watch_payload(hass))

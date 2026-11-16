@@ -1,5 +1,7 @@
 # Offers and prices
 
+🇩🇪 [Deutsche Fassung](DE-Angebote-und-Preise)
+
 ## How an item gets its price
 
 The first source with a price wins:
@@ -22,7 +24,7 @@ Under *Settings → Prices & currency*:
 - A price you type always stays on the entry it was typed for.
 
 The **price history** is in the item menu under *History*: your own prices and what was paid when checking off, with
-store and date (the last twelve changes per item).
+store and date (the last twelve changes per item), plus a small chart and the lowest price so far.
 
 ## Currency
 
@@ -31,6 +33,15 @@ chosen currency are recognised while typing, e.g. `CHF 2.50`, `2,50 Fr.` or `£1
 
 For a currency that is not in the list choose **Own symbol …** and enter up to six characters (e.g. `₺`, `Rp`). It is
 shown after the amount and recognised as a price while typing.
+
+## Watch list
+
+The watch list holds products you are waiting to see on offer. Add one from an item's menu (**Add to watch list**) or
+in the ⭐ tab of the [[Offers card]]; remove it under *Settings → Prices & currency → Watch list*.
+
+With **Notify when one of them is on offer** switched on (admins), Home Assistant checks the offer sensors every
+30 minutes – even with no dashboard open – and reports every new offer once as a notification. Enter a notify service
+(e.g. `notify.mobile_app_pixel`) to also get it on your phone.
 
 ## Offers in the shopping list
 

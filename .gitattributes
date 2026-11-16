@@ -1,0 +1,10 @@
+# Zeilenenden: Workflows, Skripte und Quelltext immer mit LF (sonst meldet Git unter Windows ganze Dateien als geändert)
+*.yml text eol=lf
+*.yaml text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.png binary
+*.gif binary

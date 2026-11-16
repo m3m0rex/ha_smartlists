@@ -460,8 +460,8 @@
     };
     const back = h("div", { class: "dlg-back wiz-back" },
       h("style", {}, DIALOG_STYLE + STYLE + WIZARD_STYLE),
-      h("div", { class: "dlg wiz", role: "dialog", "aria-modal": "true", "aria-label": t.w_title },
-        h("aside", { class: "wside" }, h("h1", {}, t.w_title), h("p", { class: "m small" }, t.w_time), stepsEl),
+      h("div", { class: "dlg wiz", role: "dialog", "aria-modal": "true", "aria-label": t.wl_title },
+        h("aside", { class: "wside" }, h("h1", {}, t.wl_title), h("p", { class: "m small" }, t.w_time), stepsEl),
         h("div", { class: "wpane" }, barEl, body,
           h("div", { class: "wfoot" }, prev, h("span", { class: "m small wl" }, t.w_later), h("span", { class: "grow" }), status, skip, next)),
         h("button", { type: "button", class: "wx", "aria-label": t.w_close, title: t.w_close, onclick: async () => {
@@ -751,8 +751,25 @@
       this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), ownRow, h("div", { class: "srow" }, status)]),
       this._sec("", t.price_paid ? t.price : t.price, null, [this._setRow(t.price_auto, this._switch(!SL_LOOK || SL_LOOK.auto_price !== false,
         async (v) => { await this._saveLook({ auto_price: v }, status); this._load(); }, t.price_auto), t.price_auto_help)]),
+      this._watchSection(),
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
     ];
+  }
+  // Global → Preise & Währung → Merkliste: Produkte, bei denen man auf ein Angebot wartet, und die Benachrichtigung
+  _watchSection() {
+    const t = this._t, box = h("div", {}, h("div", { class: "shelp" }, t.loading)), status = h("span", { class: "ok2" });
+    const draw = (w) => {
+      const set = async (patch) => { try { draw(await this._call("watch_set", patch, false)); status.textContent = "✓ " + t.saved; } catch (e) { status.textContent = (e && e.message) || t.error; } };
+      const service = h("input", { type: "text", value: w.service || "", placeholder: "notify.mobile_app_…", "aria-label": t.wl_service, style: "max-width:260px" });
+      service.addEventListener("change", () => set({ service: service.value.trim() }));
+      fill(box, w.names.length ? h("div", { class: "chips", style: "display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px" }, w.names.map((n) =>
+          h("button", { type: "button", class: "chip", title: t.delete, "aria-label": `${t.delete}: ${n}`, onclick: () => set({ remove: n }) }, `⭐ ${n} ✕`)))
+        : h("div", { class: "shelp" }, t.wl_empty),
+        this._isAdmin ? this._setRow(t.wl_notify, this._switch(!!w.notify, (v) => set({ notify: v }), t.wl_notify), t.wl_notify_help) : null,
+        this._isAdmin && w.notify ? h("div", { class: "srow2" }, h("div", { class: "sl" }, t.wl_service), service) : null, h("div", { class: "srow" }, status));
+    };
+    this._call("watch", {}, false).then(draw).catch((e) => { slWarn("watch", e); fill(box, h("div", { class: "shelp" }, t.error)); });
+    return this._sec("", "⭐ " + t.wl_title, t.wl_help, [box]);
   }
   _appearanceSection() {
     const t = this._t;
@@ -1111,5 +1128,7 @@
       h("div", { class: "tplbar" }, tiles,
         h("button", { type: "button", class: "tcard new", onclick: () => this._templateEditor(null) }, "＋ " + t.tpl_new),
         this._data.items.some((i) => !i.checked) ? h("button", { type: "button", class: "tcard new", onclick: () => this._templateEditor({
-          name: "", emoji: "", servings: null, items: this._data.items.filter((i) => !i.checked).map((i) => i.text) }, true) }, "📥 " + t.tpl_from_list) : null));
+          name: "", emoji: "", servings: null, items: this._data.items.filter((i) => !i.checked).map((i) => i.text) }, true) }, "📥 " + t.tpl_from_list) : null,
+        this._data.items.some((i) => i.checked) ? h("button", { type: "button", class: "tcard new", onclick: () => this._templateEditor({
+          name: "", emoji: "", servings: null, items: this._data.items.filter((i) => i.checked).map((i) => i.text) }, true) }, "✅ " + t.tpl_from_done) : null));
   }

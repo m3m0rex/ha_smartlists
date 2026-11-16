@@ -51,8 +51,24 @@
     const items = h("textarea", { rows: "8", placeholder: t.tpl_items_placeholder, "aria-label": t.tpl_items,
       style: "width:100%;box-sizing:border-box;border-radius:10px;border:1px solid var(--divider-color,#ccc);background:var(--secondary-background-color,#f2f2f2);color:inherit;font:inherit;padding:10px 12px;margin:0 0 6px" });
     items.value = ((tp && tp.items) || []).join("\n");
+    // 4.0: beim Einfügen (Rezept, Notiz, Chat) Aufzählungszeichen, Kästchen und Nummern entfernen
+    const hint = h("small", { class: "shelp" });
+    items.addEventListener("paste", () => setTimeout(() => {
+      const clean = items.value.split("\n").map((l) => l.replace(/^\s*(?:[-–—*•·▪◦‣]+|\[[ xX✓]?\]|[☐☑✅✔]|\d{1,2}[.)])\s+/, "").replace(/^\s*\[[ xX✓]?\]\s+/, "").trim()).filter(Boolean).join("\n");
+      if (clean !== items.value.trim()) { items.value = clean; hint.textContent = "✓ " + t.tpl_clean; }
+    }, 0));
+    // Vorschläge: häufig Gekauftes, das noch nicht in der Vorlage steht – antippen fügt eine Zeile an
+    const sugg = h("div", { style: "display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px" });
+    const drawSugg = () => {
+      const have = new Set(items.value.split("\n").map((l) => parseText(l.trim(), this._cfg ? this._cfg.tag_rules : [], [], true).name.toLowerCase()));
+      const rest = (this._frequent || []).map((s) => s.name || s.text || "").filter((n) => n && !have.has(n.toLowerCase())).slice(0, 10);
+      fill(sugg, rest.length ? h("small", { class: "shelp", style: "flex-basis:100%" }, t.tpl_suggest) : null, rest.map((n) =>
+        h("button", { type: "button", class: "chip", onclick: () => { items.value = (items.value.trim() ? items.value.trim() + "\n" : "") + n; drawSugg(); } }, "＋ " + n)));
+    };
+    items.addEventListener("input", debounce(drawSugg, 300));
+    if (!this._frequent && this._loadFrequent) Promise.resolve(this._loadFrequent()).then(drawSugg).catch(() => {}); else drawSugg();
     const body = h("div", {}, h("div", { style: "display:flex;gap:8px" }, emoji, name), servings,
-      h("p", {}, t.tpl_items_help), items);
+      h("p", {}, t.tpl_items_help), items, hint, sugg);
     const actions = [];
     if (tp && tp.id) actions.push(h("button", { type: "button", style: "margin-right:auto;color:var(--error-color,#db4437)", onclick: async () => {
       dlg.remove(); await this._call("delete_template", { template_id: tp.id }, false); this._tpls = null; this._renderTemplates();

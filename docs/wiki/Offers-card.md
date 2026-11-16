@@ -1,5 +1,7 @@
 # Offers card
 
+🇩🇪 [Deutsche Fassung](DE-Angebots-Karte)
+
 `custom:smartdiscounts-card` shows the offers of your supermarkets and matches them with a shopping list. It is
 included in SmartLists 4.0 and also runs **without SmartLists** – then it is installed from its
 [own repository](https://github.com/m3m0rex/ha_smartdiscounts-card), whose README lists every option with examples.
@@ -85,7 +87,10 @@ sources:
 
 ## Watch list and notifications
 
-The watch list comes from `watch:` in the configuration, from a to-do list (`watch_list:`, editable in the card and
+**With SmartLists** the card uses the household's watch list (see [[Offers and prices]]): it is the same on all
+devices, and Home Assistant reports new offers even with no dashboard open.
+
+**Without SmartLists** the watch list comes from `watch:` in the configuration, from a to-do list (`watch_list:`, editable in the card and
 the same on all devices) or – without one – from what you enter in the tab, stored on that device only.
 
 With `notify: true` the card creates a Home Assistant notification when a watched product is newly on offer.

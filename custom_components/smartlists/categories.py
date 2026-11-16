@@ -93,8 +93,9 @@ class CategoryIndex:
         if key in self._cache:
             return self._cache[key] or None
         result = ""
+        spaced = key.replace("-", " ")  # "washing-up liquid" wie "washing up liquid"
         for term, category_id in self.terms:
-            if term in key:
+            if term in key or term in spaced:
                 result = category_id
                 break
         if len(self._cache) > 5000:

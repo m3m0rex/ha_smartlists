@@ -82,6 +82,10 @@ class Extras:
         self.item_prices: dict[str, dict[str, float]] = {}
         # Preis-Verlauf je Artikel (normalisierter Name → letzte Einträge {"price", "store", "at", "source"})
         self.price_log: dict[str, list[dict[str, Any]]] = {}
+        # Merkliste des Haushalts: Produkte, bei denen man auf ein Angebot wartet; {"notify": bool, "service": "notify.…"}
+        self.watch: list[str] = []
+        self.watch_settings: dict[str, Any] = {}
+        self.watch_seen: list[str] = []  # schon gemeldete Angebote
 
     async def async_load(self) -> None:
         data = await self._store.async_load() or {}
@@ -94,6 +98,9 @@ class Extras:
         self.trips = dict(data.get("trips") or {})
         self.list_settings = dict(data.get("list_settings") or {})
         self.item_prices = {k: dict(v) for k, v in (data.get("item_prices") or {}).items() if isinstance(v, dict)}
+        self.watch = [str(x) for x in (data.get("watch") or []) if isinstance(x, str) and x.strip()][:60]
+        self.watch_settings = dict(data.get("watch_settings") or {})
+        self.watch_seen = list(data.get("watch_seen") or [])[-500:]
         self.price_log = {k: list(v)[-MAX_PRICE_LOG:] for k, v in (data.get("price_log") or {}).items() if isinstance(v, list)}
         self.mealplan = {k: [x for x in v if isinstance(x, str)] for k, v in (data.get("mealplan") or {}).items() if isinstance(v, list)}
 
@@ -101,7 +108,8 @@ class Extras:
         return {"store_order": self.store_order, "prices": self.prices, "expenses": self.expenses,
                 "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips,
                 "list_settings": self.list_settings, "mealplan": self.mealplan,
-                "item_prices": self.item_prices, "price_log": self.price_log}
+                "item_prices": self.item_prices, "price_log": self.price_log,
+                "watch": self.watch, "watch_settings": self.watch_settings, "watch_seen": self.watch_seen}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
@@ -152,6 +160,24 @@ class Extras:
             return
         log.append({"price": entry["price"], "store": entry.get("store"), "at": entry["at"], "source": entry.get("source", "manual")})
         del log[:-MAX_PRICE_LOG]
+
+    # ----- Merkliste
+    @callback
+    def set_watch(self, names: list[str] | None = None, settings: dict[str, Any] | None = None) -> None:
+        if names is not None:
+            seen: set[str] = set()
+            self.watch = [n for n in (" ".join(str(x).split())[:60] for x in names) if n and not (n.lower() in seen or seen.add(n.lower()))][:60]
+        if settings is not None:
+            if "notify" in settings:
+                self.watch_settings["notify"] = bool(settings["notify"])
+            if "service" in settings:
+                self.watch_settings["service"] = str(settings["service"] or "").strip()[:80]
+        self._save()
+
+    @callback
+    def mark_watch_seen(self, keys: list[str]) -> None:
+        self.watch_seen = [*self.watch_seen, *keys][-500:]
+        self._save()
 
     def price_history(self, name: str) -> list[dict[str, Any]]:
         """Neueste zuerst."""

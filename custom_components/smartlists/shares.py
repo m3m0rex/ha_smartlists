@@ -713,7 +713,7 @@ function draw(d){cur=d;
     done=d.items.filter(function(i){return i.checked&&hit(i)});
   var row=function(i){var can=d.check!=="off";var box=el("input",{type:"checkbox"});box.checked=i.checked||i.soft;box.disabled=!can;
     box.addEventListener("change",function(){call({action:box.checked?"check":"uncheck",uid:i.uid}).then(draw,function(e){e==="gone"?fail():e==="name"?0:alert(T.error)})});
-    var name=el("span",{class:"nm"},[i.count?el("span",{class:"qp",text:i.count}):null,el("span",{class:"in",text:i.name||i.text}),i.size?el("span",{class:"sz",text:i.size}):null]);
+    var name=el("span",{class:"nm"},[i.count?el("span",{class:"qp",text:i.count}):null,el("span",{class:"in",text:String(i.name||i.text).replace(/["“„”](\\d{1,3}[×xX])["“”]/g,"$1")}),i.size?el("span",{class:"sz",text:i.size}):null]);
     var tagEls=(i.tags||[]).map(function(t){return badge(t,d.look)});
     /* Angebot wie in der Karte: Markt, 🏷️ Angebot, Preis, alter Preis, gültig bis */
     var euro=function(v){try{if(d.look&&d.look.currency==="custom"&&d.look.currency_symbol)return new Intl.NumberFormat(document.documentElement.lang,{minimumFractionDigits:2,maximumFractionDigits:2}).format(v)+"\u00a0"+d.look.currency_symbol;return new Intl.NumberFormat(document.documentElement.lang,{style:"currency",currency:(d.look&&d.look.currency)||"EUR"}).format(v)}catch(e){return v.toFixed(2).replace(".",",")+" €"}},day=function(x){var p=String(x).slice(0,10).split("-");return p.length===3?p[2]+"."+p[1]+".":x};

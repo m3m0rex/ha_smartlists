@@ -44,6 +44,8 @@ const iconBtn = (path, title, onclick, cls = "") =>
   h("button", { class: `icon-btn ${cls}`, title, "aria-label": title, type: "button", onclick }, svg(path, 18));
 // Anzahl („2×“) und Größe („1 l“, „2,5 kg“) eines Artikels – in der Zeile fest markiert.
 // Mit Einheit ist quantity die Größe und pack_count die Anzahl („Milch 2x 1 l“); ohne Einheit ist quantity die Anzahl.
+// Ein wörtlich gemeintes "2x" steht im Text in Anführungszeichen – angezeigt wird es ohne
+const showName = (name) => String(name == null ? "" : name).replace(/["“„”](\d{1,3}[×xX])["“”]/g, "$1");
 const countOf = (it) => {
   const n = it.unit ? it.pack_count : it.quantity;
   return n != null && Number(n) !== 1 ? `${fmtQty(n)}×` : "";

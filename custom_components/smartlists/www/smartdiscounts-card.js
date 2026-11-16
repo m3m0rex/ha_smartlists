@@ -9,7 +9,7 @@
  * base_price/price_per_unit, category) und lassen sich je Quelle mit `map:` festlegen.
  * Keine externen Abhängigkeiten; nutzt die Theme-Variablen von Home Assistant. */
 (() => {
-const VERSION = "4.0.0-beta.1";
+const VERSION = "4.0.0-beta.2";
 const TAG = "smartdiscounts-card";
 if (customElements.get(TAG)) return;  // schon geladen (SmartLists UND eigenes Repository installiert)
 
@@ -322,6 +322,12 @@ class SmartDiscountsCard extends HTMLElement {
   async _loadWatch() {
     const id = this._config.watch_list;
     this._watchShared = !!(id && this._hass.states[id]);
+    // Mit SmartLists (und ohne eigene watch_list): die Merkliste des Haushalts – dort meldet Home Assistant auch im Hintergrund
+    this._watchSmart = !this._watchShared && (this._hass.config.components || []).includes("smartlists");
+    if (this._watchSmart) {
+      try { this._watchItems = ((await this._hass.callWS({ type: "smartlists/watch" })).names || []).map((name) => ({ name })); return; }
+      catch (e) { this._watchSmart = false; }  // ältere SmartLists-Version: wie ohne
+    }
     if (this._watchShared) {
       try {
         const r = await this._hass.callWS({ type: "todo/item/list", entity_id: id });
@@ -341,12 +347,14 @@ class SmartDiscountsCard extends HTMLElement {
   async _watchAdd(name) {
     name = String(name || "").trim();
     if (!name || this._watchTerms().some((x) => norm(x.name) === norm(name))) return;
-    if (this._watchShared) await this._hass.callService("todo", "add_item", { item: name }, { entity_id: this._config.watch_list });
+    if (this._watchSmart) await this._hass.callWS({ type: "smartlists/watch_set", add: name });
+    else if (this._watchShared) await this._hass.callService("todo", "add_item", { item: name }, { entity_id: this._config.watch_list });
     else { try { localStorage.setItem("smartdiscounts-watch", JSON.stringify([...(this._watchItems || []).map((x) => x.name), name])); } catch (e) { /* */ } }
     this._sig = null; await this._refresh(true);
   }
   async _watchRemove(term) {
-    if (this._watchShared && term.uid) await this._hass.callService("todo", "remove_item", { item: term.uid }, { entity_id: this._config.watch_list });
+    if (this._watchSmart) await this._hass.callWS({ type: "smartlists/watch_set", remove: term.name });
+    else if (this._watchShared && term.uid) await this._hass.callService("todo", "remove_item", { item: term.uid }, { entity_id: this._config.watch_list });
     else { try { localStorage.setItem("smartdiscounts-watch", JSON.stringify((this._watchItems || []).map((x) => x.name).filter((n) => n !== term.name))); } catch (e) { /* */ } }
     this._sig = null; await this._refresh(true);
   }
@@ -354,7 +362,7 @@ class SmartDiscountsCard extends HTMLElement {
   // Läuft in der Karte: gemeldet wird, wenn ein Dashboard mit der Karte geöffnet ist. Jedes Angebot nur einmal je Gerät.
   async _notify() {
     const c = this._config;
-    if (!c.notify || this._notifying) return;
+    if (!c.notify || this._notifying || this._watchSmart) return;  // mit SmartLists meldet die Integration selbst
     let seen = [];
     try { seen = JSON.parse(localStorage.getItem("smartdiscounts-notified") || "[]"); } catch (e) { /* */ }
     // zusätzlich im Speicher merken – falls der Browser keinen dauerhaften Speicher erlaubt
@@ -397,7 +405,7 @@ class SmartDiscountsCard extends HTMLElement {
         offers.length ? h("div", { class: "lrows" }, offers.map(row)) : null);
     });
     return h("div", {}, h("div", { class: "filters one" }, input, h("button", { type: "button", class: "btn pri", onclick: go }, t.w_add_btn)),
-      terms.length ? blocks : h("div", { class: "msg" }, t.w_empty), this._watchShared ? null : h("div", { class: "foot" }, t.w_local), this._foot());
+      terms.length ? blocks : h("div", { class: "msg" }, t.w_empty), this._watchShared || this._watchSmart ? null : h("div", { class: "foot" }, t.w_local), this._foot());
   }
   _matchesFor(item) { return item.name ? dealsFor(this._all, item.name, this._config.match) : []; }
   _attached(item) { return /[⚙⚙]️?\s*OFFER\s*:|🏷️/.test(item.note || ""); }

@@ -37,10 +37,11 @@ Zum Ausprobieren ohne Installation: Auf [ha-smartlists.com](https://ha-smartlist
 - **Angebots-Karte `custom:smartdiscounts-card`:** Supermarkt-Angebote, abgeglichen mit deiner Liste, mit Merkliste und Benachrichtigung – auch [einzeln installierbar](https://github.com/m3m0rex/ha_smartdiscounts-card).
 - **Angebote in der Einkaufsliste:** Hinweis 🏷️ am Artikel, abgelaufene Angebote mit einem Tipp entfernen.
 - **Preise:** Währung wählbar (auch eigenes Symbol), Preis-Verlauf je Artikel, automatisches Eintragen abschaltbar.
+- **Merkliste:** Produkte merken und benachrichtigt werden, sobald sie im Angebot sind – auch ohne geöffnetes Dashboard.
 - **Teilen:** Links nachträglich bearbeiten – Rechte, Laufzeit, Passwort.
 - **Einstellungen:** neu gegliedert, Reihenfolge der Badges einstellbar, bessere Ansicht am Smartphone.
 
-Alle Änderungen: [CHANGELOG.md](CHANGELOG.md) · Umstieg von 3.9: [Wiki → New in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/New-in-4.0). Betas erscheinen in HACS nur mit **„Beta-Versionen anzeigen“**.
+Alle Änderungen: [CHANGELOG.md](CHANGELOG.md) · Umstieg von 3.9: [Wiki → Neu in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Neu-in-4.0). Betas erscheinen in HACS nur mit **„Beta-Versionen anzeigen“**.
 
 ## Installation
 
@@ -56,7 +57,7 @@ Die Karten werden automatisch geladen – eine Dashboard-Ressource ist nicht nö
 | Karte | Wofür | Mehr |
 |---|---|---|
 | `custom:smartlists-card` | Liste, Einkaufsmodus, Einstellungen | [Wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card) |
-| `custom:smartdiscounts-card` | Angebote, abgeglichen mit der Liste | [Wiki → Offers card](https://github.com/m3m0rex/ha_smartlists/wiki/Offers-card) |
+| `custom:smartdiscounts-card` | Angebote, abgeglichen mit der Liste | [Wiki → Angebots-Karte](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Angebots-Karte) |
 
 ```yaml
 type: custom:smartlists-card
@@ -72,7 +73,7 @@ Ohne Dashboard geht es auch: Die Seite **SmartLists** in der Seitenleiste zeigt 
 | Eingabe, Badges, Namenskonvention | [Item text and naming convention](https://github.com/m3m0rex/ha_smartlists/wiki/Item-text-and-naming-convention) |
 | Kategorien, Vorschläge, einfache Listen | [Categories and suggestions](https://github.com/m3m0rex/ha_smartlists/wiki/Categories-and-suggestions) |
 | Eigene Listen, Rechte, Teilen per Link | [Own lists and sharing](https://github.com/m3m0rex/ha_smartlists/wiki/Own-lists-and-sharing) |
-| Angebote, Preise, Währung | [Offers and prices](https://github.com/m3m0rex/ha_smartlists/wiki/Offers-and-prices) |
+| Angebote, Preise, Währung | [Angebote und Preise](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Angebote-und-Preise) (Deutsch) |
 | Gang-Reihenfolge, Vorlagen, Wochenplan | [Shopping helpers](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers) |
 | Sprache, Automationen, Blueprints | [Automations and voice](https://github.com/m3m0rex/ha_smartlists/wiki/Automations-and-voice) |
 | Alle Einstellungen | [Settings](https://github.com/m3m0rex/ha_smartlists/wiki/Settings) |

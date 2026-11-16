@@ -3,6 +3,29 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.2] – 2026-11-16
+
+Second pre-release of 4.0.
+
+### Added
+
+- **Watch list of the household:** products you are waiting to see on offer. Add them from an item's menu ("Add to
+  watch list") or in the offers card; manage them under *Settings → Prices & currency*. With the notification
+  switched on, **Home Assistant checks every 30 minutes – even with no dashboard open** – and reports every new offer
+  once, optionally also via a notify service (e.g. your phone). The offers card uses this watch list automatically
+  when SmartLists is installed (a `watch_list:` of its own still wins).
+- **Price history as a small chart** in the item's history, with the lowest price so far, its store and date.
+- **Templates are quicker to create:** suggestions from "bought often" to tap, "From checked items" next to "From
+  list", and pasted text (recipe, note, chat) loses its bullets, check boxes and numbering.
+
+### Changed
+
+- **"2x" is the count wherever it stands:** `Milk 2l 2x`, `2x Milk 2l` and `Cola 2x` are all recognised (before,
+  `2x Milk 2l` lost the count and `Cola 2x` stayed text). To keep it as text, put it in quotes:
+  `Persil "2x" concentrated` – the list shows it without the quotes.
+- **Categories ignore hyphens:** "washing-up liquid" is found like "washing up liquid".
+- A `.gitattributes` keeps workflow and script files at LF line endings.
+
 ## [4.0.0-beta.1] – 2026-11-16
 
 First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enabled for SmartLists.
@@ -44,8 +67,6 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Remembered prices no longer have to fill in automatically** (switch "Fill in the remembered price
   automatically", default on): switched off, prices are only kept in the history; an item shows an offer or the price
   typed for exactly this entry.
-- **"2x" is the count wherever it stands:** `Milk 2l 2x`, `2x Milk 2l` and `Cola 2x` are all recognised. To keep it as
-  text, put it in quotes: `Persil "2x" concentrated`.
 - **Own currency symbol** (Prices & currency → "Own symbol …") for currencies that are not in the list, e.g. ₺ or Rp –
   shown after the amount and recognised as a price while typing.
 - **Price history per item** (item menu → History): own prices and what was paid when checking off, with store and

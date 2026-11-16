@@ -148,6 +148,7 @@ const STYLE = `
   .row.checked .iname { text-decoration:line-through; color:var(--secondary-text-color); }
   .row.checked .tag { opacity:.55; }
   .chip { font-size:.72rem; padding:1px 7px; border-radius:9px; background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); white-space:nowrap; }
+  button.chip { border:0; cursor:pointer; font:inherit; font-size:.8rem; padding:4px 10px; border-radius:999px; }
   .chip.qty { background:color-mix(in srgb, var(--sl-accent) 14%, transparent); color:var(--sl-accent); font-weight:600; }
   .tag { font-size:.7rem; font-weight:700; padding:1px 7px; border-radius:4px; white-space:nowrap; letter-spacing:.02em; }
   .tag.store { color:#fff; }

@@ -32,3 +32,9 @@
 
 - [[Troubleshooting]]
 - [[Development]]
+
+**Deutsch**
+
+- [Neu in 4.0](DE-Neu-in-4.0)
+- [Angebots-Karte](DE-Angebots-Karte)
+- [Angebote und Preise](DE-Angebote-und-Preise)

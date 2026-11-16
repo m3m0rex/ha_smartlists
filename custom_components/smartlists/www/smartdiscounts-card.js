@@ -14,7 +14,8 @@ const TAG = "smartdiscounts-card";
 if (customElements.get(TAG)) return;  // schon geladen (SmartLists UND eigenes Repository installiert)
 
 const TEXTS = {
-  de: { e_entities: "Nur diese Angebots-Sensoren (leer = alle erkannten)", e_group: "„Alle Angebote“ gruppieren nach", g_store: "Markt", g_cat: "Kategorie", other: "Sonstiges",
+  de: { e_stores: "Nur diese Märkte (leer = alle)", e_cat_open: "Kategorien anfangs aufgeklappt", more_n: "+{n} mehr", on_n: "{n}× auf der Liste", dup_n: "„{name}“ steht {n}-mal auf der Liste", dup_merge: "Zusammenfassen", e_list_tab: "Reiter „Meine Liste“ anzeigen", e_cat_src: "Kategorien", cs_auto: "von SmartLists, sonst vom Markt", cs_store: "immer die des Markts",
+    e_entities: "Nur diese Angebots-Sensoren (leer = alle erkannten)", e_group: "„Alle Angebote“ gruppieren nach", g_store: "Markt", g_cat: "Kategorie", other: "Sonstiges",
     tab_watch: "Merkliste", w_add: "Produkt merken, z. B. Kaffee", w_add_btn: "Merken", w_empty: "Noch nichts gemerkt. Trage Produkte ein, bei denen du auf ein Angebot wartest.", w_local: "Auf diesem Gerät gespeichert. Mit „watch_list“ (eine To-do-Liste) gilt die Merkliste auf allen Geräten.", w_fixed: "aus der Konfiguration", n_title: "Angebot für deine Merkliste", e_watch: "Merkliste: Produkte", e_watch_list: "Merkliste als To-do-Liste (gilt auf allen Geräten)", e_notify: "Benachrichtigen, wenn etwas von der Merkliste im Angebot ist", e_notify_service: "Zusätzlich an diesen Dienst senden (z. B. notify.mobile_app_…)", e_symbol: "Eigenes Währungssymbol (statt „currency“)",
     title: "Angebote", tab_list: "Meine Liste", tab_all: "Alle Angebote", search: "Angebote durchsuchen …", no_sources: "Keine Angebots-Sensoren gefunden. Installiere z. B. die REWE-, EDEKA- oder Lidl-Integration von FaserF oder trage unter „sources“ einen eigenen Sensor ein.",
     no_list: "Keine Liste gewählt – trage in der Karte unter „list“ eine To-do-Liste ein, um Angebote mit ihr abzugleichen.", list_empty: "Die Liste ist leer.", none: "kein Angebot", offers: "Angebote", offer1: "Angebot",
@@ -24,7 +25,8 @@ const TEXTS = {
     e_title: "Titel", e_list: "Einkaufsliste (To-do)", e_match: "Artikel passt zum Angebot, wenn", m_word: "ganzes Wort im Namen (Butter ≠ Butterkeks)", m_exact: "nur genau dieses Wort", m_part: "Teil des Namens",
     e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)", e_view: "Darstellung „Alle Angebote“", v_tiles: "Kacheln", v_list: "Liste mit kleinen Bildern", e_lview: "Darstellung „Meine Liste“", v_chips: "Preise nebeneinander", v_rows: "ein Angebot je Zeile",
     e_sources: "Quellen werden automatisch erkannt. Eigene Sensoren und Feld-Zuordnung: im Code-Editor unter „sources“ (siehe README)." },
-  en: { e_entities: "Only these offer sensors (empty = all detected)", e_group: "Group \"All offers\" by", g_store: "Store", g_cat: "Category", other: "Other",
+  en: { e_stores: "Only these stores (empty = all)", e_cat_open: "Categories expanded at first", more_n: "+{n} more", on_n: "{n}× on the list", dup_n: "\"{name}\" is on the list {n} times", dup_merge: "Merge", e_list_tab: "Show the \"My list\" tab", e_cat_src: "Categories", cs_auto: "from SmartLists, otherwise from the store", cs_store: "always the store's own",
+    e_entities: "Only these offer sensors (empty = all detected)", e_group: "Group \"All offers\" by", g_store: "Store", g_cat: "Category", other: "Other",
     tab_watch: "Watch list", w_add: "Watch a product, e.g. coffee", w_add_btn: "Watch", w_empty: "Nothing here yet. Enter products you are waiting to see on offer.", w_local: "Stored on this device. With \"watch_list\" (a to-do list) the watch list applies on all devices.", w_fixed: "from the configuration", n_title: "Offer for your watch list", e_watch: "Watch list: products", e_watch_list: "Watch list as a to-do list (applies on all devices)", e_notify: "Notify when something on the watch list is on offer", e_notify_service: "Also send to this service (e.g. notify.mobile_app_…)", e_symbol: "Own currency symbol (instead of \"currency\")",
     title: "Offers", tab_list: "My list", tab_all: "All offers", search: "Search offers …", no_sources: "No offer sensors found. Install e.g. FaserF's REWE, EDEKA or Lidl integration or add your own sensor under \"sources\".",
     no_list: "No list selected – set a to-do list under \"list\" to match offers against it.", list_empty: "The list is empty.", none: "no offer", offers: "offers", offer1: "offer",
@@ -34,20 +36,24 @@ const TEXTS = {
     e_title: "Title", e_list: "Shopping list (to-do)", e_match: "Item matches an offer if", m_word: "whole word in the name (butter ≠ butter biscuit)", m_exact: "exactly this word only", m_part: "part of the name",
     e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)", e_view: "\"All offers\" layout", v_tiles: "Tiles", v_list: "List with small images", e_lview: "\"My list\" layout", v_chips: "Prices side by side", v_rows: "One offer per row",
     e_sources: "Sources are detected automatically. Own sensors and field mapping: in the code editor under \"sources\" (see README)." },
-  fr: { e_entities: "Seulement ces capteurs de promos (vide = tous)", e_group: "Regrouper « Toutes les promos » par", g_store: "Magasin", g_cat: "Catégorie", other: "Autres",
+  fr: { e_stores: "Seulement ces magasins (vide = tous)", e_cat_open: "Catégories dépliées au départ", more_n: "+{n} de plus", on_n: "{n}× dans la liste", dup_n: "« {name} » est {n} fois dans la liste", dup_merge: "Regrouper", e_list_tab: "Afficher l'onglet « Ma liste »", e_cat_src: "Catégories", cs_auto: "de SmartLists, sinon du magasin", cs_store: "toujours celles du magasin",
+    e_entities: "Seulement ces capteurs de promos (vide = tous)", e_group: "Regrouper « Toutes les promos » par", g_store: "Magasin", g_cat: "Catégorie", other: "Autres",
     tab_watch: "À surveiller", w_add: "Surveiller un produit, p. ex. café", w_add_btn: "Surveiller", w_empty: "Rien pour l'instant. Saisis les produits dont tu attends une promo.", w_local: "Enregistré sur cet appareil. Avec « watch_list » (une liste de tâches), la liste vaut sur tous les appareils.", w_fixed: "depuis la configuration", n_title: "Promo pour ta liste à surveiller", e_watch: "À surveiller : produits", e_watch_list: "Liste à surveiller comme liste de tâches (tous les appareils)", e_notify: "Notifier quand un produit surveillé est en promo", e_notify_service: "Envoyer aussi à ce service (p. ex. notify.mobile_app_…)", e_symbol: "Symbole monétaire personnalisé (au lieu de « currency »)",
     title: "Promos", tab_list: "Ma liste", tab_all: "Toutes les promos", search: "Rechercher des promos …", no_sources: "Aucun capteur de promos trouvé. Installe p. ex. l'intégration REWE, EDEKA ou Lidl de FaserF ou ajoute ton propre capteur sous « sources ».", no_list: "Aucune liste choisie – indique une liste de tâches sous « list » pour la comparer aux promos.", list_empty: "La liste est vide.", none: "pas de promo", offers: "promos", offer1: "promo", on_offer: "{n} articles sur {m} en promo", cheapest: "Choisir les moins chères", only: "seulement {store}", chosen: "{n} choisies", sum: "Total", apply: "Reporter dans la liste", applied: "✓ reporté", pick_hint: "Touche un prix pour choisir une promo", until: "jusqu'au", today: "aujourd'hui seulement", expired: "expirée", add: "Ajouter à la liste", added: "✓ dans la liste", all: "toutes", less: "moins", on_list: "est sur ta liste", best: "la moins chère", item: "Article", no_hits: "Rien trouvé.", exp_n: "Promos expirées dans la liste : {n}", exp_remove: "Retirer", exp_later: "Plus tard", all_cats: "Toutes les catégories", error: "Cela n'a pas fonctionné.", attached: "promo choisie", stand: "état au", in_offer: "en promo", without: "sans promo", e_title: "Titre", e_list: "Liste de courses (tâches)", e_match: "Un article correspond à une promo si", m_word: "mot entier dans le nom (beurre ≠ biscuit au beurre)", m_exact: "exactement ce mot", m_part: "partie du nom", e_tab: "Onglet de départ", e_images: "Images", e_compact: "Lignes compactes", e_unit: "Prix à l'unité (€/kg, €/l)", e_until: "Valable jusqu'au", e_hide_none: "Masquer les articles sans promo", e_max: "Promos par magasin (onglet « Toutes »)", e_view: "Affichage « Toutes les promos »", v_tiles: "Tuiles", v_list: "Liste avec petites images", e_lview: "Affichage « Ma liste »", v_chips: "Prix côte à côte", v_rows: "une promo par ligne", e_sources: "Les sources sont détectées automatiquement. Capteurs personnels et correspondance des champs : dans l'éditeur de code sous « sources » (voir README)." },
-  es: { e_entities: "Solo estos sensores de ofertas (vacío = todos)", e_group: "Agrupar «Todas las ofertas» por", g_store: "Tienda", g_cat: "Categoría", other: "Otros",
+  es: { e_stores: "Solo estas tiendas (vacío = todas)", e_cat_open: "Categorías desplegadas al inicio", more_n: "+{n} más", on_n: "{n}× en la lista", dup_n: "«{name}» está {n} veces en la lista", dup_merge: "Unir", e_list_tab: "Mostrar la pestaña «Mi lista»", e_cat_src: "Categorías", cs_auto: "de SmartLists, si no de la tienda", cs_store: "siempre las de la tienda",
+    e_entities: "Solo estos sensores de ofertas (vacío = todos)", e_group: "Agrupar «Todas las ofertas» por", g_store: "Tienda", g_cat: "Categoría", other: "Otros",
     tab_watch: "Seguimiento", w_add: "Seguir un producto, p. ej. café", w_add_btn: "Seguir", w_empty: "Aún no hay nada. Escribe los productos de los que esperas una oferta.", w_local: "Guardado en este dispositivo. Con «watch_list» (una lista de tareas) el seguimiento vale en todos los dispositivos.", w_fixed: "de la configuración", n_title: "Oferta para tu seguimiento", e_watch: "Seguimiento: productos", e_watch_list: "Seguimiento como lista de tareas (todos los dispositivos)", e_notify: "Avisar cuando algo en seguimiento esté en oferta", e_notify_service: "Enviar también a este servicio (p. ej. notify.mobile_app_…)", e_symbol: "Símbolo de moneda propio (en lugar de «currency»)",
     title: "Ofertas", tab_list: "Mi lista", tab_all: "Todas las ofertas", search: "Buscar ofertas …", no_sources: "No se encontraron sensores de ofertas. Instala p. ej. la integración de REWE, EDEKA o Lidl de FaserF o añade tu propio sensor en «sources».", no_list: "No hay lista elegida – indica una lista de tareas en «list» para compararla con las ofertas.", list_empty: "La lista está vacía.", none: "sin oferta", offers: "ofertas", offer1: "oferta", on_offer: "{n} de {m} artículos en oferta", cheapest: "Elegir las más baratas", only: "solo {store}", chosen: "{n} elegidas", sum: "Total", apply: "Pasar a la lista", applied: "✓ aplicado", pick_hint: "Toca un precio para elegir una oferta", until: "hasta el", today: "solo hoy", expired: "caducada", add: "A la lista", added: "✓ en la lista", all: "todas", less: "menos", on_list: "está en tu lista", best: "la más barata", item: "Artículo", no_hits: "No se encontró nada.", exp_n: "Ofertas caducadas en la lista: {n}", exp_remove: "Quitar", exp_later: "Más tarde", all_cats: "Todas las categorías", error: "No ha funcionado.", attached: "oferta elegida", stand: "actualizado", in_offer: "en oferta", without: "sin oferta", e_title: "Título", e_list: "Lista de la compra (tareas)", e_match: "Un artículo coincide con una oferta si", m_word: "palabra completa en el nombre (mantequilla ≠ galleta de mantequilla)", m_exact: "solo exactamente esta palabra", m_part: "parte del nombre", e_tab: "Pestaña inicial", e_images: "Imágenes", e_compact: "Filas compactas", e_unit: "Precio por unidad (€/kg, €/l)", e_until: "Válido hasta", e_hide_none: "Ocultar artículos sin oferta", e_max: "Ofertas por tienda (pestaña «Todas»)", e_view: "Vista de «Todas las ofertas»", v_tiles: "Mosaico", v_list: "Lista con imágenes pequeñas", e_lview: "Vista de «Mi lista»", v_chips: "Precios lado a lado", v_rows: "una oferta por fila", e_sources: "Las fuentes se detectan automáticamente. Sensores propios y asignación de campos: en el editor de código, en «sources» (ver README)." },
-  it: { e_entities: "Solo questi sensori di offerte (vuoto = tutti)", e_group: "Raggruppa «Tutte le offerte» per", g_store: "Negozio", g_cat: "Categoria", other: "Altro",
+  it: { e_stores: "Solo questi negozi (vuoto = tutti)", e_cat_open: "Categorie aperte all'inizio", more_n: "+{n} altre", on_n: "{n}× in lista", dup_n: "«{name}» è {n} volte in lista", dup_merge: "Unisci", e_list_tab: "Mostra la scheda «La mia lista»", e_cat_src: "Categorie", cs_auto: "da SmartLists, altrimenti dal negozio", cs_store: "sempre quelle del negozio",
+    e_entities: "Solo questi sensori di offerte (vuoto = tutti)", e_group: "Raggruppa «Tutte le offerte» per", g_store: "Negozio", g_cat: "Categoria", other: "Altro",
     tab_watch: "Da tenere d'occhio", w_add: "Tieni d'occhio un prodotto, ad es. caffè", w_add_btn: "Aggiungi", w_empty: "Ancora niente. Inserisci i prodotti di cui aspetti un'offerta.", w_local: "Salvato su questo dispositivo. Con «watch_list» (una lista di cose da fare) vale su tutti i dispositivi.", w_fixed: "dalla configurazione", n_title: "Offerta per i prodotti che segui", e_watch: "Da tenere d'occhio: prodotti", e_watch_list: "Elenco come lista di cose da fare (tutti i dispositivi)", e_notify: "Avvisa quando un prodotto seguito è in offerta", e_notify_service: "Invia anche a questo servizio (ad es. notify.mobile_app_…)", e_symbol: "Simbolo di valuta personalizzato (al posto di «currency»)",
     title: "Offerte", tab_list: "La mia lista", tab_all: "Tutte le offerte", search: "Cerca offerte …", no_sources: "Nessun sensore di offerte trovato. Installa ad es. l'integrazione REWE, EDEKA o Lidl di FaserF oppure aggiungi un tuo sensore in «sources».", no_list: "Nessuna lista scelta – indica una lista di cose da fare in «list» per confrontarla con le offerte.", list_empty: "La lista è vuota.", none: "nessuna offerta", offers: "offerte", offer1: "offerta", on_offer: "{n} articoli su {m} in offerta", cheapest: "Scegli le più convenienti", only: "solo {store}", chosen: "{n} scelte", sum: "Totale", apply: "Riporta nella lista", applied: "✓ riportato", pick_hint: "Tocca un prezzo per scegliere un'offerta", until: "fino al", today: "solo oggi", expired: "scaduta", add: "Aggiungi alla lista", added: "✓ in lista", all: "tutte", less: "meno", on_list: "è nella tua lista", best: "la più conveniente", item: "Articolo", no_hits: "Nessun risultato.", exp_n: "Offerte scadute nella lista: {n}", exp_remove: "Rimuovi", exp_later: "Più tardi", all_cats: "Tutte le categorie", error: "Non ha funzionato.", attached: "offerta scelta", stand: "aggiornato al", in_offer: "in offerta", without: "senza offerta", e_title: "Titolo", e_list: "Lista della spesa (cose da fare)", e_match: "Un articolo corrisponde a un'offerta se", m_word: "parola intera nel nome (burro ≠ biscotto al burro)", m_exact: "solo esattamente questa parola", m_part: "parte del nome", e_tab: "Scheda iniziale", e_images: "Immagini", e_compact: "Righe compatte", e_unit: "Prezzo unitario (€/kg, €/l)", e_until: "Valida fino al", e_hide_none: "Nascondi gli articoli senza offerta", e_max: "Offerte per negozio (scheda «Tutte»)", e_view: "Vista «Tutte le offerte»", v_tiles: "Riquadri", v_list: "Elenco con piccole immagini", e_lview: "Vista «La mia lista»", v_chips: "Prezzi affiancati", v_rows: "un'offerta per riga", e_sources: "Le fonti vengono riconosciute automaticamente. Sensori propri e mappatura dei campi: nell'editor di codice in «sources» (vedi README)." },
-  pl: { e_entities: "Tylko te sensory promocji (puste = wszystkie)", e_group: "Grupuj „Wszystkie promocje” według", g_store: "Sklep", g_cat: "Kategoria", other: "Inne",
+  pl: { e_stores: "Tylko te sklepy (puste = wszystkie)", e_cat_open: "Kategorie początkowo rozwinięte", more_n: "+{n} więcej", on_n: "{n}× na liście", dup_n: "„{name}” jest na liście {n} razy", dup_merge: "Połącz", e_list_tab: "Pokaż zakładkę „Moja lista”", e_cat_src: "Kategorie", cs_auto: "z SmartLists, w innym razie ze sklepu", cs_store: "zawsze ze sklepu",
+    e_entities: "Tylko te sensory promocji (puste = wszystkie)", e_group: "Grupuj „Wszystkie promocje” według", g_store: "Sklep", g_cat: "Kategoria", other: "Inne",
     tab_watch: "Obserwowane", w_add: "Obserwuj produkt, np. kawa", w_add_btn: "Obserwuj", w_empty: "Jeszcze nic. Wpisz produkty, na których promocję czekasz.", w_local: "Zapisane na tym urządzeniu. Z „watch_list” (lista zadań) obserwowane działają na wszystkich urządzeniach.", w_fixed: "z konfiguracji", n_title: "Promocja dla obserwowanych", e_watch: "Obserwowane: produkty", e_watch_list: "Obserwowane jako lista zadań (wszystkie urządzenia)", e_notify: "Powiadom, gdy obserwowany produkt jest w promocji", e_notify_service: "Wyślij też do tej usługi (np. notify.mobile_app_…)", e_symbol: "Własny symbol waluty (zamiast „currency”)",
     title: "Promocje", tab_list: "Moja lista", tab_all: "Wszystkie promocje", search: "Szukaj promocji …", no_sources: "Nie znaleziono sensorów promocji. Zainstaluj np. integrację REWE, EDEKA lub Lidl od FaserF albo dodaj własny sensor w „sources”.", no_list: "Nie wybrano listy – wpisz listę zadań w „list”, aby porównać ją z promocjami.", list_empty: "Lista jest pusta.", none: "brak promocji", offers: "promocji", offer1: "promocja", on_offer: "{n} z {m} produktów w promocji", cheapest: "Wybierz najtańsze", only: "tylko {store}", chosen: "wybrano: {n}", sum: "Suma", apply: "Przenieś na listę", applied: "✓ przeniesiono", pick_hint: "Dotknij ceny, aby wybrać promocję", until: "do", today: "tylko dziś", expired: "wygasła", add: "Na listę", added: "✓ na liście", all: "wszystkie", less: "mniej", on_list: "jest na twojej liście", best: "najtańsza", item: "Produkt", no_hits: "Nic nie znaleziono.", exp_n: "Wygasłe promocje na liście: {n}", exp_remove: "Usuń", exp_later: "Później", all_cats: "Wszystkie kategorie", error: "Nie udało się.", attached: "wybrano promocję", stand: "stan na", in_offer: "w promocji", without: "bez promocji", e_title: "Tytuł", e_list: "Lista zakupów (zadania)", e_match: "Produkt pasuje do promocji, gdy", m_word: "całe słowo w nazwie (masło ≠ ciastko maślane)", m_exact: "tylko dokładnie to słowo", m_part: "część nazwy", e_tab: "Zakładka startowa", e_images: "Zdjęcia", e_compact: "Zwarte wiersze", e_unit: "Cena jednostkowa (€/kg, €/l)", e_until: "Ważne do", e_hide_none: "Ukryj produkty bez promocji", e_max: "Promocji na sklep (zakładka „Wszystkie”)", e_view: "Widok „Wszystkie promocje”", v_tiles: "Kafelki", v_list: "Lista z małymi zdjęciami", e_lview: "Widok „Moja lista”", v_chips: "Ceny obok siebie", v_rows: "jedna promocja w wierszu", e_sources: "Źródła są wykrywane automatycznie. Własne sensory i mapowanie pól: w edytorze kodu w „sources” (zob. README)." },
 };
-const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", list_view: "chips", sources: "auto", group_by: "store", watch: [], watch_list: "", notify: false, notify_service: "" };
+const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", list_view: "chips", sources: "auto", group_by: "store", show_list_tab: true, category_source: "auto", categories_open: true, watch: [], watch_list: "", notify: false, notify_service: "" };
 // bekannte Märkte: Erkennung über entity_id / Namen der Quelle, Farbe des Badges
 const STORES = [["rewe", "REWE", "#cc071e"], ["edeka", "EDEKA", "#f5c400"], ["lidl", "Lidl", "#0050aa"], ["aldi_sued", "ALDI Süd", "#00a0e0"], ["aldi_nord", "ALDI Nord", "#1a4d9f"], ["aldi", "ALDI", "#00549f"],
   ["norma", "Norma", "#d40f14"], ["penny", "Penny", "#cd1414"], ["kaufland", "Kaufland", "#e10915"], ["netto", "Netto", "#ffd400"], ["rossmann", "Rossmann", "#c3002d"], ["dm", "dm", "#002878"], ["globus", "Globus", "#f39200"]];
@@ -236,6 +242,15 @@ const STYLE = `
   .orow .pr b { display:block; } .orow.best .pr b { color:var(--sd-ok); }
   .orow .pr s { color:var(--secondary-text-color); font-size:.72rem; } .orow .pr .pct { color:var(--error-color,#db4437); font-weight:800; font-size:.72rem; margin-left:4px; }
   .compact .orow { padding:3px 8px; }
+  .catbar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 2px; }
+  .catbar .chip small { color:var(--secondary-text-color); } .catbar .chip.more { border-style:dashed; color:var(--sd-accent); }
+  .stepper { display:inline-flex; align-items:center; height:34px; border-radius:10px; border:1px solid color-mix(in srgb, #4caf50 55%, transparent); background:color-mix(in srgb, #4caf50 12%, transparent); flex:none; }
+  .stepper button { background:none; border:0; color:#4caf50; font:inherit; font-size:1.1rem; width:30px; height:32px; cursor:pointer; } .stepper b { min-width:26px; text-align:center; font-size:.82rem; }
+  .tl .stepper { align-self:flex-start; margin-top:4px; }
+  .shelf.fold { border-top:1px solid var(--divider-color,#e0e0e0); } .shelf.fold:first-of-type { border-top:0; }
+  .foldh { display:flex; align-items:center; gap:8px; width:100%; padding:11px 2px; border:0; background:none; color:inherit; font:inherit; font-size:.92rem; text-align:left; cursor:pointer; }
+  .foldh small { color:var(--secondary-text-color); } .foldh .sp { flex:1; } .foldh .dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .foldh .chev { color:var(--secondary-text-color); transition:transform .15s; } .shelf.fold.open .chev { transform:rotate(90deg); }
   .shelf h4 { margin:12px 0 6px; font-size:.84rem; display:flex; gap:8px; align-items:center; font-weight:500; }
   .shelf h4 small { color:var(--secondary-text-color); } .shelf h4 .sp { flex:1; }
   .shelf h4 button { background:none; border:0; color:var(--sd-accent); font:inherit; font-size:.8rem; cursor:pointer; }
@@ -273,6 +288,8 @@ class SmartDiscountsCard extends HTMLElement {
   setConfig(config) {
     this._config = { ...DEFAULTS, ...(config || {}) };
     this._tab = ["all", "watch"].includes(this._config.default_tab) ? this._config.default_tab : "list";
+    if (this._config.show_list_tab === false && this._tab === "list") this._tab = "all";
+    this._closed = new Set(); this._allCats = false;
     this._sel = {};       // Artikel-UID → gewähltes Angebot
     this._open = new Set();
     this._query = ""; this._cat = "";
@@ -303,7 +320,12 @@ class SmartDiscountsCard extends HTMLElement {
     return only.map((e) => own.find((s) => s.entity === e) || e);
   }
   _sources() { return sourcesOf(this._hass, this._src()); }
-  _offers() { return collectOffers(this._hass, this._src()); }
+  // "stores": nur diese Märkte (nach Namen, z. B. [REWE, ALDI]) – wirkt zusätzlich zu "entities"
+  _offers() {
+    const only = (Array.isArray(this._config.stores) ? this._config.stores : this._config.stores ? [this._config.stores] : []).map((x) => norm(x)).filter(Boolean);
+    const all = collectOffers(this._hass, this._src());
+    return only.length ? all.filter((o) => only.includes(norm(o.store))) : all;
+  }
   _money(v) { if (this._config.currency_symbol) { try { return `${new Intl.NumberFormat(this._hass.language || "de", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)}\u00a0${this._config.currency_symbol}`; } catch (e) { return `${v.toFixed(2)} ${this._config.currency_symbol}`; } }
     try { return new Intl.NumberFormat(this._hass.language || "de", { style: "currency", currency: this._config.currency || "EUR" }).format(v); } catch (e) { return `${v.toFixed(2)} €`; } }
   _day(d) { const p = String(d || "").split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : d || ""; }
@@ -413,7 +435,7 @@ class SmartDiscountsCard extends HTMLElement {
         c.show_images ? h("div", { class: "thumb", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image ? null : "🏷️") : null,
         h("div", { class: "n" }, o.name, h("small", {}, this._storeBadge(o), sub ? ` ${sub}` : "")),
         h("div", { class: "pr" }, h("b", {}, this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null, o.pct ? h("span", { class: "pct" }, `−${o.pct}%`) : null),
-        c.list ? h("button", { type: "button", class: "btn plus", title: t.add, "aria-label": `${t.add}: ${o.name}`, onclick: (e) => this._add(o, e.currentTarget) }, "＋") : null);
+        this._addCtl(o, false));
     };
     const blocks = terms.map((term) => {
       const offers = dealsFor(this._all, term.name, c.match);
@@ -431,7 +453,7 @@ class SmartDiscountsCard extends HTMLElement {
     const t = this._t, c = this._config;
     const stores = [...new Set(this._all.map((o) => o.store))];
     const head = h("div", { class: "head" }, h("h1", {}, c.title || t.title), h("small", {}, `${this._all.length} ${t.offers} · ${stores.length ? stores.join(", ") : "–"}`));
-    const tabs = h("div", { class: "tabs" }, [["list", "📝 " + t.tab_list], ["all", t.tab_all], ["watch", "⭐ " + t.tab_watch + (this._watchHits() ? ` · ${this._watchHits()}` : "")]].map(([v, l]) =>
+    const tabs = h("div", { class: "tabs" }, [...(c.show_list_tab === false ? [] : [["list", "📝 " + t.tab_list]]), ["all", t.tab_all], ["watch", "⭐ " + t.tab_watch + (this._watchHits() ? ` · ${this._watchHits()}` : "")]].map(([v, l]) =>
       h("button", { type: "button", class: this._tab === v ? "on" : "", onclick: () => { this._tab = v; this._render(); } }, l)));
     const body = !this._all.length ? h("div", { class: "msg" }, t.no_sources) : this._tab === "list" ? this._renderList(stores) : this._tab === "watch" ? this._renderWatch() : this._renderAll(stores);
     this._card.className = `wrap ${c.compact ? "compact" : ""} ${c.show_images ? "" : "noimg"}`;
@@ -440,7 +462,7 @@ class SmartDiscountsCard extends HTMLElement {
   // Kategorie eines Angebots: mit SmartLists dessen Einkaufs-Kategorien (einheitlich über alle Märkte), sonst die des Sensors
   async _loadCats() {
     this._catMap = null;
-    if (this._group !== "category" || !(this._hass.config.components || []).includes("smartlists")) return;
+    if (this._config.category_source === "store" || !(this._hass.config.components || []).includes("smartlists")) return;
     try {
       const r = await this._hass.callWS({ type: "smartlists/categorize", names: [...new Set(this._all.map((o) => o.name))], language: this._hass.language });
       const labels = Object.fromEntries((r.categories || []).map((x) => [x.id, x.label]));
@@ -521,32 +543,43 @@ class SmartDiscountsCard extends HTMLElement {
     const sum = h("div", { class: "sum" }, h("div", {}, chosen.length ? t.chosen.replace("{n}", chosen.length) : t.pick_hint,
       chosen.length ? h("small", {}, `${t.sum} ${this._money(total)} · ${[...new Set(chosen.map(([, o]) => o.store))].join(", ")}`) : null),
       h("span", { class: "sp" }), chosen.length ? h("button", { type: "button", class: "btn pri", onclick: (e) => this._apply(chosen, e.currentTarget) }, t.apply) : null);
+    const groups = Object.values(items.reduce((a, i) => { const k = norm(i.name); if (k) (a[k] = a[k] || []).push(i); return a; }, {})).filter((g) => g.length > 1);
+    const dupBox = groups.length && !this._dupLater ? groups.slice(0, 3).map((g) => h("div", { class: "expbox", role: "status" }, h("b", {}, "🧹 " + t.dup_n.replace("{name}", g[0].name).replace("{n}", g.length)),
+      h("span", { class: "sp" }), h("button", { type: "button", class: "btn", onclick: () => { this._dupLater = true; this._render(); } }, t.exp_later),
+      h("button", { type: "button", class: "btn pri", onclick: (e) => this._merge(g, e.currentTarget) }, t.dup_merge))) : null;
     const old = items.filter((i) => this._expiredNote(i.note));
     const expBox = old.length && !this._expLater ? h("div", { class: "expbox", role: "status" }, h("b", {}, "🏷️ " + t.exp_n.replace("{n}", old.length)), h("small", {}, old.slice(0, 3).map((i) => i.name || i.text).join(", ")),
       h("span", { class: "sp" }), h("button", { type: "button", class: "btn", onclick: () => { this._expLater = true; this._render(); } }, t.exp_later),
       h("button", { type: "button", class: "btn pri", onclick: (e) => this._clearExpired(e.currentTarget) }, t.exp_remove)) : null;
-    return h("div", {}, expBox, plan, mx, h("div", { class: "rows" }, rows.map(line)), sum, this._foot());
+    return h("div", {}, expBox, dupBox, plan, mx, h("div", { class: "rows" }, rows.map(line)), sum, this._foot());
   }
   _renderAll(stores) {
     const t = this._t, c = this._config;
     const byCat = this._group === "category";
-    const cats = [...new Set(this._all.map((o) => (byCat ? this._catOf(o) : o.category)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     const names = (this._items || []).map((i) => i.name).filter(Boolean);
     const onList = (o) => names.some((n) => matches(n, o.name, c.match));
     const q = norm(this._query);
-    const shown = this._all.filter((o) => (!q || norm(`${o.name} ${o.brand} ${o.category} ${o.store}`).includes(q)) && (!this._cat || (byCat ? this._catOf(o) : o.category) === this._cat));
+    const shown = this._all.filter((o) => (!q || norm(`${o.name} ${o.brand} ${o.category} ${this._catOf(o)} ${o.store}`).includes(q)) && (!this._cat || (byCat || this._catMap ? this._catOf(o) : o.category) === this._cat));
     const search = h("input", { class: "search", type: "search", placeholder: t.search, "aria-label": t.search, value: this._query });
     search.addEventListener("input", () => { this._query = search.value; const pos = search.selectionStart; this._render();
       const f = this._card.querySelector("input.search"); if (f) { f.focus(); try { f.setSelectionRange(pos, pos); } catch (e) { /* */ } } });
-    const catSel = cats.length ? h("select", { class: "cat", "aria-label": t.all_cats, onchange: (e) => { this._cat = e.target.value; this._render(); } },
-      h("option", { value: "" }, t.all_cats), cats.map((x) => h("option", { value: x, selected: x === this._cat }, x))) : null;
+    // Kategorien zum Antippen mit Anzahl: die größten zuerst, der Rest hinter „+N mehr“ – umbrechend, kein Scrollbalken
+    const catKey = (o) => (byCat || this._catMap ? this._catOf(o) : o.category);
+    const counts = this._all.reduce((a, o) => { const k = catKey(o); if (k) a[k] = (a[k] || 0) + 1; return a; }, {});
+    const ranked = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
+    const FIRST = 5, visible = this._allCats ? ranked : [...new Set([...ranked.slice(0, FIRST), ...(this._cat ? [this._cat] : [])])];
+    const cchip = (key, label, n) => h("button", { type: "button", class: `chip ${this._cat === key ? "on" : ""}`, "aria-pressed": String(this._cat === key),
+      onclick: () => { this._cat = this._cat === key ? "" : key; this._render(); } }, label, h("small", {}, ` ${n}`));
+    const catSel = ranked.length > 1 ? h("div", { class: "catbar" }, cchip("", t.all, this._all.length), visible.map((k) => cchip(k, k, counts[k])),
+      ranked.length > visible.length || this._allCats ? h("button", { type: "button", class: "chip more", onclick: () => { this._allCats = !this._allCats; this._render(); } },
+        this._allCats ? t.less : t.more_n.replace("{n}", ranked.length - visible.length)) : null) : null;
     const tile = (o) => {
       const mine = onList(o);
       return h("div", { class: "tl", title: o.name }, o.pct ? h("span", { class: "pctb" }, `−${o.pct}%`) : null, mine ? h("span", { class: "on", title: t.on_list }, "📝") : null,
         c.show_images ? h("div", { class: "img", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}")` : "background:none" }) : null,
         h("div", { class: "t" }, o.name), byCat ? h("div", { class: "x" }, this._storeBadge(o)) : null, h("div", {}, h("b", {}, this._money(o.price)), o.old ? h("s", { style: "margin-left:4px;font-size:.7rem;opacity:.7" }, this._money(o.old)) : null),
         h("div", { class: "x" }, [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : ""].filter(Boolean).join(" · ") || " "),
-        c.list ? h("button", { type: "button", class: "btn", onclick: (e) => this._add(o, e.currentTarget) }, "＋ " + t.add) : null);
+        this._addCtl(o, true));
     };
     // Listen-Darstellung: kleine Bilder, eine Zeile je Angebot
     const row = (o) => {
@@ -556,7 +589,7 @@ class SmartDiscountsCard extends HTMLElement {
         c.show_images ? h("div", { class: "thumb", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image ? null : "🏷️") : null,
         h("div", { class: "n" }, mine ? h("span", { title: t.on_list }, "📝 ") : null, o.name, sub || byCat ? h("small", {}, byCat ? [this._storeBadge(o), " "] : null, sub) : null),
         h("div", { class: "pr" }, h("b", {}, this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null, o.pct ? h("span", { class: "pct" }, `−${o.pct}%`) : null),
-        c.list ? h("button", { type: "button", class: "btn plus", title: t.add, "aria-label": `${t.add}: ${o.name}`, onclick: (e) => this._add(o, e.currentTarget) }, "＋") : null);
+        this._addCtl(o, false));
     };
     const asList = this._view === "list";
     const toggle = h("button", { type: "button", class: "btn vbtn", title: asList ? t.v_tiles : t.v_list, "aria-label": asList ? t.v_tiles : t.v_list,
@@ -574,11 +607,21 @@ class SmartDiscountsCard extends HTMLElement {
       const sorted = [...all.filter(onList), ...all.filter((o) => !onList(o))];
       const open = this._open.has(s) || !!q || !!this._cat;
       const list = open ? sorted : sorted.slice(0, c.max_per_store);
-      return h("div", { class: "shelf" }, h("h4", {}, byCat ? h("b", {}, s) : this._storeBadge(all[0]), h("small", {}, `${all.length} ${t.offers}`), h("span", { class: "sp" }),
+      if (byCat) {
+        // nach Kategorie: Überschrift zum Auf- und Zuklappen, mit den Märkten als Punkte
+        // Standard: aufgeklappt (categories_open: false = zugeklappt); Antippen kehrt es für diese Kategorie um
+        const shut = ((c.categories_open === false) !== this._closed.has(s)) && !q && !this._cat;
+        const dots = [...new Map(all.map((o) => [o.store, o.color])).entries()].map(([st, col]) => h("span", { class: "dot", title: st, style: `background:${col}` }));
+        return h("div", { class: `shelf fold ${shut ? "" : "open"}` },
+          h("button", { type: "button", class: "foldh", "aria-expanded": String(!shut), onclick: () => { if (this._closed.has(s)) this._closed.delete(s); else this._closed.add(s); this._render(); } },
+            h("b", {}, s), h("span", { class: "sp" }), dots, h("small", {}, `${all.length} ${all.length > 1 ? t.offers : t.offer1}`), h("span", { class: "chev" }, "›")),
+          shut ? null : asList ? h("div", { class: "lrows" }, sorted.map(row)) : h("div", { class: "rail open" }, sorted.map(tile)));
+      }
+      return h("div", { class: "shelf" }, h("h4", {}, this._storeBadge(all[0]), h("small", {}, `${all.length} ${t.offers}`), h("span", { class: "sp" }),
         all.length > c.max_per_store && !q && !this._cat ? h("button", { type: "button", onclick: () => { if (open) this._open.delete(s); else this._open.add(s); this._render(); } }, open ? t.less : `${t.all} →`) : null),
         asList ? h("div", { class: "lrows" }, list.map(row)) : h("div", { class: `rail ${open ? "open" : ""}` }, list.map(tile)));
     });
-    return h("div", {}, h("div", { class: "filters" }, search, catSel, gbtn, toggle), shown.length ? shelves : h("div", { class: "msg" }, t.no_hits), this._foot());
+    return h("div", {}, h("div", { class: "filters" }, search, gbtn, toggle), catSel, shown.length ? shelves : h("div", { class: "msg" }, t.no_hits), this._foot());
   }
   _foot() {
     const ts = this._sources().map((s) => this._hass.states[s.entity].last_updated).filter(Boolean).sort().pop();
@@ -626,12 +669,50 @@ class SmartDiscountsCard extends HTMLElement {
       this._sel = {}; this._sig = null; await this._refresh(true);
     } catch (e) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; }
   }
+  // Anzahl im Text eines Eintrags: "2x Bio Orangen" oder "Bio Orangen 2" (so schreibt es SmartLists)
+  _countOf(text) { const a = String(text).match(/^\s*(\d{1,3})\s?[x×]\s+\S/i), b = String(text).match(/\s(\d{1,3})\s*$/); return a ? +a[1] : b ? +b[1] : 1; }
+  _withCount(text, n) {
+    const bare = String(text).replace(/^\s*\d{1,3}\s?[x×]\s+(?=\S)/i, "").replace(/\s\d{1,3}\s*$/, "").trim();
+    return n > 1 ? `${n}x ${bare}` : bare;
+  }
+  // Einträge der Liste, die dasselbe meinen wie dieses Angebot (gleicher Name ohne Menge und Zeichen)
+  _same(o) { const key = norm(itemName(o.name)); return (this._items || []).filter((i) => norm(i.name) === key); }
+  _onListCount(o) { return this._same(o).reduce((a, i) => a + this._countOf(i.text), 0); }
+  async _step(o, delta, btn) {
+    const it = this._same(o)[0];
+    if (!it) return this._add(o, btn);
+    if (btn) btn.disabled = true;
+    try {
+      const n = this._countOf(it.text) + delta;
+      if (n <= 0) await this._hass.callService("todo", "remove_item", { item: it.uid }, { entity_id: this._config.list });
+      else await this._hass.callService("todo", "update_item", { item: it.uid, rename: this._withCount(it.text, n) }, { entity_id: this._config.list });
+      this._sig = null; await this._loadList(); this._render();
+    } catch (e) { if (btn) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; } }
+  }
+  // ＋ oder – steht der Artikel schon auf der Liste – ein Zähler (− 2× +)
+  _addCtl(o, wide) {
+    const t = this._t, n = this._onListCount(o);
+    if (!this._config.list) return null;
+    if (!n) return h("button", { type: "button", class: wide ? "btn" : "btn plus", title: t.add, "aria-label": `${t.add}: ${o.name}`, onclick: (e) => this._add(o, e.currentTarget) }, wide ? "＋ " + t.add : "＋");
+    return h("span", { class: "stepper", title: t.on_n.replace("{n}", n) },
+      h("button", { type: "button", "aria-label": `− ${o.name}`, onclick: (e) => this._step(o, -1, e.currentTarget) }, "−"), h("b", {}, `${n}×`),
+      h("button", { type: "button", "aria-label": `+ ${o.name}`, onclick: (e) => this._step(o, 1, e.currentTarget) }, "+"));
+  }
+  // Doppelte Einträge zu einem zusammenfassen (Summe der Anzahl, Notiz des ersten bleibt)
+  async _merge(group, btn) {
+    btn.disabled = true;
+    try {
+      const total = group.reduce((a, i) => a + this._countOf(i.text), 0);
+      await this._hass.callService("todo", "update_item", { item: group[0].uid, rename: this._withCount(group[0].text, total) }, { entity_id: this._config.list });
+      await this._hass.callService("todo", "remove_item", { item: group.slice(1).map((i) => i.uid) }, { entity_id: this._config.list });
+      this._sig = null; await this._refresh(true);
+    } catch (e) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; }
+  }
   async _add(o, btn) {
     btn.disabled = true;
     try {
       await this._hass.callService("todo", "add_item", { item: o.name, description: this._offerNote(o) }, { entity_id: this._config.list });
-      btn.textContent = btn.classList.contains("plus") ? "✓" : this._t.added; btn.classList.add("done");
-      this._sig = null; await this._loadList();
+      this._sig = null; await this._loadList(); this._render();
     } catch (e) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; }
   }
 }
@@ -645,13 +726,18 @@ class SmartDiscountsCardEditor extends HTMLElement {
     const b = (name) => ({ name, selector: { boolean: {} } });
     // nur Sensoren anbieten, die wirklich Angebote liefern
     const found = sourcesOf(this._hass, "auto").map((s) => s.entity);
+    const storeNames = [...new Set([...collectOffers(this._hass, "auto").map((o) => o.store), ...(Array.isArray(this._config.stores) ? this._config.stores : [])])].sort((a, b) => a.localeCompare(b));
     const schema = [
       { name: "title", selector: { text: {} } },
       { name: "list", selector: { entity: { domain: "todo" } } },
+      ...(storeNames.length ? [{ name: "stores", selector: { select: { multiple: true, mode: "dropdown", options: storeNames.map((x) => ({ value: x, label: x })) } } }] : []),
       { name: "entities", selector: { entity: { multiple: true, ...(found.length ? { include_entities: [...new Set([...found, ...(this._config.entities || [])])] } : { domain: "sensor" }) } } },
       { name: "match", selector: { select: { mode: "dropdown", options: [["word", t.m_word], ["exact", t.m_exact], ["part", t.m_part]].map(([value, label]) => ({ value, label })) } } },
       { name: "default_tab", selector: { select: { mode: "dropdown", options: [["list", t.tab_list], ["all", t.tab_all], ["watch", t.tab_watch]].map(([value, label]) => ({ value, label })) } } },
       { name: "list_view", selector: { select: { mode: "dropdown", options: [["chips", t.v_chips], ["rows", t.v_rows]].map(([value, label]) => ({ value, label })) } } },
+      b("show_list_tab"),
+      b("categories_open"),
+      { name: "category_source", selector: { select: { mode: "dropdown", options: [["auto", t.cs_auto], ["store", t.cs_store]].map(([value, label]) => ({ value, label })) } } },
       { name: "group_by", selector: { select: { mode: "dropdown", options: [["store", t.g_store], ["category", t.g_cat]].map(([value, label]) => ({ value, label })) } } },
       { name: "all_view", selector: { select: { mode: "dropdown", options: [["tiles", t.v_tiles], ["list", t.v_list]].map(([value, label]) => ({ value, label })) } } },
       { type: "grid", name: "", schema: [b("show_images"), b("compact"), b("show_unit_price"), b("show_valid_until"), b("hide_without_offer")] },
@@ -662,7 +748,7 @@ class SmartDiscountsCardEditor extends HTMLElement {
       { name: "notify_service", selector: { text: {} } },
       { name: "currency_symbol", selector: { text: {} } },
     ];
-    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, list_view: t.e_lview, all_view: t.e_view, group_by: t.e_group, entities: t.e_entities, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
+    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, list_view: t.e_lview, all_view: t.e_view, group_by: t.e_group, entities: t.e_entities, stores: t.e_stores, show_list_tab: t.e_list_tab, category_source: t.e_cat_src, categories_open: t.e_cat_open, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
       show_valid_until: t.e_until, hide_without_offer: t.e_hide_none, max_per_store: t.e_max,
       watch: t.e_watch, watch_list: t.e_watch_list, notify: t.e_notify, notify_service: t.e_notify_service, currency_symbol: t.e_symbol };
     if (!this._form) {

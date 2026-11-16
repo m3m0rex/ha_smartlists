@@ -18,11 +18,16 @@ Third pre-release of 4.0.
 ### Added
 
 - **Offers card: "All offers" grouped by category** instead of by store (`group_by: category`, or the 🗂️ button in the
-  card). With SmartLists the shopping categories are used – the same for all stores and in store order; without it the
+  card), with headings that fold (`categories_open: false` starts them folded). With SmartLists the shopping
+  categories are used – the same for all stores and in store order; without it, or with `category_source: store`, the
   categories of the sensors.
-
-- **Offers card: limit a card to one or several offer sensors** (`entities:`, selectable in the visual editor) – e.g. one
-  card only for REWE and another only for ALDI.
+- **Offers card: category filter as a bar** with counts instead of the browser's select box – the largest first, the
+  rest behind "+N more", wrapping without a scroll bar. The search field also finds category names ("fruit").
+- **Offers card: already on the list.** ＋ no longer adds a second entry: the button becomes a counter (− 2× +) that
+  changes the count of the existing entry. Duplicates already on the list can be merged with one tap.
+- **Offers card: one card per store.** Limit a card to stores (`stores: [REWE]`) or to offer sensors (`entities:`) –
+  both selectable in the visual editor, e.g. one card only for REWE and another only for ALDI.
+- **Offers card: `show_list_tab: false`** hides the "My list" tab – e.g. for a leaflet-style card on a wall tablet.
 
 ### Fixed
 

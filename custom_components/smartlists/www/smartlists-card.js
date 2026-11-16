@@ -4694,13 +4694,15 @@ class SmartListsCard extends HTMLElement {
     const cat = d.categories.find((c) => c.id === it.category);
     const tags = !this._config.show_tags ? [] : (it.tags || []).filter((x) => this._config.show_source || !x.implicit);
     const toggle = () => { if (on) this._sel.delete(it.uid); else this._sel.add(it.uid); this._renderList(); };
+    const note = this._config.show_note && it.note;
     return h("div", { class: `row selmode ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${on ? "sel" : ""}`, role: "checkbox", "aria-checked": String(on), tabindex: "0",
       onclick: toggle, onkeydown: (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } } },
       h("span", { class: `box selbox ${on ? "on" : ""}` }, on ? svg(ICON.check, 16) : null),
       showEmoji ? h("span", { class: "catemoji" }, cat ? emojiOf(cat.label) : "") : null,
       h("div", { class: "main" },
         h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill", style: it.checked ? null : markStyle("count") }, countOf(it)) : null, h("span", { class: "iname" }, showName(it.name)), sizeOf(it) ? h("span", { class: "sizechip", style: it.checked ? null : markStyle("size") }, sizeOf(it)) : null),
-        tags.length ? h("div", { class: "subline" }, tags.map(badge)) : null),
+        // Badges und Notiz wie in der normalen Zeile – beim Auswählen will man sehen, was man markiert
+        tags.length || note ? h("div", { class: "subline" }, tags.map(badge), note ? h("span", { class: "note" }, it.note) : null) : null),
       h("span", { class: "stepcol" }), h("div", { class: "actions" }));
   }
   _startSelect(it) {

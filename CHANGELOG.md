@@ -15,6 +15,7 @@ Fifth pre-release of 4.0.
 
 ### Fixed
 
+- **Notes stay visible while selecting several items.** In "Select several" the rows showed the badges but not the note.
 - **Offers card: the same offer no longer appears twice** when two sensors report it (for example two integrations or
   two branches of the same store). Offers count as the same when store, name, price and end date match; an offer with a
   different price stays separate. The background check of the watch list follows the same rule.

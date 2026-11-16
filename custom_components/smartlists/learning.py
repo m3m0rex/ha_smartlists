@@ -770,6 +770,7 @@ def currency_symbols(appearance: dict[str, Any] | None) -> tuple[str, ...]:
         return (look["currency_symbol"],)  # eigenes Symbol (z. B. "₺", "Rp", "лв")
     return CURRENCIES.get((appearance or {}).get("currency") or "EUR", CURRENCIES["EUR"])
 BADGE_STYLES = ("filled", "soft", "outline", "text")
+MARK_KINDS = ("count", "size", "offer")
 
 
 def scoped_count(entry: dict[str, Any], scope: set[str] | None) -> int:
@@ -795,7 +796,8 @@ def validate_appearance(raw: Any) -> dict[str, Any]:
     if not isinstance(raw, dict):
         return out
     for kind, v in (raw.get("kinds") or {}).items():
-        if kind not in itemtext.TAG_KINDS or not isinstance(v, dict):
+        # 4.0: auch Anzahl („2ד), Größe („1 l“) und der Angebots-Hinweis lassen sich gestalten
+        if kind not in (*itemtext.TAG_KINDS, *MARK_KINDS) or not isinstance(v, dict):
             continue
         clean = {}
         if v.get("style") in BADGE_STYLES:

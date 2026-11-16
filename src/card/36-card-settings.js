@@ -852,6 +852,24 @@
             onchange: (e) => setK({ icon: e.target.value === BADGE_DEFAULTS[kind].icon ? null : e.target.value }) }), t),
           reset(() => { const n = { ...look.kinds }; delete n[kind]; look = { ...look, kinds: n }; draw(); save(); }, t.reset_default)));
     };
+    // Anzahl, Größe und Angebots-Hinweis: Stil + Farbe (kein Symbol)
+    const markRow = (kind, sampleText) => {
+      const k = look.kinds[kind] || {}, cur = { ...MARK_DEFAULTS[kind], ...k };
+      const prev = h("small", {}, h("span", { class: kind === "count" ? "qpill" : kind === "size" ? "sizechip" : "dealhint", style: markStyle(kind, look) + (kind === "offer" ? ";padding:1px 8px" : "") }, sampleText));
+      const setK = (patch) => {
+        const next = { ...k, ...patch };
+        Object.keys(next).forEach((x) => (next[x] == null || next[x] === "" || next[x] === MARK_DEFAULTS[kind][x]) && delete next[x]);
+        const kinds = { ...look.kinds, [kind]: next };
+        if (!Object.keys(next).length) delete kinds[kind];
+        look = { ...look, kinds }; draw(); save();
+      };
+      return h("div", { class: "srow2" }, h("div", { class: "sl" }, t["kind_" + kind], prev),
+        h("div", { class: "look-row" },
+          h("select", { "aria-label": `${t["kind_" + kind]}: ${t.look_style}`, onchange: (e) => setK({ style: e.target.value }) },
+            BADGE_STYLES.map((st) => h("option", { value: st, selected: cur.style === st }, t["look_" + st]))),
+          colorInput(cur.color, (c) => { prev.firstChild.style.cssText = markStyle(kind, { ...look, kinds: { ...look.kinds, [kind]: { ...k, color: c } } }); }, (c) => setK({ color: c }), `${t["kind_" + kind]}: ${t.look_color}`),
+          reset(() => { const n = { ...look.kinds }; delete n[kind]; look = { ...look, kinds: n }; draw(); save(); }, t.reset_default)));
+    };
     const listEl = h("div");
     const drawValues = () => {
       const q = searchKey(query);
@@ -896,6 +914,7 @@
     const draw = () => {
       fill(body,
         h("div", { class: "grp" }, t.look_kinds), kindRow("store"), kindRow("person"), kindRow("tag"),
+        markRow("count", "2×"), markRow("size", "1 l"), markRow("offer", `🏷️ ${fmtMoney(1.99, this._hass.language)}`),
         h("div", { class: "grp" }, t.look_values),
         h("input", { type: "search", class: "search2", placeholder: t.look_search, "aria-label": t.look_search, value: query, oninput: (e) => { query = e.target.value; drawValues(); } }),
         listEl,

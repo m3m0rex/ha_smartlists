@@ -1,5 +1,6 @@
 const TEXTS = {
   de: {
+    kind_count: "Anzahl (2×)", kind_size: "Größe (1 l)", kind_offer: "Angebots-Hinweis",
     wl_send_to: "Senden an", wl_add_target: "Ziel hinzufügen", wl_search: "Durchsuchen", wl_hass: "In Home Assistant", wl_hass_sub: "Benachrichtigung in der Seitenleiste", wl_grp_dev: "Smartphones & Tablets", wl_grp_other: "Weitere Dienste", wl_none: "Keine", wl_done: "Fertig", wl_n: "{n} ausgewählt", wl_no_target: "Kein Ziel gewählt – es wird nichts gesendet.",
     wl_menu: "Auf die Merkliste", wl_added: "steht auf der Merkliste", wl_title: "Merkliste", wl_help: "Produkte, bei denen du auf ein Angebot wartest. Hinzufügen: im Menü eines Artikels oder in der Angebots-Karte.", wl_empty: "Noch nichts gemerkt.", wl_notify: "Benachrichtigen, wenn etwas davon im Angebot ist", wl_notify_help: "Home Assistant prüft alle 30 Minuten – auch wenn kein Dashboard geöffnet ist – und meldet jedes Angebot einmal.", wl_service: "Zusätzlich senden an (z. B. notify.mobile_app_…)", ph_low: "Günstigster Preis bisher", tpl_suggest: "Häufig gekauft – antippen zum Hinzufügen:", tpl_from_done: "Aus Erledigtem", tpl_clean: "Aufzählungszeichen und Nummern entfernt",
     cur_custom: "Eigenes Symbol …", cur_symbol: "Symbol", cur_symbol_help: "Bis 6 Zeichen, z. B. ₺, Rp oder лв – steht hinter dem Betrag und wird beim Eintippen als Preis erkannt.", cur_symbol_bad: "Symbol nicht möglich – ohne Ziffern, Leerzeichen und @ # * + ~ !",
@@ -273,6 +274,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    kind_count: "Count (2×)", kind_size: "Size (1 l)", kind_offer: "Offer hint",
     wl_send_to: "Send to", wl_add_target: "Add target", wl_search: "Search", wl_hass: "In Home Assistant", wl_hass_sub: "Notification in the sidebar", wl_grp_dev: "Smartphones & tablets", wl_grp_other: "Other services", wl_none: "None", wl_done: "Done", wl_n: "{n} selected", wl_no_target: "No target selected – nothing is sent.",
     wl_menu: "Add to watch list", wl_added: "is on the watch list", wl_title: "Watch list", wl_help: "Products you are waiting to see on offer. Add them from an item's menu or in the offers card.", wl_empty: "Nothing here yet.", wl_notify: "Notify when one of them is on offer", wl_notify_help: "Home Assistant checks every 30 minutes – even with no dashboard open – and reports every offer once.", wl_service: "Also send to (e.g. notify.mobile_app_…)", ph_low: "Lowest price so far", tpl_suggest: "Bought often – tap to add:", tpl_from_done: "From checked items", tpl_clean: "Bullets and numbers removed",
     cur_custom: "Own symbol …", cur_symbol: "Symbol", cur_symbol_help: "Up to 6 characters, e.g. ₺, Rp or лв – shown after the amount and recognised as a price while typing.", cur_symbol_bad: "Symbol not possible – no digits, spaces or @ # * + ~ !",
@@ -546,6 +548,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    kind_count: "Nombre (2×)", kind_size: "Taille (1 l)", kind_offer: "Indication de promo",
     wl_send_to: "Envoyer à", wl_add_target: "Ajouter une cible", wl_search: "Rechercher", wl_hass: "Dans Home Assistant", wl_hass_sub: "Notification dans la barre latérale", wl_grp_dev: "Smartphones et tablettes", wl_grp_other: "Autres services", wl_none: "Aucune", wl_done: "Terminé", wl_n: "{n} sélectionnée(s)", wl_no_target: "Aucune cible choisie – rien n'est envoyé.",
     wl_menu: "Ajouter aux produits surveillés", wl_added: "est surveillé", wl_title: "Produits surveillés", wl_help: "Produits dont tu attends une promo. Ajoute-les depuis le menu d'un article ou dans la carte des promos.", wl_empty: "Rien pour l'instant.", wl_notify: "Notifier quand l'un d'eux est en promo", wl_notify_help: "Home Assistant vérifie toutes les 30 minutes – même sans tableau de bord ouvert – et signale chaque promo une fois.", wl_service: "Envoyer aussi à (p. ex. notify.mobile_app_…)", ph_low: "Prix le plus bas jusqu'ici", tpl_suggest: "Souvent achetés – touche pour ajouter :", tpl_from_done: "Depuis les articles cochés", tpl_clean: "Puces et numéros retirés",
     cur_custom: "Symbole personnalisé …", cur_symbol: "Symbole", cur_symbol_help: "Jusqu'à 6 caractères, p. ex. ₺, Rp ou лв – affiché après le montant et reconnu comme prix à la saisie.", cur_symbol_bad: "Symbole impossible – sans chiffres, espaces ni @ # * + ~ !",
@@ -819,6 +822,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    kind_count: "Cantidad (2×)", kind_size: "Tamaño (1 l)", kind_offer: "Aviso de oferta",
     wl_send_to: "Enviar a", wl_add_target: "Añadir destino", wl_search: "Buscar", wl_hass: "En Home Assistant", wl_hass_sub: "Notificación en la barra lateral", wl_grp_dev: "Smartphones y tabletas", wl_grp_other: "Otros servicios", wl_none: "Ninguno", wl_done: "Listo", wl_n: "{n} seleccionado(s)", wl_no_target: "Ningún destino elegido – no se envía nada.",
     wl_menu: "Añadir al seguimiento", wl_added: "está en seguimiento", wl_title: "Seguimiento", wl_help: "Productos de los que esperas una oferta. Añádelos desde el menú de un artículo o en la tarjeta de ofertas.", wl_empty: "Aún no hay nada.", wl_notify: "Avisar cuando alguno esté en oferta", wl_notify_help: "Home Assistant comprueba cada 30 minutos – aunque no haya ningún panel abierto – y avisa una vez por oferta.", wl_service: "Enviar también a (p. ej. notify.mobile_app_…)", ph_low: "Precio más bajo hasta ahora", tpl_suggest: "Comprados a menudo – toca para añadir:", tpl_from_done: "De lo ya marcado", tpl_clean: "Viñetas y números eliminados",
     cur_custom: "Símbolo propio …", cur_symbol: "Símbolo", cur_symbol_help: "Hasta 6 caracteres, p. ej. ₺, Rp o лв – aparece tras el importe y se reconoce como precio al escribir.", cur_symbol_bad: "Símbolo no válido – sin cifras, espacios ni @ # * + ~ !",
@@ -1092,6 +1096,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    kind_count: "Numero (2×)", kind_size: "Formato (1 l)", kind_offer: "Segnalazione offerta",
     wl_send_to: "Invia a", wl_add_target: "Aggiungi destinazione", wl_search: "Cerca", wl_hass: "In Home Assistant", wl_hass_sub: "Notifica nella barra laterale", wl_grp_dev: "Smartphone e tablet", wl_grp_other: "Altri servizi", wl_none: "Nessuna", wl_done: "Fatto", wl_n: "{n} selezionate", wl_no_target: "Nessuna destinazione scelta – non viene inviato nulla.",
     wl_menu: "Aggiungi ai prodotti seguiti", wl_added: "è tra i prodotti seguiti", wl_title: "Prodotti seguiti", wl_help: "Prodotti di cui aspetti un'offerta. Aggiungili dal menu di un articolo o nella scheda offerte.", wl_empty: "Ancora niente.", wl_notify: "Avvisa quando uno è in offerta", wl_notify_help: "Home Assistant controlla ogni 30 minuti – anche senza dashboard aperta – e segnala ogni offerta una volta.", wl_service: "Invia anche a (ad es. notify.mobile_app_…)", ph_low: "Prezzo più basso finora", tpl_suggest: "Comprati spesso – tocca per aggiungere:", tpl_from_done: "Dagli articoli spuntati", tpl_clean: "Punti elenco e numeri rimossi",
     cur_custom: "Simbolo personalizzato …", cur_symbol: "Simbolo", cur_symbol_help: "Fino a 6 caratteri, ad es. ₺, Rp o лв – compare dopo l'importo ed è riconosciuto come prezzo durante la digitazione.", cur_symbol_bad: "Simbolo non valido – senza cifre, spazi né @ # * + ~ !",
@@ -1365,6 +1370,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    kind_count: "Liczba (2×)", kind_size: "Wielkość (1 l)", kind_offer: "Wskazówka promocji",
     wl_send_to: "Wyślij do", wl_add_target: "Dodaj cel", wl_search: "Szukaj", wl_hass: "W Home Assistant", wl_hass_sub: "Powiadomienie w pasku bocznym", wl_grp_dev: "Smartfony i tablety", wl_grp_other: "Inne usługi", wl_none: "Żaden", wl_done: "Gotowe", wl_n: "Wybrano: {n}", wl_no_target: "Nie wybrano celu – nic nie zostanie wysłane.",
     wl_menu: "Dodaj do obserwowanych", wl_added: "jest obserwowany", wl_title: "Obserwowane", wl_help: "Produkty, na których promocję czekasz. Dodaj je z menu produktu lub w karcie promocji.", wl_empty: "Jeszcze nic.", wl_notify: "Powiadom, gdy któryś jest w promocji", wl_notify_help: "Home Assistant sprawdza co 30 minut – także bez otwartego dashboardu – i zgłasza każdą promocję raz.", wl_service: "Wyślij też do (np. notify.mobile_app_…)", ph_low: "Najniższa cena do tej pory", tpl_suggest: "Często kupowane – dotknij, aby dodać:", tpl_from_done: "Z odhaczonych", tpl_clean: "Usunięto punktory i numery",
     cur_custom: "Własny symbol …", cur_symbol: "Symbol", cur_symbol_help: "Do 6 znaków, np. ₺, Rp lub лв – stoi po kwocie i jest rozpoznawany jako cena przy wpisywaniu.", cur_symbol_bad: "Symbol niedozwolony – bez cyfr, spacji i @ # * + ~ !",

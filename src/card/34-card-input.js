@@ -566,8 +566,12 @@
         // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
         this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null],
       price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
-        deals.length ? h("button", { type: "button", class: "dealhint", title: t.deal_title.replace("{name}", it.name), onclick: (e) => { e.stopPropagation(); this._dealDialog(it, deals); } },
-          `🏷️ ${t.deal_from.replace("{price}", fmtMoney(deals[0].price, this._hass.language))}${deals.length > 1 ? ` · ${deals.length}` : ""}`) : null],
+        // Angebots-Hinweis mit allem, was man zum Entscheiden braucht: Markt, Preis, gültig bis – und wie viele es gibt
+        deals.length ? h("button", { type: "button", class: "dealhint", style: markStyle("offer"), title: `${t.deal_title.replace("{name}", it.name)} – ${deals[0].name}`, onclick: (e) => { e.stopPropagation(); this._dealDialog(it, deals); } },
+          h("span", { class: "dstore", style: `background:${deals[0].color};${/^#(f|e)[0-9a-f]{5}$/i.test(deals[0].color || "") ? "color:#1a1a1a" : ""}` }, deals[0].store),
+          `🏷️ ${(deals.length > 1 ? t.deal_from : "{price}").replace("{price}", fmtMoney(deals[0].price, this._hass.language))}`,
+          deals[0].until ? h("span", { class: "duntil" }, `${t.offer_until || "bis"} ${String(deals[0].until).slice(8, 10)}.${String(deals[0].until).slice(5, 7)}.`) : null,
+          deals.length > 1 ? h("span", { class: "dmore" }, `+${deals.length - 1}`) : null) : null],
       note: [this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
     };
     const sub = slRowOrder().flatMap((k) => part[k] || []);
@@ -581,7 +585,7 @@
       showEmoji ? h("span", { class: "catemoji", title: cat ? cat.label : "" }, cat ? emojiOf(cat.label) : "") : null,
       h("div", { class: "main" },
         // Zeile 1: Anzahl (gefüllt) · Name · Größe (umrandet) – fest markiert, damit man sie beim Einkaufen sofort sieht
-        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, nameEl, sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill", style: it.checked ? null : markStyle("count") }, countOf(it)) : null, nameEl, sizeOf(it) ? h("span", { class: "sizechip", style: it.checked ? null : markStyle("size") }, sizeOf(it)) : null),
         // Zeile 2: Badges, Herkunft, Preis und Notiz
         sub.some(Boolean) ? h("div", { class: "subline" }, sub) : null,
         it.offer && this._config.show_offer !== false ? this._offerLine(it, tags) : null,
@@ -615,7 +619,7 @@
       h("span", { class: `box selbox ${on ? "on" : ""}` }, on ? svg(ICON.check, 16) : null),
       showEmoji ? h("span", { class: "catemoji" }, cat ? emojiOf(cat.label) : "") : null,
       h("div", { class: "main" },
-        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill" }, countOf(it)) : null, h("span", { class: "iname" }, showName(it.name)), sizeOf(it) ? h("span", { class: "sizechip" }, sizeOf(it)) : null),
+        h("div", { class: "name-line" }, countOf(it) ? h("span", { class: "qpill", style: it.checked ? null : markStyle("count") }, countOf(it)) : null, h("span", { class: "iname" }, showName(it.name)), sizeOf(it) ? h("span", { class: "sizechip", style: it.checked ? null : markStyle("size") }, sizeOf(it)) : null),
         tags.length ? h("div", { class: "subline" }, tags.map(badge)) : null),
       h("span", { class: "stepcol" }), h("div", { class: "actions" }));
   }

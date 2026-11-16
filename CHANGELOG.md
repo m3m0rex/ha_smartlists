@@ -20,6 +20,11 @@ Fourth pre-release of 4.0.
 - **Offers card: choose the tabs and their order** (`tabs: [all, watch]`, in the editor with drag to reorder). With only
   one tab the tab bar disappears. `show_list_tab: false` from beta 3 still works.
 
+- **Style of the count ("2×"), the size ("1 l") and the offer hint** can be set under *Badges & colours* like the other
+  badges: filled, subtle, outline or text only, each with its own colour.
+- **The offer hint in the shopping list shows more:** the store as a badge, the price, "until 21.11." and how many
+  further offers there are – instead of only "from 1,99 €".
+
 ### Changed
 
 - **Offers card: tiles run top to bottom** in a grid instead of one row with a sideways scroll bar. The old behaviour

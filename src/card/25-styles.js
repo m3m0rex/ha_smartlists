@@ -123,7 +123,9 @@ const STYLE = `
   .group-title.bar.closed .chev { transform:rotate(-90deg); }
   .fchip.flbl { display:inline-flex; align-items:center; gap:2px; border-color:transparent; color:var(--secondary-text-color); padding-left:2px; font-size:.75rem; }
   .fchip.flbl .chev { transition:transform .15s; } .fchip.flbl.closed .chev { transform:rotate(-90deg); }
-  .dealhint { border:none; font:inherit; font-size:.72rem; font-weight:700; background:#f2b705; color:#1a1a1a; border-radius:9px; padding:1px 8px; cursor:pointer; white-space:nowrap; }
+  .dealhint { border:none; font:inherit; font-size:.72rem; font-weight:700; background:#f2b705; color:#1a1a1a; border-radius:9px; padding:1px 8px 1px 2px; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; }
+  .dealhint .dstore { color:#fff; border-radius:7px; padding:0 6px; font-size:.66rem; line-height:1.5; }
+  .dealhint .duntil, .dealhint .dmore { font-weight:500; opacity:.8; }
   .group-title.bar small { color:var(--secondary-text-color); font-weight:400; font-size:.78rem; }
   /* schmale Karte: Stift/Papierkorb ausblenden – Bearbeiten über die Geste (Einstellungen → Bedienung) */
   .listwrap { container-type:inline-size; }

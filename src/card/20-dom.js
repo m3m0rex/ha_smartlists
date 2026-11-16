@@ -74,6 +74,15 @@ function textOn(color) {
   const n = parseInt(m[1], 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
   return 0.299 * r + 0.587 * g + 0.114 * b > 170 ? "#1a1a1a" : "#fff";
 }
+// Anzahl („2ד), Größe („1 l“) und Angebots-Hinweis: Stil und Farbe wie bei den Badges einstellbar (Einstellungen → Badges & Farben)
+const MARK_DEFAULTS = { count: { style: "soft", color: "#e39a1c" }, size: { style: "outline", color: "#e39a1c" }, offer: { style: "filled", color: "#f2b705" } };
+function markStyle(kind, look = SL_LOOK) {
+  const k = { ...MARK_DEFAULTS[kind], ...(((look && look.kinds) || {})[kind] || {}) }, c = k.color;
+  if (k.style === "filled") return `background:${c};color:${k.text || textOn(c)};border:1.5px solid ${c}`;
+  if (k.style === "outline") return `background:none;color:${k.text || c};border:1.5px solid ${c}`;
+  if (k.style === "text") return `background:none;color:${k.text || c};border:1.5px solid transparent;padding-left:0;padding-right:0`;
+  return `background:color-mix(in srgb, ${c} 18%, transparent);color:${k.text || c};border:1.5px solid transparent`;
+}
 function badge(tag, look = SL_LOOK) {
   if (!look || typeof look !== "object") look = SL_LOOK; // auch bei tags.map(badge) (2. Argument = Index)
   const kind = tag.kind === "store" || tag.kind === "person" ? tag.kind : "tag";

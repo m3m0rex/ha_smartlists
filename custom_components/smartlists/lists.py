@@ -402,6 +402,24 @@ async def remove_items(hass: HomeAssistant, entity_id: str, uids: list[str], con
     return {}
 
 
+async def clear_expired_offers(hass: HomeAssistant, entity_id: str, context: Context | None = None) -> dict[str, Any]:
+    """Abgelaufene Angebote von den Artikeln nehmen (Markt, Preis, „gültig bis“) – Artikel und Notiz bleiben."""
+    entity = combined_entity(hass, entity_id)
+    removed = 0
+    for item in await raw_items(hass, entity_id):
+        clean, offer, raw_line = split_offer(item.get("note"))
+        if not raw_line or not offer or not offer.get("expired"):
+            continue
+        if entity is not None:
+            removed += bool(await entity.async_clear_offer(item["uid"]))
+        else:
+            await _call(hass, "update_item", {"entity_id": entity_id, "item": item["uid"], "description": clean}, context)
+            removed += 1
+    if entity is not None and removed:
+        await entity._async_refresh()  # noqa: SLF001 – wie nach jeder Änderung über die kombinierte Liste
+    return {"removed": removed}
+
+
 async def clear_completed(hass: HomeAssistant, entity_id: str, context: Context | None = None) -> dict[str, Any]:
     await _call(hass, "remove_completed_items", {"entity_id": entity_id}, context)
     return {}

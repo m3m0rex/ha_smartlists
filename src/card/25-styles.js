@@ -110,6 +110,10 @@ const STYLE = `
   .subline { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin-top:3px; }
   .subline .note { margin:0; }
   .stepcol { display:flex; justify-content:flex-end; }
+  .expbox { margin:4px 10px 8px; padding:10px 12px; border-radius:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    background:color-mix(in srgb, var(--warning-color,#ff9800) 14%, transparent); border:1px solid color-mix(in srgb, var(--warning-color,#ff9800) 40%, transparent); }
+  .expbox .et { flex:1 1 200px; min-width:0; } .expbox .et small { display:block; color:var(--secondary-text-color); font-size:.76rem; }
+  .expbox .eb { display:flex; gap:6px; margin-left:auto; } .expbox .btn2 { height:32px; }
   .kv { display:grid; grid-template-columns:auto 1fr; gap:4px 16px; font-size:.9rem; } .kv span { color:var(--secondary-text-color); }
   /* Kategorie als getönter Balken */
   .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;

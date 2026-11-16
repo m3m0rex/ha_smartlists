@@ -631,6 +631,17 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
             self._learning.record(item.summary or "", self._default_add)
         await self._async_refresh()
 
+    async def async_clear_offer(self, uid: str) -> bool:
+        """Angebot (⚙OFFER-Zeile) eines Artikels entfernen – direkt in der Quell-Liste, die übrige Notiz bleibt.
+        Über async_update_todo_item ginge das nicht: dort wird die Zeile absichtlich wieder angehängt."""
+        source, source_uid, _original = self._lookup(uid)
+        await self._require("rename")
+        clean, _offer, raw_line = split_offer(self._raw_desc.get(uid))
+        if not raw_line:
+            return False
+        await self._call("update_item", {"entity_id": source, "item": source_uid, "description": clean})
+        return True
+
     async def async_update_todo_item(self, item: TodoItem) -> None:
         """Abhaken / Umbenennen / Beschreibung ändern."""
         source, source_uid, original = self._lookup(item.uid)

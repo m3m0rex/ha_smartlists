@@ -18,7 +18,7 @@ const TEXTS = {
     no_list: "Keine Liste gewählt – trage in der Karte unter „list“ eine To-do-Liste ein, um Angebote mit ihr abzugleichen.", list_empty: "Die Liste ist leer.", none: "kein Angebot", offers: "Angebote", offer1: "Angebot",
     on_offer: "{n} von {m} Artikeln im Angebot", cheapest: "Günstigste wählen", only: "nur {store}", chosen: "{n} gewählt", sum: "Summe", apply: "In Liste übernehmen", applied: "✓ übernommen", pick_hint: "Preis antippen, um ein Angebot zu wählen",
     until: "bis", today: "nur noch heute", expired: "abgelaufen", add: "Auf die Liste", added: "✓ auf der Liste", all: "alle", less: "weniger", on_list: "steht auf deiner Liste", best: "günstigster", item: "Artikel",
-    no_hits: "Nichts gefunden.", all_cats: "Alle Kategorien", error: "Das hat nicht geklappt.", attached: "Angebot gewählt", stand: "Stand", in_offer: "im Angebot", without: "ohne Angebot",
+    no_hits: "Nichts gefunden.", exp_n: "Abgelaufene Angebote auf der Liste: {n}", exp_remove: "Entfernen", exp_later: "Später", all_cats: "Alle Kategorien", error: "Das hat nicht geklappt.", attached: "Angebot gewählt", stand: "Stand", in_offer: "im Angebot", without: "ohne Angebot",
     e_title: "Titel", e_list: "Einkaufsliste (To-do)", e_match: "Artikel passt zum Angebot, wenn", m_word: "ganzes Wort im Namen (Butter ≠ Butterkeks)", m_exact: "nur genau dieses Wort", m_part: "Teil des Namens",
     e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)", e_view: "Darstellung „Alle Angebote“", v_tiles: "Kacheln", v_list: "Liste mit kleinen Bildern", e_lview: "Darstellung „Meine Liste“", v_chips: "Preise nebeneinander", v_rows: "ein Angebot je Zeile",
     e_sources: "Quellen werden automatisch erkannt. Eigene Sensoren und Feld-Zuordnung: im Code-Editor unter „sources“ (siehe README)." },
@@ -26,7 +26,7 @@ const TEXTS = {
     no_list: "No list selected – set a to-do list under \"list\" to match offers against it.", list_empty: "The list is empty.", none: "no offer", offers: "offers", offer1: "offer",
     on_offer: "{n} of {m} items on offer", cheapest: "Pick cheapest", only: "only {store}", chosen: "{n} selected", sum: "Total", apply: "Apply to list", applied: "✓ applied", pick_hint: "Tap a price to pick an offer",
     until: "until", today: "today only", expired: "expired", add: "Add to list", added: "✓ on the list", all: "all", less: "less", on_list: "is on your list", best: "cheapest", item: "Item",
-    no_hits: "Nothing found.", all_cats: "All categories", error: "That did not work.", attached: "offer selected", stand: "as of", in_offer: "on offer", without: "no offer",
+    no_hits: "Nothing found.", exp_n: "Expired offers on the list: {n}", exp_remove: "Remove", exp_later: "Later", all_cats: "All categories", error: "That did not work.", attached: "offer selected", stand: "as of", in_offer: "on offer", without: "no offer",
     e_title: "Title", e_list: "Shopping list (to-do)", e_match: "Item matches an offer if", m_word: "whole word in the name (butter ≠ butter biscuit)", m_exact: "exactly this word only", m_part: "part of the name",
     e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)", e_view: "\"All offers\" layout", v_tiles: "Tiles", v_list: "List with small images", e_lview: "\"My list\" layout", v_chips: "Prices side by side", v_rows: "One offer per row",
     e_sources: "Sources are detected automatically. Own sensors and field mapping: in the code editor under \"sources\" (see README)." },
@@ -137,6 +137,9 @@ const STYLE = `
   .lrow .pr .pct { color:var(--error-color,#db4437); font-weight:800; font-size:.72rem; margin-left:4px; }
   .lrow .plus { width:34px; height:34px; padding:0; font-size:1.1rem; flex:none; }
   .compact .lrow { padding:4px 2px; }
+  .expbox { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; padding:9px 12px; border-radius:12px; font-size:.86rem;
+    background:color-mix(in srgb, var(--warning-color,#ff9800) 14%, transparent); border:1px solid color-mix(in srgb, var(--warning-color,#ff9800) 40%, transparent); }
+  .expbox small { color:var(--secondary-text-color); } .expbox .sp { flex:1; }
   .plan .ph { display:flex; align-items:center; gap:8px; } .plan .ph b { flex:1; }
   .vbtn.sm { width:32px; height:32px; font-size:.95rem; }
   .orows { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
@@ -376,7 +379,11 @@ class SmartDiscountsCard extends HTMLElement {
     const sum = h("div", { class: "sum" }, h("div", {}, chosen.length ? t.chosen.replace("{n}", chosen.length) : t.pick_hint,
       chosen.length ? h("small", {}, `${t.sum} ${this._money(total)} · ${[...new Set(chosen.map(([, o]) => o.store))].join(", ")}`) : null),
       h("span", { class: "sp" }), chosen.length ? h("button", { type: "button", class: "btn pri", onclick: (e) => this._apply(chosen, e.currentTarget) }, t.apply) : null);
-    return h("div", {}, plan, mx, h("div", { class: "rows" }, rows.map(line)), sum, this._foot());
+    const old = items.filter((i) => this._expiredNote(i.note));
+    const expBox = old.length && !this._expLater ? h("div", { class: "expbox", role: "status" }, h("b", {}, "🏷️ " + t.exp_n.replace("{n}", old.length)), h("small", {}, old.slice(0, 3).map((i) => i.name || i.text).join(", ")),
+      h("span", { class: "sp" }), h("button", { type: "button", class: "btn", onclick: () => { this._expLater = true; this._render(); } }, t.exp_later),
+      h("button", { type: "button", class: "btn pri", onclick: (e) => this._clearExpired(e.currentTarget) }, t.exp_remove)) : null;
+    return h("div", {}, expBox, plan, mx, h("div", { class: "rows" }, rows.map(line)), sum, this._foot());
   }
   _renderAll(stores) {
     const t = this._t, c = this._config;
@@ -435,7 +442,28 @@ class SmartDiscountsCard extends HTMLElement {
   _offerNote(o) {
     const smart = (this._hass.config.components || []).includes("smartlists");
     if (smart) return `⚙OFFER:${JSON.stringify({ s: o.store, p: o.price, ...(o.old ? { o: o.old } : {}), ...(o.until ? { e: o.until } : {}), a: Math.floor(Date.now() / 1000) })}`;
-    return `🏷️ ${o.store} · ${this._money(o.price)}${o.until ? ` · ${this._t.until} ${this._day(o.until)}` : ""} · ${o.name}`;
+    // Datum mit Jahr, damit sich ein abgelaufenes Angebot später erkennen lässt
+    return `🏷️ ${o.store} · ${this._money(o.price)}${o.until ? ` · ${this._t.until} ${this._day(o.until)}${String(o.until).slice(0, 4)}` : ""} · ${o.name}`;
+  }
+  // Ist das an den Eintrag geschriebene Angebot abgelaufen? (⚙OFFER-Zeile von SmartLists oder die lesbare 🏷️-Zeile)
+  _expiredNote(note) {
+    const today = new Date().toISOString().slice(0, 10);
+    for (const l of String(note || "").split("\n")) {
+      const j = l.match(/[⚙\u2699]\ufe0f?\s*OFFER\s*:\s*(\{.*\})/);
+      if (j) { try { const e = String(JSON.parse(j[1]).e || "").slice(0, 10); if (e && e < today) return true; } catch (e) { /* */ } }
+      const d = /^\s*🏷️/.test(l) && l.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+      if (d && `${d[3]}-${d[2]}-${d[1]}` < today) return true;
+    }
+    return false;
+  }
+  async _clearExpired(btn) {
+    btn.disabled = true;
+    try {
+      if ((this._hass.config.components || []).includes("smartlists")) await this._hass.callWS({ type: "smartlists/clear_expired_offers", entity_id: this._config.list });
+      else for (const it of this._items.filter((i) => this._expiredNote(i.note)))
+        await this._hass.callService("todo", "update_item", { item: it.uid, description: this._cleanNote(it.note) }, { entity_id: this._config.list });
+      this._sig = null; await this._refresh(true);
+    } catch (e) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; }
   }
   _cleanNote(note) { return String(note || "").split("\n").filter((l) => !/^\s*([⚙⚙]️?\s*OFFER\s*:|🏷️)/.test(l)).join("\n").trim(); }
   async _apply(chosen, btn) {

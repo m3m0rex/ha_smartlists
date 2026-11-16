@@ -38,6 +38,12 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Order below the item name is configurable** (Settings → Badges & colours): store, tag, person, price and note can
   be moved; applies to everyone and to shared pages.
 
+### Added – expired offers
+
+- **Hint when offers on the list have expired** (in the list card and in the offers card): "Remove" takes store,
+  price and validity off the items in one go – the items themselves stay. "Later" hides the hint until the page is
+  reloaded.
+
 ### Changed – sharing
 
 - **Share links can be edited afterwards** (✎ next to a link): permissions, validity and password – the link itself

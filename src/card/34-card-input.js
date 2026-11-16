@@ -383,6 +383,17 @@
     const done = visible.filter((i) => i.checked);
     const out = [];
     if (this._sel) out.push(this._selBar(d, visible));
+    // 4.0: abgelaufene Angebote an Artikeln – Hinweis mit „Entfernen“ (oder „Später“: bis zum nächsten Laden der Seite)
+    const expired = d.items.filter((i) => !i.checked && i.offer && i.offer.expired);
+    if (expired.length && d.permissions.rename && !this._expiredLater) {
+      out.push(h("div", { class: "expbox", role: "status" },
+        h("div", { class: "et" }, h("b", {}, "🏷️ " + t.offers_expired.replace("{n}", expired.length)), h("small", {}, `${expired.slice(0, 3).map((i) => i.name).join(", ")}${expired.length > 3 ? " …" : ""} – ${t.offers_expired_help}`)),
+        h("div", { class: "eb" },
+          h("button", { class: "btn2", type: "button", onclick: () => { this._expiredLater = true; this._renderList(); } }, t.offers_expired_later),
+          h("button", { class: "btn2 primary", type: "button", onclick: async (e) => { e.currentTarget.disabled = true;
+            try { const r = await this._call("clear_expired_offers", {}); this._toast(`✓ ${t.offers_expired_remove}: ${r.removed}`); } catch (err) { this._toast((err && err.message) || t.error); }
+            this._load(); } }, t.offers_expired_remove))));
+    }
     // über einen Link hinzugefügt, wartet auf Freigabe: ✓ übernehmen / ✕ verwerfen
     if (d.pending && d.pending.length) {
       const decide = async (pid, approve) => {

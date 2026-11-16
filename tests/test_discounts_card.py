@@ -41,3 +41,18 @@ def test_discounts_card_version_matches_manifest():
 
     manifest = json.loads((CARD.parent.parent / "manifest.json").read_text(encoding="utf-8"))["version"]
     assert re.search(r'const VERSION = "([^"]+)"', CARD.read_text(encoding="utf-8")).group(1) == manifest
+
+
+def test_discounts_card_texts_complete():
+    """Alle sechs Sprachen haben dieselben Texte (sonst steht in der Karte „undefined“)."""
+    import re
+
+    src = CARD.read_text(encoding="utf-8")
+    block = src[src.index("const TEXTS = {"):src.index("const DEFAULTS")]
+    langs = {}
+    for m in re.finditer(r"^  (\w\w): \{(.*?)\n(?=  \w\w: \{|\};)", block, re.M | re.S):
+        langs[m.group(1)] = set(re.findall(r'(?:^|[ ,{])(\w+): "', m.group(2)))
+    assert set(langs) == {"de", "en", "fr", "es", "it", "pl"}
+    for lang, keys in langs.items():
+        assert keys == langs["de"], (lang, keys ^ langs["de"])
+    assert {"tab_watch", "w_add", "n_title", "e_notify"} <= langs["de"]

@@ -1,5 +1,6 @@
 const TEXTS = {
   de: {
+    cur_custom: "Eigenes Symbol …", cur_symbol: "Symbol", cur_symbol_help: "Bis 6 Zeichen, z. B. ₺, Rp oder лв – steht hinter dem Betrag und wird beim Eintippen als Preis erkannt.", cur_symbol_bad: "Symbol nicht möglich – ohne Ziffern, Leerzeichen und @ # * + ~ !",
     price_auto: "Gemerkten Preis automatisch eintragen", price_auto_help: "An: Kommt ein Artikel wieder auf die Liste, steht sein letzter Preis dabei. Aus: Preise werden nur im Verlauf geführt – ein Artikel zeigt nur ein Angebot oder den Preis, den du für diesen Eintrag tippst.", price_log: "Preis-Verlauf",
     deal_from: "ab {price}", deal_title: "Angebote für „{name}“", deal_take: "Nehmen", deal_help: "„Nehmen“ hängt Markt, Preis und Gültigkeit an den Artikel. Nach Ablauf verschwindet der Preis wieder.", l_show_offer_hints: "Hinweis auf Angebote (🏷️)", collapse: "einklappen", expand: "aufklappen",
     offers_expired: "Abgelaufene Angebote: {n}", offers_expired_help: "Markt, Preis und „gültig bis“ werden vom Artikel entfernt – der Artikel bleibt auf der Liste.", offers_expired_remove: "Entfernen", offers_expired_later: "Später",
@@ -270,6 +271,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    cur_custom: "Own symbol …", cur_symbol: "Symbol", cur_symbol_help: "Up to 6 characters, e.g. ₺, Rp or лв – shown after the amount and recognised as a price while typing.", cur_symbol_bad: "Symbol not possible – no digits, spaces or @ # * + ~ !",
     price_auto: "Fill in the remembered price automatically", price_auto_help: "On: when an item returns to the list, its last price is shown. Off: prices are only kept in the history – an item only shows an offer or the price you type for this entry.", price_log: "Price history",
     deal_from: "from {price}", deal_title: "Offers for \u201c{name}\u201d", deal_take: "Take", deal_help: "\u201cTake\u201d attaches store, price and validity to the item. The price disappears when the offer expires.", l_show_offer_hints: "Offer hints (🏷️)", collapse: "collapse", expand: "expand",
     offers_expired: "Expired offers: {n}", offers_expired_help: "Store, price and validity are removed from the item – the item stays on the list.", offers_expired_remove: "Remove", offers_expired_later: "Later",
@@ -540,6 +542,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    cur_custom: "Symbole personnalisé …", cur_symbol: "Symbole", cur_symbol_help: "Jusqu'à 6 caractères, p. ex. ₺, Rp ou лв – affiché après le montant et reconnu comme prix à la saisie.", cur_symbol_bad: "Symbole impossible – sans chiffres, espaces ni @ # * + ~ !",
     price_auto: "Reprendre automatiquement le prix mémorisé", price_auto_help: "Activé : quand un article revient sur la liste, son dernier prix s'affiche. Désactivé : les prix restent dans l'historique – un article n'affiche qu'une promo ou le prix saisi pour cette entrée.", price_log: "Historique des prix",
     deal_from: "dès {price}", deal_title: "Promos pour « {name} »", deal_take: "Prendre", deal_help: "« Prendre » ajoute magasin, prix et validité à l'article. Le prix disparaît à l'expiration.", l_show_offer_hints: "Indication des promos (🏷️)", collapse: "replier", expand: "déplier",
     offers_expired: "Promos expirées : {n}", offers_expired_help: "Magasin, prix et validité sont retirés – l'article reste sur la liste.", offers_expired_remove: "Retirer", offers_expired_later: "Plus tard",
@@ -810,6 +813,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    cur_custom: "Símbolo propio …", cur_symbol: "Símbolo", cur_symbol_help: "Hasta 6 caracteres, p. ej. ₺, Rp o лв – aparece tras el importe y se reconoce como precio al escribir.", cur_symbol_bad: "Símbolo no válido – sin cifras, espacios ni @ # * + ~ !",
     price_auto: "Rellenar el precio recordado automáticamente", price_auto_help: "Activado: cuando un artículo vuelve a la lista, aparece su último precio. Desactivado: los precios solo quedan en el historial – un artículo solo muestra una oferta o el precio que escribas para esa entrada.", price_log: "Historial de precios",
     deal_from: "desde {price}", deal_title: "Ofertas para «{name}»", deal_take: "Elegir", deal_help: "«Elegir» añade tienda, precio y validez al artículo. El precio desaparece al caducar.", l_show_offer_hints: "Aviso de ofertas (🏷️)", collapse: "contraer", expand: "expandir",
     offers_expired: "Ofertas caducadas: {n}", offers_expired_help: "Se quitan tienda, precio y validez – el artículo sigue en la lista.", offers_expired_remove: "Quitar", offers_expired_later: "Más tarde",
@@ -1080,6 +1084,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    cur_custom: "Simbolo personalizzato …", cur_symbol: "Simbolo", cur_symbol_help: "Fino a 6 caratteri, ad es. ₺, Rp o лв – compare dopo l'importo ed è riconosciuto come prezzo durante la digitazione.", cur_symbol_bad: "Simbolo non valido – senza cifre, spazi né @ # * + ~ !",
     price_auto: "Inserisci automaticamente il prezzo ricordato", price_auto_help: "Attivo: quando un articolo torna in lista, compare l'ultimo prezzo. Disattivo: i prezzi restano solo nella cronologia – un articolo mostra solo un'offerta o il prezzo digitato per questa voce.", price_log: "Cronologia prezzi",
     deal_from: "da {price}", deal_title: "Offerte per «{name}»", deal_take: "Scegli", deal_help: "«Scegli» aggiunge negozio, prezzo e validità all'articolo. Il prezzo sparisce alla scadenza.", l_show_offer_hints: "Avviso offerte (🏷️)", collapse: "comprimi", expand: "espandi",
     offers_expired: "Offerte scadute: {n}", offers_expired_help: "Negozio, prezzo e validità vengono rimossi – l'articolo resta in lista.", offers_expired_remove: "Rimuovi", offers_expired_later: "Più tardi",
@@ -1350,6 +1355,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    cur_custom: "Własny symbol …", cur_symbol: "Symbol", cur_symbol_help: "Do 6 znaków, np. ₺, Rp lub лв – stoi po kwocie i jest rozpoznawany jako cena przy wpisywaniu.", cur_symbol_bad: "Symbol niedozwolony – bez cyfr, spacji i @ # * + ~ !",
     price_auto: "Automatycznie wpisuj zapamiętaną cenę", price_auto_help: "Wł.: gdy produkt wraca na listę, pokazuje ostatnią cenę. Wył.: ceny są tylko w historii – produkt pokazuje jedynie promocję lub cenę wpisaną dla tego wpisu.", price_log: "Historia cen",
     deal_from: "od {price}", deal_title: "Promocje dla „{name}”", deal_take: "Wybierz", deal_help: "„Wybierz” dodaje sklep, cenę i termin do produktu. Cena znika po wygaśnięciu.", l_show_offer_hints: "Podpowiedzi promocji (🏷️)", collapse: "zwiń", expand: "rozwiń",
     offers_expired: "Wygasłe promocje: {n}", offers_expired_help: "Sklep, cena i termin zostaną usunięte – produkt zostaje na liście.", offers_expired_remove: "Usuń", offers_expired_later: "Później",

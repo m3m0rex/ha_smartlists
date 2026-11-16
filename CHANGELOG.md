@@ -28,6 +28,12 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Works with any sensor** that has a list of offers in an attribute – FaserF's REWE/EDEKA/Lidl/ALDI/Norma
   integrations are detected automatically, own sensors too (field names are recognised or set with `map:`).
 - **Also available on its own** (repository `ha_smartdiscounts-card`): it only needs a to-do list, not SmartLists.
+- **Watch list** (third tab ⭐): products you are waiting to see on offer – from `watch:` in the configuration, from a
+  to-do list (`watch_list:`, the same on all devices) or stored on the device. With `notify: true` Home Assistant
+  shows a notification when a watched product is newly on offer (optionally also via `notify_service:`). The check
+  runs in the card, i.e. while a dashboard with the card is open.
+- **Six languages** (German, English, French, Spanish, Italian, Polish) and `currency_symbol:` for currencies without
+  an ISO code in the list.
 
 ### Added – prices & currency
 
@@ -38,6 +44,8 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Remembered prices no longer have to fill in automatically** (switch "Fill in the remembered price
   automatically", default on): switched off, prices are only kept in the history; an item shows an offer or the price
   typed for exactly this entry.
+- **Own currency symbol** (Prices & currency → "Own symbol …") for currencies that are not in the list, e.g. ₺ or Rp –
+  shown after the amount and recognised as a price while typing.
 - **Price history per item** (item menu → History): own prices and what was paid when checking off, with store and
   date.
 - **Order below the item name is configurable** (Settings → Badges & colours): store, tag, person, price and note can

@@ -175,3 +175,19 @@ def test_price_per_entry_and_price_history():
     # Schalter des Haushalts: nur „aus“ wird gespeichert
     assert validate_appearance({"auto_price": False}) == {"kinds": {}, "values": {}, "auto_price": False}
     assert validate_appearance({"auto_price": True}) == {"kinds": {}, "values": {}}
+
+
+def test_own_currency_symbol():
+    """4.0: eigenes Symbol für Währungen, die nicht in der Liste stehen."""
+    from smartlists.extras import split_price
+    from smartlists.learning import currency_symbols, validate_appearance
+
+    look = validate_appearance({"currency": "custom", "currency_symbol": " ₺ "})
+    assert look == {"kinds": {}, "values": {}, "currency": "custom", "currency_symbol": "₺"}
+    assert currency_symbols(look) == ("₺",)
+    assert split_price("Ekmek 12,50 ₺", currency_symbols(look)) == ("Ekmek", 12.5)
+    assert split_price("Susu Rp 15", currency_symbols({"currency": "custom", "currency_symbol": "Rp"})) == ("Susu", 15.0)
+    # ungültig (Ziffern, Leerzeichen, Zeichen der Badges, zu lang) → bleibt beim Euro
+    for bad in ("", "1", "a b", "@", "#x", "toolong7", None):
+        assert validate_appearance({"currency": "custom", "currency_symbol": bad}) == {"kinds": {}, "values": {}}
+    assert currency_symbols({"currency": "custom"}) == ("€", "EUR")

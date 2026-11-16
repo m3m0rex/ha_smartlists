@@ -310,11 +310,15 @@ const itemStoreLabel = (key, cfg) => { const k = ((cfg && cfg.known_stores) || [
 // Währung des Haushalts (Einstellungen → Preise & Währung); gleiche Liste wie learning.CURRENCIES
 const CURRENCIES = { EUR: ["€", "EUR"], CHF: ["CHF", "Fr.", "SFr"], GBP: ["£", "GBP"], USD: ["$", "USD"], PLN: ["zł", "PLN"],
   SEK: ["kr", "SEK"], DKK: ["kr", "DKK"], NOK: ["kr", "NOK"], CZK: ["Kč", "CZK"], HUF: ["Ft", "HUF"] };
-const slCurrency = () => (SL_LOOK && CURRENCIES[SL_LOOK.currency] ? SL_LOOK.currency : "EUR");
-const slCurrencySymbol = () => CURRENCIES[slCurrency()][0];
+// "custom" = eigenes Symbol (SL_LOOK.currency_symbol) statt einer Währung aus der Liste
+const slCurrency = () => (SL_LOOK && SL_LOOK.currency === "custom" && SL_LOOK.currency_symbol ? "custom" : SL_LOOK && CURRENCIES[SL_LOOK.currency] ? SL_LOOK.currency : "EUR");
+const slSymbols = () => (slCurrency() === "custom" ? [SL_LOOK.currency_symbol] : CURRENCIES[slCurrency()]);
+const slCurrencySymbol = () => slSymbols()[0];
 const ROW_ORDER = ["store", "tag", "person", "price", "note"];
 const slRowOrder = () => (SL_LOOK && Array.isArray(SL_LOOK.order) && SL_LOOK.order.length ? [...SL_LOOK.order, ...ROW_ORDER.filter((x) => !SL_LOOK.order.includes(x))] : ROW_ORDER);
-const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: slCurrency() }).format(v));
+const fmtMoney = (v, lang) => (v == null ? "" : slCurrency() === "custom"
+  ? `${new Intl.NumberFormat(lang || "de", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)}\u00a0${SL_LOOK.currency_symbol}`
+  : new Intl.NumberFormat(lang || "de", { style: "currency", currency: slCurrency() }).format(v));
 
 /* Symbol-Auswahl (Emoji) für Vorlagen und Badges: Raster nach Gruppen + freie Eingabe.
  * slEmojiPicker(root, current, t) → Promise<string | null> ("" = ohne Symbol) */

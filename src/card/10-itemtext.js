@@ -28,9 +28,9 @@ function splitTags(text, rules, stores) {
 // Die Schreibweisen richten sich nach der Währung des Haushalts ("CHF 2.50", "2,50 Fr.", "£1.20").
 const PRICE_RES = {};
 const priceRe = () => {
-  const code = slCurrency();
+  const code = slCurrency() + "|" + slSymbols().join("|");
   if (!PRICE_RES[code]) {
-    const sym = [...CURRENCIES[code]].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+    const sym = [...slSymbols()].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
     const n = "\\d+(?:[.,]\\d{1,2})?";
     PRICE_RES[code] = new RegExp(`(^|\\s)(?:(?:${sym})\\s?(${n})|(${n})\\s?(?:${sym}))(?=\\s|$)`, "gi");
   }

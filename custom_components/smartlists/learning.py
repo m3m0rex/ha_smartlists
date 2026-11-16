@@ -761,7 +761,13 @@ CURRENCIES: dict[str, tuple[str, ...]] = {
 ROW_ORDER = ("store", "tag", "person", "price", "note")
 
 
+_SYMBOL = re.compile(r"^[^\s\d.,@#*+~!]{1,6}$")
+
+
 def currency_symbols(appearance: dict[str, Any] | None) -> tuple[str, ...]:
+    look = appearance or {}
+    if look.get("currency") == "custom" and look.get("currency_symbol"):
+        return (look["currency_symbol"],)  # eigenes Symbol (z. B. "₺", "Rp", "лв")
     return CURRENCIES.get((appearance or {}).get("currency") or "EUR", CURRENCIES["EUR"])
 BADGE_STYLES = ("filled", "soft", "outline", "text")
 
@@ -818,6 +824,9 @@ def validate_appearance(raw: Any) -> dict[str, Any]:
     # 4.0: Währung des Haushalts und Reihenfolge der Angaben unter dem Artikelnamen (nur wenn gesetzt)
     if raw.get("currency") in CURRENCIES and raw["currency"] != "EUR":
         out["currency"] = raw["currency"]
+    elif raw.get("currency") == "custom" and isinstance(raw.get("currency_symbol"), str) and _SYMBOL.match(raw["currency_symbol"].strip()):
+        out["currency"] = "custom"  # eigenes Symbol statt einer Währung aus der Liste
+        out["currency_symbol"] = raw["currency_symbol"].strip()
     # gemerkte Preise automatisch an wiederkehrende Artikel schreiben? (aus: Preise nur im Verlauf)
     if raw.get("auto_price") is False:
         out["auto_price"] = False

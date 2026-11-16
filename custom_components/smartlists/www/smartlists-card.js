@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    cur_custom: "Eigenes Symbol …", cur_symbol: "Symbol", cur_symbol_help: "Bis 6 Zeichen, z. B. ₺, Rp oder лв – steht hinter dem Betrag und wird beim Eintippen als Preis erkannt.", cur_symbol_bad: "Symbol nicht möglich – ohne Ziffern, Leerzeichen und @ # * + ~ !",
     price_auto: "Gemerkten Preis automatisch eintragen", price_auto_help: "An: Kommt ein Artikel wieder auf die Liste, steht sein letzter Preis dabei. Aus: Preise werden nur im Verlauf geführt – ein Artikel zeigt nur ein Angebot oder den Preis, den du für diesen Eintrag tippst.", price_log: "Preis-Verlauf",
     deal_from: "ab {price}", deal_title: "Angebote für „{name}“", deal_take: "Nehmen", deal_help: "„Nehmen“ hängt Markt, Preis und Gültigkeit an den Artikel. Nach Ablauf verschwindet der Preis wieder.", l_show_offer_hints: "Hinweis auf Angebote (🏷️)", collapse: "einklappen", expand: "aufklappen",
     offers_expired: "Abgelaufene Angebote: {n}", offers_expired_help: "Markt, Preis und „gültig bis“ werden vom Artikel entfernt – der Artikel bleibt auf der Liste.", offers_expired_remove: "Entfernen", offers_expired_later: "Später",
@@ -397,6 +398,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    cur_custom: "Own symbol …", cur_symbol: "Symbol", cur_symbol_help: "Up to 6 characters, e.g. ₺, Rp or лв – shown after the amount and recognised as a price while typing.", cur_symbol_bad: "Symbol not possible – no digits, spaces or @ # * + ~ !",
     price_auto: "Fill in the remembered price automatically", price_auto_help: "On: when an item returns to the list, its last price is shown. Off: prices are only kept in the history – an item only shows an offer or the price you type for this entry.", price_log: "Price history",
     deal_from: "from {price}", deal_title: "Offers for \u201c{name}\u201d", deal_take: "Take", deal_help: "\u201cTake\u201d attaches store, price and validity to the item. The price disappears when the offer expires.", l_show_offer_hints: "Offer hints (🏷️)", collapse: "collapse", expand: "expand",
     offers_expired: "Expired offers: {n}", offers_expired_help: "Store, price and validity are removed from the item – the item stays on the list.", offers_expired_remove: "Remove", offers_expired_later: "Later",
@@ -667,6 +669,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    cur_custom: "Symbole personnalisé …", cur_symbol: "Symbole", cur_symbol_help: "Jusqu'à 6 caractères, p. ex. ₺, Rp ou лв – affiché après le montant et reconnu comme prix à la saisie.", cur_symbol_bad: "Symbole impossible – sans chiffres, espaces ni @ # * + ~ !",
     price_auto: "Reprendre automatiquement le prix mémorisé", price_auto_help: "Activé : quand un article revient sur la liste, son dernier prix s'affiche. Désactivé : les prix restent dans l'historique – un article n'affiche qu'une promo ou le prix saisi pour cette entrée.", price_log: "Historique des prix",
     deal_from: "dès {price}", deal_title: "Promos pour « {name} »", deal_take: "Prendre", deal_help: "« Prendre » ajoute magasin, prix et validité à l'article. Le prix disparaît à l'expiration.", l_show_offer_hints: "Indication des promos (🏷️)", collapse: "replier", expand: "déplier",
     offers_expired: "Promos expirées : {n}", offers_expired_help: "Magasin, prix et validité sont retirés – l'article reste sur la liste.", offers_expired_remove: "Retirer", offers_expired_later: "Plus tard",
@@ -937,6 +940,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    cur_custom: "Símbolo propio …", cur_symbol: "Símbolo", cur_symbol_help: "Hasta 6 caracteres, p. ej. ₺, Rp o лв – aparece tras el importe y se reconoce como precio al escribir.", cur_symbol_bad: "Símbolo no válido – sin cifras, espacios ni @ # * + ~ !",
     price_auto: "Rellenar el precio recordado automáticamente", price_auto_help: "Activado: cuando un artículo vuelve a la lista, aparece su último precio. Desactivado: los precios solo quedan en el historial – un artículo solo muestra una oferta o el precio que escribas para esa entrada.", price_log: "Historial de precios",
     deal_from: "desde {price}", deal_title: "Ofertas para «{name}»", deal_take: "Elegir", deal_help: "«Elegir» añade tienda, precio y validez al artículo. El precio desaparece al caducar.", l_show_offer_hints: "Aviso de ofertas (🏷️)", collapse: "contraer", expand: "expandir",
     offers_expired: "Ofertas caducadas: {n}", offers_expired_help: "Se quitan tienda, precio y validez – el artículo sigue en la lista.", offers_expired_remove: "Quitar", offers_expired_later: "Más tarde",
@@ -1207,6 +1211,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    cur_custom: "Simbolo personalizzato …", cur_symbol: "Simbolo", cur_symbol_help: "Fino a 6 caratteri, ad es. ₺, Rp o лв – compare dopo l'importo ed è riconosciuto come prezzo durante la digitazione.", cur_symbol_bad: "Simbolo non valido – senza cifre, spazi né @ # * + ~ !",
     price_auto: "Inserisci automaticamente il prezzo ricordato", price_auto_help: "Attivo: quando un articolo torna in lista, compare l'ultimo prezzo. Disattivo: i prezzi restano solo nella cronologia – un articolo mostra solo un'offerta o il prezzo digitato per questa voce.", price_log: "Cronologia prezzi",
     deal_from: "da {price}", deal_title: "Offerte per «{name}»", deal_take: "Scegli", deal_help: "«Scegli» aggiunge negozio, prezzo e validità all'articolo. Il prezzo sparisce alla scadenza.", l_show_offer_hints: "Avviso offerte (🏷️)", collapse: "comprimi", expand: "espandi",
     offers_expired: "Offerte scadute: {n}", offers_expired_help: "Negozio, prezzo e validità vengono rimossi – l'articolo resta in lista.", offers_expired_remove: "Rimuovi", offers_expired_later: "Più tardi",
@@ -1477,6 +1482,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    cur_custom: "Własny symbol …", cur_symbol: "Symbol", cur_symbol_help: "Do 6 znaków, np. ₺, Rp lub лв – stoi po kwocie i jest rozpoznawany jako cena przy wpisywaniu.", cur_symbol_bad: "Symbol niedozwolony – bez cyfr, spacji i @ # * + ~ !",
     price_auto: "Automatycznie wpisuj zapamiętaną cenę", price_auto_help: "Wł.: gdy produkt wraca na listę, pokazuje ostatnią cenę. Wył.: ceny są tylko w historii – produkt pokazuje jedynie promocję lub cenę wpisaną dla tego wpisu.", price_log: "Historia cen",
     deal_from: "od {price}", deal_title: "Promocje dla „{name}”", deal_take: "Wybierz", deal_help: "„Wybierz” dodaje sklep, cenę i termin do produktu. Cena znika po wygaśnięciu.", l_show_offer_hints: "Podpowiedzi promocji (🏷️)", collapse: "zwiń", expand: "rozwiń",
     offers_expired: "Wygasłe promocje: {n}", offers_expired_help: "Sklep, cena i termin zostaną usunięte – produkt zostaje na liście.", offers_expired_remove: "Usuń", offers_expired_later: "Później",
@@ -1796,9 +1802,9 @@ function splitTags(text, rules, stores) {
 // Die Schreibweisen richten sich nach der Währung des Haushalts ("CHF 2.50", "2,50 Fr.", "£1.20").
 const PRICE_RES = {};
 const priceRe = () => {
-  const code = slCurrency();
+  const code = slCurrency() + "|" + slSymbols().join("|");
   if (!PRICE_RES[code]) {
-    const sym = [...CURRENCIES[code]].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+    const sym = [...slSymbols()].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
     const n = "\\d+(?:[.,]\\d{1,2})?";
     PRICE_RES[code] = new RegExp(`(^|\\s)(?:(?:${sym})\\s?(${n})|(${n})\\s?(?:${sym}))(?=\\s|$)`, "gi");
   }
@@ -2193,11 +2199,15 @@ const itemStoreLabel = (key, cfg) => { const k = ((cfg && cfg.known_stores) || [
 // Währung des Haushalts (Einstellungen → Preise & Währung); gleiche Liste wie learning.CURRENCIES
 const CURRENCIES = { EUR: ["€", "EUR"], CHF: ["CHF", "Fr.", "SFr"], GBP: ["£", "GBP"], USD: ["$", "USD"], PLN: ["zł", "PLN"],
   SEK: ["kr", "SEK"], DKK: ["kr", "DKK"], NOK: ["kr", "NOK"], CZK: ["Kč", "CZK"], HUF: ["Ft", "HUF"] };
-const slCurrency = () => (SL_LOOK && CURRENCIES[SL_LOOK.currency] ? SL_LOOK.currency : "EUR");
-const slCurrencySymbol = () => CURRENCIES[slCurrency()][0];
+// "custom" = eigenes Symbol (SL_LOOK.currency_symbol) statt einer Währung aus der Liste
+const slCurrency = () => (SL_LOOK && SL_LOOK.currency === "custom" && SL_LOOK.currency_symbol ? "custom" : SL_LOOK && CURRENCIES[SL_LOOK.currency] ? SL_LOOK.currency : "EUR");
+const slSymbols = () => (slCurrency() === "custom" ? [SL_LOOK.currency_symbol] : CURRENCIES[slCurrency()]);
+const slCurrencySymbol = () => slSymbols()[0];
 const ROW_ORDER = ["store", "tag", "person", "price", "note"];
 const slRowOrder = () => (SL_LOOK && Array.isArray(SL_LOOK.order) && SL_LOOK.order.length ? [...SL_LOOK.order, ...ROW_ORDER.filter((x) => !SL_LOOK.order.includes(x))] : ROW_ORDER);
-const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: slCurrency() }).format(v));
+const fmtMoney = (v, lang) => (v == null ? "" : slCurrency() === "custom"
+  ? `${new Intl.NumberFormat(lang || "de", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)}\u00a0${SL_LOOK.currency_symbol}`
+  : new Intl.NumberFormat(lang || "de", { style: "currency", currency: slCurrency() }).format(v));
 
 /* Symbol-Auswahl (Emoji) für Vorlagen und Badges: Raster nach Gruppen + freie Eingabe.
  * slEmojiPicker(root, current, t) → Promise<string | null> ("" = ohne Symbol) */
@@ -5539,13 +5549,30 @@ class SmartListsCard extends HTMLElement {
     const t = this._t;
     const status = h("span", { class: "ok2" });
     const help = h("small", {});
-    const setHelp = () => { help.textContent = t.cur_help.replace("{symbols}", CURRENCIES[slCurrency()].join(", ")); };
+    const setHelp = () => { help.textContent = t.cur_help.replace("{symbols}", slSymbols().join(", ")); };
     setHelp();
     const names = (() => { try { return new Intl.DisplayNames([this._lang || "en"], { type: "currency" }); } catch (e) { return null; } })();
-    const sel = h("select", { "aria-label": t.cur_label, onchange: async (e) => { await this._saveLook({ currency: e.target.value }, status); setHelp(); this._renderList(); } },
-      Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)));
+    // eigenes Symbol: für Währungen, die nicht in der Liste stehen
+    const own = h("input", { type: "text", maxlength: "6", size: "6", placeholder: "₺", "aria-label": t.cur_symbol, value: (SL_LOOK && SL_LOOK.currency_symbol) || "" });
+    const ownRow = h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_symbol, h("small", {}, t.cur_symbol_help)), own);
+    const saveOwn = async () => {
+      const symbol = own.value.trim();
+      if (!symbol) return;
+      await this._saveLook({ currency: "custom", currency_symbol: symbol }, status);
+      if (slCurrency() !== "custom") status.textContent = t.cur_symbol_bad;
+      setHelp(); this._renderList();
+    };
+    own.addEventListener("change", saveOwn);
+    const sel = h("select", { "aria-label": t.cur_label, onchange: async (e) => {
+      ownRow.hidden = e.target.value !== "custom";
+      if (e.target.value === "custom") { own.focus(); return saveOwn(); }
+      await this._saveLook({ currency: e.target.value, currency_symbol: undefined }, status); setHelp(); this._renderList();
+    } },
+      Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)),
+      h("option", { value: "custom", selected: slCurrency() === "custom" }, t.cur_custom));
+    ownRow.hidden = slCurrency() !== "custom";
     return [
-      this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), h("div", { class: "srow" }, status)]),
+      this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), ownRow, h("div", { class: "srow" }, status)]),
       this._sec("", t.price_paid ? t.price : t.price, null, [this._setRow(t.price_auto, this._switch(!SL_LOOK || SL_LOOK.auto_price !== false,
         async (v) => { await this._saveLook({ auto_price: v }, status); this._load(); }, t.price_auto), t.price_auto_help)]),
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
@@ -5559,7 +5586,7 @@ class SmartListsCard extends HTMLElement {
     const save = debounce(async () => {
       try {
         // Währung/Reihenfolge werden in eigenen Abschnitten gespeichert – hier nicht mit altem Stand überschreiben
-        look = { ...look, currency: SL_LOOK.currency, order: SL_LOOK.order };
+        look = { ...look, currency: SL_LOOK.currency, currency_symbol: SL_LOOK.currency_symbol, order: SL_LOOK.order, auto_price: SL_LOOK.auto_price };
         const r = await this._call("set_appearance", { appearance: look }, false);
         look = r.appearance; tags = r.tags; SL_LOOK = look;
         if (this._cfg) this._cfg = { ...this._cfg, appearance: look };

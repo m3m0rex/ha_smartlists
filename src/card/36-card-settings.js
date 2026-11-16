@@ -725,13 +725,30 @@
     const t = this._t;
     const status = h("span", { class: "ok2" });
     const help = h("small", {});
-    const setHelp = () => { help.textContent = t.cur_help.replace("{symbols}", CURRENCIES[slCurrency()].join(", ")); };
+    const setHelp = () => { help.textContent = t.cur_help.replace("{symbols}", slSymbols().join(", ")); };
     setHelp();
     const names = (() => { try { return new Intl.DisplayNames([this._lang || "en"], { type: "currency" }); } catch (e) { return null; } })();
-    const sel = h("select", { "aria-label": t.cur_label, onchange: async (e) => { await this._saveLook({ currency: e.target.value }, status); setHelp(); this._renderList(); } },
-      Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)));
+    // eigenes Symbol: für Währungen, die nicht in der Liste stehen
+    const own = h("input", { type: "text", maxlength: "6", size: "6", placeholder: "₺", "aria-label": t.cur_symbol, value: (SL_LOOK && SL_LOOK.currency_symbol) || "" });
+    const ownRow = h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_symbol, h("small", {}, t.cur_symbol_help)), own);
+    const saveOwn = async () => {
+      const symbol = own.value.trim();
+      if (!symbol) return;
+      await this._saveLook({ currency: "custom", currency_symbol: symbol }, status);
+      if (slCurrency() !== "custom") status.textContent = t.cur_symbol_bad;
+      setHelp(); this._renderList();
+    };
+    own.addEventListener("change", saveOwn);
+    const sel = h("select", { "aria-label": t.cur_label, onchange: async (e) => {
+      ownRow.hidden = e.target.value !== "custom";
+      if (e.target.value === "custom") { own.focus(); return saveOwn(); }
+      await this._saveLook({ currency: e.target.value, currency_symbol: undefined }, status); setHelp(); this._renderList();
+    } },
+      Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)),
+      h("option", { value: "custom", selected: slCurrency() === "custom" }, t.cur_custom));
+    ownRow.hidden = slCurrency() !== "custom";
     return [
-      this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), h("div", { class: "srow" }, status)]),
+      this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), ownRow, h("div", { class: "srow" }, status)]),
       this._sec("", t.price_paid ? t.price : t.price, null, [this._setRow(t.price_auto, this._switch(!SL_LOOK || SL_LOOK.auto_price !== false,
         async (v) => { await this._saveLook({ auto_price: v }, status); this._load(); }, t.price_auto), t.price_auto_help)]),
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
@@ -745,7 +762,7 @@
     const save = debounce(async () => {
       try {
         // Währung/Reihenfolge werden in eigenen Abschnitten gespeichert – hier nicht mit altem Stand überschreiben
-        look = { ...look, currency: SL_LOOK.currency, order: SL_LOOK.order };
+        look = { ...look, currency: SL_LOOK.currency, currency_symbol: SL_LOOK.currency_symbol, order: SL_LOOK.order, auto_price: SL_LOOK.auto_price };
         const r = await this._call("set_appearance", { appearance: look }, false);
         look = r.appearance; tags = r.tags; SL_LOOK = look;
         if (this._cfg) this._cfg = { ...this._cfg, appearance: look };

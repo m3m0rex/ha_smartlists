@@ -716,7 +716,7 @@ function draw(d){cur=d;
     var name=el("span",{class:"nm"},[i.count?el("span",{class:"qp",text:i.count}):null,el("span",{class:"in",text:i.name||i.text}),i.size?el("span",{class:"sz",text:i.size}):null]);
     var tagEls=(i.tags||[]).map(function(t){return badge(t,d.look)});
     /* Angebot wie in der Karte: Markt, 🏷️ Angebot, Preis, alter Preis, gültig bis */
-    var euro=function(v){try{return new Intl.NumberFormat(document.documentElement.lang,{style:"currency",currency:(d.look&&d.look.currency)||"EUR"}).format(v)}catch(e){return v.toFixed(2).replace(".",",")+" €"}},day=function(x){var p=String(x).slice(0,10).split("-");return p.length===3?p[2]+"."+p[1]+".":x};
+    var euro=function(v){try{if(d.look&&d.look.currency==="custom"&&d.look.currency_symbol)return new Intl.NumberFormat(document.documentElement.lang,{minimumFractionDigits:2,maximumFractionDigits:2}).format(v)+"\u00a0"+d.look.currency_symbol;return new Intl.NumberFormat(document.documentElement.lang,{style:"currency",currency:(d.look&&d.look.currency)||"EUR"}).format(v)}catch(e){return v.toFixed(2).replace(".",",")+" €"}},day=function(x){var p=String(x).slice(0,10).split("-");return p.length===3?p[2]+"."+p[1]+".":x};
     var o=i.offer,extra=null;
     if(o){var hasStore=(i.tags||[]).some(function(t){return t.kind==="store"&&String(t.label||t.value).toLowerCase()===String(o.store_label).toLowerCase()});
       extra=el("span",{class:"offer"+(o.expired?" exp":"")},[hasStore?null:badge({kind:"store",value:o.store,label:o.store_label,color:o.color},d.look),

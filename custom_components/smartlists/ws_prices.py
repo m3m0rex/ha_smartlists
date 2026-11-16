@@ -112,20 +112,25 @@ def ws_stats(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     connection.send_result(msg["id"], stats(_learning(hass), _extras(hass), msg["days"]))
 
 
-def _watch_payload(hass: HomeAssistant) -> dict[str, Any]:
-    extras = _extras(hass)
-    return {"names": list(extras.watch), "notify": bool(extras.watch_settings.get("notify")), "service": extras.watch_settings.get("service") or ""}
+async def _watch_payload(hass: HomeAssistant) -> dict[str, Any]:
+    from .notify import async_get_notifier
+
+    extras, notifier = _extras(hass), await async_get_notifier(hass)
+    return {"names": list(extras.watch), "notify": bool(extras.watch_settings.get("notify")),
+            "targets": list(extras.watch_settings.get("targets") or []),
+            # woraus man wählen kann: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten
+            "services": notifier.services(), "entities": notifier.entities()}
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch"})
-@callback
-def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+@websocket_api.async_response
+async def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Merkliste des Haushalts (Produkte, bei denen man auf ein Angebot wartet) und ihre Benachrichtigung."""
-    connection.send_result(msg["id"], _watch_payload(hass))
+    connection.send_result(msg["id"], await _watch_payload(hass))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("names"): [str], vol.Optional("add"): str,
-                                  vol.Optional("remove"): str, vol.Optional("notify"): bool, vol.Optional("service"): str})
+                                  vol.Optional("remove"): str, vol.Optional("notify"): bool, vol.Optional("targets"): [dict]})
 @websocket_api.async_response
 async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen; Benachrichtigung nur für Admins."""
@@ -135,7 +140,7 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
         names.append(msg["add"])
     if msg.get("remove"):
         names = [n for n in names if n.lower() != msg["remove"].strip().lower()]
-    settings = {k: msg[k] for k in ("notify", "service") if k in msg}
+    settings = {k: msg[k] for k in ("notify", "targets") if k in msg}
     if settings and not connection.user.is_admin:
         connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Die Benachrichtigung stellt ein Admin ein.")
         return
@@ -144,4 +149,4 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
         from .offers import async_check_watch
 
         await async_check_watch(hass)
-    connection.send_result(msg["id"], _watch_payload(hass))
+    connection.send_result(msg["id"], await _watch_payload(hass))

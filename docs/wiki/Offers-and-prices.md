@@ -40,8 +40,9 @@ The watch list holds products you are waiting to see on offer. Add one from an i
 in the ⭐ tab of the [[Offers card]]; remove it under *Settings → Prices & currency → Watch list*.
 
 With **Notify when one of them is on offer** switched on (admins), Home Assistant checks the offer sensors every
-30 minutes – even with no dashboard open – and reports every new offer once as a notification. Enter a notify service
-(e.g. `notify.mobile_app_pixel`) to also get it on your phone.
+30 minutes – even with no dashboard open – and reports every new offer once Under **Send to** you choose where it goes –
+several targets are possible: the notification in Home Assistant, the companion app on your phones and tablets, or any
+other notify service.
 
 ## Offers in the shopping list
 

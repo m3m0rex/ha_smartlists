@@ -98,7 +98,7 @@
         this._version && this._version !== CARD_VERSION ? [h("span", {}, t.card || "Card"), h("b", {}, CARD_VERSION)] : null,
         h("span", {}, "Home Assistant"), h("b", {}, (this._hass.config && this._hass.config.version) || "–"))]),
       this._sec("", t.info_help, null, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
-        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, REPO + "/issues"), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
+        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, this._issueUrl()), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
       ...(!this._isAdmin ? [] : [
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
@@ -755,18 +755,52 @@
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
     ];
   }
+  // „Fehler melden“: neues Issue mit Versionen und Umgebung vorausgefüllt (nichts Persönliches – keine Listen, Artikel oder Adressen)
+  _issueUrl() {
+    const ua = navigator.userAgent || "";
+    const app = /Home ?Assistant/i.test(ua) ? "Home Assistant app" : /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
+    const os = /Android/.test(ua) ? "Android" : /iPhone|iPad|iOS/.test(ua) ? "iOS" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "";
+    const where = location.pathname.startsWith("/smartlists") ? "Sidebar page" : "Dashboard card";
+    const body = ["### What happened?", "", "", "### What did you expect?", "", "", "### Steps to reproduce", "1. ", "", "### Environment",
+      `- SmartLists: ${this._version || CARD_VERSION}${this._version && this._version !== CARD_VERSION ? ` (card: ${CARD_VERSION})` : ""}`,
+      `- Home Assistant: ${(this._hass.config && this._hass.config.version) || "?"}`, `- Where: ${where}`, `- Browser / app: ${app}${os ? `, ${os}` : ""}`,
+      `- Language: ${this._lang || (this._hass && this._hass.language) || "?"}`].join("\n");
+    return `${"https://github.com/m3m0rex/ha_smartlists"}/issues/new?body=${encodeURIComponent(body)}`;
+  }
   // Global → Preise & Währung → Merkliste: Produkte, bei denen man auf ein Angebot wartet, und die Benachrichtigung
   _watchSection() {
     const t = this._t, box = h("div", {}, h("div", { class: "shelp" }, t.loading)), status = h("span", { class: "ok2" });
     const draw = (w) => {
       const set = async (patch) => { try { draw(await this._call("watch_set", patch, false)); status.textContent = "✓ " + t.saved; } catch (e) { status.textContent = (e && e.message) || t.error; } };
-      const service = h("input", { type: "text", value: w.service || "", placeholder: "notify.mobile_app_…", "aria-label": t.wl_service, style: "max-width:260px" });
-      service.addEventListener("change", () => set({ service: service.value.trim() }));
+      // Ziele: gewählte als Kacheln, „Ziel hinzufügen“ öffnet eine Liste mit Suche und Häkchen (mehrere möglich)
+      const all = [{ id: "persistent_notification", kind: "hass", icon: "🔔", name: t.wl_hass, sub: t.wl_hass_sub, grp: "Home Assistant" },
+        ...(w.services || []).map((sv) => { const dev = sv.startsWith("mobile_app_"); return { id: "notify." + sv, kind: "service", icon: dev ? "📱" : /telegram/.test(sv) ? "✈️" : /alexa|tts|speak/.test(sv) ? "🔊" : "✉️",
+          name: (dev ? sv.slice(11) : sv).replace(/_/g, " "), sub: "notify." + sv, grp: dev ? t.wl_grp_dev : t.wl_grp_other }; }),
+        ...(w.entities || []).map((e) => ({ id: e.id, kind: "entity", icon: "🔔", name: e.name, sub: e.id, grp: t.wl_grp_other }))];
+      const has = (x) => (w.targets || []).some((y) => y.id === x.id);
+      const toggle = (x) => set({ targets: has(x) ? w.targets.filter((y) => y.id !== x.id) : [...(w.targets || []), { id: x.id, kind: x.kind }] });
+      const picked = all.filter(has);
+      const q = (this._watchQuery || "").toLowerCase();
+      const search = h("input", { type: "search", class: "tsearch", placeholder: t.wl_search, "aria-label": t.wl_search, value: this._watchQuery || "" });
+      search.addEventListener("input", () => { this._watchQuery = search.value; const pos = search.selectionStart; draw(w); const f = box.querySelector(".tsearch"); if (f) { f.focus(); try { f.setSelectionRange(pos, pos); } catch (e) { /* */ } } });
+      let last = "";
+      const options = all.filter((x) => !q || `${x.name} ${x.sub}`.toLowerCase().includes(q)).map((x) => [x.grp !== last ? h("div", { class: "tgrp" }, (last = x.grp)) : null,
+        h("button", { type: "button", class: `topt ${has(x) ? "on" : ""}`, role: "option", "aria-selected": String(has(x)), onclick: () => toggle(x) },
+          h("span", { class: "ti" }, x.icon), h("span", { class: "tn" }, x.name, h("small", {}, x.sub)), h("span", { class: "tcb" }, has(x) ? "✓" : ""))]);
+      const pop = this._watchOpen ? h("div", { class: "tpop", role: "listbox", "aria-multiselectable": "true" }, search, h("div", { class: "tlist" }, options),
+        h("div", { class: "tfoot" }, h("span", {}, t.wl_n.replace("{n}", picked.length)),
+          h("button", { type: "button", class: "linkbtn", onclick: () => set({ targets: [] }) }, t.wl_none),
+          h("button", { type: "button", class: "btn2", onclick: () => { this._watchOpen = false; this._watchQuery = ""; draw(w); } }, t.wl_done))) : null;
+      const targets = h("div", {}, h("div", { class: "grp", style: "padding:10px 0 6px" }, t.wl_send_to),
+        h("div", { class: "ntiles", style: "grid-template-columns:repeat(auto-fill,minmax(150px,1fr))" }, picked.map((x) => h("div", { class: "ntile on" }, h("span", { class: "ni" }, x.icon),
+          h("span", { class: "nn" }, x.name), h("button", { type: "button", class: "tx", "aria-label": `${t.delete}: ${x.name}`, onclick: () => toggle(x) }, "✕"))),
+          h("button", { type: "button", class: "ntile add", "aria-expanded": String(!!this._watchOpen), onclick: () => { this._watchOpen = !this._watchOpen; draw(w); } }, "＋ " + t.wl_add_target)),
+        pop, picked.length ? null : h("div", { class: "shelp" }, t.wl_no_target));
       fill(box, w.names.length ? h("div", { class: "chips", style: "display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px" }, w.names.map((n) =>
           h("button", { type: "button", class: "chip", title: t.delete, "aria-label": `${t.delete}: ${n}`, onclick: () => set({ remove: n }) }, `⭐ ${n} ✕`)))
         : h("div", { class: "shelp" }, t.wl_empty),
         this._isAdmin ? this._setRow(t.wl_notify, this._switch(!!w.notify, (v) => set({ notify: v }), t.wl_notify), t.wl_notify_help) : null,
-        this._isAdmin && w.notify ? h("div", { class: "srow2" }, h("div", { class: "sl" }, t.wl_service), service) : null, h("div", { class: "srow" }, status));
+        this._isAdmin && w.notify ? targets : null, h("div", { class: "srow" }, status));
     };
     this._call("watch", {}, false).then(draw).catch((e) => { slWarn("watch", e); fill(box, h("div", { class: "shelp" }, t.error)); });
     return this._sec("", "⭐ " + t.wl_title, t.wl_help, [box]);

@@ -57,6 +57,22 @@ def split_price(text: str, symbols: tuple[str, ...] | None = None) -> tuple[str,
     return " ".join((text[: m.start()] + " " + text[m.end():]).split()), value
 
 
+def clean_watch_targets(raw: Any) -> list[dict[str, str]]:
+    """Ziele der Merklisten-Benachrichtigung: Meldung in Home Assistant, notify-Dienste, notify-Entitäten."""
+    out: list[dict[str, str]] = []
+    for t in raw if isinstance(raw, list) else []:
+        if not isinstance(t, dict):
+            continue
+        tid, kind = str(t.get("id") or ""), t.get("kind")
+        if kind == "hass":
+            tid = "persistent_notification"
+        elif kind not in ("service", "entity") or not re.fullmatch(r"notify\.[a-z0-9_]+", tid):
+            continue
+        if not any(x["id"] == tid for x in out):
+            out.append({"id": tid, "kind": kind})
+    return out[:12]
+
+
 class Extras:
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
@@ -100,6 +116,10 @@ class Extras:
         self.item_prices = {k: dict(v) for k, v in (data.get("item_prices") or {}).items() if isinstance(v, dict)}
         self.watch = [str(x) for x in (data.get("watch") or []) if isinstance(x, str) and x.strip()][:60]
         self.watch_settings = dict(data.get("watch_settings") or {})
+        if "targets" not in self.watch_settings:  # bis beta.1 der Karte: ein Dienst als Text
+            old = str(self.watch_settings.pop("service", "") or "")
+            self.watch_settings["targets"] = [{"id": "persistent_notification", "kind": "hass"},
+                                              *([{"id": old, "kind": "service"}] if old.startswith("notify.") else [])]
         self.watch_seen = list(data.get("watch_seen") or [])[-500:]
         self.price_log = {k: list(v)[-MAX_PRICE_LOG:] for k, v in (data.get("price_log") or {}).items() if isinstance(v, list)}
         self.mealplan = {k: [x for x in v if isinstance(x, str)] for k, v in (data.get("mealplan") or {}).items() if isinstance(v, list)}
@@ -170,8 +190,8 @@ class Extras:
         if settings is not None:
             if "notify" in settings:
                 self.watch_settings["notify"] = bool(settings["notify"])
-            if "service" in settings:
-                self.watch_settings["service"] = str(settings["service"] or "").strip()[:80]
+            if "targets" in settings:
+                self.watch_settings["targets"] = clean_watch_targets(settings["targets"])
         self._save()
 
     @callback

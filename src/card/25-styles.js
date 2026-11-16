@@ -195,6 +195,19 @@ const STYLE = `
     background:var(--card-background-color,#fff); color:inherit; font:inherit; text-align:left; cursor:pointer; min-height:52px; box-sizing:border-box; }
   .ntile.on { border-color:var(--sl-accent); background:color-mix(in srgb, var(--sl-accent) 12%, transparent); }
   .ntile.add { border-style:dashed; color:var(--sl-accent); }
+  .ntile .tx { margin-left:auto; background:none; border:0; color:var(--secondary-text-color); font-size:1rem; cursor:pointer; padding:0 2px; }
+  /* Ziel-Auswahl mit Suche und Häkchen (Merkliste) */
+  .tpop { margin:8px 0; border:1px solid var(--divider-color,#ddd); border-radius:14px; overflow:hidden; background:var(--card-background-color,#fff); box-shadow:0 10px 28px rgba(0,0,0,.28); }
+  .tpop .tsearch { width:calc(100% - 20px); margin:10px; height:40px; box-sizing:border-box; border-radius:10px; border:1.5px solid var(--sl-accent); background:var(--secondary-background-color,#f2f2f2); color:inherit; font:inherit; padding:0 12px; }
+  .tpop .tlist { max-height:320px; overflow-y:auto; }
+  .tgrp { font-size:.7rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--secondary-text-color); padding:8px 14px 4px; }
+  .topt { display:flex; align-items:center; gap:12px; width:100%; padding:9px 14px; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+  .topt.on { background:color-mix(in srgb, var(--sl-accent) 14%, transparent); }
+  .topt .ti { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:var(--secondary-background-color,#eee); flex:none; }
+  .topt .tn { flex:1; min-width:0; font-weight:600; } .topt .tn small { display:block; font-weight:400; font-size:.72rem; color:var(--secondary-text-color); font-family:ui-monospace,Consolas,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topt .tcb { width:20px; height:20px; border-radius:6px; border:2px solid var(--secondary-text-color); flex:none; display:grid; place-items:center; font-size:.8rem; color:#fff; }
+  .topt.on .tcb { background:var(--sl-accent); border-color:var(--sl-accent); }
+  .tfoot { display:flex; align-items:center; gap:10px; padding:10px 14px; border-top:1px solid var(--divider-color,#ddd); font-size:.82rem; color:var(--secondary-text-color); } .tfoot span { flex:1; }
   .ntile .ni { font-size:1.3rem; width:26px; text-align:center; flex:none; } .ntile .nn { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
   .ntile .nn small { display:block; color:var(--secondary-text-color); font-size:.72rem; overflow:hidden; text-overflow:ellipsis; }
   .ntile .nc { color:var(--sl-accent); font-weight:700; width:14px; }
@@ -540,7 +553,8 @@ const WIZARD_STYLE = `
 `;
 
 const LIST_DIALOG_STYLE = `
-  .lsd { align-items:flex-end; padding:0; }
+  /* Breite des Fensters zählt, nicht die des Bildschirms: in einer schmalen Karte/Spalte ist das Fenster auch am PC schmal */
+  .lsd { align-items:flex-end; padding:0; container-type:inline-size; }
   .lsheet { max-width:none; width:100%; max-height:92vh; overflow:auto; padding:0; border-radius:16px 16px 0 0; --sl-accent:var(--primary-color,#03a9f4); }
   .ltop { display:flex; align-items:center; gap:10px; padding:14px 18px 12px; border-bottom:1px solid var(--divider-color,#e0e0e0); position:sticky; top:0; background:var(--card-background-color,#fff); z-index:1; }
   .lwho { flex:1; min-width:0; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
@@ -554,7 +568,7 @@ const LIST_DIALOG_STYLE = `
     border:1px solid var(--divider-color,#ccc); border-radius:8px; background:none; cursor:pointer; flex:none; box-sizing:border-box; }
   .dlg.lsheet .srow2 select { width:180px; }
   /* 4.0 – Handy: auch im Listen-/Teilen-Fenster die Beschriftung über Auswahl und Eingabefeld (nichts abgeschnitten) */
-  @media (max-width: 520px) {
+  @container (max-width: 560px) {
     .dlg.lsheet .srow2 { flex-wrap:wrap; row-gap:6px; }
     .dlg.lsheet .srow2 > .sl { flex:1 1 60%; min-width:150px; }
     .dlg.lsheet .srow2 > select, .dlg.lsheet .srow2 > input:not([type=checkbox]):not([type=color]) { flex:1 1 100%; width:auto; max-width:100%; min-width:0; margin:0; }
@@ -562,9 +576,9 @@ const LIST_DIALOG_STYLE = `
   .dlg.lsheet button { height:auto; }
   .dlg.lsheet .btn2 { height:36px; } .dlg.lsheet .icon-btn { border:none; padding:0; }
   .dlg.lsheet .lfoot .ok { height:38px; }
-  @media (min-width: 760px) {
-    .lsd { align-items:center; padding:16px; }
-    .lsheet { max-width:860px; border-radius:16px; }
+  @media (min-width: 760px) { .lsd { align-items:center; padding:16px; } .lsheet { border-radius:16px; } }
+  @container (min-width: 760px) {
+    .lsheet { max-width:860px; }
     .ltwo:not(.one) { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
     .ltwo { padding:22px 24px 0; } .ltop, .lfoot { padding-left:24px; padding-right:24px; }
   }

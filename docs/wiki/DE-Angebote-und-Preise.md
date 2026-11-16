@@ -41,8 +41,9 @@ Merkliste**) oder im Reiter ⭐ der [Angebots-Karte](DE-Angebots-Karte); entfern
 Währung → Merkliste*.
 
 Ist **Benachrichtigen, wenn etwas davon im Angebot ist** eingeschaltet (Admins), prüft Home Assistant die
-Angebots-Sensoren alle 30 Minuten – auch ohne geöffnetes Dashboard – und meldet jedes neue Angebot einmal. Trägst du
-einen notify-Dienst ein (z. B. `notify.mobile_app_pixel`), kommt die Meldung zusätzlich aufs Smartphone.
+Angebots-Sensoren alle 30 Minuten – auch ohne geöffnetes Dashboard – und meldet jedes neue Angebot einmal. Unter **Senden an** wählst du,
+wohin die Meldung geht – mehrere Ziele sind möglich: die Benachrichtigung in Home Assistant, die App auf Smartphones
+und Tablets oder jeder andere notify-Dienst.
 
 ## Angebote in der Einkaufsliste
 

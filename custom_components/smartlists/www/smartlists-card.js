@@ -43,7 +43,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "4.0.0-beta.2";
+const CARD_VERSION = "4.0.0-beta.3";
 // Fehlgeschlagene Server-Aufrufe, die die Oberfläche nicht aufhalten sollen: wenigstens in der Browser-Konsole zeigen
 const slWarn = (what, err) => { try { console.warn(`SmartLists: ${what} failed –`, (err && err.message) || err); } catch (e) { /* */ } };
 const SORT_MODES = ["category", "alpha", "added", "list"];
@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    wl_send_to: "Senden an", wl_add_target: "Ziel hinzufügen", wl_search: "Durchsuchen", wl_hass: "In Home Assistant", wl_hass_sub: "Benachrichtigung in der Seitenleiste", wl_grp_dev: "Smartphones & Tablets", wl_grp_other: "Weitere Dienste", wl_none: "Keine", wl_done: "Fertig", wl_n: "{n} ausgewählt", wl_no_target: "Kein Ziel gewählt – es wird nichts gesendet.",
     wl_menu: "Auf die Merkliste", wl_added: "steht auf der Merkliste", wl_title: "Merkliste", wl_help: "Produkte, bei denen du auf ein Angebot wartest. Hinzufügen: im Menü eines Artikels oder in der Angebots-Karte.", wl_empty: "Noch nichts gemerkt.", wl_notify: "Benachrichtigen, wenn etwas davon im Angebot ist", wl_notify_help: "Home Assistant prüft alle 30 Minuten – auch wenn kein Dashboard geöffnet ist – und meldet jedes Angebot einmal.", wl_service: "Zusätzlich senden an (z. B. notify.mobile_app_…)", ph_low: "Günstigster Preis bisher", tpl_suggest: "Häufig gekauft – antippen zum Hinzufügen:", tpl_from_done: "Aus Erledigtem", tpl_clean: "Aufzählungszeichen und Nummern entfernt",
     cur_custom: "Eigenes Symbol …", cur_symbol: "Symbol", cur_symbol_help: "Bis 6 Zeichen, z. B. ₺, Rp oder лв – steht hinter dem Betrag und wird beim Eintippen als Preis erkannt.", cur_symbol_bad: "Symbol nicht möglich – ohne Ziffern, Leerzeichen und @ # * + ~ !",
     price_auto: "Gemerkten Preis automatisch eintragen", price_auto_help: "An: Kommt ein Artikel wieder auf die Liste, steht sein letzter Preis dabei. Aus: Preise werden nur im Verlauf geführt – ein Artikel zeigt nur ein Angebot oder den Preis, den du für diesen Eintrag tippst.", price_log: "Preis-Verlauf",
@@ -399,6 +400,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    wl_send_to: "Send to", wl_add_target: "Add target", wl_search: "Search", wl_hass: "In Home Assistant", wl_hass_sub: "Notification in the sidebar", wl_grp_dev: "Smartphones & tablets", wl_grp_other: "Other services", wl_none: "None", wl_done: "Done", wl_n: "{n} selected", wl_no_target: "No target selected – nothing is sent.",
     wl_menu: "Add to watch list", wl_added: "is on the watch list", wl_title: "Watch list", wl_help: "Products you are waiting to see on offer. Add them from an item's menu or in the offers card.", wl_empty: "Nothing here yet.", wl_notify: "Notify when one of them is on offer", wl_notify_help: "Home Assistant checks every 30 minutes – even with no dashboard open – and reports every offer once.", wl_service: "Also send to (e.g. notify.mobile_app_…)", ph_low: "Lowest price so far", tpl_suggest: "Bought often – tap to add:", tpl_from_done: "From checked items", tpl_clean: "Bullets and numbers removed",
     cur_custom: "Own symbol …", cur_symbol: "Symbol", cur_symbol_help: "Up to 6 characters, e.g. ₺, Rp or лв – shown after the amount and recognised as a price while typing.", cur_symbol_bad: "Symbol not possible – no digits, spaces or @ # * + ~ !",
     price_auto: "Fill in the remembered price automatically", price_auto_help: "On: when an item returns to the list, its last price is shown. Off: prices are only kept in the history – an item only shows an offer or the price you type for this entry.", price_log: "Price history",
@@ -671,6 +673,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    wl_send_to: "Envoyer à", wl_add_target: "Ajouter une cible", wl_search: "Rechercher", wl_hass: "Dans Home Assistant", wl_hass_sub: "Notification dans la barre latérale", wl_grp_dev: "Smartphones et tablettes", wl_grp_other: "Autres services", wl_none: "Aucune", wl_done: "Terminé", wl_n: "{n} sélectionnée(s)", wl_no_target: "Aucune cible choisie – rien n'est envoyé.",
     wl_menu: "Ajouter aux produits surveillés", wl_added: "est surveillé", wl_title: "Produits surveillés", wl_help: "Produits dont tu attends une promo. Ajoute-les depuis le menu d'un article ou dans la carte des promos.", wl_empty: "Rien pour l'instant.", wl_notify: "Notifier quand l'un d'eux est en promo", wl_notify_help: "Home Assistant vérifie toutes les 30 minutes – même sans tableau de bord ouvert – et signale chaque promo une fois.", wl_service: "Envoyer aussi à (p. ex. notify.mobile_app_…)", ph_low: "Prix le plus bas jusqu'ici", tpl_suggest: "Souvent achetés – touche pour ajouter :", tpl_from_done: "Depuis les articles cochés", tpl_clean: "Puces et numéros retirés",
     cur_custom: "Symbole personnalisé …", cur_symbol: "Symbole", cur_symbol_help: "Jusqu'à 6 caractères, p. ex. ₺, Rp ou лв – affiché après le montant et reconnu comme prix à la saisie.", cur_symbol_bad: "Symbole impossible – sans chiffres, espaces ni @ # * + ~ !",
     price_auto: "Reprendre automatiquement le prix mémorisé", price_auto_help: "Activé : quand un article revient sur la liste, son dernier prix s'affiche. Désactivé : les prix restent dans l'historique – un article n'affiche qu'une promo ou le prix saisi pour cette entrée.", price_log: "Historique des prix",
@@ -943,6 +946,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    wl_send_to: "Enviar a", wl_add_target: "Añadir destino", wl_search: "Buscar", wl_hass: "En Home Assistant", wl_hass_sub: "Notificación en la barra lateral", wl_grp_dev: "Smartphones y tabletas", wl_grp_other: "Otros servicios", wl_none: "Ninguno", wl_done: "Listo", wl_n: "{n} seleccionado(s)", wl_no_target: "Ningún destino elegido – no se envía nada.",
     wl_menu: "Añadir al seguimiento", wl_added: "está en seguimiento", wl_title: "Seguimiento", wl_help: "Productos de los que esperas una oferta. Añádelos desde el menú de un artículo o en la tarjeta de ofertas.", wl_empty: "Aún no hay nada.", wl_notify: "Avisar cuando alguno esté en oferta", wl_notify_help: "Home Assistant comprueba cada 30 minutos – aunque no haya ningún panel abierto – y avisa una vez por oferta.", wl_service: "Enviar también a (p. ej. notify.mobile_app_…)", ph_low: "Precio más bajo hasta ahora", tpl_suggest: "Comprados a menudo – toca para añadir:", tpl_from_done: "De lo ya marcado", tpl_clean: "Viñetas y números eliminados",
     cur_custom: "Símbolo propio …", cur_symbol: "Símbolo", cur_symbol_help: "Hasta 6 caracteres, p. ej. ₺, Rp o лв – aparece tras el importe y se reconoce como precio al escribir.", cur_symbol_bad: "Símbolo no válido – sin cifras, espacios ni @ # * + ~ !",
     price_auto: "Rellenar el precio recordado automáticamente", price_auto_help: "Activado: cuando un artículo vuelve a la lista, aparece su último precio. Desactivado: los precios solo quedan en el historial – un artículo solo muestra una oferta o el precio que escribas para esa entrada.", price_log: "Historial de precios",
@@ -1215,6 +1219,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    wl_send_to: "Invia a", wl_add_target: "Aggiungi destinazione", wl_search: "Cerca", wl_hass: "In Home Assistant", wl_hass_sub: "Notifica nella barra laterale", wl_grp_dev: "Smartphone e tablet", wl_grp_other: "Altri servizi", wl_none: "Nessuna", wl_done: "Fatto", wl_n: "{n} selezionate", wl_no_target: "Nessuna destinazione scelta – non viene inviato nulla.",
     wl_menu: "Aggiungi ai prodotti seguiti", wl_added: "è tra i prodotti seguiti", wl_title: "Prodotti seguiti", wl_help: "Prodotti di cui aspetti un'offerta. Aggiungili dal menu di un articolo o nella scheda offerte.", wl_empty: "Ancora niente.", wl_notify: "Avvisa quando uno è in offerta", wl_notify_help: "Home Assistant controlla ogni 30 minuti – anche senza dashboard aperta – e segnala ogni offerta una volta.", wl_service: "Invia anche a (ad es. notify.mobile_app_…)", ph_low: "Prezzo più basso finora", tpl_suggest: "Comprati spesso – tocca per aggiungere:", tpl_from_done: "Dagli articoli spuntati", tpl_clean: "Punti elenco e numeri rimossi",
     cur_custom: "Simbolo personalizzato …", cur_symbol: "Simbolo", cur_symbol_help: "Fino a 6 caratteri, ad es. ₺, Rp o лв – compare dopo l'importo ed è riconosciuto come prezzo durante la digitazione.", cur_symbol_bad: "Simbolo non valido – senza cifre, spazi né @ # * + ~ !",
     price_auto: "Inserisci automaticamente il prezzo ricordato", price_auto_help: "Attivo: quando un articolo torna in lista, compare l'ultimo prezzo. Disattivo: i prezzi restano solo nella cronologia – un articolo mostra solo un'offerta o il prezzo digitato per questa voce.", price_log: "Cronologia prezzi",
@@ -1487,6 +1492,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    wl_send_to: "Wyślij do", wl_add_target: "Dodaj cel", wl_search: "Szukaj", wl_hass: "W Home Assistant", wl_hass_sub: "Powiadomienie w pasku bocznym", wl_grp_dev: "Smartfony i tablety", wl_grp_other: "Inne usługi", wl_none: "Żaden", wl_done: "Gotowe", wl_n: "Wybrano: {n}", wl_no_target: "Nie wybrano celu – nic nie zostanie wysłane.",
     wl_menu: "Dodaj do obserwowanych", wl_added: "jest obserwowany", wl_title: "Obserwowane", wl_help: "Produkty, na których promocję czekasz. Dodaj je z menu produktu lub w karcie promocji.", wl_empty: "Jeszcze nic.", wl_notify: "Powiadom, gdy któryś jest w promocji", wl_notify_help: "Home Assistant sprawdza co 30 minut – także bez otwartego dashboardu – i zgłasza każdą promocję raz.", wl_service: "Wyślij też do (np. notify.mobile_app_…)", ph_low: "Najniższa cena do tej pory", tpl_suggest: "Często kupowane – dotknij, aby dodać:", tpl_from_done: "Z odhaczonych", tpl_clean: "Usunięto punktory i numery",
     cur_custom: "Własny symbol …", cur_symbol: "Symbol", cur_symbol_help: "Do 6 znaków, np. ₺, Rp lub лв – stoi po kwocie i jest rozpoznawany jako cena przy wpisywaniu.", cur_symbol_bad: "Symbol niedozwolony – bez cyfr, spacji i @ # * + ~ !",
     price_auto: "Automatycznie wpisuj zapamiętaną cenę", price_auto_help: "Wł.: gdy produkt wraca na listę, pokazuje ostatnią cenę. Wył.: ceny są tylko w historii – produkt pokazuje jedynie promocję lub cenę wpisaną dla tego wpisu.", price_log: "Historia cen",
@@ -2584,6 +2590,19 @@ const STYLE = `
     background:var(--card-background-color,#fff); color:inherit; font:inherit; text-align:left; cursor:pointer; min-height:52px; box-sizing:border-box; }
   .ntile.on { border-color:var(--sl-accent); background:color-mix(in srgb, var(--sl-accent) 12%, transparent); }
   .ntile.add { border-style:dashed; color:var(--sl-accent); }
+  .ntile .tx { margin-left:auto; background:none; border:0; color:var(--secondary-text-color); font-size:1rem; cursor:pointer; padding:0 2px; }
+  /* Ziel-Auswahl mit Suche und Häkchen (Merkliste) */
+  .tpop { margin:8px 0; border:1px solid var(--divider-color,#ddd); border-radius:14px; overflow:hidden; background:var(--card-background-color,#fff); box-shadow:0 10px 28px rgba(0,0,0,.28); }
+  .tpop .tsearch { width:calc(100% - 20px); margin:10px; height:40px; box-sizing:border-box; border-radius:10px; border:1.5px solid var(--sl-accent); background:var(--secondary-background-color,#f2f2f2); color:inherit; font:inherit; padding:0 12px; }
+  .tpop .tlist { max-height:320px; overflow-y:auto; }
+  .tgrp { font-size:.7rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--secondary-text-color); padding:8px 14px 4px; }
+  .topt { display:flex; align-items:center; gap:12px; width:100%; padding:9px 14px; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+  .topt.on { background:color-mix(in srgb, var(--sl-accent) 14%, transparent); }
+  .topt .ti { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:var(--secondary-background-color,#eee); flex:none; }
+  .topt .tn { flex:1; min-width:0; font-weight:600; } .topt .tn small { display:block; font-weight:400; font-size:.72rem; color:var(--secondary-text-color); font-family:ui-monospace,Consolas,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topt .tcb { width:20px; height:20px; border-radius:6px; border:2px solid var(--secondary-text-color); flex:none; display:grid; place-items:center; font-size:.8rem; color:#fff; }
+  .topt.on .tcb { background:var(--sl-accent); border-color:var(--sl-accent); }
+  .tfoot { display:flex; align-items:center; gap:10px; padding:10px 14px; border-top:1px solid var(--divider-color,#ddd); font-size:.82rem; color:var(--secondary-text-color); } .tfoot span { flex:1; }
   .ntile .ni { font-size:1.3rem; width:26px; text-align:center; flex:none; } .ntile .nn { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
   .ntile .nn small { display:block; color:var(--secondary-text-color); font-size:.72rem; overflow:hidden; text-overflow:ellipsis; }
   .ntile .nc { color:var(--sl-accent); font-weight:700; width:14px; }
@@ -2929,7 +2948,8 @@ const WIZARD_STYLE = `
 `;
 
 const LIST_DIALOG_STYLE = `
-  .lsd { align-items:flex-end; padding:0; }
+  /* Breite des Fensters zählt, nicht die des Bildschirms: in einer schmalen Karte/Spalte ist das Fenster auch am PC schmal */
+  .lsd { align-items:flex-end; padding:0; container-type:inline-size; }
   .lsheet { max-width:none; width:100%; max-height:92vh; overflow:auto; padding:0; border-radius:16px 16px 0 0; --sl-accent:var(--primary-color,#03a9f4); }
   .ltop { display:flex; align-items:center; gap:10px; padding:14px 18px 12px; border-bottom:1px solid var(--divider-color,#e0e0e0); position:sticky; top:0; background:var(--card-background-color,#fff); z-index:1; }
   .lwho { flex:1; min-width:0; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
@@ -2943,7 +2963,7 @@ const LIST_DIALOG_STYLE = `
     border:1px solid var(--divider-color,#ccc); border-radius:8px; background:none; cursor:pointer; flex:none; box-sizing:border-box; }
   .dlg.lsheet .srow2 select { width:180px; }
   /* 4.0 – Handy: auch im Listen-/Teilen-Fenster die Beschriftung über Auswahl und Eingabefeld (nichts abgeschnitten) */
-  @media (max-width: 520px) {
+  @container (max-width: 560px) {
     .dlg.lsheet .srow2 { flex-wrap:wrap; row-gap:6px; }
     .dlg.lsheet .srow2 > .sl { flex:1 1 60%; min-width:150px; }
     .dlg.lsheet .srow2 > select, .dlg.lsheet .srow2 > input:not([type=checkbox]):not([type=color]) { flex:1 1 100%; width:auto; max-width:100%; min-width:0; margin:0; }
@@ -2951,9 +2971,9 @@ const LIST_DIALOG_STYLE = `
   .dlg.lsheet button { height:auto; }
   .dlg.lsheet .btn2 { height:36px; } .dlg.lsheet .icon-btn { border:none; padding:0; }
   .dlg.lsheet .lfoot .ok { height:38px; }
-  @media (min-width: 760px) {
-    .lsd { align-items:center; padding:16px; }
-    .lsheet { max-width:860px; border-radius:16px; }
+  @media (min-width: 760px) { .lsd { align-items:center; padding:16px; } .lsheet { border-radius:16px; } }
+  @container (min-width: 760px) {
+    .lsheet { max-width:860px; }
     .ltwo:not(.one) { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
     .ltwo { padding:22px 24px 0; } .ltop, .lfoot { padding-left:24px; padding-right:24px; }
   }
@@ -4956,7 +4976,7 @@ class SmartListsCard extends HTMLElement {
         this._version && this._version !== CARD_VERSION ? [h("span", {}, t.card || "Card"), h("b", {}, CARD_VERSION)] : null,
         h("span", {}, "Home Assistant"), h("b", {}, (this._hass.config && this._hass.config.version) || "–"))]),
       this._sec("", t.info_help, null, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
-        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, REPO + "/issues"), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
+        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, this._issueUrl()), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
       ...(!this._isAdmin ? [] : [
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
@@ -5613,18 +5633,52 @@ class SmartListsCard extends HTMLElement {
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
     ];
   }
+  // „Fehler melden“: neues Issue mit Versionen und Umgebung vorausgefüllt (nichts Persönliches – keine Listen, Artikel oder Adressen)
+  _issueUrl() {
+    const ua = navigator.userAgent || "";
+    const app = /Home ?Assistant/i.test(ua) ? "Home Assistant app" : /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
+    const os = /Android/.test(ua) ? "Android" : /iPhone|iPad|iOS/.test(ua) ? "iOS" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "";
+    const where = location.pathname.startsWith("/smartlists") ? "Sidebar page" : "Dashboard card";
+    const body = ["### What happened?", "", "", "### What did you expect?", "", "", "### Steps to reproduce", "1. ", "", "### Environment",
+      `- SmartLists: ${this._version || CARD_VERSION}${this._version && this._version !== CARD_VERSION ? ` (card: ${CARD_VERSION})` : ""}`,
+      `- Home Assistant: ${(this._hass.config && this._hass.config.version) || "?"}`, `- Where: ${where}`, `- Browser / app: ${app}${os ? `, ${os}` : ""}`,
+      `- Language: ${this._lang || (this._hass && this._hass.language) || "?"}`].join("\n");
+    return `${"https://github.com/m3m0rex/ha_smartlists"}/issues/new?body=${encodeURIComponent(body)}`;
+  }
   // Global → Preise & Währung → Merkliste: Produkte, bei denen man auf ein Angebot wartet, und die Benachrichtigung
   _watchSection() {
     const t = this._t, box = h("div", {}, h("div", { class: "shelp" }, t.loading)), status = h("span", { class: "ok2" });
     const draw = (w) => {
       const set = async (patch) => { try { draw(await this._call("watch_set", patch, false)); status.textContent = "✓ " + t.saved; } catch (e) { status.textContent = (e && e.message) || t.error; } };
-      const service = h("input", { type: "text", value: w.service || "", placeholder: "notify.mobile_app_…", "aria-label": t.wl_service, style: "max-width:260px" });
-      service.addEventListener("change", () => set({ service: service.value.trim() }));
+      // Ziele: gewählte als Kacheln, „Ziel hinzufügen“ öffnet eine Liste mit Suche und Häkchen (mehrere möglich)
+      const all = [{ id: "persistent_notification", kind: "hass", icon: "🔔", name: t.wl_hass, sub: t.wl_hass_sub, grp: "Home Assistant" },
+        ...(w.services || []).map((sv) => { const dev = sv.startsWith("mobile_app_"); return { id: "notify." + sv, kind: "service", icon: dev ? "📱" : /telegram/.test(sv) ? "✈️" : /alexa|tts|speak/.test(sv) ? "🔊" : "✉️",
+          name: (dev ? sv.slice(11) : sv).replace(/_/g, " "), sub: "notify." + sv, grp: dev ? t.wl_grp_dev : t.wl_grp_other }; }),
+        ...(w.entities || []).map((e) => ({ id: e.id, kind: "entity", icon: "🔔", name: e.name, sub: e.id, grp: t.wl_grp_other }))];
+      const has = (x) => (w.targets || []).some((y) => y.id === x.id);
+      const toggle = (x) => set({ targets: has(x) ? w.targets.filter((y) => y.id !== x.id) : [...(w.targets || []), { id: x.id, kind: x.kind }] });
+      const picked = all.filter(has);
+      const q = (this._watchQuery || "").toLowerCase();
+      const search = h("input", { type: "search", class: "tsearch", placeholder: t.wl_search, "aria-label": t.wl_search, value: this._watchQuery || "" });
+      search.addEventListener("input", () => { this._watchQuery = search.value; const pos = search.selectionStart; draw(w); const f = box.querySelector(".tsearch"); if (f) { f.focus(); try { f.setSelectionRange(pos, pos); } catch (e) { /* */ } } });
+      let last = "";
+      const options = all.filter((x) => !q || `${x.name} ${x.sub}`.toLowerCase().includes(q)).map((x) => [x.grp !== last ? h("div", { class: "tgrp" }, (last = x.grp)) : null,
+        h("button", { type: "button", class: `topt ${has(x) ? "on" : ""}`, role: "option", "aria-selected": String(has(x)), onclick: () => toggle(x) },
+          h("span", { class: "ti" }, x.icon), h("span", { class: "tn" }, x.name, h("small", {}, x.sub)), h("span", { class: "tcb" }, has(x) ? "✓" : ""))]);
+      const pop = this._watchOpen ? h("div", { class: "tpop", role: "listbox", "aria-multiselectable": "true" }, search, h("div", { class: "tlist" }, options),
+        h("div", { class: "tfoot" }, h("span", {}, t.wl_n.replace("{n}", picked.length)),
+          h("button", { type: "button", class: "linkbtn", onclick: () => set({ targets: [] }) }, t.wl_none),
+          h("button", { type: "button", class: "btn2", onclick: () => { this._watchOpen = false; this._watchQuery = ""; draw(w); } }, t.wl_done))) : null;
+      const targets = h("div", {}, h("div", { class: "grp", style: "padding:10px 0 6px" }, t.wl_send_to),
+        h("div", { class: "ntiles", style: "grid-template-columns:repeat(auto-fill,minmax(150px,1fr))" }, picked.map((x) => h("div", { class: "ntile on" }, h("span", { class: "ni" }, x.icon),
+          h("span", { class: "nn" }, x.name), h("button", { type: "button", class: "tx", "aria-label": `${t.delete}: ${x.name}`, onclick: () => toggle(x) }, "✕"))),
+          h("button", { type: "button", class: "ntile add", "aria-expanded": String(!!this._watchOpen), onclick: () => { this._watchOpen = !this._watchOpen; draw(w); } }, "＋ " + t.wl_add_target)),
+        pop, picked.length ? null : h("div", { class: "shelp" }, t.wl_no_target));
       fill(box, w.names.length ? h("div", { class: "chips", style: "display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px" }, w.names.map((n) =>
           h("button", { type: "button", class: "chip", title: t.delete, "aria-label": `${t.delete}: ${n}`, onclick: () => set({ remove: n }) }, `⭐ ${n} ✕`)))
         : h("div", { class: "shelp" }, t.wl_empty),
         this._isAdmin ? this._setRow(t.wl_notify, this._switch(!!w.notify, (v) => set({ notify: v }), t.wl_notify), t.wl_notify_help) : null,
-        this._isAdmin && w.notify ? h("div", { class: "srow2" }, h("div", { class: "sl" }, t.wl_service), service) : null, h("div", { class: "srow" }, status));
+        this._isAdmin && w.notify ? targets : null, h("div", { class: "srow" }, status));
     };
     this._call("watch", {}, false).then(draw).catch((e) => { slWarn("watch", e); fill(box, h("div", { class: "shelp" }, t.error)); });
     return this._sec("", "⭐ " + t.wl_title, t.wl_help, [box]);

@@ -120,14 +120,17 @@ async def async_check_watch(hass: HomeAssistant) -> int:
     if len(fresh) > 12:
         lines.append(f"+{len(fresh) - 12}")
     title, message = "🏷️ Angebot für deine Merkliste", "\n".join(lines)
-    try:
-        await hass.services.async_call("persistent_notification", "create",
-                                       {"title": title, "message": message, "notification_id": "smartlists_watch"}, blocking=False)
-        service = str(extras.watch_settings.get("service") or "")
-        if re.fullmatch(r"[a-z0-9_]+\.[a-z0-9_]+", service) and hass.services.has_service(*service.split(".", 1)):
-            await hass.services.async_call(*service.split(".", 1), {"title": title, "message": message, "data": {"tag": "smartlists_watch"}}, blocking=False)
-    except Exception:  # noqa: BLE001 – eine Meldung darf nie die Prüfung abbrechen
-        _LOGGER.warning("Merkliste: Benachrichtigung fehlgeschlagen", exc_info=True)
+    from .notify import async_get_notifier
+
+    for target in extras.watch_settings.get("targets") or []:
+        try:
+            if target.get("kind") == "hass":
+                await hass.services.async_call("persistent_notification", "create",
+                                               {"title": title, "message": message, "notification_id": "smartlists_watch"}, blocking=False)
+            else:  # notify-Dienst oder -Entität: derselbe Weg wie die Benachrichtigungen der Listen
+                await (await async_get_notifier(hass))._deliver(target, title, message, "smartlists_watch")
+        except Exception:  # noqa: BLE001 – ein falsches Ziel darf die anderen nicht aufhalten
+            _LOGGER.warning("Merkliste: Benachrichtigung an %s fehlgeschlagen", target.get("id"), exc_info=True)
     return len(fresh)
 
 

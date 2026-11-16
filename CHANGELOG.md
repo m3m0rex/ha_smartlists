@@ -3,6 +3,23 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.3] – 2026-11-16
+
+Third pre-release of 4.0.
+
+### Changed
+
+- **Watch list: where the notification goes** is now chosen from a list with search and check marks instead of a text
+  field – several targets are possible: the notification in Home Assistant (can be switched off), the companion app
+  on your phones and tablets, or any other notify service or entity. A service entered in beta 2 is kept.
+- **"Report a bug" is pre-filled** with the SmartLists and Home Assistant versions, where it happened, browser or app
+  and language – nothing personal (no lists, items or addresses).
+
+### Fixed
+
+- **List settings window in a narrow card or column:** on a wide screen it still used two columns, so labels were
+  squeezed to one letter per line. The layout now follows the width of the window, not of the screen.
+
 ## [4.0.0-beta.2] – 2026-11-16
 
 Second pre-release of 4.0.

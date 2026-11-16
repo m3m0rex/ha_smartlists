@@ -201,8 +201,11 @@ def test_watch_list_and_offer_matching():
     from smartlists.offers import deals_for, matches, num
 
     ex = Extras(types.SimpleNamespace(data={}))
-    ex.set_watch(["Kaffee", " kaffee ", "Nutella", ""], {"notify": True, "service": " notify.mobile_app_x "})
-    assert ex.watch == ["Kaffee", "Nutella"] and ex.watch_settings == {"notify": True, "service": "notify.mobile_app_x"}
+    ex.set_watch(["Kaffee", " kaffee ", "Nutella", ""], {"notify": True, "targets": [
+        {"id": "x", "kind": "hass"}, {"id": "notify.mobile_app_x", "kind": "service"}, {"id": "notify.mobile_app_x", "kind": "service"},
+        {"id": "light.turn_on", "kind": "service"}, {"id": "notify.tv", "kind": "entity"}, "kaputt"]})
+    assert ex.watch == ["Kaffee", "Nutella"] and ex.watch_settings == {"notify": True, "targets": [
+        {"id": "persistent_notification", "kind": "hass"}, {"id": "notify.mobile_app_x", "kind": "service"}, {"id": "notify.tv", "kind": "entity"}]}
     ex.mark_watch_seen(["a", "b"])
     assert ex.watch_seen == ["a", "b"]
     assert [num(x) for x in ("11,49 €", "1.11 €", "€ 10.98", 5.49, "gratis")] == [11.49, 1.11, 10.98, 5.49, None]

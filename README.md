@@ -59,8 +59,6 @@ The cards are loaded automatically – no dashboard resource needed. Requires Ho
 | `custom:smartlists-card` | List, shopping mode, settings | [Wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card) |
 | `custom:smartdiscounts-card` | Offers matched with the list | [Wiki → Offers card](https://github.com/m3m0rex/ha_smartlists/wiki/Offers-card) |
 
-Offer sensors for the offers card come e.g. from FaserF's REWE integration [ha-rewe](https://github.com/FaserF/ha-rewe) (an independent project).
-
 ```yaml
 type: custom:smartlists-card
 entity: todo.shopping
@@ -82,6 +80,23 @@ It also works without a dashboard: the **SmartLists** page in the sidebar shows 
 | When something does not work | [Troubleshooting](https://github.com/m3m0rex/ha_smartlists/wiki/Troubleshooting) |
 
 > The Android app **HA SmartLists** is not published yet. Everything described here works without it.
+
+## Thanks to FaserF
+
+The offer data does not come from SmartLists but from the integrations by [FaserF](https://github.com/FaserF) – without them there would be
+nothing to show in the offers card. Thank you! All his projects: [hassio-addons.fabiseitz.de](https://hassio-addons.fabiseitz.de/)
+
+| | Integration | What it provides |
+|---|---|---|
+| 🏷️ | [ha-grocery-deals](https://github.com/FaserF/ha-grocery-deals) | Multi-store price comparison: aggregates the store integrations |
+| 🔴 | [ha-rewe](https://github.com/FaserF/ha-rewe) | REWE: weekly offers, bonus points and discounts |
+| 🟡 | [ha-edeka](https://github.com/FaserF/ha-edeka) | EDEKA: weekly offers, discounts and PAYBACK card |
+| 🔵 | [ha-lidl](https://github.com/FaserF/ha-lidl) | Lidl Plus: weekly offers, coupons and digital receipts |
+| ⚪ | [ha-aldi](https://github.com/FaserF/ha-aldi) | ALDI Süd and ALDI Nord: weekly flyers |
+| 🔴 | [ha-norma](https://github.com/FaserF/ha-norma) | Norma: weekly discounts and flyer offers |
+| 🔴 | [ha-penny](https://github.com/FaserF/ha-penny) | PENNY: digital receipts (eBons) and loyalty points |
+
+SmartLists is an independent project and not affiliated with FaserF or the stores mentioned.
 
 ## Contributing
 

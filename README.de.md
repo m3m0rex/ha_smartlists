@@ -59,8 +59,6 @@ Die Karten werden automatisch geladen – eine Dashboard-Ressource ist nicht nö
 | `custom:smartlists-card` | Liste, Einkaufsmodus, Einstellungen | [Wiki → Card](https://github.com/m3m0rex/ha_smartlists/wiki/Card) |
 | `custom:smartdiscounts-card` | Angebote, abgeglichen mit der Liste | [Wiki → Angebots-Karte](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Angebots-Karte) |
 
-Angebots-Sensoren für die Angebots-Karte liefert z. B. die REWE-Integration [ha-rewe](https://github.com/FaserF/ha-rewe) von FaserF (eigenständiges Projekt).
-
 ```yaml
 type: custom:smartlists-card
 entity: todo.einkauf
@@ -82,6 +80,23 @@ Ohne Dashboard geht es auch: Die Seite **SmartLists** in der Seitenleiste zeigt 
 | Wenn etwas nicht klappt | [Troubleshooting](https://github.com/m3m0rex/ha_smartlists/wiki/Troubleshooting) |
 
 > Die Android-App **HA SmartLists** ist noch nicht veröffentlicht. Alles hier Beschriebene funktioniert ohne sie.
+
+## Dank an FaserF
+
+Die Angebots-Daten kommen nicht von SmartLists, sondern aus den Integrationen von [FaserF](https://github.com/FaserF) – ohne sie gäbe es
+in der Angebots-Karte nichts anzuzeigen. Vielen Dank dafür! Alle seine Projekte: [hassio-addons.fabiseitz.de](https://hassio-addons.fabiseitz.de/)
+
+| | Integration | Was sie liefert |
+|---|---|---|
+| 🏷️ | [ha-grocery-deals](https://github.com/FaserF/ha-grocery-deals) | Preisvergleich über mehrere Märkte: fasst die Markt-Integrationen zusammen |
+| 🔴 | [ha-rewe](https://github.com/FaserF/ha-rewe) | REWE: Wochenangebote, Bonuspunkte und Rabatte |
+| 🟡 | [ha-edeka](https://github.com/FaserF/ha-edeka) | EDEKA: Wochenangebote, Rabatte und PAYBACK-Karte |
+| 🔵 | [ha-lidl](https://github.com/FaserF/ha-lidl) | Lidl Plus: Wochenangebote, Coupons und digitale Kassenbons |
+| ⚪ | [ha-aldi](https://github.com/FaserF/ha-aldi) | ALDI Süd und ALDI Nord: Wochenprospekte |
+| 🔴 | [ha-norma](https://github.com/FaserF/ha-norma) | Norma: Wochenangebote und Prospekt |
+| 🔴 | [ha-penny](https://github.com/FaserF/ha-penny) | PENNY: digitale Kassenbons (eBons) und Treuepunkte |
+
+SmartLists ist ein eigenständiges Projekt und nicht mit FaserF oder den genannten Märkten verbunden.
 
 ## Mitmachen
 

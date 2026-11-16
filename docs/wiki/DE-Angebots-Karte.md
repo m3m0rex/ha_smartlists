@@ -10,8 +10,9 @@ Beispielen auf.
 
 ## Voraussetzung
 
-Mindestens ein Sensor mit einer Angebotsliste in einem Attribut, z. B. aus der REWE-Integration
-[ha-rewe](https://github.com/FaserF/ha-rewe) von FaserF. Jeder andere Sensor mit einer solchen Liste (EDEKA, Lidl, ALDI …) geht ebenso. Eigene REST-, Template- oder Scrape-Sensoren gehen ebenso.
+Mindestens ein Sensor mit einer Angebotsliste in einem Attribut, z. B. aus den Integrationen von
+[FaserF](https://github.com/FaserF) für REWE, EDEKA, Lidl, ALDI und Norma ([alle Projekte](https://hassio-addons.fabiseitz.de/)). Jeder andere Sensor mit einer solchen
+Liste geht ebenso. Eigene REST-, Template- oder Scrape-Sensoren gehen ebenso.
 
 ## Einrichten
 

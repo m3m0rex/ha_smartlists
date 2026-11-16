@@ -124,7 +124,7 @@ function storeOf(src, state) {
 }
 // alle Angebote aller Quellen, vereinheitlicht
 function collectOffers(hass, cfg) {
-  const out = [];
+  const out = [], seen = new Map();  // dasselbe Angebot aus zwei Sensoren (z. B. zwei Integrationen für denselben Markt) nur einmal
   const today = new Date().toISOString().slice(0, 10);
   for (const src of sourcesOf(hass, cfg)) {
     const state = hass.states[src.entity];
@@ -144,9 +144,12 @@ function collectOffers(hass, cfg) {
       // Rabatt: Angabe der Quelle („-44%“) oder aus altem und neuem Preis berechnet
       const dm = String(pick(o, "discount") || "").match(/-?\s*(\d{1,2})\s*%/);
       const pct = dm ? +dm[1] : old && old > price ? Math.round((1 - price / old) * 100) : null;
+      const label = st ? String(st) : store.label, dk = `${norm(label)}|${norm(name)}|${price}|${until || ""}`, twin = seen.get(dk);
+      if (twin) { if (!twin.image) twin.image = pick(o, "image"); if (!twin.unit && unitText) { twin.unitText = String(unitText).replace(/ /g, " "); twin.unit = unitPrice(unitText); } if (!twin.category) twin.category = Array.isArray(cat) ? cat[0] : cat || ""; return; }
       out.push({ id: `${src.entity}#${i}`, name: String(name), price, old: old && old > price ? old : null, pct, brand: pick(o, "brand") || "", image: pick(o, "image"), until, today: until === today,
         unitText: unitText ? String(unitText).replace(/ /g, " ") : "", unit: unitPrice(unitText), category: Array.isArray(cat) ? cat[0] : cat || "",
-        store: st ? String(st) : store.label, color: store.color, entity: src.entity });
+        store: label, color: store.color, entity: src.entity });
+      seen.set(dk, out[out.length - 1]);
     });
   }
   return out;

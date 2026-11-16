@@ -13,6 +13,12 @@ Fifth pre-release of 4.0.
   price in the tile, row and table views (also in the table on narrow cards), and the lowest unit price among the offers
   for an item is shown in green. Offers without a unit price look as before.
 
+### Fixed
+
+- **Offers card: the same offer no longer appears twice** when two sensors report it (for example two integrations or
+  two branches of the same store). Offers count as the same when store, name, price and end date match; an offer with a
+  different price stays separate. The background check of the watch list follows the same rule.
+
 ## [4.0.0-beta.4] – 2026-11-16
 
 Fourth pre-release of 4.0.

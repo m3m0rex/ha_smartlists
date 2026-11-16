@@ -236,3 +236,18 @@ def test_offers_from_own_sources():
     assert collect(hass) == [{"name": "Kaffee Gold", "price": 4.99, "until": "2999-01-01", "store": "REWE"}]
     assert collect(hass, src) == [{"name": "Kaffee Gold", "price": 4.99, "until": "2999-01-01", "store": "REWE"},
                                   {"name": "Filterkaffee", "price": 3.49, "until": "2999-02-02", "store": "Kaufland"}]
+
+
+def test_offers_same_offer_from_two_sensors_once():
+    """Dasselbe Angebot aus zwei Sensoren zählt in der Hintergrund-Prüfung einmal."""
+    import types
+
+    from smartlists.offers import collect
+
+    def st(entity_id, name, rows):
+        return types.SimpleNamespace(entity_id=entity_id, attributes={"friendly_name": name, "discounts": rows})
+
+    row = {"title": "Bio Bananen", "price": "1,79 €", "end_date": "2999-01-01"}
+    states = [st("sensor.rewe_1", "REWE 1", [row]), st("sensor.rewe_2", "REWE 2", [dict(row), {**row, "price": "1,59 €"}])]
+    hass = types.SimpleNamespace(states=types.SimpleNamespace(async_all=lambda domain: states))
+    assert [(o["store"], o["price"]) for o in collect(hass)] == [("REWE", 1.79), ("REWE", 1.59)]

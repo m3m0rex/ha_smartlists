@@ -56,3 +56,26 @@ def test_discounts_card_texts_complete():
     for lang, keys in langs.items():
         assert keys == langs["de"], (lang, keys ^ langs["de"])
     assert {"tab_watch", "w_add", "n_title", "e_notify"} <= langs["de"]
+
+
+DUP_SCRIPT = """
+globalThis.window = globalThis; globalThis.HTMLElement = class {}; globalThis.customElements = { get() {}, define() {} };
+globalThis.document = {}; console.info = () => {};
+require(process.argv[2]);
+const row = (t, p, extra) => Object.assign({ title: t, price: p, end_date: "2999-01-01" }, extra || {});
+const st = (id, name, rows) => ({ entity_id: id, state: String(rows.length), last_updated: "x", attributes: { friendly_name: name, discounts: rows } });
+const hass = { states: {
+  "sensor.rewe_1": st("sensor.rewe_1", "REWE 1", [row("Bio Bananen", "1,79 €"), row("Broccoli", "0,99 €", { price_per_unit: "1 kg = 1,98 €" })]),
+  "sensor.rewe_2": st("sensor.rewe_2", "REWE 2", [row("Bio Bananen", "1,79 €", { image_url: "http://x/b.png" }), row("Broccoli", "0,89 €")]),
+} };
+console.log(JSON.stringify(window.SmartDiscounts.offers(hass).map((o) => [o.store, o.name, o.price, o.image || ""])));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="Node.js nicht installiert")
+def test_discounts_card_same_offer_from_two_sensors_once(tmp_path):
+    """Dasselbe Angebot (Markt, Name, Preis, Datum) aus zwei Sensoren erscheint einmal – ein anderer Preis bleibt eigenes Angebot."""
+    script = tmp_path / "d.cjs"
+    script.write_text(DUP_SCRIPT, encoding="utf-8")
+    out = json.loads(subprocess.run(["node", str(script), str(CARD)], capture_output=True, text=True, check=True).stdout)
+    assert out == [["REWE", "Bio Bananen", 1.79, "http://x/b.png"], ["REWE", "Broccoli", 0.99, ""], ["REWE", "Broccoli", 0.89, ""]]

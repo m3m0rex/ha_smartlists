@@ -110,6 +110,7 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
     """Alle gültigen Angebote: Sensoren mit einer Angebotsliste in einem Attribut (automatisch erkannt) und
     eigene Quellen mit Feld-Zuordnung, wie sie in einer Angebots-Karte eingetragen sind."""
     today, out = date.today().isoformat(), []
+    seen: set[tuple[Any, ...]] = set()
     own = {s["entity"]: s for s in (custom or [])}
     states = {s.entity_id: s for s in hass.states.async_all("sensor")}
     for entity_id, state in states.items():
@@ -132,7 +133,13 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
             until = str(pick(row, "until") or "")[:10] or None
             if until and re.fullmatch(r"\d{4}-\d\d-\d\d", until) and until < today:
                 continue
-            out.append({"name": str(name), "price": price, "until": until, "store": str(pick(row, "store") or label)})
+            offer = {"name": str(name), "price": price, "until": until, "store": str(pick(row, "store") or label)}
+            # the same offer from two sensors (e.g. two integrations for one store) counts once
+            key = (norm(offer["store"]), norm(offer["name"]), price, until)
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(offer)
     return out
 
 

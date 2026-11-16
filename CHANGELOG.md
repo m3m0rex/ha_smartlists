@@ -35,6 +35,9 @@ Third pre-release of 4.0.
 
 ### Fixed
 
+- **Offers card ignored the SmartLists rights of a list:** with rights to check off only, "Add to list", the counter
+  and "Apply to list" were still offered. The card now asks SmartLists what the user may do on that list and hides
+  what is not allowed.
 - **Offers card: "Pick cheapest" and "only REWE" could not be undone** – tapping the active button again now clears the
   selection.
 - **List settings window in a narrow card or column:** on a wide screen it still used two columns, so labels were

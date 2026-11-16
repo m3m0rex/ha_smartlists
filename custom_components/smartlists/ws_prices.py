@@ -150,3 +150,12 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
 
         await async_check_watch(hass)
     connection.send_result(msg["id"], await _watch_payload(hass))
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/categorize", vol.Required("names"): [str], vol.Optional("language"): str})
+@callback
+def ws_categorize(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Einkaufs-Kategorie für viele Namen auf einmal – die Angebots-Karte sortiert damit „Alle Angebote“ nach Kategorie."""
+    learning = _learning(hass)
+    connection.send_result(msg["id"], {"map": {name: learning.resolve(name)[0] for name in msg["names"][:3000]},
+                                       "categories": learning.categories.as_list(msg.get("language"))})

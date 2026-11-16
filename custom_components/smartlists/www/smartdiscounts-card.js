@@ -14,7 +14,8 @@ const TAG = "smartdiscounts-card";
 if (customElements.get(TAG)) return;  // schon geladen (SmartLists UND eigenes Repository installiert)
 
 const TEXTS = {
-  de: { tab_watch: "Merkliste", w_add: "Produkt merken, z. B. Kaffee", w_add_btn: "Merken", w_empty: "Noch nichts gemerkt. Trage Produkte ein, bei denen du auf ein Angebot wartest.", w_local: "Auf diesem Gerät gespeichert. Mit „watch_list“ (eine To-do-Liste) gilt die Merkliste auf allen Geräten.", w_fixed: "aus der Konfiguration", n_title: "Angebot für deine Merkliste", e_watch: "Merkliste: Produkte", e_watch_list: "Merkliste als To-do-Liste (gilt auf allen Geräten)", e_notify: "Benachrichtigen, wenn etwas von der Merkliste im Angebot ist", e_notify_service: "Zusätzlich an diesen Dienst senden (z. B. notify.mobile_app_…)", e_symbol: "Eigenes Währungssymbol (statt „currency“)",
+  de: { e_entities: "Nur diese Angebots-Sensoren (leer = alle erkannten)", e_group: "„Alle Angebote“ gruppieren nach", g_store: "Markt", g_cat: "Kategorie", other: "Sonstiges",
+    tab_watch: "Merkliste", w_add: "Produkt merken, z. B. Kaffee", w_add_btn: "Merken", w_empty: "Noch nichts gemerkt. Trage Produkte ein, bei denen du auf ein Angebot wartest.", w_local: "Auf diesem Gerät gespeichert. Mit „watch_list“ (eine To-do-Liste) gilt die Merkliste auf allen Geräten.", w_fixed: "aus der Konfiguration", n_title: "Angebot für deine Merkliste", e_watch: "Merkliste: Produkte", e_watch_list: "Merkliste als To-do-Liste (gilt auf allen Geräten)", e_notify: "Benachrichtigen, wenn etwas von der Merkliste im Angebot ist", e_notify_service: "Zusätzlich an diesen Dienst senden (z. B. notify.mobile_app_…)", e_symbol: "Eigenes Währungssymbol (statt „currency“)",
     title: "Angebote", tab_list: "Meine Liste", tab_all: "Alle Angebote", search: "Angebote durchsuchen …", no_sources: "Keine Angebots-Sensoren gefunden. Installiere z. B. die REWE-, EDEKA- oder Lidl-Integration von FaserF oder trage unter „sources“ einen eigenen Sensor ein.",
     no_list: "Keine Liste gewählt – trage in der Karte unter „list“ eine To-do-Liste ein, um Angebote mit ihr abzugleichen.", list_empty: "Die Liste ist leer.", none: "kein Angebot", offers: "Angebote", offer1: "Angebot",
     on_offer: "{n} von {m} Artikeln im Angebot", cheapest: "Günstigste wählen", only: "nur {store}", chosen: "{n} gewählt", sum: "Summe", apply: "In Liste übernehmen", applied: "✓ übernommen", pick_hint: "Preis antippen, um ein Angebot zu wählen",
@@ -23,7 +24,8 @@ const TEXTS = {
     e_title: "Titel", e_list: "Einkaufsliste (To-do)", e_match: "Artikel passt zum Angebot, wenn", m_word: "ganzes Wort im Namen (Butter ≠ Butterkeks)", m_exact: "nur genau dieses Wort", m_part: "Teil des Namens",
     e_tab: "Start-Reiter", e_images: "Bilder", e_compact: "Kompakte Zeilen", e_unit: "Grundpreis (€/kg, €/l)", e_until: "Gültig bis", e_hide_none: "Artikel ohne Angebot ausblenden", e_max: "Angebote je Markt (Reiter „Alle“)", e_view: "Darstellung „Alle Angebote“", v_tiles: "Kacheln", v_list: "Liste mit kleinen Bildern", e_lview: "Darstellung „Meine Liste“", v_chips: "Preise nebeneinander", v_rows: "ein Angebot je Zeile",
     e_sources: "Quellen werden automatisch erkannt. Eigene Sensoren und Feld-Zuordnung: im Code-Editor unter „sources“ (siehe README)." },
-  en: { tab_watch: "Watch list", w_add: "Watch a product, e.g. coffee", w_add_btn: "Watch", w_empty: "Nothing here yet. Enter products you are waiting to see on offer.", w_local: "Stored on this device. With \"watch_list\" (a to-do list) the watch list applies on all devices.", w_fixed: "from the configuration", n_title: "Offer for your watch list", e_watch: "Watch list: products", e_watch_list: "Watch list as a to-do list (applies on all devices)", e_notify: "Notify when something on the watch list is on offer", e_notify_service: "Also send to this service (e.g. notify.mobile_app_…)", e_symbol: "Own currency symbol (instead of \"currency\")",
+  en: { e_entities: "Only these offer sensors (empty = all detected)", e_group: "Group \"All offers\" by", g_store: "Store", g_cat: "Category", other: "Other",
+    tab_watch: "Watch list", w_add: "Watch a product, e.g. coffee", w_add_btn: "Watch", w_empty: "Nothing here yet. Enter products you are waiting to see on offer.", w_local: "Stored on this device. With \"watch_list\" (a to-do list) the watch list applies on all devices.", w_fixed: "from the configuration", n_title: "Offer for your watch list", e_watch: "Watch list: products", e_watch_list: "Watch list as a to-do list (applies on all devices)", e_notify: "Notify when something on the watch list is on offer", e_notify_service: "Also send to this service (e.g. notify.mobile_app_…)", e_symbol: "Own currency symbol (instead of \"currency\")",
     title: "Offers", tab_list: "My list", tab_all: "All offers", search: "Search offers …", no_sources: "No offer sensors found. Install e.g. FaserF's REWE, EDEKA or Lidl integration or add your own sensor under \"sources\".",
     no_list: "No list selected – set a to-do list under \"list\" to match offers against it.", list_empty: "The list is empty.", none: "no offer", offers: "offers", offer1: "offer",
     on_offer: "{n} of {m} items on offer", cheapest: "Pick cheapest", only: "only {store}", chosen: "{n} selected", sum: "Total", apply: "Apply to list", applied: "✓ applied", pick_hint: "Tap a price to pick an offer",
@@ -32,16 +34,20 @@ const TEXTS = {
     e_title: "Title", e_list: "Shopping list (to-do)", e_match: "Item matches an offer if", m_word: "whole word in the name (butter ≠ butter biscuit)", m_exact: "exactly this word only", m_part: "part of the name",
     e_tab: "Start tab", e_images: "Images", e_compact: "Compact rows", e_unit: "Unit price (€/kg, €/l)", e_until: "Valid until", e_hide_none: "Hide items without an offer", e_max: "Offers per store (\"All\" tab)", e_view: "\"All offers\" layout", v_tiles: "Tiles", v_list: "List with small images", e_lview: "\"My list\" layout", v_chips: "Prices side by side", v_rows: "One offer per row",
     e_sources: "Sources are detected automatically. Own sensors and field mapping: in the code editor under \"sources\" (see README)." },
-  fr: { tab_watch: "À surveiller", w_add: "Surveiller un produit, p. ex. café", w_add_btn: "Surveiller", w_empty: "Rien pour l'instant. Saisis les produits dont tu attends une promo.", w_local: "Enregistré sur cet appareil. Avec « watch_list » (une liste de tâches), la liste vaut sur tous les appareils.", w_fixed: "depuis la configuration", n_title: "Promo pour ta liste à surveiller", e_watch: "À surveiller : produits", e_watch_list: "Liste à surveiller comme liste de tâches (tous les appareils)", e_notify: "Notifier quand un produit surveillé est en promo", e_notify_service: "Envoyer aussi à ce service (p. ex. notify.mobile_app_…)", e_symbol: "Symbole monétaire personnalisé (au lieu de « currency »)",
+  fr: { e_entities: "Seulement ces capteurs de promos (vide = tous)", e_group: "Regrouper « Toutes les promos » par", g_store: "Magasin", g_cat: "Catégorie", other: "Autres",
+    tab_watch: "À surveiller", w_add: "Surveiller un produit, p. ex. café", w_add_btn: "Surveiller", w_empty: "Rien pour l'instant. Saisis les produits dont tu attends une promo.", w_local: "Enregistré sur cet appareil. Avec « watch_list » (une liste de tâches), la liste vaut sur tous les appareils.", w_fixed: "depuis la configuration", n_title: "Promo pour ta liste à surveiller", e_watch: "À surveiller : produits", e_watch_list: "Liste à surveiller comme liste de tâches (tous les appareils)", e_notify: "Notifier quand un produit surveillé est en promo", e_notify_service: "Envoyer aussi à ce service (p. ex. notify.mobile_app_…)", e_symbol: "Symbole monétaire personnalisé (au lieu de « currency »)",
     title: "Promos", tab_list: "Ma liste", tab_all: "Toutes les promos", search: "Rechercher des promos …", no_sources: "Aucun capteur de promos trouvé. Installe p. ex. l'intégration REWE, EDEKA ou Lidl de FaserF ou ajoute ton propre capteur sous « sources ».", no_list: "Aucune liste choisie – indique une liste de tâches sous « list » pour la comparer aux promos.", list_empty: "La liste est vide.", none: "pas de promo", offers: "promos", offer1: "promo", on_offer: "{n} articles sur {m} en promo", cheapest: "Choisir les moins chères", only: "seulement {store}", chosen: "{n} choisies", sum: "Total", apply: "Reporter dans la liste", applied: "✓ reporté", pick_hint: "Touche un prix pour choisir une promo", until: "jusqu'au", today: "aujourd'hui seulement", expired: "expirée", add: "Ajouter à la liste", added: "✓ dans la liste", all: "toutes", less: "moins", on_list: "est sur ta liste", best: "la moins chère", item: "Article", no_hits: "Rien trouvé.", exp_n: "Promos expirées dans la liste : {n}", exp_remove: "Retirer", exp_later: "Plus tard", all_cats: "Toutes les catégories", error: "Cela n'a pas fonctionné.", attached: "promo choisie", stand: "état au", in_offer: "en promo", without: "sans promo", e_title: "Titre", e_list: "Liste de courses (tâches)", e_match: "Un article correspond à une promo si", m_word: "mot entier dans le nom (beurre ≠ biscuit au beurre)", m_exact: "exactement ce mot", m_part: "partie du nom", e_tab: "Onglet de départ", e_images: "Images", e_compact: "Lignes compactes", e_unit: "Prix à l'unité (€/kg, €/l)", e_until: "Valable jusqu'au", e_hide_none: "Masquer les articles sans promo", e_max: "Promos par magasin (onglet « Toutes »)", e_view: "Affichage « Toutes les promos »", v_tiles: "Tuiles", v_list: "Liste avec petites images", e_lview: "Affichage « Ma liste »", v_chips: "Prix côte à côte", v_rows: "une promo par ligne", e_sources: "Les sources sont détectées automatiquement. Capteurs personnels et correspondance des champs : dans l'éditeur de code sous « sources » (voir README)." },
-  es: { tab_watch: "Seguimiento", w_add: "Seguir un producto, p. ej. café", w_add_btn: "Seguir", w_empty: "Aún no hay nada. Escribe los productos de los que esperas una oferta.", w_local: "Guardado en este dispositivo. Con «watch_list» (una lista de tareas) el seguimiento vale en todos los dispositivos.", w_fixed: "de la configuración", n_title: "Oferta para tu seguimiento", e_watch: "Seguimiento: productos", e_watch_list: "Seguimiento como lista de tareas (todos los dispositivos)", e_notify: "Avisar cuando algo en seguimiento esté en oferta", e_notify_service: "Enviar también a este servicio (p. ej. notify.mobile_app_…)", e_symbol: "Símbolo de moneda propio (en lugar de «currency»)",
+  es: { e_entities: "Solo estos sensores de ofertas (vacío = todos)", e_group: "Agrupar «Todas las ofertas» por", g_store: "Tienda", g_cat: "Categoría", other: "Otros",
+    tab_watch: "Seguimiento", w_add: "Seguir un producto, p. ej. café", w_add_btn: "Seguir", w_empty: "Aún no hay nada. Escribe los productos de los que esperas una oferta.", w_local: "Guardado en este dispositivo. Con «watch_list» (una lista de tareas) el seguimiento vale en todos los dispositivos.", w_fixed: "de la configuración", n_title: "Oferta para tu seguimiento", e_watch: "Seguimiento: productos", e_watch_list: "Seguimiento como lista de tareas (todos los dispositivos)", e_notify: "Avisar cuando algo en seguimiento esté en oferta", e_notify_service: "Enviar también a este servicio (p. ej. notify.mobile_app_…)", e_symbol: "Símbolo de moneda propio (en lugar de «currency»)",
     title: "Ofertas", tab_list: "Mi lista", tab_all: "Todas las ofertas", search: "Buscar ofertas …", no_sources: "No se encontraron sensores de ofertas. Instala p. ej. la integración de REWE, EDEKA o Lidl de FaserF o añade tu propio sensor en «sources».", no_list: "No hay lista elegida – indica una lista de tareas en «list» para compararla con las ofertas.", list_empty: "La lista está vacía.", none: "sin oferta", offers: "ofertas", offer1: "oferta", on_offer: "{n} de {m} artículos en oferta", cheapest: "Elegir las más baratas", only: "solo {store}", chosen: "{n} elegidas", sum: "Total", apply: "Pasar a la lista", applied: "✓ aplicado", pick_hint: "Toca un precio para elegir una oferta", until: "hasta el", today: "solo hoy", expired: "caducada", add: "A la lista", added: "✓ en la lista", all: "todas", less: "menos", on_list: "está en tu lista", best: "la más barata", item: "Artículo", no_hits: "No se encontró nada.", exp_n: "Ofertas caducadas en la lista: {n}", exp_remove: "Quitar", exp_later: "Más tarde", all_cats: "Todas las categorías", error: "No ha funcionado.", attached: "oferta elegida", stand: "actualizado", in_offer: "en oferta", without: "sin oferta", e_title: "Título", e_list: "Lista de la compra (tareas)", e_match: "Un artículo coincide con una oferta si", m_word: "palabra completa en el nombre (mantequilla ≠ galleta de mantequilla)", m_exact: "solo exactamente esta palabra", m_part: "parte del nombre", e_tab: "Pestaña inicial", e_images: "Imágenes", e_compact: "Filas compactas", e_unit: "Precio por unidad (€/kg, €/l)", e_until: "Válido hasta", e_hide_none: "Ocultar artículos sin oferta", e_max: "Ofertas por tienda (pestaña «Todas»)", e_view: "Vista de «Todas las ofertas»", v_tiles: "Mosaico", v_list: "Lista con imágenes pequeñas", e_lview: "Vista de «Mi lista»", v_chips: "Precios lado a lado", v_rows: "una oferta por fila", e_sources: "Las fuentes se detectan automáticamente. Sensores propios y asignación de campos: en el editor de código, en «sources» (ver README)." },
-  it: { tab_watch: "Da tenere d'occhio", w_add: "Tieni d'occhio un prodotto, ad es. caffè", w_add_btn: "Aggiungi", w_empty: "Ancora niente. Inserisci i prodotti di cui aspetti un'offerta.", w_local: "Salvato su questo dispositivo. Con «watch_list» (una lista di cose da fare) vale su tutti i dispositivi.", w_fixed: "dalla configurazione", n_title: "Offerta per i prodotti che segui", e_watch: "Da tenere d'occhio: prodotti", e_watch_list: "Elenco come lista di cose da fare (tutti i dispositivi)", e_notify: "Avvisa quando un prodotto seguito è in offerta", e_notify_service: "Invia anche a questo servizio (ad es. notify.mobile_app_…)", e_symbol: "Simbolo di valuta personalizzato (al posto di «currency»)",
+  it: { e_entities: "Solo questi sensori di offerte (vuoto = tutti)", e_group: "Raggruppa «Tutte le offerte» per", g_store: "Negozio", g_cat: "Categoria", other: "Altro",
+    tab_watch: "Da tenere d'occhio", w_add: "Tieni d'occhio un prodotto, ad es. caffè", w_add_btn: "Aggiungi", w_empty: "Ancora niente. Inserisci i prodotti di cui aspetti un'offerta.", w_local: "Salvato su questo dispositivo. Con «watch_list» (una lista di cose da fare) vale su tutti i dispositivi.", w_fixed: "dalla configurazione", n_title: "Offerta per i prodotti che segui", e_watch: "Da tenere d'occhio: prodotti", e_watch_list: "Elenco come lista di cose da fare (tutti i dispositivi)", e_notify: "Avvisa quando un prodotto seguito è in offerta", e_notify_service: "Invia anche a questo servizio (ad es. notify.mobile_app_…)", e_symbol: "Simbolo di valuta personalizzato (al posto di «currency»)",
     title: "Offerte", tab_list: "La mia lista", tab_all: "Tutte le offerte", search: "Cerca offerte …", no_sources: "Nessun sensore di offerte trovato. Installa ad es. l'integrazione REWE, EDEKA o Lidl di FaserF oppure aggiungi un tuo sensore in «sources».", no_list: "Nessuna lista scelta – indica una lista di cose da fare in «list» per confrontarla con le offerte.", list_empty: "La lista è vuota.", none: "nessuna offerta", offers: "offerte", offer1: "offerta", on_offer: "{n} articoli su {m} in offerta", cheapest: "Scegli le più convenienti", only: "solo {store}", chosen: "{n} scelte", sum: "Totale", apply: "Riporta nella lista", applied: "✓ riportato", pick_hint: "Tocca un prezzo per scegliere un'offerta", until: "fino al", today: "solo oggi", expired: "scaduta", add: "Aggiungi alla lista", added: "✓ in lista", all: "tutte", less: "meno", on_list: "è nella tua lista", best: "la più conveniente", item: "Articolo", no_hits: "Nessun risultato.", exp_n: "Offerte scadute nella lista: {n}", exp_remove: "Rimuovi", exp_later: "Più tardi", all_cats: "Tutte le categorie", error: "Non ha funzionato.", attached: "offerta scelta", stand: "aggiornato al", in_offer: "in offerta", without: "senza offerta", e_title: "Titolo", e_list: "Lista della spesa (cose da fare)", e_match: "Un articolo corrisponde a un'offerta se", m_word: "parola intera nel nome (burro ≠ biscotto al burro)", m_exact: "solo esattamente questa parola", m_part: "parte del nome", e_tab: "Scheda iniziale", e_images: "Immagini", e_compact: "Righe compatte", e_unit: "Prezzo unitario (€/kg, €/l)", e_until: "Valida fino al", e_hide_none: "Nascondi gli articoli senza offerta", e_max: "Offerte per negozio (scheda «Tutte»)", e_view: "Vista «Tutte le offerte»", v_tiles: "Riquadri", v_list: "Elenco con piccole immagini", e_lview: "Vista «La mia lista»", v_chips: "Prezzi affiancati", v_rows: "un'offerta per riga", e_sources: "Le fonti vengono riconosciute automaticamente. Sensori propri e mappatura dei campi: nell'editor di codice in «sources» (vedi README)." },
-  pl: { tab_watch: "Obserwowane", w_add: "Obserwuj produkt, np. kawa", w_add_btn: "Obserwuj", w_empty: "Jeszcze nic. Wpisz produkty, na których promocję czekasz.", w_local: "Zapisane na tym urządzeniu. Z „watch_list” (lista zadań) obserwowane działają na wszystkich urządzeniach.", w_fixed: "z konfiguracji", n_title: "Promocja dla obserwowanych", e_watch: "Obserwowane: produkty", e_watch_list: "Obserwowane jako lista zadań (wszystkie urządzenia)", e_notify: "Powiadom, gdy obserwowany produkt jest w promocji", e_notify_service: "Wyślij też do tej usługi (np. notify.mobile_app_…)", e_symbol: "Własny symbol waluty (zamiast „currency”)",
+  pl: { e_entities: "Tylko te sensory promocji (puste = wszystkie)", e_group: "Grupuj „Wszystkie promocje” według", g_store: "Sklep", g_cat: "Kategoria", other: "Inne",
+    tab_watch: "Obserwowane", w_add: "Obserwuj produkt, np. kawa", w_add_btn: "Obserwuj", w_empty: "Jeszcze nic. Wpisz produkty, na których promocję czekasz.", w_local: "Zapisane na tym urządzeniu. Z „watch_list” (lista zadań) obserwowane działają na wszystkich urządzeniach.", w_fixed: "z konfiguracji", n_title: "Promocja dla obserwowanych", e_watch: "Obserwowane: produkty", e_watch_list: "Obserwowane jako lista zadań (wszystkie urządzenia)", e_notify: "Powiadom, gdy obserwowany produkt jest w promocji", e_notify_service: "Wyślij też do tej usługi (np. notify.mobile_app_…)", e_symbol: "Własny symbol waluty (zamiast „currency”)",
     title: "Promocje", tab_list: "Moja lista", tab_all: "Wszystkie promocje", search: "Szukaj promocji …", no_sources: "Nie znaleziono sensorów promocji. Zainstaluj np. integrację REWE, EDEKA lub Lidl od FaserF albo dodaj własny sensor w „sources”.", no_list: "Nie wybrano listy – wpisz listę zadań w „list”, aby porównać ją z promocjami.", list_empty: "Lista jest pusta.", none: "brak promocji", offers: "promocji", offer1: "promocja", on_offer: "{n} z {m} produktów w promocji", cheapest: "Wybierz najtańsze", only: "tylko {store}", chosen: "wybrano: {n}", sum: "Suma", apply: "Przenieś na listę", applied: "✓ przeniesiono", pick_hint: "Dotknij ceny, aby wybrać promocję", until: "do", today: "tylko dziś", expired: "wygasła", add: "Na listę", added: "✓ na liście", all: "wszystkie", less: "mniej", on_list: "jest na twojej liście", best: "najtańsza", item: "Produkt", no_hits: "Nic nie znaleziono.", exp_n: "Wygasłe promocje na liście: {n}", exp_remove: "Usuń", exp_later: "Później", all_cats: "Wszystkie kategorie", error: "Nie udało się.", attached: "wybrano promocję", stand: "stan na", in_offer: "w promocji", without: "bez promocji", e_title: "Tytuł", e_list: "Lista zakupów (zadania)", e_match: "Produkt pasuje do promocji, gdy", m_word: "całe słowo w nazwie (masło ≠ ciastko maślane)", m_exact: "tylko dokładnie to słowo", m_part: "część nazwy", e_tab: "Zakładka startowa", e_images: "Zdjęcia", e_compact: "Zwarte wiersze", e_unit: "Cena jednostkowa (€/kg, €/l)", e_until: "Ważne do", e_hide_none: "Ukryj produkty bez promocji", e_max: "Promocji na sklep (zakładka „Wszystkie”)", e_view: "Widok „Wszystkie promocje”", v_tiles: "Kafelki", v_list: "Lista z małymi zdjęciami", e_lview: "Widok „Moja lista”", v_chips: "Ceny obok siebie", v_rows: "jedna promocja w wierszu", e_sources: "Źródła są wykrywane automatycznie. Własne sensory i mapowanie pól: w edytorze kodu w „sources” (zob. README)." },
 };
-const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", list_view: "chips", sources: "auto", watch: [], watch_list: "", notify: false, notify_service: "" };
+const DEFAULTS = { list: "", match: "word", default_tab: "list", show_images: true, compact: false, show_unit_price: true, show_valid_until: true, hide_without_offer: false, max_per_store: 12, all_view: "tiles", list_view: "chips", sources: "auto", group_by: "store", watch: [], watch_list: "", notify: false, notify_service: "" };
 // bekannte Märkte: Erkennung über entity_id / Namen der Quelle, Farbe des Badges
 const STORES = [["rewe", "REWE", "#cc071e"], ["edeka", "EDEKA", "#f5c400"], ["lidl", "Lidl", "#0050aa"], ["aldi_sued", "ALDI Süd", "#00a0e0"], ["aldi_nord", "ALDI Nord", "#1a4d9f"], ["aldi", "ALDI", "#00549f"],
   ["norma", "Norma", "#d40f14"], ["penny", "Penny", "#cd1414"], ["kaufland", "Kaufland", "#e10915"], ["netto", "Netto", "#ffd400"], ["rossmann", "Rossmann", "#c3002d"], ["dm", "dm", "#002878"], ["globus", "Globus", "#f39200"]];
@@ -272,6 +278,8 @@ class SmartDiscountsCard extends HTMLElement {
     this._query = ""; this._cat = "";
     this._view = this._config.all_view === "list" ? "list" : "tiles";
     try { const v = localStorage.getItem("smartdiscounts-view"); if (v === "list" || v === "tiles") this._view = v; } catch (e) { /* */ }
+    this._group = this._config.group_by === "category" ? "category" : "store";
+    try { const v = localStorage.getItem("smartdiscounts-group"); if (v === "category" || v === "store") this._group = v; } catch (e) { /* */ }
     this._lview = this._config.list_view === "rows" ? "rows" : "chips";
     try { const v = localStorage.getItem("smartdiscounts-list-view"); if (v === "rows" || v === "chips") this._lview = v; } catch (e) { /* */ }
     if (!this.shadowRoot) { this._card = h("div", { class: "wrap" }); this.attachShadow({ mode: "open" }).append(h("style", {}, STYLE), h("ha-card", {}, this._card)); }
@@ -286,8 +294,16 @@ class SmartDiscountsCard extends HTMLElement {
   getCardSize() { return 6; }
   getGridOptions() { return { columns: 12, min_columns: 6, rows: "auto" }; }
 
-  _sources() { return sourcesOf(this._hass, this._config.sources); }
-  _offers() { return collectOffers(this._hass, this._config.sources); }
+  // "entities": nur diese Sensoren (z. B. eine Karte nur für REWE) – einfache Form von "sources", im Editor auswählbar.
+  // Eigene Angaben unter "sources" (store, color, map) bleiben für diese Sensoren erhalten.
+  _src() {
+    const c = this._config, only = (Array.isArray(c.entities) ? c.entities : c.entities ? [c.entities] : []).filter((e) => typeof e === "string" && e);
+    if (!only.length) return c.sources;
+    const own = Array.isArray(c.sources) ? c.sources.filter((s) => s && typeof s === "object") : [];
+    return only.map((e) => own.find((s) => s.entity === e) || e);
+  }
+  _sources() { return sourcesOf(this._hass, this._src()); }
+  _offers() { return collectOffers(this._hass, this._src()); }
   _money(v) { if (this._config.currency_symbol) { try { return `${new Intl.NumberFormat(this._hass.language || "de", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)}\u00a0${this._config.currency_symbol}`; } catch (e) { return `${v.toFixed(2)} ${this._config.currency_symbol}`; } }
     try { return new Intl.NumberFormat(this._hass.language || "de", { style: "currency", currency: this._config.currency || "EUR" }).format(v); } catch (e) { return `${v.toFixed(2)} €`; } }
   _day(d) { const p = String(d || "").split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : d || ""; }
@@ -313,6 +329,7 @@ class SmartDiscountsCard extends HTMLElement {
     this._sig = sig;
     this._all = this._offers();
     await this._loadList();
+    await this._loadCats();
     await this._loadWatch();
     this._render();
     this._notify();
@@ -420,6 +437,18 @@ class SmartDiscountsCard extends HTMLElement {
     this._card.className = `wrap ${c.compact ? "compact" : ""} ${c.show_images ? "" : "noimg"}`;
     this._card.replaceChildren(head, tabs, body);
   }
+  // Kategorie eines Angebots: mit SmartLists dessen Einkaufs-Kategorien (einheitlich über alle Märkte), sonst die des Sensors
+  async _loadCats() {
+    this._catMap = null;
+    if (this._group !== "category" || !(this._hass.config.components || []).includes("smartlists")) return;
+    try {
+      const r = await this._hass.callWS({ type: "smartlists/categorize", names: [...new Set(this._all.map((o) => o.name))], language: this._hass.language });
+      const labels = Object.fromEntries((r.categories || []).map((x) => [x.id, x.label]));
+      this._catOrder = (r.categories || []).map((x) => x.label);
+      this._catMap = Object.fromEntries(Object.entries(r.map || {}).map(([n, id]) => [n, labels[id] || id]));
+    } catch (e) { this._catMap = null; }  // ältere SmartLists-Version: Kategorien der Sensoren
+  }
+  _catOf(o) { return (this._catMap && this._catMap[o.name]) || o.category || this._t.other; }
   _watchHits() { return this._watchTerms().filter((x) => dealsFor(this._all, x.name, this._config.match).length).length; }
   _storeBadge(o) { return h("span", { class: "store", style: `background:${o.color};${/^#(f|e)[0-9a-f]{5}$/i.test(o.color) ? "color:#1a1a1a" : ""}` }, o.store); }
   _priceChip(item, o, best) {
@@ -500,11 +529,12 @@ class SmartDiscountsCard extends HTMLElement {
   }
   _renderAll(stores) {
     const t = this._t, c = this._config;
-    const cats = [...new Set(this._all.map((o) => o.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    const byCat = this._group === "category";
+    const cats = [...new Set(this._all.map((o) => (byCat ? this._catOf(o) : o.category)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     const names = (this._items || []).map((i) => i.name).filter(Boolean);
     const onList = (o) => names.some((n) => matches(n, o.name, c.match));
     const q = norm(this._query);
-    const shown = this._all.filter((o) => (!q || norm(`${o.name} ${o.brand} ${o.category} ${o.store}`).includes(q)) && (!this._cat || o.category === this._cat));
+    const shown = this._all.filter((o) => (!q || norm(`${o.name} ${o.brand} ${o.category} ${o.store}`).includes(q)) && (!this._cat || (byCat ? this._catOf(o) : o.category) === this._cat));
     const search = h("input", { class: "search", type: "search", placeholder: t.search, "aria-label": t.search, value: this._query });
     search.addEventListener("input", () => { this._query = search.value; const pos = search.selectionStart; this._render();
       const f = this._card.querySelector("input.search"); if (f) { f.focus(); try { f.setSelectionRange(pos, pos); } catch (e) { /* */ } } });
@@ -514,35 +544,41 @@ class SmartDiscountsCard extends HTMLElement {
       const mine = onList(o);
       return h("div", { class: "tl", title: o.name }, o.pct ? h("span", { class: "pctb" }, `−${o.pct}%`) : null, mine ? h("span", { class: "on", title: t.on_list }, "📝") : null,
         c.show_images ? h("div", { class: "img", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}")` : "background:none" }) : null,
-        h("div", { class: "t" }, o.name), h("div", {}, h("b", {}, this._money(o.price)), o.old ? h("s", { style: "margin-left:4px;font-size:.7rem;opacity:.7" }, this._money(o.old)) : null),
+        h("div", { class: "t" }, o.name), byCat ? h("div", { class: "x" }, this._storeBadge(o)) : null, h("div", {}, h("b", {}, this._money(o.price)), o.old ? h("s", { style: "margin-left:4px;font-size:.7rem;opacity:.7" }, this._money(o.old)) : null),
         h("div", { class: "x" }, [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : ""].filter(Boolean).join(" · ") || " "),
         c.list ? h("button", { type: "button", class: "btn", onclick: (e) => this._add(o, e.currentTarget) }, "＋ " + t.add) : null);
     };
     // Listen-Darstellung: kleine Bilder, eine Zeile je Angebot
     const row = (o) => {
       const mine = onList(o);
-      const sub = [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : "", o.category].filter(Boolean).join(" · ");
+      const sub = [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : "", byCat ? "" : o.category].filter(Boolean).join(" · ");
       return h("div", { class: "lrow", title: o.name },
         c.show_images ? h("div", { class: "thumb", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image ? null : "🏷️") : null,
-        h("div", { class: "n" }, mine ? h("span", { title: t.on_list }, "📝 ") : null, o.name, sub ? h("small", {}, sub) : null),
+        h("div", { class: "n" }, mine ? h("span", { title: t.on_list }, "📝 ") : null, o.name, sub || byCat ? h("small", {}, byCat ? [this._storeBadge(o), " "] : null, sub) : null),
         h("div", { class: "pr" }, h("b", {}, this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null, o.pct ? h("span", { class: "pct" }, `−${o.pct}%`) : null),
         c.list ? h("button", { type: "button", class: "btn plus", title: t.add, "aria-label": `${t.add}: ${o.name}`, onclick: (e) => this._add(o, e.currentTarget) }, "＋") : null);
     };
     const asList = this._view === "list";
     const toggle = h("button", { type: "button", class: "btn vbtn", title: asList ? t.v_tiles : t.v_list, "aria-label": asList ? t.v_tiles : t.v_list,
       onclick: () => { this._view = asList ? "tiles" : "list"; try { localStorage.setItem("smartdiscounts-view", this._view); } catch (e) { /* */ } this._render(); } }, asList ? "▦" : "☰");
-    const shelves = stores.map((s) => {
-      const all = shown.filter((o) => o.store === s);
+    const gbtn = h("button", { type: "button", class: "btn vbtn", title: `${t.e_group}: ${byCat ? t.g_store : t.g_cat}`, "aria-label": `${t.e_group}: ${byCat ? t.g_store : t.g_cat}`,
+      onclick: async () => { this._group = byCat ? "store" : "category"; this._cat = ""; this._open.clear(); try { localStorage.setItem("smartdiscounts-group", this._group); } catch (e) { /* */ }
+        await this._loadCats(); this._render(); } }, byCat ? "🏬" : "🗂️");
+    // Gruppen: je Markt (Standard) oder je Kategorie – dann in der Reihenfolge der Einkaufs-Kategorien, sonst nach Namen
+    const order = this._catMap && this._catOrder ? this._catOrder : [];
+    const keys = byCat ? [...new Set(shown.map((o) => this._catOf(o)))].sort((a, b) => ((order.indexOf(a) + 1 || 999) - (order.indexOf(b) + 1 || 999)) || a.localeCompare(b)) : stores;
+    const shelves = keys.map((s) => {
+      const all = shown.filter((o) => (byCat ? this._catOf(o) === s : o.store === s));
       if (!all.length) return null;
       // Angebote für die eigene Liste zuerst
       const sorted = [...all.filter(onList), ...all.filter((o) => !onList(o))];
       const open = this._open.has(s) || !!q || !!this._cat;
       const list = open ? sorted : sorted.slice(0, c.max_per_store);
-      return h("div", { class: "shelf" }, h("h4", {}, this._storeBadge(all[0]), h("small", {}, `${all.length} ${t.offers}`), h("span", { class: "sp" }),
+      return h("div", { class: "shelf" }, h("h4", {}, byCat ? h("b", {}, s) : this._storeBadge(all[0]), h("small", {}, `${all.length} ${t.offers}`), h("span", { class: "sp" }),
         all.length > c.max_per_store && !q && !this._cat ? h("button", { type: "button", onclick: () => { if (open) this._open.delete(s); else this._open.add(s); this._render(); } }, open ? t.less : `${t.all} →`) : null),
         asList ? h("div", { class: "lrows" }, list.map(row)) : h("div", { class: `rail ${open ? "open" : ""}` }, list.map(tile)));
     });
-    return h("div", {}, h("div", { class: "filters" }, search, catSel, toggle), shown.length ? shelves : h("div", { class: "msg" }, t.no_hits), this._foot());
+    return h("div", {}, h("div", { class: "filters" }, search, catSel, gbtn, toggle), shown.length ? shelves : h("div", { class: "msg" }, t.no_hits), this._foot());
   }
   _foot() {
     const ts = this._sources().map((s) => this._hass.states[s.entity].last_updated).filter(Boolean).sort().pop();
@@ -607,12 +643,16 @@ class SmartDiscountsCardEditor extends HTMLElement {
     if (!this._hass || !this._config) return;
     const t = TEXTS[String(this._hass.language || "en").slice(0, 2)] || TEXTS.en;
     const b = (name) => ({ name, selector: { boolean: {} } });
+    // nur Sensoren anbieten, die wirklich Angebote liefern
+    const found = sourcesOf(this._hass, "auto").map((s) => s.entity);
     const schema = [
       { name: "title", selector: { text: {} } },
       { name: "list", selector: { entity: { domain: "todo" } } },
+      { name: "entities", selector: { entity: { multiple: true, ...(found.length ? { include_entities: [...new Set([...found, ...(this._config.entities || [])])] } : { domain: "sensor" }) } } },
       { name: "match", selector: { select: { mode: "dropdown", options: [["word", t.m_word], ["exact", t.m_exact], ["part", t.m_part]].map(([value, label]) => ({ value, label })) } } },
       { name: "default_tab", selector: { select: { mode: "dropdown", options: [["list", t.tab_list], ["all", t.tab_all], ["watch", t.tab_watch]].map(([value, label]) => ({ value, label })) } } },
       { name: "list_view", selector: { select: { mode: "dropdown", options: [["chips", t.v_chips], ["rows", t.v_rows]].map(([value, label]) => ({ value, label })) } } },
+      { name: "group_by", selector: { select: { mode: "dropdown", options: [["store", t.g_store], ["category", t.g_cat]].map(([value, label]) => ({ value, label })) } } },
       { name: "all_view", selector: { select: { mode: "dropdown", options: [["tiles", t.v_tiles], ["list", t.v_list]].map(([value, label]) => ({ value, label })) } } },
       { type: "grid", name: "", schema: [b("show_images"), b("compact"), b("show_unit_price"), b("show_valid_until"), b("hide_without_offer")] },
       { name: "max_per_store", selector: { number: { min: 3, max: 100, mode: "box" } } },
@@ -622,7 +662,7 @@ class SmartDiscountsCardEditor extends HTMLElement {
       { name: "notify_service", selector: { text: {} } },
       { name: "currency_symbol", selector: { text: {} } },
     ];
-    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, list_view: t.e_lview, all_view: t.e_view, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
+    const labels = { title: t.e_title, list: t.e_list, match: t.e_match, default_tab: t.e_tab, list_view: t.e_lview, all_view: t.e_view, group_by: t.e_group, entities: t.e_entities, show_images: t.e_images, compact: t.e_compact, show_unit_price: t.e_unit,
       show_valid_until: t.e_until, hide_without_offer: t.e_hide_none, max_per_store: t.e_max,
       watch: t.e_watch, watch_list: t.e_watch_list, notify: t.e_notify, notify_service: t.e_notify_service, currency_symbol: t.e_symbol };
     if (!this._form) {

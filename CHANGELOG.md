@@ -15,6 +15,15 @@ Third pre-release of 4.0.
 - **"Report a bug" is pre-filled** with the SmartLists and Home Assistant versions, where it happened, browser or app
   and language – nothing personal (no lists, items or addresses).
 
+### Added
+
+- **Offers card: "All offers" grouped by category** instead of by store (`group_by: category`, or the 🗂️ button in the
+  card). With SmartLists the shopping categories are used – the same for all stores and in store order; without it the
+  categories of the sensors.
+
+- **Offers card: limit a card to one or several offer sensors** (`entities:`, selectable in the visual editor) – e.g. one
+  card only for REWE and another only for ALDI.
+
 ### Fixed
 
 - **Offers card: "Pick cheapest" and "only REWE" could not be undone** – tapping the active button again now clears the

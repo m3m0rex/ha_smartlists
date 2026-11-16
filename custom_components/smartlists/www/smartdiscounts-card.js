@@ -242,6 +242,13 @@ const STYLE = `
   .orow .pr b { display:block; } .orow.best .pr b { color:var(--sd-ok); }
   .orow .pr s { color:var(--secondary-text-color); font-size:.72rem; } .orow .pr .pct { color:var(--error-color,#db4437); font-weight:800; font-size:.72rem; margin-left:4px; }
   .compact .orow { padding:3px 8px; }
+  /* schon auf der Liste: Haken über dem (abgedunkelten) Bild */
+  .tl .img, .lrow .thumb { position:relative; overflow:hidden; }
+  .tl.got .img::before, .lrow.got .thumb::before { content:""; position:absolute; inset:0; background:rgba(20,60,25,.62); }
+  .gotck { position:absolute; inset:0; margin:auto; width:34px; height:34px; border-radius:50%; background:#43a047; color:#fff; font-weight:800; font-size:1.2rem; display:grid; place-items:center; box-shadow:0 3px 10px rgba(0,0,0,.4); }
+  .lrow .gotck { width:auto; height:auto; background:none; box-shadow:none; font-size:1.15rem; }
+  .gotn { position:absolute; right:4px; bottom:4px; background:#0d2a12; color:#bff0c2; font-size:.68rem; font-weight:800; border-radius:999px; padding:0 6px; }
+  .gott { color:#4caf50; font-weight:700; }
   .catbar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 2px; }
   .catbar .chip small { color:var(--secondary-text-color); } .catbar .chip.more { border-style:dashed; color:var(--sd-accent); }
   .stepper { display:inline-flex; align-items:center; height:34px; border-radius:10px; border:1px solid color-mix(in srgb, #4caf50 55%, transparent); background:color-mix(in srgb, #4caf50 12%, transparent); flex:none; }
@@ -574,20 +581,24 @@ class SmartDiscountsCard extends HTMLElement {
       ranked.length > visible.length || this._allCats ? h("button", { type: "button", class: "chip more", onclick: () => { this._allCats = !this._allCats; this._render(); } },
         this._allCats ? t.less : t.more_n.replace("{n}", ranked.length - visible.length)) : null) : null;
     const tile = (o) => {
-      const mine = onList(o);
-      return h("div", { class: "tl", title: o.name }, o.pct ? h("span", { class: "pctb" }, `−${o.pct}%`) : null, mine ? h("span", { class: "on", title: t.on_list }, "📝") : null,
-        c.show_images ? h("div", { class: "img", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}")` : "background:none" }) : null,
-        h("div", { class: "t" }, o.name), byCat ? h("div", { class: "x" }, this._storeBadge(o)) : null, h("div", {}, h("b", {}, this._money(o.price)), o.old ? h("s", { style: "margin-left:4px;font-size:.7rem;opacity:.7" }, this._money(o.old)) : null),
+      const got = this._onListCount(o), mine = !got && onList(o);
+      // steht genau dieses Angebot schon auf der Liste: Bild grün abgedunkelt, Haken darüber, Anzahl unten rechts
+      return h("div", { class: `tl ${got ? "got" : ""}`, title: got ? `${o.name} – ${t.on_n.replace("{n}", got)}` : o.name }, o.pct ? h("span", { class: "pctb" }, `−${o.pct}%`) : null, mine ? h("span", { class: "on", title: t.on_list }, "📝") : null,
+        c.show_images ? h("div", { class: "img", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}")` : "background:none" },
+          got ? [h("span", { class: "gotck", "aria-hidden": "true" }, "✓"), h("span", { class: "gotn" }, `${got}×`)] : null) : null,
+        h("div", { class: "t" }, !c.show_images && got ? h("span", { class: "gott" }, "✓ ") : null, o.name), byCat ? h("div", { class: "x" }, this._storeBadge(o)) : null, h("div", {}, h("b", {}, this._money(o.price)), o.old ? h("s", { style: "margin-left:4px;font-size:.7rem;opacity:.7" }, this._money(o.old)) : null),
         h("div", { class: "x" }, [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : ""].filter(Boolean).join(" · ") || " "),
         this._addCtl(o, true));
     };
     // Listen-Darstellung: kleine Bilder, eine Zeile je Angebot
     const row = (o) => {
-      const mine = onList(o);
+      const got = this._onListCount(o), mine = !got && onList(o);
       const sub = [c.show_unit_price ? this._unitLabel(o) : "", c.show_valid_until && o.until ? (o.today ? t.today : `${t.until} ${this._day(o.until)}`) : "", byCat ? "" : o.category].filter(Boolean).join(" · ");
-      return h("div", { class: "lrow", title: o.name },
-        c.show_images ? h("div", { class: "thumb", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image ? null : "🏷️") : null,
-        h("div", { class: "n" }, mine ? h("span", { title: t.on_list }, "📝 ") : null, o.name, sub || byCat ? h("small", {}, byCat ? [this._storeBadge(o), " "] : null, sub) : null),
+      return h("div", { class: `lrow ${got ? "got" : ""}`, title: o.name },
+        c.show_images ? h("div", { class: "thumb", style: o.image ? `background-image:url("${String(o.image).replace(/"/g, "%22")}");background-color:#fff` : null }, o.image || got ? null : "🏷️",
+          got ? h("span", { class: "gotck", "aria-hidden": "true" }, "✓") : null) : null,
+        h("div", { class: "n" }, mine ? h("span", { title: t.on_list }, "📝 ") : null, o.name,
+          sub || byCat || got ? h("small", {}, got ? h("b", { class: "gott" }, `✓ ${t.on_n.replace("{n}", got)}${sub || byCat ? " · " : ""}`) : null, byCat ? [this._storeBadge(o), " "] : null, sub) : null),
         h("div", { class: "pr" }, h("b", {}, this._money(o.price)), o.old ? h("s", {}, this._money(o.old)) : null, o.pct ? h("span", { class: "pct" }, `−${o.pct}%`) : null),
         this._addCtl(o, false));
     };

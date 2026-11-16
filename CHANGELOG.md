@@ -24,7 +24,8 @@ Third pre-release of 4.0.
 - **Offers card: category filter as a bar** with counts instead of the browser's select box – the largest first, the
   rest behind "+N more", wrapping without a scroll bar. The search field also finds category names ("fruit").
 - **Offers card: already on the list.** ＋ no longer adds a second entry: the button becomes a counter (− 2× +) that
-  changes the count of the existing entry. Duplicates already on the list can be merged with one tap.
+  changes the count of the existing entry, and the offer is marked with a check over its (dimmed) image and the
+  count. Duplicates already on the list can be merged with one tap.
 - **Offers card: one card per store.** Limit a card to stores (`stores: [REWE]`) or to offer sensors (`entities:`) –
   both selectable in the visual editor, e.g. one card only for REWE and another only for ALDI.
 - **Offers card: `show_list_tab: false`** hides the "My list" tab – e.g. for a leaflet-style card on a wall tablet.

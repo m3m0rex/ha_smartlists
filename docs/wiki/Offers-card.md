@@ -1,0 +1,108 @@
+# Offers card
+
+`custom:smartdiscounts-card` shows the offers of your supermarkets and matches them with a shopping list. It is
+included in SmartLists 4.0 and also runs **without SmartLists** – then it is installed from its
+[own repository](https://github.com/m3m0rex/ha_smartdiscounts-card), whose README lists every option with examples.
+
+## What you need
+
+At least one sensor with a list of offers in an attribute, e.g. from FaserF's integrations for REWE, EDEKA, Lidl,
+ALDI or Norma. Your own REST, template or scrape sensors work as well.
+
+## Set up
+
+```yaml
+type: custom:smartdiscounts-card
+list: todo.shopping
+```
+
+- **My list:** for every open item the matching offers per store, the cheapest marked ★. "Pick cheapest" or "only
+  REWE" selects for the whole list; "Apply to list" writes store, price and validity to the items.
+- **All offers:** one shelf per store with search and categories – as tiles or as a list with small images.
+- **⭐ Watch list:** products you are waiting to see on offer.
+
+The card speaks German, English, French, Spanish, Italian and Polish and follows the language of Home Assistant.
+
+## Options
+
+| Option | Default | Description |
+|---|---|---|
+| `list` | – | To-do list to match offers against |
+| `title` | "Offers" | Heading |
+| `sources` | `auto` | `auto`, or a list of sources (see below) |
+| `match` | `word` | `word` (butter ≠ butter biscuit), `exact`, `part` |
+| `default_tab` | `list` | `list`, `all` or `watch` |
+| `list_view` | `chips` | "My list": `chips` (prices side by side, a table on wide cards) or `rows` |
+| `all_view` | `tiles` | "All offers" as `tiles` or as a `list` with small images |
+| `show_images` | `true` | Product images |
+| `compact` | `false` | Compact rows |
+| `show_unit_price` | `true` | Unit price (€/kg, €/l) |
+| `show_valid_until` | `true` | "until 21.11." |
+| `hide_without_offer` | `false` | Hide list items without an offer |
+| `max_per_store` | `12` | Offers per store before "all →" |
+| `currency` | `EUR` | ISO currency code |
+| `currency_symbol` | – | Own symbol instead of `currency`, e.g. `₺` |
+| `watch` | – | Watch list: fixed products, e.g. `[coffee, Nutella]` |
+| `watch_list` | – | Watch list as a to-do list – the same on all devices |
+| `notify` | `false` | Home Assistant notification when a watched product is newly on offer |
+| `notify_service` | – | Also send it to this service, e.g. `notify.mobile_app_pixel` |
+
+## Your own sensors: all fields of `map:`
+
+The card recognises common field names by itself. For everything else you map the fields: on the left the field of
+the card, on the right the field of your sensor. Only `name` and `price` are required; a dot reaches into nested
+data (`images.0.url`).
+
+| Field | Meaning | Recognised automatically as |
+|---|---|---|
+| `name` | Product name (**required**) | `product`, `title`, `name`, `product_name`, `description` |
+| `price` | Offer price (**required**) | `price`, `new_price`, `discount_price`, `offer_price`, `sale_price`, `price_euro`, `current_price` |
+| `old_price` | Old price, struck through | `old_price`, `regular_price`, `original_price`, `was_price` |
+| `discount` | Discount, e.g. "-44%" | `discount`, `discount_percent`, `savings` |
+| `unit` | Unit price as text, e.g. "1 kg = 5,16 €" | `price_per_unit`, `base_price`, `unit_price` |
+| `image` | Image address | `picture_link`, `image_url`, `image`, `picture`, `img`, `thumbnail` |
+| `until` | Valid until (`YYYY-MM-DD`) | `valid_until`, `end_date`, `valid_to`, `until` |
+| `category` | Category for the filter | `category`, `categories`, `group` |
+| `brand` | Brand (searchable) | `brand`, `manufacturer` |
+| `store` | Store of this one offer | `store`, `market`, `retailer`, `advertiser` |
+
+```yaml
+type: custom:smartdiscounts-card
+list: todo.shopping
+sources:
+  - auto
+  - entity: sensor.my_store
+    attribute: results
+    store: Kaufland
+    color: "#e10915"
+    map:
+      name: product.name
+      price: prices.current
+      old_price: prices.regular
+      image: images.0.url
+      until: validity.to
+```
+
+## Watch list and notifications
+
+The watch list comes from `watch:` in the configuration, from a to-do list (`watch_list:`, editable in the card and
+the same on all devices) or – without one – from what you enter in the tab, stored on that device only.
+
+With `notify: true` the card creates a Home Assistant notification when a watched product is newly on offer.
+**The check runs in the card**, so it reports while a dashboard with the card is open (e.g. a wall tablet). For
+notifications without an open dashboard use an automation – the README of the card has an example.
+
+## Together with SmartLists
+
+- A chosen offer appears as a **badge on the item** with store, price and "valid until".
+- The shopping list shows a 🏷️ hint on items that are on offer (see [[Offers and prices]]).
+- Expired offers are pointed out in both cards and removed with one tap.
+
+## Questions
+
+**No discount shown?** Not every sensor delivers an old price – then the card shows price and unit price.
+
+**"Butter" finds "butter biscuit"?** `match: word` prevents that; `exact` is stricter still.
+
+**A store is missing?** Check that the sensor has a list in one of the attributes `discounts`, `offers`, `deals`,
+`items`, `results` or `products` – otherwise name it with `attribute:`.

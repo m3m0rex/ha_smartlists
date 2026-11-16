@@ -408,6 +408,10 @@
       out.push([ICON.template, t.tpl, () => { closeAll(); this._showTpl = true; this._renderTemplates(); this._render(); }]);
       if (this._feat("mealplan")) out.push([ICON.calendar, t.mp_title, () => { this._moreOpen = false; this._renderMore(); this._mealPlanDialog(); }]);
     }
+    // „Einkauf beenden …“ gibt es immer hier – der Knopf in der Summenleiste erscheint nur im Einkaufsmodus
+    const doneCount = d.items.filter((i) => i.checked).length;
+    if (d.type !== "notes" && doneCount && d.permissions.toggle)
+      out.push([ICON.cart, t.trip_done + " …", () => { this._moreOpen = false; this._renderMore(); this._finishShopping(doneCount); }]);
     if (c.show_settings !== false) {
       if (c.settings_scope !== "list") out.push([ICON.tune, t.settings_global, () => { closeAll(); this._showSettings = true; this._setChosen = false; this._renderImport(); this._renderSettings(); this._render(); }]);
       out.push([ICON.gear, t.settings_list, () => { this._moreOpen = false; this._renderMore(); this._listDialog(); }]);

@@ -78,6 +78,69 @@ const matches = (name, title, mode) => {
   return want.every((w) => { const s = stem(w); return hs.includes(s) || (mode !== "exact" && w.length >= 4 && have.some((x) => x.length > w.length && (x.endsWith(w) || stem(x).endsWith(s)))); });
 };
 
+function sourcesOf(hass, cfg) {
+  const st = hass.states;
+  const explicit = Array.isArray(cfg) ? cfg.filter((s) => s && s !== "auto").map((s) => (typeof s === "string" ? { entity: s } : s)) : [];
+  const out = [...explicit];
+  if (cfg === "auto" || !Array.isArray(cfg) || cfg.includes("auto")) {
+    for (const id of Object.keys(st)) {
+      if (!id.startsWith("sensor.") || out.some((s) => s.entity === id)) continue;
+      const attr = LIST_ATTRS.find((a) => Array.isArray(st[id].attributes[a]) && st[id].attributes[a].length && typeof st[id].attributes[a][0] === "object"
+        && FIELDS.name.some((f) => f in st[id].attributes[a][0]) && FIELDS.price.some((f) => f in st[id].attributes[a][0]));
+      if (attr) out.push({ entity: id, attribute: attr });
+    }
+  }
+  return out.filter((s) => st[s.entity]);
+}
+function storeOf(src, state) {
+  const hay = norm(`${src.entity} ${state.attributes.friendly_name || ""}`).replace(/[^a-z0-9]+/g, "_");
+  const known = STORES.find(([key]) => hay.includes(key));
+  const label = src.store || (known && known[1]) || String(state.attributes.friendly_name || src.entity).replace(/\s*(offers?|angebote|discounts?)\s*$/i, "");
+  const k2 = STORES.find(([, l]) => norm(l) === norm(label));
+  return { label, color: src.color || (k2 && k2[2]) || (known && known[2]) || "#6b7280" };
+}
+// alle Angebote aller Quellen, vereinheitlicht
+function collectOffers(hass, cfg) {
+  const out = [];
+  const today = new Date().toISOString().slice(0, 10);
+  for (const src of sourcesOf(hass, cfg)) {
+    const state = hass.states[src.entity];
+    const attr = src.attribute || LIST_ATTRS.find((a) => Array.isArray(state.attributes[a]));
+    const rows = get(state.attributes, attr);
+    if (!Array.isArray(rows)) continue;
+    const store = storeOf(src, state);
+    const pick = (o, f) => { const key = (src.map && src.map[f]) || FIELDS[f].find((k) => o[k] != null && o[k] !== ""); return key ? get(o, key) : null; };
+    rows.forEach((o, i) => {
+      if (!o || typeof o !== "object") return;
+      const name = pick(o, "name"), price = num(pick(o, "price"));
+      if (!name || price == null) return;
+      const unitText = pick(o, "unit"), until = pick(o, "until") ? String(pick(o, "until")).slice(0, 10) : null;
+      if (until && /^\d{4}-\d\d-\d\d$/.test(until) && until < today) return;  // abgelaufen
+      const st = pick(o, "store");
+      const cat = pick(o, "category"), old = num(pick(o, "old_price"));
+      // Rabatt: Angabe der Quelle („-44%“) oder aus altem und neuem Preis berechnet
+      const dm = String(pick(o, "discount") || "").match(/-?\s*(\d{1,2})\s*%/);
+      const pct = dm ? +dm[1] : old && old > price ? Math.round((1 - price / old) * 100) : null;
+      out.push({ id: `${src.entity}#${i}`, name: String(name), price, old: old && old > price ? old : null, pct, brand: pick(o, "brand") || "", image: pick(o, "image"), until, today: until === today,
+        unitText: unitText ? String(unitText).replace(/ /g, " ") : "", unit: unitPrice(unitText), category: Array.isArray(cat) ? cat[0] : cat || "",
+        store: st ? String(st) : store.label, color: store.color, entity: src.entity });
+    });
+  }
+  return out;
+}
+// günstiger: nach Grundpreis, wenn beide denselben haben – sonst nach Preis
+const cheaper = (a, b) => (a.unit && b.unit && a.unit.unit === b.unit.unit ? a.unit.value - b.unit.value || a.price - b.price : a.price - b.price);
+// passende Angebote für einen Artikelnamen: je Markt das günstigste, günstigstes zuerst
+function dealsFor(offers, name, mode = "word") {
+  const byStore = new Map();
+  for (const o of offers) {
+    if (!matches(name, o.name, mode)) continue;
+    const cur = byStore.get(o.store);
+    if (!cur || cheaper(o, cur) < 0) byStore.set(o.store, o);
+  }
+  return [...byStore.values()].sort(cheaper);
+}
+
 const STYLE = `
   :host { display:block; --sd-accent: var(--smartdiscounts-accent, var(--primary-color)); --sd-q: var(--smartlists-qty-color, #e39a1c); --sd-ok: var(--success-color, #43a047); }
   ha-card { display:block; padding:14px 12px 12px; border-radius: var(--ha-card-border-radius, 12px); }
@@ -212,61 +275,13 @@ class SmartDiscountsCard extends HTMLElement {
   getCardSize() { return 6; }
   getGridOptions() { return { columns: 12, min_columns: 6, rows: "auto" }; }
 
-  _sources() {
-    const st = this._hass.states, cfg = this._config.sources;
-    const explicit = Array.isArray(cfg) ? cfg.filter((s) => s && s !== "auto").map((s) => (typeof s === "string" ? { entity: s } : s)) : [];
-    const out = [...explicit];
-    if (cfg === "auto" || !Array.isArray(cfg) || cfg.includes("auto")) {
-      for (const id of Object.keys(st)) {
-        if (!id.startsWith("sensor.") || out.some((s) => s.entity === id)) continue;
-        const attr = LIST_ATTRS.find((a) => Array.isArray(st[id].attributes[a]) && st[id].attributes[a].length && typeof st[id].attributes[a][0] === "object"
-          && FIELDS.name.some((f) => f in st[id].attributes[a][0]) && FIELDS.price.some((f) => f in st[id].attributes[a][0]));
-        if (attr) out.push({ entity: id, attribute: attr });
-      }
-    }
-    return out.filter((s) => st[s.entity]);
-  }
-  _storeOf(src, state) {
-    const hay = norm(`${src.entity} ${state.attributes.friendly_name || ""}`).replace(/[^a-z0-9]+/g, "_");
-    const known = STORES.find(([key]) => hay.includes(key));
-    const label = src.store || (known && known[1]) || String(state.attributes.friendly_name || src.entity).replace(/\s*(offers?|angebote|discounts?)\s*$/i, "");
-    const k2 = STORES.find(([, l]) => norm(l) === norm(label));
-    return { label, color: src.color || (k2 && k2[2]) || (known && known[2]) || "#6b7280" };
-  }
-  // alle Angebote aller Quellen, vereinheitlicht
-  _offers() {
-    const out = [];
-    const today = new Date().toISOString().slice(0, 10);
-    for (const src of this._sources()) {
-      const state = this._hass.states[src.entity];
-      const attr = src.attribute || LIST_ATTRS.find((a) => Array.isArray(state.attributes[a]));
-      const rows = get(state.attributes, attr);
-      if (!Array.isArray(rows)) continue;
-      const store = this._storeOf(src, state);
-      const pick = (o, f) => { const key = (src.map && src.map[f]) || FIELDS[f].find((k) => o[k] != null && o[k] !== ""); return key ? get(o, key) : null; };
-      rows.forEach((o, i) => {
-        if (!o || typeof o !== "object") return;
-        const name = pick(o, "name"), price = num(pick(o, "price"));
-        if (!name || price == null) return;
-        const unitText = pick(o, "unit"), until = pick(o, "until") ? String(pick(o, "until")).slice(0, 10) : null;
-        if (until && /^\d{4}-\d\d-\d\d$/.test(until) && until < today) return;  // abgelaufen
-        const st = pick(o, "store");
-        const cat = pick(o, "category"), old = num(pick(o, "old_price"));
-        // Rabatt: Angabe der Quelle („-44%“) oder aus altem und neuem Preis berechnet
-        const dm = String(pick(o, "discount") || "").match(/-?\s*(\d{1,2})\s*%/);
-        const pct = dm ? +dm[1] : old && old > price ? Math.round((1 - price / old) * 100) : null;
-        out.push({ id: `${src.entity}#${i}`, name: String(name), price, old: old && old > price ? old : null, pct, brand: pick(o, "brand") || "", image: pick(o, "image"), until, today: until === today,
-          unitText: unitText ? String(unitText).replace(/ /g, " ") : "", unit: unitPrice(unitText), category: Array.isArray(cat) ? cat[0] : cat || "",
-          store: st ? String(st) : store.label, color: store.color, entity: src.entity });
-      });
-    }
-    return out;
-  }
+  _sources() { return sourcesOf(this._hass, this._config.sources); }
+  _offers() { return collectOffers(this._hass, this._config.sources); }
   _money(v) { try { return new Intl.NumberFormat(this._hass.language || "de", { style: "currency", currency: this._config.currency || "EUR" }).format(v); } catch (e) { return `${v.toFixed(2)} €`; } }
   _day(d) { const p = String(d || "").split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : d || ""; }
   _unitLabel(o) { return o.unit ? `${this._money(o.unit.value)}/${o.unit.unit}` : ""; }
   // günstiger: nach Grundpreis, wenn beide denselben haben – sonst nach Preis
-  _cmp(a, b) { return a.unit && b.unit && a.unit.unit === b.unit.unit ? a.unit.value - b.unit.value || a.price - b.price : a.price - b.price; }
+  _cmp(a, b) { return cheaper(a, b); }
 
   async _loadList() {
     const id = this._config.list;
@@ -288,16 +303,7 @@ class SmartDiscountsCard extends HTMLElement {
     await this._loadList();
     this._render();
   }
-  _matchesFor(item) {
-    if (!item.name) return [];
-    const byStore = new Map();
-    for (const o of this._all) {
-      if (!matches(item.name, o.name, this._config.match)) continue;
-      const cur = byStore.get(o.store);
-      if (!cur || this._cmp(o, cur) < 0) byStore.set(o.store, o);  // je Markt das günstigste passende Angebot
-    }
-    return [...byStore.values()].sort((a, b) => this._cmp(a, b));
-  }
+  _matchesFor(item) { return item.name ? dealsFor(this._all, item.name, this._config.match) : []; }
   _attached(item) { return /[⚙⚙]️?\s*OFFER\s*:|🏷️/.test(item.note || ""); }
 
   _render() {
@@ -525,5 +531,6 @@ window.customCards = window.customCards || [];
 window.customCards.push({ type: TAG, name: "SmartDiscounts", description: "Supermarket offers, matched with your shopping list", preview: true, documentationURL: "https://github.com/m3m0rex/ha_smartdiscounts-card" });
 console.info(`%c SMARTDISCOUNTS-CARD %c ${VERSION} `, "background:#e39a1c;color:#111;font-weight:700", "background:#222;color:#fff");
 // Test-Hilfen (reine Funktionen)
-window.SmartDiscounts = { itemName, matches, num, unitPrice };
+// … und für andere Karten (SmartLists zeigt damit den 🏷️-Hinweis in der Einkaufsliste)
+window.SmartDiscounts = { itemName, matches, num, unitPrice, offers: (hass, sources = "auto") => collectOffers(hass, sources), dealsFor };
 })();

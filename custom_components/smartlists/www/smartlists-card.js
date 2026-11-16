@@ -52,7 +52,7 @@ const CARD_DEFAULTS = {
   sort: "category",
   show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
   show_undo: true, show_import: true, show_settings: true,
-  show_title: true, show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
+  show_title: true, show_offer_hints: true, show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
   drag_drop: true, show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
   show_completed: true, collapse_completed: true,
   start_shopping: false,
@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    deal_from: "ab {price}", deal_title: "Angebote für „{name}“", deal_take: "Nehmen", deal_help: "„Nehmen“ hängt Markt, Preis und Gültigkeit an den Artikel. Nach Ablauf verschwindet der Preis wieder.", l_show_offer_hints: "Hinweis auf Angebote (🏷️)", collapse: "einklappen", expand: "aufklappen",
     offers_expired: "Abgelaufene Angebote: {n}", offers_expired_help: "Markt, Preis und „gültig bis“ werden vom Artikel entfernt – der Artikel bleibt auf der Liste.", offers_expired_remove: "Entfernen", offers_expired_later: "Später",
     a_price: "Preise & Währung", cur_label: "Währung", cur_help: "Für Preise, Summe und Ausgaben. Beim Eintippen als Preis erkannt: {symbols}", price_how: "So entsteht der Preis eines Artikels", price_how_note: "Die erste Quelle mit Preis gewinnt. In der Liste steht Preis × Menge; beim Abhaken wird der Betrag als Ausgabe gebucht.", price_how_1: "Angebot (aus der App oder der Angebots-Karte) – gilt für den ganzen Artikel, bis es abläuft.", price_how_2: "Preis im Text einer anderen Quelle („… - 0,99 €“) – je Stück.", price_how_3: "Eigener Preis – im Artikel eingetragen oder beim Hinzufügen getippt („Milch 2 l 2,38 €“ merkt 1,19 je l).", price_how_4: "Zuletzt bezahlt (mit ~ gekennzeichnet) – beim letzten Abhaken gebucht.", order_title: "Reihenfolge unter dem Namen", order_help: "Was in der Zeile unter dem Artikelnamen zuerst steht. Gilt für alle – auch in der App und auf geteilten Seiten.",
     share_edit: "Link bearbeiten", share_edit_help: "Änderungen gelten sofort für alle, die den Link haben. Der Link selbst bleibt gleich.", share_keep: "unverändert", share_pw_keep: "leer lassen = Passwort bleibt",
@@ -395,6 +396,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    deal_from: "from {price}", deal_title: "Offers for \u201c{name}\u201d", deal_take: "Take", deal_help: "\u201cTake\u201d attaches store, price and validity to the item. The price disappears when the offer expires.", l_show_offer_hints: "Offer hints (🏷️)", collapse: "collapse", expand: "expand",
     offers_expired: "Expired offers: {n}", offers_expired_help: "Store, price and validity are removed from the item – the item stays on the list.", offers_expired_remove: "Remove", offers_expired_later: "Later",
     a_price: "Prices & currency", cur_label: "Currency", cur_help: "For prices, totals and expenses. Recognised as a price while typing: {symbols}", price_how: "How an item gets its price", price_how_note: "The first source with a price wins. The list shows price × quantity; checking an item books the amount as an expense.", price_how_1: "Offer (from the app or the offers card) – applies to the whole item until it expires.", price_how_2: "Price in the text from another source (\"… - 0,99 €\") – per piece.", price_how_3: "Own price – entered in the item or typed when adding (\"Milk 2 l 2,38 €\" remembers 1,19 per l).", price_how_4: "Last paid (marked with ~) – booked when last checked off.", order_title: "Order below the name", order_help: "What comes first in the line below the item name. Applies to everyone – also in the app and on shared pages.",
     share_edit: "Edit link", share_edit_help: "Changes apply immediately for everyone who has the link. The link itself stays the same.", share_keep: "unchanged", share_pw_keep: "leave empty = password stays",
@@ -663,6 +665,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    deal_from: "dès {price}", deal_title: "Promos pour « {name} »", deal_take: "Prendre", deal_help: "« Prendre » ajoute magasin, prix et validité à l'article. Le prix disparaît à l'expiration.", l_show_offer_hints: "Indication des promos (🏷️)", collapse: "replier", expand: "déplier",
     offers_expired: "Promos expirées : {n}", offers_expired_help: "Magasin, prix et validité sont retirés – l'article reste sur la liste.", offers_expired_remove: "Retirer", offers_expired_later: "Plus tard",
     a_price: "Prix et devise", cur_label: "Devise", cur_help: "Pour les prix, le total et les dépenses. Reconnu comme prix à la saisie : {symbols}", price_how: "D'où vient le prix d'un article", price_how_note: "La première source avec un prix l'emporte. La liste affiche prix × quantité ; cocher un article enregistre la dépense.", price_how_1: "Promo (de l'appli ou de la carte des promos) – vaut pour tout l'article jusqu'à expiration.", price_how_2: "Prix dans le texte d'une autre source (« … - 0,99 € ») – à l'unité.", price_how_3: "Prix personnel – saisi dans l'article ou à l'ajout (« Lait 2 l 2,38 € » retient 1,19 par l).", price_how_4: "Dernier prix payé (marqué ~) – enregistré au dernier cochage.", order_title: "Ordre sous le nom", order_help: "Ce qui vient en premier sous le nom de l'article. Vaut pour tous – aussi dans l'appli et sur les pages partagées.",
     share_edit: "Modifier le lien", share_edit_help: "Les modifications s'appliquent immédiatement pour tous ceux qui ont le lien. Le lien reste le même.", share_keep: "inchangé", share_pw_keep: "laisser vide = mot de passe inchangé",
@@ -931,6 +934,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    deal_from: "desde {price}", deal_title: "Ofertas para «{name}»", deal_take: "Elegir", deal_help: "«Elegir» añade tienda, precio y validez al artículo. El precio desaparece al caducar.", l_show_offer_hints: "Aviso de ofertas (🏷️)", collapse: "contraer", expand: "expandir",
     offers_expired: "Ofertas caducadas: {n}", offers_expired_help: "Se quitan tienda, precio y validez – el artículo sigue en la lista.", offers_expired_remove: "Quitar", offers_expired_later: "Más tarde",
     a_price: "Precios y moneda", cur_label: "Moneda", cur_help: "Para precios, total y gastos. Se reconoce como precio al escribir: {symbols}", price_how: "De dónde sale el precio de un artículo", price_how_note: "Gana la primera fuente con precio. La lista muestra precio × cantidad; al marcar se registra el gasto.", price_how_1: "Oferta (de la app o de la tarjeta de ofertas) – vale para todo el artículo hasta que caduque.", price_how_2: "Precio en el texto de otra fuente («… - 0,99 €») – por unidad.", price_how_3: "Precio propio – introducido en el artículo o al añadir («Leche 2 l 2,38 €» recuerda 1,19 por l).", price_how_4: "Último pagado (marcado con ~) – registrado al marcar por última vez.", order_title: "Orden bajo el nombre", order_help: "Qué aparece primero bajo el nombre del artículo. Vale para todos – también en la app y en páginas compartidas.",
     share_edit: "Editar enlace", share_edit_help: "Los cambios se aplican de inmediato para quien tenga el enlace. El enlace no cambia.", share_keep: "sin cambios", share_pw_keep: "dejar vacío = la contraseña no cambia",
@@ -1199,6 +1203,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    deal_from: "da {price}", deal_title: "Offerte per «{name}»", deal_take: "Scegli", deal_help: "«Scegli» aggiunge negozio, prezzo e validità all'articolo. Il prezzo sparisce alla scadenza.", l_show_offer_hints: "Avviso offerte (🏷️)", collapse: "comprimi", expand: "espandi",
     offers_expired: "Offerte scadute: {n}", offers_expired_help: "Negozio, prezzo e validità vengono rimossi – l'articolo resta in lista.", offers_expired_remove: "Rimuovi", offers_expired_later: "Più tardi",
     a_price: "Prezzi e valuta", cur_label: "Valuta", cur_help: "Per prezzi, totale e spese. Riconosciuto come prezzo durante la digitazione: {symbols}", price_how: "Come nasce il prezzo di un articolo", price_how_note: "Vince la prima fonte con un prezzo. La lista mostra prezzo × quantità; spuntando si registra la spesa.", price_how_1: "Offerta (dall'app o dalla scheda offerte) – vale per l'intero articolo fino alla scadenza.", price_how_2: "Prezzo nel testo di un'altra fonte («… - 0,99 €») – al pezzo.", price_how_3: "Prezzo proprio – inserito nell'articolo o digitato all'aggiunta («Latte 2 l 2,38 €» ricorda 1,19 al l).", price_how_4: "Ultimo pagato (segnato con ~) – registrato all'ultima spunta.", order_title: "Ordine sotto il nome", order_help: "Cosa viene prima sotto il nome dell'articolo. Vale per tutti – anche nell'app e nelle pagine condivise.",
     share_edit: "Modifica link", share_edit_help: "Le modifiche valgono subito per chi ha il link. Il link resta lo stesso.", share_keep: "invariato", share_pw_keep: "lascia vuoto = la password resta",
@@ -1467,6 +1472,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    deal_from: "od {price}", deal_title: "Promocje dla „{name}”", deal_take: "Wybierz", deal_help: "„Wybierz” dodaje sklep, cenę i termin do produktu. Cena znika po wygaśnięciu.", l_show_offer_hints: "Podpowiedzi promocji (🏷️)", collapse: "zwiń", expand: "rozwiń",
     offers_expired: "Wygasłe promocje: {n}", offers_expired_help: "Sklep, cena i termin zostaną usunięte – produkt zostaje na liście.", offers_expired_remove: "Usuń", offers_expired_later: "Później",
     a_price: "Ceny i waluta", cur_label: "Waluta", cur_help: "Dla cen, sumy i wydatków. Rozpoznawane jako cena podczas pisania: {symbols}", price_how: "Skąd bierze się cena produktu", price_how_note: "Wygrywa pierwsze źródło z ceną. Lista pokazuje cenę × ilość; odhaczenie księguje wydatek.", price_how_1: "Promocja (z aplikacji lub karty promocji) – dotyczy całego produktu do wygaśnięcia.", price_how_2: "Cena w tekście z innego źródła („… - 0,99 €”) – za sztukę.", price_how_3: "Własna cena – wpisana w produkcie lub przy dodawaniu („Mleko 2 l 2,38 €” zapamiętuje 1,19 za l).", price_how_4: "Ostatnio zapłacono (oznaczone ~) – zaksięgowane przy ostatnim odhaczeniu.", order_title: "Kolejność pod nazwą", order_help: "Co jest pierwsze w wierszu pod nazwą produktu. Dotyczy wszystkich – także aplikacji i udostępnionych stron.",
     share_edit: "Edytuj link", share_edit_help: "Zmiany działają od razu dla wszystkich, którzy mają link. Sam link się nie zmienia.", share_keep: "bez zmian", share_pw_keep: "puste = hasło bez zmian",
@@ -2465,6 +2471,12 @@ const STYLE = `
   /* Kategorie als getönter Balken */
   .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;
     background:color-mix(in srgb, var(--cc) 16%, transparent); color:var(--cc); font-size:.9rem; font-weight:700; text-transform:none; letter-spacing:0; }
+  button.group-title.bar { border:none; font:inherit; font-size:.9rem; font-weight:700; cursor:pointer; text-align:left; width:calc(100% - 20px); box-sizing:border-box; }
+  .group-title.bar .grow { flex:1; } .group-title.bar .chev { transition:transform .15s; opacity:.8; }
+  .group-title.bar.closed .chev { transform:rotate(-90deg); }
+  .fchip.flbl { display:inline-flex; align-items:center; gap:2px; border-color:transparent; color:var(--secondary-text-color); padding-left:2px; font-size:.75rem; }
+  .fchip.flbl .chev { transition:transform .15s; } .fchip.flbl.closed .chev { transform:rotate(-90deg); }
+  .dealhint { border:none; font:inherit; font-size:.72rem; font-weight:700; background:#f2b705; color:#1a1a1a; border-radius:9px; padding:1px 8px; cursor:pointer; white-space:nowrap; }
   .group-title.bar small { color:var(--secondary-text-color); font-weight:400; font-size:.78rem; }
   /* schmale Karte: Stift/Papierkorb ausblenden – Bearbeiten über die Geste (Einstellungen → Bedienung) */
   .listwrap { container-type:inline-size; }
@@ -4248,6 +4260,46 @@ class SmartListsCard extends HTMLElement {
       (res) => () => this._call("remove_items", { uids: [res.uid] }), { snack: false });
   }
 
+  // eingeklappte Abschnitte dieser Liste (auf dem Gerät gemerkt)
+  _collapsed() {
+    if (!this._collapsedSet) {
+      let saved = [];
+      try { saved = JSON.parse(localStorage.getItem(`smartlists-collapsed:${this._config.entity}`) || "[]"); } catch (e) { /* */ }
+      this._collapsedSet = new Set(Array.isArray(saved) ? saved : []);
+    }
+    return this._collapsedSet;
+  }
+  _toggleCollapsed(key) {
+    const set = this._collapsed();
+    if (set.has(key)) set.delete(key); else set.add(key);
+    try { localStorage.setItem(`smartlists-collapsed:${this._config.entity}`, JSON.stringify([...set])); } catch (e) { /* */ }
+    this._renderList();
+  }
+  // 🏷️ passende Angebote zu einem Artikel (aus der Angebots-Karte, falls Angebots-Sensoren vorhanden sind)
+  _dealsFor(it) {
+    if (!this._deals || !this._deals.length || it.offer || it.checked || !it.name) return [];
+    const deals = window.SmartDiscounts.dealsFor(this._deals, it.name, "word");
+    // Steht am Artikel schon ein @Markt, zählen nur dessen Angebote
+    const stores = (it.tags || []).filter((x) => x.kind === "store").map((x) => searchKey(x.label || x.value));
+    return stores.length ? deals.filter((o) => stores.some((s) => searchKey(o.store).startsWith(s) || s.startsWith(searchKey(o.store)))) : deals;
+  }
+  _dealDialog(it, deals) {
+    const t = this._t, lang = this._hass.language;
+    const day = (iso) => { const p = String(iso).slice(0, 10).split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : iso; };
+    const take = async (o) => {
+      dlg.remove();
+      const line = `⚙OFFER:${JSON.stringify({ s: o.store, p: o.price, ...(o.old ? { o: o.old } : {}), ...(o.until ? { e: o.until } : {}), a: Math.floor(Date.now() / 1000) })}`;
+      try { await this._call("update_item", { uid: it.uid, text: it.text, note: [it.note, line].filter(Boolean).join("\n") }); } catch (err) { this._toast((err && err.message) || t.error); }
+      this._load();
+    };
+    const dlg = this._dialog(t.deal_title.replace("{name}", it.name), h("div", {}, h("p", { class: "shelp" }, t.deal_help),
+      deals.map((o, i) => h("div", { class: "srow2" },
+        h("div", { class: "sl" }, h("span", { class: "tag store", style: `background:${o.color};color:${textOn(o.color)}` }, o.store), " ", o.name,
+          h("small", {}, [o.unit ? `${fmtMoney(o.unit.value, lang)}/${o.unit.unit}` : "", o.until ? `${t.offer_until} ${day(o.until)}` : ""].filter(Boolean).join(" · "))),
+        h("b", { style: i === 0 && deals.length > 1 ? "color:var(--success-color,#43a047)" : null }, fmtMoney(o.price, lang)),
+        h("button", { class: "btn2 primary", type: "button", onclick: () => take(o) }, t.deal_take)))),
+      [h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel)]);
+  }
   _renderFrequent() {
     const el = this._freqEl;
     if (!el) return;
@@ -4274,8 +4326,15 @@ class SmartListsCard extends HTMLElement {
         canReset ? h("button", { class: "fchip warn", type: "button", onclick: () => reset(null) }, "↺ " + t.freq_reset) : null,
         h("button", { class: "fchip", type: "button", onclick: () => { this._freqEdit = false; this._renderFrequent(); } }, "✓ " + t.done)));
     }
+    let freqClosed = false;
+    try { freqClosed = localStorage.getItem("smartlists-freq-closed") === "1"; } catch (e) { /* */ }
+    const freqToggle = h("button", { class: `fchip flbl ${freqClosed ? "closed" : ""}`, type: "button", "aria-expanded": String(!freqClosed), title: freqClosed ? t.expand : t.collapse,
+      onmousedown: (e) => e.preventDefault(),
+      onclick: () => { try { localStorage.setItem("smartlists-freq-closed", freqClosed ? "0" : "1"); } catch (e) { /* */ } this._renderFrequent(); } },
+      svg(ICON.chevron, 16, "chev"), this._t.frequent, freqClosed ? ` · ${items.length}` : "");
+    if (freqClosed) return fill(el, h("div", { class: "frequent" }, freqToggle));
     fill(el, h("div", { class: "frequent" },
-      h("span", { class: "lbl" }, this._t.frequent),
+      freqToggle,
       h("button", { class: "fchip fedit", type: "button", title: t.freq_edit, "aria-label": t.freq_edit,
         onmousedown: (e) => e.preventDefault(), onclick: () => { this._freqEdit = true; this._renderFrequent(); } }, "✎"),
       items.map((s) => h("button", { class: "fchip", type: "button", title: s.category_label,
@@ -4355,6 +4414,8 @@ class SmartListsCard extends HTMLElement {
     const done = visible.filter((i) => i.checked);
     const out = [];
     if (this._sel) out.push(this._selBar(d, visible));
+    // Angebote aus den Angebots-Sensoren (für den 🏷️-Hinweis an passenden Artikeln) – einmal je Zeichnen
+    this._deals = this._config.show_offer_hints !== false && window.SmartDiscounts && d.type !== "notes" ? window.SmartDiscounts.offers(this._hass) : [];
     // 4.0: abgelaufene Angebote an Artikeln – Hinweis mit „Entfernen“ (oder „Später“: bis zum nächsten Laden der Seite)
     const expired = d.items.filter((i) => !i.checked && i.offer && i.offer.expired);
     if (expired.length && d.permissions.rename && !this._expiredLater) {
@@ -4392,8 +4453,12 @@ class SmartListsCard extends HTMLElement {
       groupsInOrder([...groups.keys()]).forEach((k) => {
         const items = groups.get(k).sort(byName);
         const color = colorOf(k);
-        rows.push(h("div", { class: "group-title full bar", style: color ? `--cc:${color}` : null }, h("span", { class: "gt" }, labelOf(k)), h("small", {}, String(items.length))),
-          items.map((i) => this._row(i, d, false)));
+        // 4.0: Abschnitt einklappbar (je Liste auf diesem Gerät gemerkt); bei der Suche immer offen
+        const key = `${mode}:${k}`, closed = !searching && this._collapsed().has(key);
+        rows.push(h("button", { type: "button", class: `group-title full bar ${closed ? "closed" : ""}`, style: color ? `--cc:${color}` : null, "aria-expanded": String(!closed),
+          title: closed ? t.expand : t.collapse, onclick: () => this._toggleCollapsed(key) },
+          h("span", { class: "gt" }, labelOf(k)), h("small", {}, String(items.length)), h("span", { class: "grow" }), svg(ICON.chevron, 18, "chev")),
+          closed ? null : items.map((i) => this._row(i, d, false)));
       });
     };
     if (searching && !visible.length) {
@@ -4476,6 +4541,7 @@ class SmartListsCard extends HTMLElement {
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
     const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
+    const deals = this._config.show_offer_hints !== false && !shop ? this._dealsFor(it) : [];
     // Reihenfolge der Angaben unter dem Namen: Haushalt (Einstellungen → Badges & Farben)
     const part = {
       store: tags.filter((x) => x.kind === "store").map(badge),
@@ -4483,7 +4549,9 @@ class SmartListsCard extends HTMLElement {
       person: [...tags.filter((x) => x.kind === "person").map(badge),
         // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
         this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null],
-      price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null],
+      price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
+        deals.length ? h("button", { type: "button", class: "dealhint", title: t.deal_title.replace("{name}", it.name), onclick: (e) => { e.stopPropagation(); this._dealDialog(it, deals); } },
+          `🏷️ ${t.deal_from.replace("{price}", fmtMoney(deals[0].price, this._hass.language))}${deals.length > 1 ? ` · ${deals.length}` : ""}`) : null],
       note: [this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
     };
     const sub = slRowOrder().flatMap((k) => part[k] || []);
@@ -6942,6 +7010,10 @@ class SmartListsCard extends HTMLElement {
       out.push([ICON.template, t.tpl, () => { closeAll(); this._showTpl = true; this._renderTemplates(); this._render(); }]);
       if (this._feat("mealplan")) out.push([ICON.calendar, t.mp_title, () => { this._moreOpen = false; this._renderMore(); this._mealPlanDialog(); }]);
     }
+    // „Einkauf beenden …“ gibt es immer hier – der Knopf in der Summenleiste erscheint nur im Einkaufsmodus
+    const doneCount = d.items.filter((i) => i.checked).length;
+    if (d.type !== "notes" && doneCount && d.permissions.toggle)
+      out.push([ICON.cart, t.trip_done + " …", () => { this._moreOpen = false; this._renderMore(); this._finishShopping(doneCount); }]);
     if (c.show_settings !== false) {
       if (c.settings_scope !== "list") out.push([ICON.tune, t.settings_global, () => { closeAll(); this._showSettings = true; this._setChosen = false; this._renderImport(); this._renderSettings(); this._render(); }]);
       out.push([ICON.gear, t.settings_list, () => { this._moreOpen = false; this._renderMore(); this._listDialog(); }]);
@@ -7072,7 +7144,7 @@ class SmartListsCardEditor extends HTMLElement {
       ]),
       section("header", "mdi:page-layout-header",
         [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-      section("input", "mdi:plus-box-outline", [b("show_title"), b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan")]),
+      section("input", "mdi:plus-box-outline", [b("show_title"), b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan"), b("show_offer_hints")]),
       section("list", "mdi:format-list-bulleted",
         [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_prices"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
       section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),

@@ -118,6 +118,12 @@ const STYLE = `
   /* Kategorie als getönter Balken */
   .group-title.bar { --cc: var(--secondary-text-color); display:flex; align-items:center; gap:8px; margin:8px 10px 2px; padding:6px 10px; border-radius:10px;
     background:color-mix(in srgb, var(--cc) 16%, transparent); color:var(--cc); font-size:.9rem; font-weight:700; text-transform:none; letter-spacing:0; }
+  button.group-title.bar { border:none; font:inherit; font-size:.9rem; font-weight:700; cursor:pointer; text-align:left; width:calc(100% - 20px); box-sizing:border-box; }
+  .group-title.bar .grow { flex:1; } .group-title.bar .chev { transition:transform .15s; opacity:.8; }
+  .group-title.bar.closed .chev { transform:rotate(-90deg); }
+  .fchip.flbl { display:inline-flex; align-items:center; gap:2px; border-color:transparent; color:var(--secondary-text-color); padding-left:2px; font-size:.75rem; }
+  .fchip.flbl .chev { transition:transform .15s; } .fchip.flbl.closed .chev { transform:rotate(-90deg); }
+  .dealhint { border:none; font:inherit; font-size:.72rem; font-weight:700; background:#f2b705; color:#1a1a1a; border-radius:9px; padding:1px 8px; cursor:pointer; white-space:nowrap; }
   .group-title.bar small { color:var(--secondary-text-color); font-weight:400; font-size:.78rem; }
   /* schmale Karte: Stift/Papierkorb ausblenden – Bearbeiten über die Geste (Einstellungen → Bedienung) */
   .listwrap { container-type:inline-size; }

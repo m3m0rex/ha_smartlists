@@ -276,6 +276,46 @@
       (res) => () => this._call("remove_items", { uids: [res.uid] }), { snack: false });
   }
 
+  // eingeklappte Abschnitte dieser Liste (auf dem Gerät gemerkt)
+  _collapsed() {
+    if (!this._collapsedSet) {
+      let saved = [];
+      try { saved = JSON.parse(localStorage.getItem(`smartlists-collapsed:${this._config.entity}`) || "[]"); } catch (e) { /* */ }
+      this._collapsedSet = new Set(Array.isArray(saved) ? saved : []);
+    }
+    return this._collapsedSet;
+  }
+  _toggleCollapsed(key) {
+    const set = this._collapsed();
+    if (set.has(key)) set.delete(key); else set.add(key);
+    try { localStorage.setItem(`smartlists-collapsed:${this._config.entity}`, JSON.stringify([...set])); } catch (e) { /* */ }
+    this._renderList();
+  }
+  // 🏷️ passende Angebote zu einem Artikel (aus der Angebots-Karte, falls Angebots-Sensoren vorhanden sind)
+  _dealsFor(it) {
+    if (!this._deals || !this._deals.length || it.offer || it.checked || !it.name) return [];
+    const deals = window.SmartDiscounts.dealsFor(this._deals, it.name, "word");
+    // Steht am Artikel schon ein @Markt, zählen nur dessen Angebote
+    const stores = (it.tags || []).filter((x) => x.kind === "store").map((x) => searchKey(x.label || x.value));
+    return stores.length ? deals.filter((o) => stores.some((s) => searchKey(o.store).startsWith(s) || s.startsWith(searchKey(o.store)))) : deals;
+  }
+  _dealDialog(it, deals) {
+    const t = this._t, lang = this._hass.language;
+    const day = (iso) => { const p = String(iso).slice(0, 10).split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : iso; };
+    const take = async (o) => {
+      dlg.remove();
+      const line = `⚙OFFER:${JSON.stringify({ s: o.store, p: o.price, ...(o.old ? { o: o.old } : {}), ...(o.until ? { e: o.until } : {}), a: Math.floor(Date.now() / 1000) })}`;
+      try { await this._call("update_item", { uid: it.uid, text: it.text, note: [it.note, line].filter(Boolean).join("\n") }); } catch (err) { this._toast((err && err.message) || t.error); }
+      this._load();
+    };
+    const dlg = this._dialog(t.deal_title.replace("{name}", it.name), h("div", {}, h("p", { class: "shelp" }, t.deal_help),
+      deals.map((o, i) => h("div", { class: "srow2" },
+        h("div", { class: "sl" }, h("span", { class: "tag store", style: `background:${o.color};color:${textOn(o.color)}` }, o.store), " ", o.name,
+          h("small", {}, [o.unit ? `${fmtMoney(o.unit.value, lang)}/${o.unit.unit}` : "", o.until ? `${t.offer_until} ${day(o.until)}` : ""].filter(Boolean).join(" · "))),
+        h("b", { style: i === 0 && deals.length > 1 ? "color:var(--success-color,#43a047)" : null }, fmtMoney(o.price, lang)),
+        h("button", { class: "btn2 primary", type: "button", onclick: () => take(o) }, t.deal_take)))),
+      [h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel)]);
+  }
   _renderFrequent() {
     const el = this._freqEl;
     if (!el) return;
@@ -302,8 +342,15 @@
         canReset ? h("button", { class: "fchip warn", type: "button", onclick: () => reset(null) }, "↺ " + t.freq_reset) : null,
         h("button", { class: "fchip", type: "button", onclick: () => { this._freqEdit = false; this._renderFrequent(); } }, "✓ " + t.done)));
     }
+    let freqClosed = false;
+    try { freqClosed = localStorage.getItem("smartlists-freq-closed") === "1"; } catch (e) { /* */ }
+    const freqToggle = h("button", { class: `fchip flbl ${freqClosed ? "closed" : ""}`, type: "button", "aria-expanded": String(!freqClosed), title: freqClosed ? t.expand : t.collapse,
+      onmousedown: (e) => e.preventDefault(),
+      onclick: () => { try { localStorage.setItem("smartlists-freq-closed", freqClosed ? "0" : "1"); } catch (e) { /* */ } this._renderFrequent(); } },
+      svg(ICON.chevron, 16, "chev"), this._t.frequent, freqClosed ? ` · ${items.length}` : "");
+    if (freqClosed) return fill(el, h("div", { class: "frequent" }, freqToggle));
     fill(el, h("div", { class: "frequent" },
-      h("span", { class: "lbl" }, this._t.frequent),
+      freqToggle,
       h("button", { class: "fchip fedit", type: "button", title: t.freq_edit, "aria-label": t.freq_edit,
         onmousedown: (e) => e.preventDefault(), onclick: () => { this._freqEdit = true; this._renderFrequent(); } }, "✎"),
       items.map((s) => h("button", { class: "fchip", type: "button", title: s.category_label,
@@ -383,6 +430,8 @@
     const done = visible.filter((i) => i.checked);
     const out = [];
     if (this._sel) out.push(this._selBar(d, visible));
+    // Angebote aus den Angebots-Sensoren (für den 🏷️-Hinweis an passenden Artikeln) – einmal je Zeichnen
+    this._deals = this._config.show_offer_hints !== false && window.SmartDiscounts && d.type !== "notes" ? window.SmartDiscounts.offers(this._hass) : [];
     // 4.0: abgelaufene Angebote an Artikeln – Hinweis mit „Entfernen“ (oder „Später“: bis zum nächsten Laden der Seite)
     const expired = d.items.filter((i) => !i.checked && i.offer && i.offer.expired);
     if (expired.length && d.permissions.rename && !this._expiredLater) {
@@ -420,8 +469,12 @@
       groupsInOrder([...groups.keys()]).forEach((k) => {
         const items = groups.get(k).sort(byName);
         const color = colorOf(k);
-        rows.push(h("div", { class: "group-title full bar", style: color ? `--cc:${color}` : null }, h("span", { class: "gt" }, labelOf(k)), h("small", {}, String(items.length))),
-          items.map((i) => this._row(i, d, false)));
+        // 4.0: Abschnitt einklappbar (je Liste auf diesem Gerät gemerkt); bei der Suche immer offen
+        const key = `${mode}:${k}`, closed = !searching && this._collapsed().has(key);
+        rows.push(h("button", { type: "button", class: `group-title full bar ${closed ? "closed" : ""}`, style: color ? `--cc:${color}` : null, "aria-expanded": String(!closed),
+          title: closed ? t.expand : t.collapse, onclick: () => this._toggleCollapsed(key) },
+          h("span", { class: "gt" }, labelOf(k)), h("small", {}, String(items.length)), h("span", { class: "grow" }), svg(ICON.chevron, 18, "chev")),
+          closed ? null : items.map((i) => this._row(i, d, false)));
       });
     };
     if (searching && !visible.length) {
@@ -504,6 +557,7 @@
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
     const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
+    const deals = this._config.show_offer_hints !== false && !shop ? this._dealsFor(it) : [];
     // Reihenfolge der Angaben unter dem Namen: Haushalt (Einstellungen → Badges & Farben)
     const part = {
       store: tags.filter((x) => x.kind === "store").map(badge),
@@ -511,7 +565,9 @@
       person: [...tags.filter((x) => x.kind === "person").map(badge),
         // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
         this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null],
-      price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null],
+      price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
+        deals.length ? h("button", { type: "button", class: "dealhint", title: t.deal_title.replace("{name}", it.name), onclick: (e) => { e.stopPropagation(); this._dealDialog(it, deals); } },
+          `🏷️ ${t.deal_from.replace("{price}", fmtMoney(deals[0].price, this._hass.language))}${deals.length > 1 ? ` · ${deals.length}` : ""}`) : null],
       note: [this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
     };
     const sub = slRowOrder().flatMap((k) => part[k] || []);

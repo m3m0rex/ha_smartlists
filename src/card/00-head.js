@@ -52,7 +52,7 @@ const CARD_DEFAULTS = {
   sort: "category",
   show_header: true, show_count: true, show_search: true, show_sort: true, show_shopping: true,
   show_undo: true, show_import: true, show_settings: true,
-  show_title: true, show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
+  show_title: true, show_offer_hints: true, show_add: true, show_frequent: true, show_templates: true, show_scan: true, show_prices: true,
   drag_drop: true, show_stepper: true, show_offer: true, show_tags: true, show_source: true, show_note: true, show_category_titles: true, compact: false,
   show_completed: true, collapse_completed: true,
   start_shopping: false,

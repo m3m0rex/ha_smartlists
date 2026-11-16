@@ -38,6 +38,15 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Order below the item name is configurable** (Settings → Badges & colours): store, tag, person, price and note can
   be moved; applies to everyone and to shared pages.
 
+### Added – offers in the shopping list
+
+- **🏷️ hint on items that are on offer** ("from 1,29 € · 2"): tap to see the matching offers per store and take one –
+  store, price and validity are attached to the item. Items with an @store only show offers of that store. Uses the same offer sensors as the offers card; can be switched
+  off per card ("Offer hints").
+- **Sections can be collapsed:** tap a category bar to fold it (remembered per list and device); "Frequently bought"
+  folds as well.
+- **"Shopping done …" is always in the ⋯ menu**, the button in the total bar only appears in shopping mode.
+
 ### Added – expired offers
 
 - **Hint when offers on the list have expired** (in the list card and in the offers card): "Remove" takes store,

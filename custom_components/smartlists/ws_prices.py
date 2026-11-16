@@ -33,7 +33,9 @@ def ws_store_order(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/set_price", vol.Required("name"): str,
-                                  vol.Optional("price"): vol.Any(vol.Coerce(float), None), vol.Optional("store"): vol.Any(str, None)})
+                                  vol.Optional("price"): vol.Any(vol.Coerce(float), None), vol.Optional("store"): vol.Any(str, None),
+                                  # 4.0: der Preis gehört (auch) zu genau diesem Eintrag
+                                  vol.Optional("entity_id"): str, vol.Optional("uid"): str})
 @callback
 def ws_set_price(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Preis je Einheit für einen Artikel merken (None = vergessen)."""
@@ -44,7 +46,16 @@ def ws_set_price(hass: HomeAssistant, connection: websocket_api.ActiveConnection
         connection.send_error(msg["id"], "invalid", "Preis ungültig")
         return
     _extras(hass).set_price(msg["name"], price, msg.get("store"))
+    if msg.get("entity_id") and msg.get("uid"):
+        _extras(hass).set_item_price(msg["entity_id"], msg["uid"], price)
     connection.send_result(msg["id"], {})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/price_history", vol.Required("name"): str})
+@callback
+def ws_price_history(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Preis-Verlauf eines Artikels (neueste zuerst): eigener Preis und „beim Abhaken bezahlt“."""
+    connection.send_result(msg["id"], {"entries": _extras(hass).price_history(msg["name"])})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/expenses",

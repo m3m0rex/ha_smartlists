@@ -409,12 +409,21 @@
       body = [head(t.ih_title, true), listEl];
       this._call("item_history", { name: it.name }).then((r) => {
         const fmtT = (ts) => new Date(ts * 1000).toLocaleString(this._hass.language || "de", { dateStyle: "short", timeStyle: "short" });
-        if (!r.entries.length) return fill(listEl, t.ih_none);
         listEl.className = "ihist";
+        // 4.0: Preis-Verlauf des Artikels unter dem Verlauf
+        const priceEl = h("div");
+        this._call("price_history", { name: it.name }, false).then((p) => {
+          if (!p.entries || !p.entries.length) return;
+          fill(priceEl, h("div", { class: "grp", style: "padding:8px 0 2px" }, "🏷️ " + t.price_log),
+            p.entries.map((e) => h("div", { class: "ih" }, h("span", { class: "a" }, fmtMoney(e.price, this._hass.language)),
+              h("span", { class: "w" }, e.source === "paid" ? t.price_paid : t.price_manual,
+                h("small", {}, `${e.store ? e.store + " · " : ""}${fmtT(e.at)}`)))));
+        }).catch((e) => slWarn("price_history", e));
+        if (!r.entries.length) return fill(listEl, t.ih_none, priceEl);
         fill(listEl, r.entries.map((e) => h("div", { class: "ih" },
           h("span", { class: "a" }, t["ih_" + e.a] || e.a),
           h("span", { class: "w" }, e.a === "rename" ? `${e.old} → ${e.text}` : e.text,
-            h("small", {}, `${e.link ? (e.by ? `${e.by} · ${t.ih_link}` : t.ih_link) : e.user_name || t.ih_auto} · ${fmtT(e.t)}`)))));
+            h("small", {}, `${e.link ? (e.by ? `${e.by} · ${t.ih_link}` : t.ih_link) : e.user_name || t.ih_auto} · ${fmtT(e.t)}`)))), priceEl);
       }).catch(() => fill(listEl, t.error));
     } else if (m.view === "category") {
       body = [head(t.m_category, true), h("div", { class: "mgrid" }, d.categories.map((c) => item("", c.label, async () => {

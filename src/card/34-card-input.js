@@ -714,7 +714,7 @@
       const nowP = typedPrice != null ? Math.round(typedPrice / ((parsed.quantity || 1) * (parsed.pack_count || 1)) * 1000) / 1000
         : priceIn.value === "" ? null : Number(priceIn.value.replace(",", "."));
       if (nowP !== before && !(nowP != null && Number.isNaN(nowP))) {
-        try { await this._call("set_price", { name: parsed.name || it.name, price: nowP, store: (parsed.tags.find((x) => x.kind === "store") || {}).value || null }, false); } catch (e) { slWarn("set_price", e); this._toast((e && e.message) || this._t.error); }
+        try { await this._call("set_price", { name: parsed.name || it.name, price: nowP, store: (parsed.tags.find((x) => x.kind === "store") || {}).value || null, entity_id: this._config.entity, uid: it.uid }, false); } catch (e) { slWarn("set_price", e); this._toast((e && e.message) || this._t.error); }
       }
       if (!this._noCats && cat.value !== it.category) {
         try { await this._call("set_category", { name: parsed.name || it.name, category: cat.value }, false); } catch (e) { slWarn("set_category", e); this._toast((e && e.message) || this._t.error); }

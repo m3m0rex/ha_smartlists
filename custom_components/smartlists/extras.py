@@ -27,6 +27,7 @@ STORAGE_KEY = f"{DOMAIN}.extras"
 MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
 MAX_BARCODES = 3000
+MAX_PRICE_LOG = 12  # Einträge im Preis-Verlauf je Artikel
 # Preis am Ende des Textes: "Milch 2 l 1,19€", "Butter 1.79 €", "Kaffee €6,49"
 # Preis als eigenes Wort irgendwo im Text ("Milch 2 l 1,19€ @REWE", "€6,49 Kaffee"), auch "EUR"
 _PRICE = re.compile(r"(?<!\S)(?:[-–—]\s+)?(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?!\S)")
@@ -76,6 +77,11 @@ class Extras:
         self.mealplan: dict[str, list[str]] = {}
         self.checked_at: dict[str, dict[str, int]] = {}
         self.trips: dict[str, int] = {}
+        # 4.0: Preis, der für genau EINEN Eintrag getippt wurde (Liste → uid → Preis je Einheit) – unabhängig davon,
+        # ob gemerkte Preise automatisch eingetragen werden
+        self.item_prices: dict[str, dict[str, float]] = {}
+        # Preis-Verlauf je Artikel (normalisierter Name → letzte Einträge {"price", "store", "at", "source"})
+        self.price_log: dict[str, list[dict[str, Any]]] = {}
 
     async def async_load(self) -> None:
         data = await self._store.async_load() or {}
@@ -87,12 +93,15 @@ class Extras:
         self.checked_at = {k: dict(v) for k, v in (data.get("checked_at") or {}).items()}
         self.trips = dict(data.get("trips") or {})
         self.list_settings = dict(data.get("list_settings") or {})
+        self.item_prices = {k: dict(v) for k, v in (data.get("item_prices") or {}).items() if isinstance(v, dict)}
+        self.price_log = {k: list(v)[-MAX_PRICE_LOG:] for k, v in (data.get("price_log") or {}).items() if isinstance(v, list)}
         self.mealplan = {k: [x for x in v if isinstance(x, str)] for k, v in (data.get("mealplan") or {}).items() if isinstance(v, list)}
 
     def _data(self) -> dict[str, Any]:
         return {"store_order": self.store_order, "prices": self.prices, "expenses": self.expenses,
                 "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips,
-                "list_settings": self.list_settings, "mealplan": self.mealplan}
+                "list_settings": self.list_settings, "mealplan": self.mealplan,
+                "item_prices": self.item_prices, "price_log": self.price_log}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
@@ -131,7 +140,38 @@ class Extras:
             self.prices.pop(key, None)
         else:
             self.prices[key] = {"price": round(float(price), 2), "store": store, "at": int(time.time()), "source": source}
+            self._log_price(key, self.prices[key])
         self._save()
+
+    def _log_price(self, key: str, entry: dict[str, Any]) -> None:
+        """Preis-Verlauf: nur festhalten, wenn sich Preis oder Markt gegenüber dem letzten Eintrag geändert haben."""
+        log = self.price_log.setdefault(key, [])
+        last = log[-1] if log else None
+        if last and last.get("price") == entry["price"] and (last.get("store") or "") == (entry.get("store") or ""):
+            last["at"] = entry["at"]
+            return
+        log.append({"price": entry["price"], "store": entry.get("store"), "at": entry["at"], "source": entry.get("source", "manual")})
+        del log[:-MAX_PRICE_LOG]
+
+    def price_history(self, name: str) -> list[dict[str, Any]]:
+        """Neueste zuerst."""
+        return list(reversed(self.price_log.get(normalize(itemtext.parse(name, []).name or name), [])))
+
+    @callback
+    def set_item_price(self, entity_id: str, uid: str, price: float | None) -> None:
+        """Preis je Einheit für genau diesen Eintrag (None = entfernen)."""
+        marks = self.item_prices.setdefault(entity_id, {})
+        if price is None:
+            if marks.pop(uid, None) is None:
+                return
+        else:
+            marks[uid] = round(float(price), 3)
+            for k in list(marks)[: max(0, len(marks) - 500)]:
+                marks.pop(k)
+        self._save()
+
+    def item_price(self, entity_id: str, uid: str) -> float | None:
+        return (self.item_prices.get(entity_id) or {}).get(uid)
 
     @callback
     def book(self, name: str, quantity: float | None, store: str | None, user: str | None, entity_id: str,
@@ -147,6 +187,7 @@ class Extras:
         self.expenses = self.expenses[-MAX_EXPENSES:]
         if price is not None:
             self.prices[normalize(name)] = {"price": round(float(price), 2), "store": store, "at": entry["t"], "source": "paid"}
+            self._log_price(normalize(name), self.prices[normalize(name)])
         self._save()
         return entry
 

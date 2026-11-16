@@ -818,6 +818,9 @@ def validate_appearance(raw: Any) -> dict[str, Any]:
     # 4.0: Währung des Haushalts und Reihenfolge der Angaben unter dem Artikelnamen (nur wenn gesetzt)
     if raw.get("currency") in CURRENCIES and raw["currency"] != "EUR":
         out["currency"] = raw["currency"]
+    # gemerkte Preise automatisch an wiederkehrende Artikel schreiben? (aus: Preise nur im Verlauf)
+    if raw.get("auto_price") is False:
+        out["auto_price"] = False
     order = [x for x in dict.fromkeys(raw.get("order") or []) if x in ROW_ORDER] if isinstance(raw.get("order"), list) else []
     if order:
         order = [*order, *(x for x in ROW_ORDER if x not in order)]

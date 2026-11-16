@@ -81,6 +81,7 @@ from .ws_data import (
 from .ws_prices import (
     ws_store_order,
     ws_set_price,
+    ws_price_history,
     ws_expenses,
     ws_templates,
     ws_save_template,
@@ -177,6 +178,7 @@ def async_register(hass: HomeAssistant) -> None:
         ws_create_notes,
         ws_store_order,
         ws_set_price,
+        ws_price_history,
         ws_expenses,
         ws_templates,
         ws_save_template,

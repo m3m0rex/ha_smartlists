@@ -149,3 +149,29 @@ def test_currency_of_the_household():
         "kinds": {}, "values": {}, "currency": "CHF", "order": ["price", "store", "tag", "person", "note"]}
     assert validate_appearance({"currency": "EUR", "order": list(ROW_ORDER)}) == {"kinds": {}, "values": {}}
     assert validate_appearance({"currency": "DOGE", "order": "x"}) == {"kinds": {}, "values": {}}
+
+
+def test_price_per_entry_and_price_history():
+    """4.0: ein getippter Preis gehört zum Eintrag; jede Änderung landet im Preis-Verlauf."""
+    import types
+
+    from smartlists.extras import MAX_PRICE_LOG, Extras
+    from smartlists.learning import validate_appearance
+
+    ex = Extras(types.SimpleNamespace(data={}))
+    ex.set_item_price("todo.a", "u1", 1.19)
+    assert ex.item_price("todo.a", "u1") == 1.19 and ex.item_price("todo.a", "u2") is None and ex.item_price("todo.b", "u1") is None
+    ex.set_item_price("todo.a", "u1", None)
+    assert ex.item_price("todo.a", "u1") is None
+    # Verlauf: gleicher Preis im selben Markt wird nicht doppelt geführt, neueste zuerst
+    ex.set_price("Milch", 1.19, "rewe")
+    ex.set_price("Milch", 1.19, "rewe")
+    ex.set_price("Milch 2 l", 1.29, "aldi")
+    ex.book("Milch", 2, "aldi", "u", "todo.a", price=1.09)
+    assert [(e["price"], e["store"], e["source"]) for e in ex.price_history("Milch")] == [(1.09, "aldi", "paid"), (1.29, "aldi", "manual"), (1.19, "rewe", "manual")]
+    for n in range(40):
+        ex.set_price("Brot", 1 + n / 100)
+    assert len(ex.price_history("Brot")) == MAX_PRICE_LOG and ex.price_history("Unbekannt") == []
+    # Schalter des Haushalts: nur „aus“ wird gespeichert
+    assert validate_appearance({"auto_price": False}) == {"kinds": {}, "values": {}, "auto_price": False}
+    assert validate_appearance({"auto_price": True}) == {"kinds": {}, "values": {}}

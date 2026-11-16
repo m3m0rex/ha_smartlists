@@ -181,6 +181,8 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
     notes = is_notes(hass, entity_id)
     extras = _extras(hass)
     plain = bool(extras and extras.is_plain(entity_id))
+    # Haushalt: gemerkte Preise automatisch an wiederkehrende Artikel schreiben (Standard) oder nur im Verlauf führen
+    auto_price = (getattr(learning, "appearance", None) or {}).get("auto_price") is not False
     shares = _shares(hass)
     soft = shares.soft_checked(entity_id) if shares else {}
     via_link = shares.added_via_link(entity_id) if shares else {}
@@ -214,7 +216,10 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         elif info.get("text_price") is not None:
             # Preis steht im Text einer anderen Quelle ("… (REWE) - 0,99 €") – gilt je Stück
             price = {"total": round(float(info["text_price"]) * qty, 2), "unit_price": round(float(info["text_price"]), 2), "source": "text"}
-        elif extras and not plain and (p := extras.price_for(info["name"])):
+        elif extras and not plain and (own_price := extras.item_price(entity_id, raw["uid"])) is not None:
+            # für genau diesen Eintrag getippt
+            price = {"total": round(float(own_price) * qty, 2), "unit_price": own_price, "source": "manual"}
+        elif extras and not plain and auto_price and (p := extras.price_for(info["name"])):
             price = {"total": round(float(p["price"]) * qty, 2), "unit_price": p["price"], "source": p.get("source", "manual"), "at": p.get("at")}
         items.append(
             {
@@ -290,9 +295,14 @@ async def all_lists(hass: HomeAssistant, user: Any | None = None) -> list[dict[s
 
 
 def _take_price(hass: HomeAssistant, entity_id: str, text: str) -> str:
-    """Preis im Text ("Milch 2 l 1,19€ @REWE") gehört nicht in den Namen – wird als Preis gemerkt."""
+    return _typed_price(hass, entity_id, text)[0]
+
+
+def _typed_price(hass: HomeAssistant, entity_id: str, text: str) -> tuple[str, float | None]:
+    """Preis im Text ("Milch 2 l 1,19€ @REWE") gehört nicht in den Namen – wird als Preis gemerkt.
+    Liefert (Text ohne Preis, Preis je Einheit oder None); der Aufrufer hängt ihn an den Eintrag."""
     if is_notes(hass, entity_id) or (extras := _extras(hass)) is None or extras.is_plain(entity_id):
-        return text  # einfache Liste: Preis bleibt im Text, wird nicht gemerkt
+        return text, None  # einfache Liste: Preis bleibt im Text, wird nicht gemerkt
     from .extras import split_price
 
     from .learning import currency_symbols
@@ -302,8 +312,10 @@ def _take_price(hass: HomeAssistant, entity_id: str, text: str) -> str:
         item = _learning(hass).parse(text)
         store = next((t["value"] for t in item.tags if t["kind"] == "store"), None)
         # gespeichert wird der Preis je Einheit (2 l für 2,38 € → 1,19 €/l), damit andere Mengen stimmen
-        extras.set_price(item.name, price / ((item.quantity or 1) * (item.pack_count or 1)), store)
-    return text
+        unit = price / ((item.quantity or 1) * (item.pack_count or 1))
+        extras.set_price(item.name, unit, store)
+        return text, unit
+    return text, None
 
 
 async def add_item(
@@ -318,8 +330,9 @@ async def add_item(
     """Hinzufügen; liefert die uid des neuen Artikels (für „Rückgängig“).
     HA meldet die uid beim Hinzufügen nicht zurück – sie wird über den Vorher/Nachher-Vergleich ermittelt."""
     text = text.strip()
+    typed = None
     if not from_share:
-        text = _take_price(hass, entity_id, text)
+        text, typed = _typed_price(hass, entity_id, text)
     if not text:
         raise ListError("Leerer Artikel")
     perms = list_permissions(hass, entity_id)
@@ -336,6 +349,8 @@ async def add_item(
     new = [i for i in await raw_items(hass, entity_id) if i["uid"] not in before]
     match = next((i for i in reversed(new) if i["text"] == text), new[-1] if new else None)
     uid = match["uid"] if match else None
+    if uid and typed is not None and (extras := _extras(hass)) is not None:
+        extras.set_item_price(entity_id, uid, typed)  # der getippte Preis gehört zu diesem Eintrag
     if uid and checked:
         await _call(hass, "update_item", {"entity_id": entity_id, "item": uid, "status": STATUS_DONE}, context)
     return {"uid": uid}
@@ -359,7 +374,10 @@ async def update_item(
         current = next((i for i in await raw_items(hass, entity_id) if i["uid"] == uid), None)
         if current is None:
             raise ListError("Artikel nicht gefunden – die Liste wird neu geladen")
-        text = _take_price(hass, entity_id, text.strip()) or current["text"]
+        text, typed = _typed_price(hass, entity_id, text.strip())
+        text = text or current["text"]
+        if typed is not None and (extras := _extras(hass)) is not None:
+            extras.set_item_price(entity_id, uid, typed)
         if text != current["text"]:
             data["rename"] = text
         if note is not None and list_permissions(hass, entity_id)["note"]:
@@ -399,6 +417,9 @@ async def _book(hass: HomeAssistant, entity_id: str, uid: str, checked: bool, co
 async def remove_items(hass: HomeAssistant, entity_id: str, uids: list[str], context: Context | None = None) -> dict[str, Any]:
     if uids:
         await _call(hass, "remove_item", {"entity_id": entity_id, "item": list(uids)}, context)
+        if (extras := _extras(hass)) is not None:
+            for uid in uids:
+                extras.set_item_price(entity_id, uid, None)
     return {}
 
 

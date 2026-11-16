@@ -35,6 +35,11 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
   Prices, totals, the shared page and the price field use it, and typing recognises its spellings
   ("CHF 2.50", "2,50 Fr.", "£1.20"). Default stays €.
 - **"How an item gets its price"** is explained in the same place: offer → price in the text → own price → last paid.
+- **Remembered prices no longer have to fill in automatically** (switch "Fill in the remembered price
+  automatically", default on): switched off, prices are only kept in the history; an item shows an offer or the price
+  typed for exactly this entry.
+- **Price history per item** (item menu → History): own prices and what was paid when checking off, with store and
+  date.
 - **Order below the item name is configurable** (Settings → Badges & colours): store, tag, person, price and note can
   be moved; applies to everyone and to shared pages.
 

@@ -732,6 +732,8 @@
       Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)));
     return [
       this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), h("div", { class: "srow" }, status)]),
+      this._sec("", t.price_paid ? t.price : t.price, null, [this._setRow(t.price_auto, this._switch(!SL_LOOK || SL_LOOK.auto_price !== false,
+        async (v) => { await this._saveLook({ auto_price: v }, status); this._load(); }, t.price_auto), t.price_auto_help)]),
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
     ];
   }

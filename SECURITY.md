@@ -32,8 +32,20 @@ HA SmartLists Android app (separate project).
 - All data stays in your Home Assistant instance (`.storage/smartlists.*`). There is no telemetry. The
   integration connects to the outside only in two cases:
   - **Barcode lookup** (off by default): if you switch it on, the scanned code – nothing else, no account – is
-    sent to the product database, by default Open Food Facts. Without it the scanner only knows codes it has
-    already learned.
+    sent to the lookup services you have selected, one after the other until one knows the product. Only Open
+    Food Facts is preselected; the others are contacted only if you add them:
+
+    | Service | Host |
+    | --- | --- |
+    | Open Food Facts (preselected) | `world.openfoodfacts.org` |
+    | Open Beauty Facts | `world.openbeautyfacts.org` |
+    | Open Pet Food Facts | `world.openpetfoodfacts.org` |
+    | Open Products Facts | `world.openproductsfacts.org` |
+    | UPCitemdb | `api.upcitemdb.com` |
+    | Your own service | the `https://` address you enter |
+
+    A product that was found is remembered, so the same code is not asked again. Without the lookup the scanner
+    only knows codes it has already learned.
   - **Cloudflare tunnel** for shared links (off by default): if you enable it, SmartLists starts `cloudflared`,
     which connects to Cloudflare.
 

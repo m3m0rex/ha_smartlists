@@ -43,6 +43,9 @@ KNOWN_STORES: dict[str, tuple[str, str]] = {
 _NUM = r"[0-9]+(?:[.,][0-9]+)?"
 _UNIT = r"[a-zA-Z\u00C0-\u024F%°]+\.?"
 _SUFFIX_UNIT = re.compile(rf"^(.+?)\s+(?:([0-9]+)[×xX]\s+)?({_NUM})\s+({_UNIT})$")
+# Maßeinheit direkt an der Zahl: "Milch 1l", "Kartoffeln 2,5kg", "Joghurt 4x 150g" (gleiche Regel in www/smartlists-card.js).
+# Bewusst nur echte Maßeinheiten – sonst würde "Batterien AA4" oder "Cola 2x" falsch zerlegt.
+_SUFFIX_GLUED = re.compile(rf"^(.+?)\s+(?:([0-9]+)[×xX]\s+)?({_NUM})(kg|gr|mg|g|ml|cl|l)$", re.IGNORECASE)
 _SUFFIX_ONLY = re.compile(rf"^(.+?)\s+(?:([0-9]+)[×xX]\s+)?({_NUM})$")
 _PREFIX_QTY = re.compile(rf"^({_NUM})\s*(?:({_UNIT})\s+)?(.+)$")
 # Wörter, die bei "2 Bananen" fälschlich als Einheit erkannt würden, wenn kein Leerzeichen-Name folgt
@@ -204,6 +207,8 @@ def _parse_core(text: str, rules: list[dict[str, str]], *, allow_prefix_quantity
     rest, tags = split_tags(text, rules)
     if m := _SUFFIX_UNIT.match(rest):
         return ParsedItem(m.group(1).strip(), _num(m.group(3)), m.group(4), int(m.group(2)) if m.group(2) else None, tags)
+    if m := _SUFFIX_GLUED.match(rest):
+        return ParsedItem(m.group(1).strip(), _num(m.group(3)), m.group(4).lower(), int(m.group(2)) if m.group(2) else None, tags)
     if m := _SUFFIX_ONLY.match(rest):
         return ParsedItem(m.group(1).strip(), _num(m.group(3)), None, int(m.group(2)) if m.group(2) else None, tags)
     if allow_prefix_quantity and (m := _PREFIX_QTY.match(rest)):

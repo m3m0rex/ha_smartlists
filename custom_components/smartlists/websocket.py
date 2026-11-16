@@ -6,6 +6,7 @@ Tag-Regeln und Vergessen gelernter Stichwörter nur Administratoren.
 
 from __future__ import annotations
 
+import logging
 import asyncio
 import json
 
@@ -24,6 +25,8 @@ from .learning import Learning
 # Version der Befehlsschnittstelle. Erhöhen, wenn sich Befehle/Antworten inkompatibel ändern –
 # App und Karte prüfen das beim Koppeln (smartlists/info).
 API_VERSION = 1
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def _learning(hass: HomeAssistant) -> Learning:
@@ -83,6 +86,7 @@ async def ws_suggest(hass: HomeAssistant, connection: websocket_api.ActiveConnec
             )
             names = [i.get("summary", "") for i in ((response or {}).get(entity_id) or {}).get("items", [])]
         except Exception:  # noqa: BLE001 – Vorschläge sollen nie an einer Liste scheitern
+            _LOGGER.debug("Vorschläge: Liste %s nicht lesbar", entity_id, exc_info=True)
             names = []
     scope = lists.suggest_scope(hass, entity_id) if entity_id else None
     connection.send_result(msg["id"], _learning(hass).suggest(msg["query"], names, msg["limit"], scope))
@@ -236,6 +240,7 @@ def _list_command(schema: dict[Any, Any]):
                 connection.send_error(msg["id"], "smartlists_error", str(err))
                 return
             except Exception as err:  # noqa: BLE001 – Karte soll eine Meldung statt Hängen sehen
+                _LOGGER.exception("SmartLists: %s fehlgeschlagen", msg.get("type"))
                 connection.send_error(msg["id"], "smartlists_error", str(err) or type(err).__name__)
                 return
             connection.send_result(msg["id"], result)
@@ -1506,7 +1511,7 @@ async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 
                 await async_install_sentences(hass)
             except Exception:  # noqa: BLE001 – Assist ist optional
-                pass
+                _LOGGER.warning("SmartLists: Sprachbefehle konnten nicht eingerichtet werden", exc_info=True)
             done.append("voice")
         learning.automation["barcode_lookup"] = bool(msg["barcode"])
         rights = learning.rights()
@@ -1613,6 +1618,7 @@ async def ws_mealie_import(hass: HomeAssistant, connection: websocket_api.Active
                 full = await hass.services.async_call("mealie", "get_recipe", {"config_entry_id": entry_id, "recipe_id": str(rid)},
                                                       blocking=True, return_response=True)
             except Exception:  # noqa: BLE001
+                _LOGGER.debug("Mealie: Rezept nicht ladbar", exc_info=True)
                 continue
             r = (full or {}).get("recipe") or {}
             from .extras import ingredient_text

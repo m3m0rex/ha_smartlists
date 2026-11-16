@@ -15,11 +15,14 @@ einschalten lassen sie sich jederzeit unter Einstellungen → Extras (nur Admins
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 FEATURES = ("notes", "mealplan", "stats")
 MEALPLAN_UNIQUE_ID = "smartlists_meal_plan"
@@ -77,5 +80,5 @@ def apply_entity(hass: HomeAssistant, platform: str, unique_id: str, on: bool) -
             # HA lädt den Eintrag danach von selbst neu (ca. 30 s), dann ist der Kalender wieder da
             reg.async_update_entity(entity_id, disabled_by=None)
     except Exception:  # noqa: BLE001 – der Kalender ist Beiwerk, der Schalter soll trotzdem wirken
-        pass
+        _LOGGER.warning("SmartLists: Kalender konnte nicht umgeschaltet werden", exc_info=True)
 

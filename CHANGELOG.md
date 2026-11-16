@@ -3,6 +3,24 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.1] – 2026-11-16
+
+First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enabled for SmartLists.
+
+### Added
+
+- **Sizes without a space are recognised:** "Milk 1l", "Potatoes 2,5kg" or "Yoghurt 4x 150g" are now quantity + unit,
+  just like "1 l" (kg, g, mg, l, ml, cl).
+
+### Changed
+
+- **Share-link passwords** are hashed with 600,000 PBKDF2 rounds (previously 120,000). Existing links keep working
+  unchanged.
+- **Errors are no longer swallowed silently:** failed actions via the card or a shared link now appear in the
+  Home Assistant log; the card shows a message when saving a price, category or permission fails.
+- **Releases:** versions with a suffix (`-beta.1`, `-rc.1`) are published as GitHub pre-releases and never become
+  "latest".
+
 ## [3.9.24] – 2026-11-15
 
 ### Changed

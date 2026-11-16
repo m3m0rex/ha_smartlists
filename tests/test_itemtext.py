@@ -76,3 +76,33 @@ def test_import_text_from_other_cards():
         r = t.parse(text, rules)
         assert not r.imported and r.price is None, text
     assert t.parse("Bier (Lidl) - 10,99 EUR", rules).price == 10.99
+
+
+def test_unit_glued_to_number():
+    """4.0: "1l", "2,5kg", "150g" ohne Leerzeichen sind Menge + Einheit – wie "1 l"."""
+    from smartlists.itemtext import _parse_core
+
+    for text, name, qty, unit, packs in [
+        ("Milch 1l", "Milch", 1, "l", None),
+        ("Milch 1L", "Milch", 1, "l", None),
+        ("Kartoffeln 2,5kg", "Kartoffeln", 2.5, "kg", None),
+        ("Joghurt 4x 150g", "Joghurt", 150, "g", 4),
+        ("Zahnpasta 75ml", "Zahnpasta", 75, "ml", None),
+    ]:
+        item = _parse_core(text, [])
+        assert (item.name, item.quantity, item.unit, item.pack_count) == (name, qty, unit, packs), text
+    # keine Maßeinheit → bleibt Teil des Namens
+    assert _parse_core("Batterien AA4", []).quantity is None
+    assert _parse_core("Milch 1 l", []).unit == "l"
+
+
+def test_password_iterations():
+    """Neue Link-Passwörter mit 600 000 Runden; alte (ohne "iter") bleiben mit 120 000 gültig."""
+    from smartlists import shares
+
+    new = shares.make_password("geheim")
+    assert new["iter"] == shares.PW_ITERATIONS == 600_000
+    assert shares.check_password({"pw": new}, "geheim") and not shares.check_password({"pw": new}, "falsch")
+    old = {"salt": "00" * 16, "hash": shares._pw_hash("alt", "00" * 16, 120_000)}
+    assert shares.check_password({"pw": old}, "alt") and not shares.check_password({"pw": old}, "neu")
+    assert not shares.check_password({"pw": {**old, "iter": 1}}, "alt")

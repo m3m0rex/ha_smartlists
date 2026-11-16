@@ -16,6 +16,7 @@ Sicherheit (bewusst eng gefasst):
 
 from __future__ import annotations
 
+import logging
 import asyncio
 import hashlib
 import secrets
@@ -29,6 +30,8 @@ from homeassistant.core import Context, HomeAssistant, callback
 from homeassistant.helpers.storage import Store
 
 from .const import DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 STORAGE_KEY = f"{DOMAIN}.shares"
 MAX_LINKS = 30
@@ -72,14 +75,20 @@ def _hash(token: str) -> str:
 MAX_PASSWORD = 100
 
 
-def _pw_hash(password: str, salt: str) -> str:
-    return hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt), 120_000).hex()
+# PBKDF2-Runden: neue Passwörter mit PW_ITERATIONS (OWASP-Empfehlung für SHA-256); Links von vor 4.0 haben
+# kein "iter" gespeichert und werden weiter mit den damaligen 120 000 Runden geprüft.
+PW_ITERATIONS = 600_000
+PW_ITERATIONS_LEGACY = 120_000
 
 
-def make_password(password: str) -> dict[str, str]:
-    """Passwort eines Links: nur Salz + PBKDF2-Hash gespeichert."""
+def _pw_hash(password: str, salt: str, iterations: int = PW_ITERATIONS_LEGACY) -> str:
+    return hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt), iterations).hex()
+
+
+def make_password(password: str) -> dict[str, Any]:
+    """Passwort eines Links: nur Salz + PBKDF2-Hash (und die Rundenzahl) gespeichert."""
     salt = secrets.token_hex(16)
-    return {"salt": salt, "hash": _pw_hash(password, salt)}
+    return {"salt": salt, "hash": _pw_hash(password, salt, PW_ITERATIONS), "iter": PW_ITERATIONS}
 
 
 # Falsche Passwörter je Link: nach PW_MAX_FAILS Fehlversuchen innerhalb von PW_WINDOW Sekunden ist der Link
@@ -144,7 +153,13 @@ def check_password(link: dict[str, Any], given: str | None) -> bool:
         return False
     import hmac
 
-    return hmac.compare_digest(_pw_hash(given, pw["salt"]), pw["hash"])
+    try:
+        iterations = int(pw.get("iter") or PW_ITERATIONS_LEGACY)
+    except (TypeError, ValueError):
+        return False
+    if not PW_ITERATIONS_LEGACY <= iterations <= 5_000_000:
+        return False
+    return hmac.compare_digest(_pw_hash(given, pw["salt"], iterations), pw["hash"])
 
 
 class Shares:
@@ -411,7 +426,7 @@ class ShareApiView(HomeAssistantView):
                     elif info.get("text_price") is not None:
                         entry["price"] = float(info["text_price"])
                 except Exception:  # noqa: BLE001 – im Zweifel nur der Text
-                    pass
+                    _LOGGER.debug("Geteilte Seite: Artikel nicht zerlegbar, zeige nur den Text", exc_info=True)
             out_items.append(entry)
         return {
             "name": name, "check": link["check"], "add": link["add"], "expires": link["expires"],
@@ -502,7 +517,8 @@ class ShareApiView(HomeAssistantView):
                     shares._save()
             else:
                 return web.json_response({"error": "forbidden"}, status=403, headers=SECURITY_HEADERS)
-        except Exception:  # noqa: BLE001 – keine internen Details nach außen
+        except Exception:  # noqa: BLE001 – keine internen Details nach außen, aber ins Log
+            _LOGGER.exception("SmartLists: Aktion über einen geteilten Link fehlgeschlagen")
             return web.json_response({"error": "failed"}, status=500, headers=SECURITY_HEADERS)
         return web.json_response(await self._payload(hass, shares, link, str(request.query.get("lang") or "")[:5]),
                                  headers=SECURITY_HEADERS)

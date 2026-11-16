@@ -43,7 +43,9 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "3.9.24";
+const CARD_VERSION = "4.0.0-beta.1";
+// Fehlgeschlagene Server-Aufrufe, die die Oberfläche nicht aufhalten sollen: wenigstens in der Browser-Konsole zeigen
+const slWarn = (what, err) => { try { console.warn(`SmartLists: ${what} failed –`, (err && err.message) || err); } catch (e) { /* */ } };
 const SORT_MODES = ["category", "alpha", "added", "list"];
 // Darstellung pro Karte (Lovelace-Editor). Persönliche Bedienung steht dagegen in UI_DEFAULTS.
 const CARD_DEFAULTS = {
@@ -1710,6 +1712,8 @@ const TEXTS = {
 const NUM = "[0-9]+(?:[.,][0-9]+)?";
 const UNIT = "[a-zA-Z\\u00C0-\\u024F%°]+\\.?";
 const RE_SUFFIX_UNIT = new RegExp(`^(.+?)\\s+(?:([0-9]+)[×xX]\\s+)?(${NUM})\\s+(${UNIT})$`);
+// Maßeinheit direkt an der Zahl: "Milch 1l", "Kartoffeln 2,5kg" (gleiche Regel in itemtext.py)
+const RE_SUFFIX_GLUED = new RegExp(`^(.+?)\\s+(?:([0-9]+)[×xX]\\s+)?(${NUM})(kg|gr|mg|g|ml|cl|l)$`, "i");
 const RE_SUFFIX_ONLY = new RegExp(`^(.+?)\\s+(?:([0-9]+)[×xX]\\s+)?(${NUM})$`);
 const RE_PREFIX_QTY = new RegExp(`^(${NUM})\\s*(?:(${UNIT})\\s+)?(.+)$`);
 const UNIT_WORDS = new Set(("stk stück st kg g gr l ml cl pck pk packung packungen fl flasche flaschen dose dosen becher " +
@@ -1778,6 +1782,7 @@ function parseText(text, rules, stores, typed = false) {
   const [rest, tags] = splitTags(text || "", rules, stores);
   let m;
   if ((m = rest.match(RE_SUFFIX_UNIT))) return { name: m[1].trim(), quantity: num(m[3]), unit: m[4], pack_count: m[2] ? +m[2] : null, tags };
+  if ((m = rest.match(RE_SUFFIX_GLUED))) return { name: m[1].trim(), quantity: num(m[3]), unit: m[4].toLowerCase(), pack_count: m[2] ? +m[2] : null, tags };
   if ((m = rest.match(RE_SUFFIX_ONLY))) return { name: m[1].trim(), quantity: num(m[3]), unit: null, pack_count: m[2] ? +m[2] : null, tags };
   if (typed && (m = rest.match(RE_PREFIX_QTY))) {
     let [, q, unit, name] = m;
@@ -4497,10 +4502,10 @@ class SmartListsCard extends HTMLElement {
       const nowP = typedPrice != null ? Math.round(typedPrice / ((parsed.quantity || 1) * (parsed.pack_count || 1)) * 1000) / 1000
         : priceIn.value === "" ? null : Number(priceIn.value.replace(",", "."));
       if (nowP !== before && !(nowP != null && Number.isNaN(nowP))) {
-        try { await this._call("set_price", { name: parsed.name || it.name, price: nowP, store: (parsed.tags.find((x) => x.kind === "store") || {}).value || null }, false); } catch (e) { /* */ }
+        try { await this._call("set_price", { name: parsed.name || it.name, price: nowP, store: (parsed.tags.find((x) => x.kind === "store") || {}).value || null }, false); } catch (e) { slWarn("set_price", e); this._toast((e && e.message) || this._t.error); }
       }
       if (!this._noCats && cat.value !== it.category) {
-        try { await this._call("set_category", { name: parsed.name || it.name, category: cat.value }, false); } catch (e) { /* */ }
+        try { await this._call("set_category", { name: parsed.name || it.name, category: cat.value }, false); } catch (e) { slWarn("set_category", e); this._toast((e && e.message) || this._t.error); }
       }
       this._change(`${it.name} ${t.changed}`, "update_item", { uid: it.uid, text: encodeText(parsed, this._cfg.tag_rules) || it.text, note: note ? note.value : it.note || "" },
         () => () => this._call("update_item", { uid: it.uid, text: it.text, note: it.note || "" }));
@@ -4712,7 +4717,7 @@ class SmartListsCard extends HTMLElement {
     const showLinks = async () => {
       fill(linksEl, h("div", { class: "shelp" }, t.loading));
       let links = [];
-      try { links = (await this._call("share_links_all", {}, false)).links; } catch (e) { /* */ }
+      try { links = (await this._call("share_links_all", {}, false)).links; } catch (e) { slWarn("share_links_all", e); }
       if (!links.length) return fill(linksEl, h("div", { class: "shelp" }, t.rights_no_links));
       fill(linksEl, ...links.map((l) => this._setRow(l.list_name,
         h("button", { class: "linkbtn", type: "button", onclick: async () => { await this._hass.callWS({ type: "smartlists/share_revoke", entity_id: l.entity_id, link_id: l.id }); showLinks(); } }, t.share_revoke),
@@ -4811,7 +4816,7 @@ class SmartListsCard extends HTMLElement {
     const draw = () => fill(body, ...["create_lists", "templates", "categories", "prices"].map((key) =>
       this._setRow(t["rights_" + key], this._switch(rights[key] !== false, async (on) => {
         rights = { ...rights, [key]: on };
-        try { rights = (await this._call("set_rights", { rights }, false)).rights; this._cfg = { ...this._cfg, rights }; } catch (e) { /* */ }
+        try { rights = (await this._call("set_rights", { rights }, false)).rights; this._cfg = { ...this._cfg, rights }; } catch (e) { slWarn("set_rights", e); this._toast((e && e.message) || this._t.error); }
         draw();
       }, t["rights_" + key]))));
     draw();
@@ -4896,9 +4901,9 @@ class SmartListsCard extends HTMLElement {
       && !st[e].attributes.smartlists_combined).sort();
     const nameOf = (e) => (st[e] && st[e].attributes.friendly_name) || e;
     let users = [], packs = [], services = [];
-    try { users = (await this._call("users", {}, false)).users || []; } catch (e) { /* */ }
-    try { packs = (await this._call("packs", {}, false)).packs || []; } catch (e) { /* */ }
-    try { services = (await this._call("notify", {}, false)).services || []; } catch (e) { /* */ }
+    try { users = (await this._call("users", {}, false)).users || []; } catch (e) { slWarn("users", e); }
+    try { packs = (await this._call("packs", {}, false)).packs || []; } catch (e) { slWarn("packs", e); }
+    try { services = (await this._call("notify", {}, false)).services || []; } catch (e) { slWarn("notify", e); }
     const me = this._hass.user || {};
     const rules0 = Object.fromEntries(((this._cfg && this._cfg.tag_rules) || []).map((r) => [r.kind, r.prefix]));
     const S = {
@@ -5048,7 +5053,7 @@ class SmartListsCard extends HTMLElement {
         h("div", { class: "wpane" }, barEl, body,
           h("div", { class: "wfoot" }, prev, h("span", { class: "m small wl" }, t.w_later), h("span", { class: "grow" }), status, skip, next)),
         h("button", { type: "button", class: "wx", "aria-label": t.w_close, title: t.w_close, onclick: async () => {
-          try { await this._call("setup", { skip: true }, false); } catch (e) { /* */ }
+          try { await this._call("setup", { skip: true }, false); } catch (e) { slWarn("setup", e); }
           close();
         } }, "✕")));
     this.shadowRoot.append(back);
@@ -5721,9 +5726,9 @@ class SmartListsCard extends HTMLElement {
     const inline = !close;
     const startOf = (off) => { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + off * 7); return d; };
     let week = 0, tpls = [], days = [], mealie = false, lists = [];
-    try { tpls = (await this._call("templates", {}, false)).templates; } catch (e) { /* */ }
-    try { mealie = (await this._call("mealie_status", {}, false)).available; } catch (e) { /* */ }
-    try { lists = (await this._call("lists", {}, false)).lists.filter((l) => l.can_add && l.type !== "notes"); } catch (e) { /* */ }
+    try { tpls = (await this._call("templates", {}, false)).templates; } catch (e) { slWarn("templates", e); }
+    try { mealie = (await this._call("mealie_status", {}, false)).available; } catch (e) { slWarn("mealie_status", e); }
+    try { lists = (await this._call("lists", {}, false)).lists.filter((l) => l.can_add && l.type !== "notes"); } catch (e) { slWarn("lists", e); }
     // Ziel-Liste für „Zutaten auf die Liste“: die Liste der Karte, sonst die erste passende
     let target = (lists.find((l) => l.entity_id === this._config.entity) || lists[0] || { entity_id: this._config.entity }).entity_id;
     const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -6302,7 +6307,7 @@ class SmartListsCard extends HTMLElement {
       if (!showEntries) return fill(entriesEl);
       fill(entriesEl, h("div", { class: "shelp" }, t.loading));
       let entries = [];
-      try { entries = (await this._call("expense_entries", { limit: 100 }, false)).entries; } catch (e) { /* */ }
+      try { entries = (await this._call("expense_entries", { limit: 100 }, false)).entries; } catch (e) { slWarn("expense_entries", e); }
       if (!entries.length) return fill(entriesEl, h("div", { class: "shelp" }, t.exp_none));
       const sel = new Set();
       const bar = h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" });

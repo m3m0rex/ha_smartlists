@@ -220,6 +220,7 @@ class Notifier:
                 if i["uid"] == item or i["text"] == item:
                     return i["text"]
         except Exception:  # noqa: BLE001
+            _LOGGER.debug("SmartLists: Artikel für die Benachrichtigung nicht lesbar", exc_info=True)
             return None
         return item or None
 

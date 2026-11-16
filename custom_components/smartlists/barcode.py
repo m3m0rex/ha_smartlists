@@ -11,12 +11,15 @@ automation["barcode_custom_field"] = Pfad zum Namen in der JSON-Antwort, z. B. "
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 USER_AGENT = "SmartLists-HomeAssistant/1.0 (https://github.com/m3m0rex/ha_smartlists)"
 _OFF_FIELDS = "product_name,product_name_{lang},generic_name,brands,quantity"
@@ -82,7 +85,8 @@ async def async_lookup(hass: HomeAssistant, code: str) -> dict[str, Any]:
         try:
             async with session.get(url.replace("{lang}", lang).replace("{code}", code), headers={"User-Agent": USER_AGENT, "Accept": "application/json"}, timeout=8) as resp:
                 data = await resp.json(content_type=None) if resp.status == 200 else None
-        except Exception:  # noqa: BLE001 – offline, Zeitüberschreitung, kein JSON
+        except Exception as err:  # noqa: BLE001 – offline, Zeitüberschreitung, kein JSON
+            _LOGGER.debug("Strichcode-Dienst %s nicht erreichbar: %s", provider, err)
             continue
         info = _parse(provider, data, lang, settings.get("barcode_custom_field", ""))
         if info:

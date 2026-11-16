@@ -358,6 +358,7 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
                     if self._source_as_person else None,
                     "person_color": self.source_color(source) if len(self._sources) > 1 else None,
                     "foreign": source in self._foreign,
+                    "source_entity": source,
                 }
             )
         return out

@@ -3,6 +3,17 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.4] – 2026-11-16
+
+Fourth pre-release of 4.0.
+
+### Added
+
+- **Offers card with a combined list:** `mine_only: true` only considers items from source lists that belong to the
+  user (not marked as foreign, and – for own SmartLists lists – enabled for adding), and `add_to:` chooses the list new
+  items go to, e.g. your own source list. Without `add_to` the default list of the combined list is used as before.
+  Both can be set in the visual editor.
+
 ## [4.0.0-beta.3] – 2026-11-16
 
 Third pre-release of 4.0.

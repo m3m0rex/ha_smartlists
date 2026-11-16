@@ -158,6 +158,16 @@ async def raw_items(hass: HomeAssistant, entity_id: str) -> list[dict[str, Any]]
     ]
 
 
+def _source_mine(hass: HomeAssistant, entity: Any, source: str, user: Any | None) -> bool:
+    """Gehört eine Quell-Liste einer kombinierten Liste „zu mir“? Nicht als fremd markiert und – bei eigenen
+    SmartLists-Listen – für diesen Benutzer zum Hinzufügen freigegeben."""
+    if source in entity._foreign:
+        return False
+    if access_entity(hass, source) is None:
+        return True
+    return bool(permissions_for(own_role(hass, source, user)).get("add"))
+
+
 async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None, language: str | None = None) -> dict[str, Any]:
     """Alles, was die Karte zum Anzeigen braucht. Mit `user` gelten bei eigenen Listen dessen Freigaben."""
     state = _state(hass, entity_id)
@@ -238,6 +248,9 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
                 "offer": offer,
                 "checked": raw["checked"],
                 "source": raw.get("source"),
+                # Quell-Liste (nur bei kombinierten Listen) – z. B. für „nur meine Listen“ in der Angebots-Karte
+                "source_entity": raw.get("source_entity"),
+                "foreign": foreign,
                 "permissions": {
                     "toggle": perms["toggle"],
                     "rename": perms["rename"] and not foreign,
@@ -252,7 +265,9 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         # fremd = Liste besteht nur aus fremden Quellen
         "foreign": bool(entity is not None and entity.all_foreign),
         "source_lists": entity.source_names if entity is not None else [],
-        "sources": entity.source_info if entity is not None else [],
+        # je Quell-Liste: fremd? und „meine“ = nicht fremd und der Benutzer darf dort hinzufügen
+        "sources": [{**s, "foreign": s["entity_id"] in entity._foreign, "mine": _source_mine(hass, entity, s["entity_id"], user)}
+                    for s in entity.source_info] if entity is not None else [],
         "label": entity.label_settings if entity is not None else None,
         "permissions": perms,
         "own": own_info,

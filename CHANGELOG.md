@@ -28,6 +28,8 @@ Third pre-release of 4.0.
   count. Duplicates already on the list can be merged with one tap.
 - **Offers card: one card per store.** Limit a card to stores (`stores: [REWE]`) or to offer sensors (`entities:`) –
   both selectable in the visual editor, e.g. one card only for REWE and another only for ALDI.
+- **Offers card: notification targets are picked from a list** in the visual editor (`notify_targets:` – phones, notify
+  services and notify entities, several possible) instead of typing a service name; `notify_service:` still works.
 - **Offers card: `max_per_store: 0`** shows all offers of a store without the "all →" step.
 - **Offers card: `show_list_tab: false`** hides the "My list" tab – e.g. for a leaflet-style card on a wall tablet.
 

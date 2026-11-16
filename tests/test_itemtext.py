@@ -106,3 +106,25 @@ def test_password_iterations():
     old = {"salt": "00" * 16, "hash": shares._pw_hash("alt", "00" * 16, 120_000)}
     assert shares.check_password({"pw": old}, "alt") and not shares.check_password({"pw": old}, "neu")
     assert not shares.check_password({"pw": {**old, "iter": 1}}, "alt")
+
+
+def test_count_word_anywhere():
+    """4.0: „2x“ als eigenes Wort ist die Anzahl, egal wo es steht; in Anführungszeichen bleibt es Text."""
+    from smartlists.itemtext import parse
+
+    def p(text):
+        i = parse(text, [])
+        return i.name, i.quantity, i.unit, i.pack_count
+
+    assert p("milk 2l 2x") == ("milk", 2.0, "l", 2)
+    assert p("milk 2x 2l") == ("milk", 2.0, "l", 2)
+    assert p("2x milk 2l") == ("milk", 2.0, "l", 2)
+    assert p("Joghurt 4x 150g") == ("Joghurt", 150.0, "g", 4)
+    assert p("Cola 2x") == ("Cola", 2.0, None, None)
+    assert p("2x Milch") == ("Milch", 2.0, None, None)
+    assert p("Milch 3× Bio") == ("Milch Bio", 3.0, None, None)
+    # kein eigenes Wort / in Anführungszeichen → Text
+    assert p('Persil "2x" konzentriert') == ('Persil "2x" konzentriert', None, None, None)
+    assert p("Batterien AA4") == ("Batterien AA4", None, None, None)
+    assert p("Max2x Pulver") == ("Max2x Pulver", None, None, None)
+    assert p("2x") == ("2x", None, None, None)

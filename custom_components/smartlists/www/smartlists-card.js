@@ -1836,8 +1836,20 @@ function slLang(hass) {
   return SL_LANGS.includes(l) ? l : "en";
 }
 
+// "2x" als eigenes Wort ist die Anzahl – egal wo es steht ("Milch 2l 2x"); in Anführungszeichen ("2x") bleibt es Text
+const RE_COUNT_WORD = /(?:^|(?<=\s))([0-9]{1,3})[×xX](?=\s|$)/;
 function parseText(text, rules, stores, typed = false) {
   const [rest, tags] = splitTags(text || "", rules, stores);
+  const c = rest.match(RE_COUNT_WORD);
+  const without = c ? (rest.slice(0, c.index) + " " + rest.slice(c.index + c[0].length)).split(/\s+/).filter(Boolean).join(" ") : "";
+  if (without) {
+    const item = parseRest(without, tags, typed);
+    if (item.quantity == null) { item.quantity = +c[1]; return item; }
+    if (item.pack_count == null) { item.pack_count = +c[1]; return item; }
+  }
+  return parseRest(rest, tags, typed);
+}
+function parseRest(rest, tags, typed) {
   let m;
   if ((m = rest.match(RE_SUFFIX_UNIT))) return { name: m[1].trim(), quantity: num(m[3]), unit: m[4], pack_count: m[2] ? +m[2] : null, tags };
   if ((m = rest.match(RE_SUFFIX_GLUED))) return { name: m[1].trim(), quantity: num(m[3]), unit: m[4].toLowerCase(), pack_count: m[2] ? +m[2] : null, tags };

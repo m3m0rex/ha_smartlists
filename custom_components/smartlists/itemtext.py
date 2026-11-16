@@ -47,6 +47,8 @@ _SUFFIX_UNIT = re.compile(rf"^(.+?)\s+(?:([0-9]+)[×xX]\s+)?({_NUM})\s+({_UNIT})
 # Bewusst nur echte Maßeinheiten – sonst würde "Batterien AA4" oder "Cola 2x" falsch zerlegt.
 _SUFFIX_GLUED = re.compile(rf"^(.+?)\s+(?:([0-9]+)[×xX]\s+)?({_NUM})(kg|gr|mg|g|ml|cl|l)$", re.IGNORECASE)
 _SUFFIX_ONLY = re.compile(rf"^(.+?)\s+(?:([0-9]+)[×xX]\s+)?({_NUM})$")
+# Anzahl als eigenes Wort an beliebiger Stelle: "Milch 2l 2x", "2x Milch", "Cola 2x". In Anführungszeichen ("2x") bleibt es Text.
+_COUNT_WORD = re.compile(r"(?:^|(?<=\s))([0-9]{1,3})[×xX](?=\s|$)")
 _PREFIX_QTY = re.compile(rf"^({_NUM})\s*(?:({_UNIT})\s+)?(.+)$")
 # Wörter, die bei "2 Bananen" fälschlich als Einheit erkannt würden, wenn kein Leerzeichen-Name folgt
 _UNIT_WORDS = {
@@ -199,12 +201,29 @@ def parse(text: str, rules: list[dict[str, str]], *, allow_prefix_quantity: bool
             item.tags.append({"kind": "store", "value": extra["store"], "prefix": prefix, "label": label, **({"color": color} if color else {})})
         if "count" in extra and item.quantity is None:
             item.quantity = float(extra["count"])
+        elif "count" in extra and item.pack_count is None:
+            item.pack_count = extra["count"]  # "2x Milch 1l": 2 Stück zu je 1 l
         item.price = extra.get("price")
     return item
 
 
 def _parse_core(text: str, rules: list[dict[str, str]], *, allow_prefix_quantity: bool = False) -> ParsedItem:
     rest, tags = split_tags(text, rules)
+    # "2x" als eigenes Wort ist die Anzahl – egal wo es steht
+    if (m := _COUNT_WORD.search(rest)) and (without := " ".join((rest[: m.start()] + " " + rest[m.end():]).split())):
+        item = _parse_rest(without, tags, allow_prefix_quantity)
+        count = int(m.group(1))
+        if item.quantity is None:
+            item.quantity = float(count)
+        elif item.pack_count is None:
+            item.pack_count = count
+        else:
+            return _parse_rest(rest, tags, allow_prefix_quantity)  # schon eine Anzahl vorhanden: nichts umdeuten
+        return item
+    return _parse_rest(rest, tags, allow_prefix_quantity)
+
+
+def _parse_rest(rest: str, tags: list[dict[str, Any]], allow_prefix_quantity: bool) -> ParsedItem:
     if m := _SUFFIX_UNIT.match(rest):
         return ParsedItem(m.group(1).strip(), _num(m.group(3)), m.group(4), int(m.group(2)) if m.group(2) else None, tags)
     if m := _SUFFIX_GLUED.match(rest):

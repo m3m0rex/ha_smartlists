@@ -44,6 +44,8 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Remembered prices no longer have to fill in automatically** (switch "Fill in the remembered price
   automatically", default on): switched off, prices are only kept in the history; an item shows an offer or the price
   typed for exactly this entry.
+- **"2x" is the count wherever it stands:** `Milk 2l 2x`, `2x Milk 2l` and `Cola 2x` are all recognised. To keep it as
+  text, put it in quotes: `Persil "2x" concentrated`.
 - **Own currency symbol** (Prices & currency → "Own symbol …") for currencies that are not in the list, e.g. ₺ or Rp –
   shown after the amount and recognised as a price while typing.
 - **Price history per item** (item menu → History): own prices and what was paid when checking off, with store and

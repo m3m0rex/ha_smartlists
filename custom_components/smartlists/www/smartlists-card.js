@@ -1843,6 +1843,13 @@ const OFFLINE_TYPES = new Set(["add_item", "update_item", "remove_items"]);
 const isConnErr = (e) => !!e && (e.code === 3 || /connection lost|not connected|socket/i.test(String((e && e.message) || e)));
 const offSnapKey = (e) => `smartlists-offline:${e}`;
 const offQueueKey = (e) => `smartlists-queue:${e}`;
+// offline angelegte Artikel → echte uid (über einen abgebrochenen Abgleich hinweg) und die Sperre je Liste, damit
+// zwei Karten derselben Liste (oder zwei Tabs) die Warteschlange nicht gleichzeitig senden
+const offIdsKey = (e) => `smartlists-queue-ids:${e}`;
+const offLockKey = (e) => `smartlists-flush:${e}`;
+const OFF_LOCK_MS = 20000;
+// Kennung je Änderung: Home Assistant merkt sich verarbeitete Kennungen und führt eine Wiederholung nicht doppelt aus
+const offOpId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 6)}`;
 function offLoad(key, fallback) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
 function offSave(key, value) { try { if (value == null || (Array.isArray(value) && !value.length)) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* voll */ } }
 
@@ -3068,8 +3075,10 @@ class SmartListsCard extends HTMLElement {
   get _t() { return TEXTS[this._lang] || TEXTS.en; }
   get _isAdmin() { return !this._hass.user || this._hass.user.is_admin; }
   _call(type, extra = {}, withEntity = true) {
-    const msg = { type: `smartlists/${type}`, ...(withEntity ? { entity_id: this._config.entity } : {}), ...extra };
     const queueable = withEntity && OFFLINE_TYPES.has(type);
+    // jede sammelbare Änderung bekommt eine Kennung – auch die direkt gesendete: reißt die Verbindung vor der Antwort
+    // ab, landet sie in der Warteschlange und wird mit derselben Kennung wiederholt (kein doppelter Artikel)
+    const msg = { type: `smartlists/${type}`, ...(withEntity ? { entity_id: this._config.entity } : {}), ...extra, ...(queueable ? { op_id: offOpId() } : {}) };
     if (withEntity && type === "get_list" && this._isOffline()) return this._offlineList();
     // offline – oder es warten noch gesammelte Änderungen (Reihenfolge bleibt erhalten)
     if (queueable && (this._isOffline() || this._offQueue().length)) {
@@ -3124,6 +3133,7 @@ class SmartListsCard extends HTMLElement {
       }
       offSave(offSnapKey(this._config.entity), d);
     }
+    if (!msg.op_id) msg = { ...msg, op_id: offOpId() };
     offSave(offQueueKey(this._config.entity), [...this._offQueue(), msg]);
     this._render();
     return result;
@@ -3131,14 +3141,27 @@ class SmartListsCard extends HTMLElement {
   // Wieder verbunden: gesammelte Änderungen der Reihe nach senden (offline angelegte Artikel bekommen dabei ihre echte uid)
   async _flushOffline() {
     if (this._flushing || this._isOffline() || !this._hass) return;
-    let queue = this._offQueue();
-    if (!queue.length) return;
+    const entity = this._config.entity, key = offQueueKey(entity), lock = offLockKey(entity), idsKey = offIdsKey(entity);
+    if (!offLoad(key, []).length) return;
+    // Sperre je Liste: sendet schon eine andere Karte (oder ein anderer Tab), bleibt diese hier still. Eine alte Sperre
+    // (Tab geschlossen, Karte entfernt) verfällt nach 20 s.
+    const me = offOpId();
+    const held = offLoad(lock, null);
+    if (held && held.id !== me && Date.now() - held.t < OFF_LOCK_MS) return;
+    const hold = () => offSave(lock, { id: me, t: Date.now() });
+    hold();
+    const mine = () => { const cur = offLoad(lock, null); return !cur || cur.id === me; };
+    if (!mine()) return;
     this._flushing = true;
-    const ids = {};
+    const ids = offLoad(idsKey, {}) || {};
     let sent = 0, skipped = 0;
     try {
-      while (queue.length) {
-        const op = { ...queue[0] };
+      for (;;) {
+        // die gespeicherte Warteschlange jedes Mal neu lesen: während des Abgleichs kommen Änderungen dazu
+        const queue = offLoad(key, []);
+        if (!queue.length || !mine()) break;
+        const raw = queue[0];
+        const op = { ...raw };
         const offUid = op.offline_uid;
         delete op.offline_uid;
         if (op.uid && ids[op.uid] !== undefined) op.uid = ids[op.uid];
@@ -3147,18 +3170,24 @@ class SmartListsCard extends HTMLElement {
         if (orphan) { skipped++; } else {
           try {
             const r = await this._hass.callWS(op);
-            if (offUid) ids[offUid] = r && r.uid;
+            if (offUid) { ids[offUid] = r && r.uid; offSave(idsKey, ids); }
             sent++;
           } catch (err) {
-            if (isConnErr(err)) break;  // Verbindung wieder weg → Rest bleibt für später
+            if (isConnErr(err)) break;  // Verbindung wieder weg → bleibt mit derselben Kennung für später
             skipped++;                  // z. B. inzwischen von jemand anderem gelöscht
           }
         }
-        queue = queue.slice(1);
-        offSave(offQueueKey(this._config.entity), queue);
+        // genau diesen Eintrag entfernen (nach Kennung) – nicht eine alte Kopie zurückschreiben
+        const now = offLoad(key, []);
+        const at = raw.op_id ? now.findIndex((o) => o.op_id === raw.op_id) : 0;
+        if (at >= 0) now.splice(at, 1);
+        offSave(key, now);
+        hold();
       }
     } finally {
       this._flushing = false;
+      if (!offLoad(key, []).length) offSave(idsKey, null);
+      if (mine()) offSave(lock, null);
     }
     if (sent || skipped) this._showSnack(this._t.offline_synced.replace("{n}", sent) + (skipped ? " · " + this._t.offline_skipped.replace("{n}", skipped) : ""), null);
     await this._load();

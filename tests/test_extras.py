@@ -251,3 +251,42 @@ def test_offers_same_offer_from_two_sensors_once():
     states = [st("sensor.rewe_1", "REWE 1", [row]), st("sensor.rewe_2", "REWE 2", [dict(row), {**row, "price": "1,59 €"}])]
     hass = types.SimpleNamespace(states=types.SimpleNamespace(async_all=lambda domain: states))
     assert [(o["store"], o["price"]) for o in collect(hass)] == [("REWE", 1.79), ("REWE", 1.59)]
+
+
+def test_done_ops_repeat_is_not_executed_twice():
+    """Die Karte wiederholt eine Änderung nach einem Verbindungsabbruch: ausgeführt wird sie nur einmal."""
+    import asyncio
+
+    from smartlists.doneops import DoneOps
+
+    async def run():
+        done, calls = DoneOps(limit=3), []
+
+        async def add():
+            calls.append(1)
+            await asyncio.sleep(0)
+            return {"uid": f"u{len(calls)}"}
+
+        first = await done.run(("user", "op-1"), add)
+        again = await done.run(("user", "op-1"), add)
+        other_user = await done.run(("other", "op-1"), add)
+        # zwei Karten senden dieselbe Änderung gleichzeitig: die zweite wartet auf die erste
+        both = await asyncio.gather(done.run(("user", "op-2"), add), done.run(("user", "op-2"), add))
+
+        async def boom():
+            calls.append(1)
+            raise ValueError("weg")
+
+        for _ in range(2):  # ein Fehler wird nicht gemerkt – der nächste Versuch läuft wirklich
+            try:
+                await done.run(("user", "op-3"), boom)
+            except ValueError:
+                pass
+        for i in range(10):
+            await done.run(("user", f"x{i}"), add)
+        return first, again, other_user, both, len(calls), len(done)
+
+    first, again, other_user, both, calls, size = asyncio.run(run())
+    assert first == again == {"uid": "u1"} and other_user == {"uid": "u2"}
+    assert both[0] == both[1] == {"uid": "u3"}
+    assert calls == 3 + 2 + 10 and size == 3

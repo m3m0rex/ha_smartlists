@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 
 from . import lists
 from .const import DOMAIN, SUBENTRY_COMBINED
+from .doneops import DoneOps
 from .learning import Learning
 
 # Version der Befehlsschnittstelle. Erhöhen, wenn sich Befehle/Antworten inkompatibel ändern –
@@ -39,7 +40,12 @@ def _list_command(schema: dict[Any, Any]):
                 for key in ("entity_id", "target"):
                     if msg.get(key) and not lists.notes_allowed(hass, msg[key], connection.user):
                         raise lists.ListError("Diese Notizliste gehört zu einem anderen Konto.")
-                result = await func(hass, msg, connection.context(msg))
+                # Wiederholung einer schon ausgeführten Änderung (Karte nach Verbindungsabbruch): Antwort von damals
+                if msg.get("op_id"):
+                    done: DoneOps = hass.data.setdefault(f"{DOMAIN}_done_ops", DoneOps())
+                    result = await done.run((connection.user.id, msg["op_id"]), lambda: func(hass, msg, connection.context(msg)))
+                else:
+                    result = await func(hass, msg, connection.context(msg))
             except lists.ListError as err:
                 connection.send_error(msg["id"], "smartlists_error", str(err))
                 return

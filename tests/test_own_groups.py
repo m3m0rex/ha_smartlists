@@ -99,3 +99,33 @@ def test_add_move_remove():
     assert og.group_of_owner(entry, "u2") is None and reg["removed"] == ["todo.garten"]
     asyncio.run(og.async_update_list(hass, a, title="Wocheneinkauf"))
     assert og.find(entry, a)[1]["title"] == "Wocheneinkauf"
+
+
+def test_owner_change_of_only_list_keeps_entity():
+    """War es die einzige Liste des alten Besitzers, verschwindet dessen Unter-Eintrag – und Home Assistant löscht dabei
+    alle Entitäten, die noch daran hängen. Die Entität muss deshalb vorher umgehängt sein."""
+    og, reg = _setup()
+    hass, entry = _hass()
+    a = asyncio.run(og.async_add_list(hass, "u1", "Einkauf"))
+    reg["entities"]["todo.einkauf"] = f"own_{a}"
+    old = og.group_of_owner(entry, "u1").subentry_id
+    at = {"todo.einkauf": old}  # Entität → Unter-Eintrag, wie in der Registry von Home Assistant
+    plain_remove = hass.config_entries.async_remove_subentry
+
+    def remove(e, sid):
+        for eid in [x for x, s in at.items() if s == sid]:
+            del at[eid], reg["entities"][eid]
+        plain_remove(e, sid)
+
+    hass.config_entries.async_remove_subentry = remove
+    real_update = sys.modules["homeassistant.helpers.entity_registry"].async_get(hass).async_update_entity.__func__
+
+    def update(self, entity_id, *, config_subentry_id=None, device_id=None, name=None):
+        at[entity_id] = config_subentry_id
+        real_update(self, entity_id, config_subentry_id=config_subentry_id, device_id=device_id)
+
+    type(sys.modules["homeassistant.helpers.entity_registry"].async_get(hass)).async_update_entity = update
+    asyncio.run(og.async_update_list(hass, a, owner="u2"))
+    anna = og.group_of_owner(entry, "u2")
+    assert og.group_of_owner(entry, "u1") is None and list(anna.data["lists"]) == [a]
+    assert at == {"todo.einkauf": anna.subentry_id} and "todo.einkauf" in reg["entities"]

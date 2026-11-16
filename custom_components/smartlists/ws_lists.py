@@ -16,6 +16,9 @@ from .ws_common import (
     _list_command,
 )
 
+# Kennung einer Änderung aus der Karte – eine Wiederholung nach Verbindungsabbruch wird nicht doppelt ausgeführt
+_OP_ID = vol.All(str, vol.Length(min=6, max=64))
+
 
 @_list_command({vol.Required("type"): "smartlists/get_list", vol.Required("entity_id"): str, vol.Optional("language"): str})
 async def ws_get_list(hass, msg, context):
@@ -35,6 +38,7 @@ async def ws_lists(hass, msg, context):
         vol.Required("text"): str,
         vol.Optional("note", default=""): str,
         vol.Optional("checked", default=False): bool,
+        vol.Optional("op_id"): _OP_ID,
     }
 )
 async def ws_add_item(hass, msg, context):
@@ -49,6 +53,7 @@ async def ws_add_item(hass, msg, context):
         vol.Optional("checked"): bool,
         vol.Optional("text"): str,
         vol.Optional("note"): str,
+        vol.Optional("op_id"): _OP_ID,
     }
 )
 async def ws_update_item(hass, msg, context):
@@ -59,7 +64,8 @@ async def ws_update_item(hass, msg, context):
 
 
 @_list_command(
-    {vol.Required("type"): "smartlists/remove_items", vol.Required("entity_id"): str, vol.Required("uids"): [str]}
+    {vol.Required("type"): "smartlists/remove_items", vol.Required("entity_id"): str, vol.Required("uids"): [str],
+     vol.Optional("op_id"): _OP_ID}
 )
 async def ws_remove_items(hass, msg, context):
     return await lists.remove_items(hass, msg["entity_id"], msg["uids"], context)

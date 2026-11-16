@@ -15,6 +15,22 @@ Fifth pre-release of 4.0.
 
 ### Fixed
 
+- **Offline changes: nothing gets lost or doubled any more.** Three problems in sending collected changes after a
+  connection loss, found in a code review:
+  - A change made *while* the collected changes were being sent could be overwritten and never reach Home Assistant.
+    The card now re-reads the stored queue for every step and removes exactly the entry it has sent.
+  - If the connection dropped after Home Assistant had executed a change but before the answer arrived, the change was
+    sent again and an added item appeared twice. Every change now carries an id; Home Assistant remembers the ids it
+    has processed (in memory, for 24 hours) and answers a repeat with the earlier result.
+  - Two cards of the same list on one dashboard (or two browser tabs) could send the same queue in parallel. A lock per
+    list now lets only one of them send.
+  - Items added offline keep their link to the real item when sending is interrupted half-way, so later changes to
+    them are no longer skipped.
+- **Changing the owner of an own list could lose the entity's name, icon and area** when it was the previous owner's
+  only list: the previous owner's group was removed before the entity had been moved to the new one. The order is now
+  the same as in the migration of old lists (move first, then remove).
+- **SECURITY.md said the integration makes no outbound requests.** That was wrong: the barcode lookup (on by default)
+  asks Open Food Facts, and the optional tunnel starts `cloudflared`. The text now says so; there is no telemetry.
 - **"Move" and "Copy" were missing in "Select several"** until the move dialog of a single item had been opened once.
   The target lists are now loaded when the selection starts.
 - **Notes stay visible while selecting several items.** In "Select several" the rows showed the badges but not the note.

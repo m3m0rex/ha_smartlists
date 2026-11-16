@@ -96,13 +96,19 @@ async def async_update_list(hass: HomeAssistant, list_id: str, *, title: str | N
         new["shares"] = dict(shares)
     if owner and owner != g.data.get("owner"):
         new["shares"] = {u: r for u, r in new.get("shares", {}).items() if u != owner}
-        _remove_from_group(hass, entry, g, list_id)
+        # Reihenfolge wie beim Umzug alter Listen: erst in die neue Gruppe und die Entität umhängen, dann aus der alten
+        # nehmen. War es die einzige Liste des alten Besitzers, entfernt Home Assistant mit dessen Unter-Eintrag auch
+        # alle Entitäten, die noch daran hängen – Name, Symbol und Bereich wären sonst weg.
+        old_id = g.subentry_id
         await async_add_list(hass, owner, new["title"], new["shares"], list_id=list_id)
         target = group_of_owner(entry, owner)
         if target is not None and "entity_id" in data:
             hass.config_entries.async_update_subentry(entry, target, data={**target.data, "lists": {
                 **target.data["lists"], list_id: {**target.data["lists"][list_id], "entity_id": data["entity_id"]}}})
         _repoint_entity(hass, list_id, target.subentry_id if target else None)
+        old = entry.subentries.get(old_id)
+        if old is not None:
+            _remove_from_group(hass, entry, old, list_id)
         return
     hass.config_entries.async_update_subentry(entry, g, data={**g.data, "lists": {**g.data["lists"], list_id: new}})
 

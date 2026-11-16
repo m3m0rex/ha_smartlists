@@ -29,8 +29,12 @@ HA SmartLists Android app (separate project).
 
 ## How SmartLists handles data
 
-- All data stays in your Home Assistant instance (`.storage/smartlists.*`); the integration makes no
-  outbound network requests.
+- All data stays in your Home Assistant instance (`.storage/smartlists.*`). There is no telemetry. The
+  integration connects to the outside only in two cases:
+  - **Barcode lookup** (on by default): the scanned code – nothing else, no account – is sent to the product
+    database, by default Open Food Facts. It can be switched off or pointed to other services in the settings.
+  - **Optional Cloudflare tunnel** for shared links: if you enable it, SmartLists starts `cloudflared`, which
+    connects to Cloudflare. Without it nothing runs.
 - Every command runs with the permissions of the logged-in HA user; changes to lists go through the
   regular `todo.*` services. Household settings, forgetting categories and removing devices require an
   admin.

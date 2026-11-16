@@ -51,6 +51,13 @@ const OFFLINE_TYPES = new Set(["add_item", "update_item", "remove_items"]);
 const isConnErr = (e) => !!e && (e.code === 3 || /connection lost|not connected|socket/i.test(String((e && e.message) || e)));
 const offSnapKey = (e) => `smartlists-offline:${e}`;
 const offQueueKey = (e) => `smartlists-queue:${e}`;
+// offline angelegte Artikel → echte uid (über einen abgebrochenen Abgleich hinweg) und die Sperre je Liste, damit
+// zwei Karten derselben Liste (oder zwei Tabs) die Warteschlange nicht gleichzeitig senden
+const offIdsKey = (e) => `smartlists-queue-ids:${e}`;
+const offLockKey = (e) => `smartlists-flush:${e}`;
+const OFF_LOCK_MS = 20000;
+// Kennung je Änderung: Home Assistant merkt sich verarbeitete Kennungen und führt eine Wiederholung nicht doppelt aus
+const offOpId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 6)}`;
 function offLoad(key, fallback) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
 function offSave(key, value) { try { if (value == null || (Array.isArray(value) && !value.length)) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* voll */ } }
 

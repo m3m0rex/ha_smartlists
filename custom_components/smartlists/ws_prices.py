@@ -112,21 +112,22 @@ def ws_stats(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     connection.send_result(msg["id"], stats(_learning(hass), _extras(hass), msg["days"]))
 
 
-async def _watch_payload(hass: HomeAssistant) -> dict[str, Any]:
+async def _watch_payload(hass: HomeAssistant, admin: bool = True) -> dict[str, Any]:
     from .notify import async_get_notifier
 
     extras, notifier = _extras(hass), await async_get_notifier(hass)
     return {"names": list(extras.watch), "notify": bool(extras.watch_settings.get("notify")),
             "targets": list(extras.watch_settings.get("targets") or []),
             # woraus man wählen kann: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten
-            "services": notifier.services(), "entities": notifier.entities()}
+            # die Ziele stellt nur ein Admin ein – anderen Benutzern die Dienste gar nicht erst nennen
+            "services": notifier.services() if admin else [], "entities": notifier.entities() if admin else []}
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch"})
 @websocket_api.async_response
 async def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Merkliste des Haushalts (Produkte, bei denen man auf ein Angebot wartet) und ihre Benachrichtigung."""
-    connection.send_result(msg["id"], await _watch_payload(hass))
+    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.is_admin))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("names"): [str], vol.Optional("add"): str,
@@ -149,7 +150,7 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
         from .offers import async_check_watch
 
         await async_check_watch(hass)
-    connection.send_result(msg["id"], await _watch_payload(hass))
+    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.is_admin))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/categorize", vol.Required("names"): [str], vol.Optional("language"): str})

@@ -25,6 +25,18 @@ Fourth pre-release of 4.0.
 - **The offer hint in the shopping list shows more:** the store as a badge, the price, "until 21.11." and how many
   further offers there are – instead of only "from 1,99 €".
 
+### Security and performance
+
+- **Offers card: notifications only go to `notify.*` services.** Before, a service of any domain could be entered in
+  the card configuration and was then called with the rights of whoever looked at the dashboard.
+- **Offers are no longer parsed again on every redraw** – in the offers card and for the offer hints in the shopping
+  list. With several hundred offers that was noticeable; they are now read again only when a sensor changes, and the
+  matches per item are remembered.
+- **Offers card:** the visual editor no longer rebuilds itself on every state change in Home Assistant, categories are
+  only requested again when the offers change, and tiles outside the visible area are skipped while drawing.
+- **Offers card without SmartLists:** a number at the end of an entry ("Cola Zero 4") is no longer read as the count.
+- The notify services of the household are only listed for admins in the watch list settings.
+
 ### Changed
 
 - **Offers card: tiles run top to bottom** in a grid instead of one row with a sideways scroll bar. The old behaviour

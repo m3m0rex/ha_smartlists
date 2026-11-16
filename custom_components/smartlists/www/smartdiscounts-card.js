@@ -152,6 +152,34 @@ function collectOffers(hass, cfg) {
   return out;
 }
 // günstiger: nach Grundpreis, wenn beide denselben haben – sonst nach Preis
+// Angebote nicht bei jedem Zeichnen neu zerlegen (bei mehreren hundert Angeboten spürbar): nur wenn sich ein Sensor,
+// die Angabe der Quellen oder der Tag geändert hat. Die Liste der Sensoren wird höchstens alle 10 s neu gesucht.
+const _srcCache = new Map();
+function sourcesCached(hass, cfg) {
+  const key = JSON.stringify(cfg === undefined ? "auto" : cfg), hit = _srcCache.get(key), now = Date.now();
+  if (hit && now - hit.t < 10000 && hit.list.every((x) => hass.states[x.entity])) return hit.list;
+  const list = sourcesOf(hass, cfg);
+  _srcCache.set(key, { t: now, list });
+  return list;
+}
+const _offerCache = new Map();
+function offersCached(hass, cfg) {
+  const key = JSON.stringify(cfg === undefined ? "auto" : cfg);
+  const sig = sourcesCached(hass, cfg).map((x) => `${x.entity}:${hass.states[x.entity].last_updated || hass.states[x.entity].state}`).join("|") + "|" + new Date().toISOString().slice(0, 10);
+  const hit = _offerCache.get(key);
+  if (hit && hit.sig === sig) return hit.list;
+  const list = collectOffers(hass, cfg);
+  _offerCache.set(key, { sig, list });
+  return list;
+}
+const _dealMemo = new WeakMap();
+function dealsForCached(offers, name, mode = "word") {
+  let m = _dealMemo.get(offers);
+  if (!m) { m = new Map(); _dealMemo.set(offers, m); }
+  const k = `${mode}|${name}`;
+  if (!m.has(k)) m.set(k, dealsFor(offers, name, mode));
+  return m.get(k);
+}
 const cheaper = (a, b) => (a.unit && b.unit && a.unit.unit === b.unit.unit ? a.unit.value - b.unit.value || a.price - b.price : a.price - b.price);
 // passende Angebote für einen Artikelnamen: je Markt das günstigste, günstigstes zuerst
 function dealsFor(offers, name, mode = "word") {
@@ -250,6 +278,7 @@ const STYLE = `
   .lrow .gotck { width:auto; height:auto; background:none; box-shadow:none; font-size:1.15rem; }
   .gotn { position:absolute; right:4px; bottom:4px; background:#0d2a12; color:#bff0c2; font-size:.68rem; font-weight:800; border-radius:999px; padding:0 6px; }
   .gott { color:#4caf50; font-weight:700; }
+  .tl, .lrow { content-visibility:auto; contain-intrinsic-size:auto 150px; } .lrow { contain-intrinsic-size:auto 56px; }
   .catbar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 2px; }
   .catbar .chip small { color:var(--secondary-text-color); } .catbar .chip.more { border-style:dashed; color:var(--sd-accent); }
   .stepper { display:inline-flex; align-items:center; height:34px; border-radius:10px; border:1px solid color-mix(in srgb, #4caf50 55%, transparent); background:color-mix(in srgb, #4caf50 12%, transparent); flex:none; }
@@ -345,12 +374,16 @@ class SmartDiscountsCard extends HTMLElement {
     const own = Array.isArray(c.sources) ? c.sources.filter((s) => s && typeof s === "object") : [];
     return only.map((e) => own.find((s) => s.entity === e) || e);
   }
-  _sources() { return sourcesOf(this._hass, this._src()); }
+  _sources() { return sourcesCached(this._hass, this._src()); }
   // "stores": nur diese Märkte (nach Namen, z. B. [REWE, ALDI]) – wirkt zusätzlich zu "entities"
   _offers() {
     const only = (Array.isArray(this._config.stores) ? this._config.stores : this._config.stores ? [this._config.stores] : []).map((x) => norm(x)).filter(Boolean);
-    const all = collectOffers(this._hass, this._src());
-    return only.length ? all.filter((o) => only.includes(norm(o.store))) : all;
+    const all = offersCached(this._hass, this._src());
+    if (!only.length) return all;
+    // gefilterte Liste ebenfalls merken, damit die Treffer je Artikel wiederverwendet werden
+    if (this._storeHit && this._storeHit.all === all && this._storeHit.key === only.join("|")) return this._storeHit.list;
+    this._storeHit = { all, key: only.join("|"), list: all.filter((o) => only.includes(norm(o.store))) };
+    return this._storeHit.list;
   }
   _money(v) { if (this._config.currency_symbol) { try { return `${new Intl.NumberFormat(this._hass.language || "de", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)}\u00a0${this._config.currency_symbol}`; } catch (e) { return `${v.toFixed(2)} ${this._config.currency_symbol}`; } }
     try { return new Intl.NumberFormat(this._hass.language || "de", { style: "currency", currency: this._config.currency || "EUR" }).format(v); } catch (e) { return `${v.toFixed(2)} €`; } }
@@ -449,7 +482,7 @@ class SmartDiscountsCard extends HTMLElement {
     // zusätzlich im Speicher merken – falls der Browser keinen dauerhaften Speicher erlaubt
     seen = [...new Set([...(Array.isArray(seen) ? seen : []), ...(this._notified || [])])];
     const fresh = [];
-    for (const term of this._watchTerms()) for (const o of dealsFor(this._all, term.name, c.match)) {
+    for (const term of this._watchTerms()) for (const o of dealsForCached(this._all, term.name, c.match)) {
       const key = `${norm(term.name)}|${o.store}|${o.name}|${o.price}|${o.until || ""}`;
       if (!seen.includes(key)) { seen.push(key); fresh.push({ term, o }); }
     }
@@ -464,7 +497,8 @@ class SmartDiscountsCard extends HTMLElement {
       // weitere Ziele: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten; "notify_service" ist die alte Einzel-Angabe
       const targets = [...new Set([...(Array.isArray(c.notify_targets) ? c.notify_targets : []), c.notify_service].filter((x) => typeof x === "string" && x))];
       for (const id of targets) {
-        const m = id.match(/^([a-z0-9_]+)\.([a-z0-9_]+)$/);
+        // nur notify-Dienste: die Karte ruft sie mit den Rechten des Betrachters auf – kein anderer Dienst über die Konfiguration
+        const m = id.match(/^(notify)\.([a-z0-9_]+)$/);
         if (!m) continue;
         try {
           if (m[1] === "notify" && this._hass.states[id]) await this._hass.callService("notify", "send_message", { entity_id: id, title: `🏷️ ${t.n_title}`, message });
@@ -488,7 +522,7 @@ class SmartDiscountsCard extends HTMLElement {
         this._addCtl(o, false));
     };
     const blocks = terms.map((term) => {
-      const offers = dealsFor(this._all, term.name, c.match);
+      const offers = dealsForCached(this._all, term.name, c.match);
       return h("div", { class: "shelf" }, h("h4", {}, "⭐ ", term.name, h("small", {}, offers.length ? `${offers.length} ${offers.length > 1 ? t.offers : t.offer1}` : t.none), h("span", { class: "sp" }),
         term.fixed ? h("small", {}, t.w_fixed) : h("button", { type: "button", "aria-label": `${t.exp_remove}: ${term.name}`, onclick: () => this._watchRemove(term) }, t.exp_remove)),
         offers.length ? h("div", { class: "lrows" }, offers.map(row)) : null);
@@ -496,14 +530,15 @@ class SmartDiscountsCard extends HTMLElement {
     return h("div", {}, h("div", { class: "filters one" }, input, h("button", { type: "button", class: "btn pri", onclick: go }, t.w_add_btn)),
       terms.length ? blocks : h("div", { class: "msg" }, t.w_empty), this._watchShared || this._watchSmart ? null : h("div", { class: "foot" }, t.w_local), this._foot());
   }
-  _matchesFor(item) { return item.name ? dealsFor(this._all, item.name, this._config.match) : []; }
+  _matchesFor(item) { return item.name ? dealsForCached(this._all, item.name, this._config.match) : []; }
   _attached(item) { return /[⚙⚙]️?\s*OFFER\s*:|🏷️/.test(item.note || ""); }
 
   _render() {
     const t = this._t, c = this._config;
     const stores = [...new Set(this._all.map((o) => o.store))];
     const head = h("div", { class: "head" }, h("h1", {}, c.title || t.title), h("small", {}, `${this._all.length} ${t.offers} · ${stores.length ? stores.join(", ") : "–"}`));
-    const names = { list: "📝 " + t.tab_list, all: t.tab_all, watch: "⭐ " + t.tab_watch + (this._watchHits() ? ` · ${this._watchHits()}` : "") };
+    const hits = this._watchHits();
+    const names = { list: "📝 " + t.tab_list, all: t.tab_all, watch: "⭐ " + t.tab_watch + (hits ? ` · ${hits}` : "") };
     const shown = this._tabs();
     // nur ein Reiter gewählt: keine Reiter-Leiste
     const tabs = shown.length > 1 ? h("div", { class: "tabs" }, shown.map((v) =>
@@ -514,8 +549,9 @@ class SmartDiscountsCard extends HTMLElement {
   }
   // Kategorie eines Angebots: mit SmartLists dessen Einkaufs-Kategorien (einheitlich über alle Märkte), sonst die des Sensors
   async _loadCats() {
-    this._catMap = null;
-    if (this._config.category_source === "store" || !(this._hass.config.components || []).includes("smartlists")) return;
+    if (this._config.category_source === "store" || !(this._hass.config.components || []).includes("smartlists")) { this._catMap = null; return; }
+    if (this._catFor === this._all && this._catLang === this._hass.language) return;  // gleiche Angebote: nicht erneut fragen
+    this._catMap = null; this._catFor = this._all; this._catLang = this._hass.language;
     try {
       const r = await this._hass.callWS({ type: "smartlists/categorize", names: [...new Set(this._all.map((o) => o.name))], language: this._hass.language });
       const labels = Object.fromEntries((r.categories || []).map((x) => [x.id, x.label]));
@@ -531,7 +567,7 @@ class SmartDiscountsCard extends HTMLElement {
     const out = (picked.length ? picked : all).filter((x) => x !== "list" || c.show_list_tab !== false);
     return out.length ? out : ["all"];
   }
-  _watchHits() { return this._watchTerms().filter((x) => dealsFor(this._all, x.name, this._config.match).length).length; }
+  _watchHits() { return this._watchTerms().filter((x) => dealsForCached(this._all, x.name, this._config.match).length).length; }
   _storeBadge(o) { return h("span", { class: "store", style: `background:${o.color};${/^#(f|e)[0-9a-f]{5}$/i.test(o.color) ? "color:#1a1a1a" : ""}` }, o.store); }
   _priceChip(item, o, best) {
     const t = this._t, c = this._config, sel = this._sel[item.uid] && this._sel[item.uid].id === o.id;
@@ -750,9 +786,13 @@ class SmartDiscountsCard extends HTMLElement {
     } catch (e) { btn.disabled = false; btn.textContent = (e && e.message) || this._t.error; }
   }
   // Anzahl im Text eines Eintrags: "2x Bio Orangen" oder "Bio Orangen 2" (so schreibt es SmartLists)
-  _countOf(text) { const a = String(text).match(/^\s*(\d{1,3})\s?[x×]\s+\S/i), b = String(text).match(/\s(\d{1,3})\s*$/); return a ? +a[1] : b ? +b[1] : 1; }
+  _smart() { return (this._hass.config.components || []).includes("smartlists"); }
+  // Zahl am Ende („Butter 2“) nur mit SmartLists als Anzahl lesen – sonst kann sie zum Namen gehören („Cola Zero 4“)
+  _countOf(text) { const a = String(text).match(/^\s*(\d{1,3})\s?[x×]\s+\S/i), b = this._smart() && String(text).match(/\s(\d{1,3})\s*$/); return a ? +a[1] : b ? +b[1] : 1; }
   _withCount(text, n) {
-    const bare = String(text).replace(/^\s*\d{1,3}\s?[x×]\s+(?=\S)/i, "").replace(/\s\d{1,3}\s*$/, "").trim();
+    let bare = String(text).replace(/^\s*\d{1,3}\s?[x×]\s+(?=\S)/i, "");
+    if (this._smart()) bare = bare.replace(/\s\d{1,3}\s*$/, "");
+    bare = bare.trim();
     return n > 1 ? `${n}x ${bare}` : bare;
   }
   // Einträge der Liste, die dasselbe meinen wie dieses Angebot (gleicher Name ohne Menge und Zeichen)
@@ -800,14 +840,20 @@ class SmartDiscountsCard extends HTMLElement {
 
 class SmartDiscountsCardEditor extends HTMLElement {
   setConfig(config) { this._config = { ...(config || {}) }; this._draw(); }
-  set hass(hass) { this._hass = hass; this._draw(); }
+  set hass(hass) {
+    // Home Assistant setzt hass bei jeder Zustandsänderung – der Editor muss nur neu, wenn sich Sprache, Sensoren oder Dienste ändern
+    const sig = `${hass.language}|${Object.keys(hass.states).length}|${Object.keys((hass.services && hass.services.notify) || {}).length}|${(hass.config.components || []).length}`;
+    this._hass = hass;
+    if (sig === this._hsig && this._form) { this._form.hass = hass; return; }
+    this._hsig = sig; this._draw();
+  }
   _draw() {
     if (!this._hass || !this._config) return;
     const t = TEXTS[String(this._hass.language || "en").slice(0, 2)] || TEXTS.en;
     const b = (name) => ({ name, selector: { boolean: {} } });
     // nur Sensoren anbieten, die wirklich Angebote liefern
-    const found = sourcesOf(this._hass, "auto").map((s) => s.entity);
-    const storeNames = [...new Set([...collectOffers(this._hass, "auto").map((o) => o.store), ...(Array.isArray(this._config.stores) ? this._config.stores : [])])].sort((a, b) => a.localeCompare(b));
+    const found = sourcesCached(this._hass, "auto").map((s) => s.entity);
+    const storeNames = [...new Set([...offersCached(this._hass, "auto").map((o) => o.store), ...(Array.isArray(this._config.stores) ? this._config.stores : [])])].sort((a, b) => a.localeCompare(b));
     const schema = [
       { name: "title", selector: { text: {} } },
       { name: "list", selector: { entity: { domain: "todo" } } },
@@ -900,5 +946,5 @@ window.customCards.push({ type: TAG, name: "SmartDiscounts", description: "Super
 console.info(`%c SMARTDISCOUNTS-CARD %c ${VERSION} `, "background:#e39a1c;color:#111;font-weight:700", "background:#222;color:#fff");
 // Test-Hilfen (reine Funktionen)
 // … und für andere Karten (SmartLists zeigt damit den 🏷️-Hinweis in der Einkaufsliste)
-window.SmartDiscounts = { itemName, matches, num, unitPrice, offers: (hass, sources = "auto") => collectOffers(hass, sources), dealsFor };
+window.SmartDiscounts = { itemName, matches, num, unitPrice, offers: (hass, sources = "auto") => offersCached(hass, sources), dealsFor: dealsForCached };
 })();

@@ -1,5 +1,6 @@
 const TEXTS = {
   de: {
+    share_edit: "Link bearbeiten", share_edit_help: "Änderungen gelten sofort für alle, die den Link haben. Der Link selbst bleibt gleich.", share_keep: "unverändert", share_pw_keep: "leer lassen = Passwort bleibt",
     a_info: "Info", a_info_sub: "Version, Hilfe und neu einrichten", info_version: "Version", info_help: "Hilfe", info_docs: "Anleitung (Wiki)", info_issue: "Fehler melden", info_changelog: "Was ist neu?", a_auto: "Sprachbefehle & Automationen",
     shop_finish: "Knopf „Einkauf beendet“", shop_finish_shopping: "nur im Einkaufsmodus", shop_finish_always: "immer", shop_finish_never: "nie", l_show_title: "Name der Liste", share_password_on: "Mit Passwort schützen",
     add_placeholder: "z. B. 2 kg Äpfel {store}", add_ph_store: "Markt", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
@@ -265,6 +266,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    share_edit: "Edit link", share_edit_help: "Changes apply immediately for everyone who has the link. The link itself stays the same.", share_keep: "unchanged", share_pw_keep: "leave empty = password stays",
     a_info: "About", a_info_sub: "Version, help and setup", info_version: "Version", info_help: "Help", info_docs: "Guide (wiki)", info_issue: "Report a problem", info_changelog: "What's new?", a_auto: "Voice commands & automations",
     shop_finish: "\"Shopping done\" button", shop_finish_shopping: "only in shopping mode", shop_finish_always: "always", shop_finish_never: "never", l_show_title: "List name", share_password_on: "Protect with a password",
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
@@ -530,6 +532,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    share_edit: "Modifier le lien", share_edit_help: "Les modifications s'appliquent immédiatement pour tous ceux qui ont le lien. Le lien reste le même.", share_keep: "inchangé", share_pw_keep: "laisser vide = mot de passe inchangé",
     a_info: "Infos", a_info_sub: "Version, aide et configuration", info_version: "Version", info_help: "Aide", info_docs: "Guide (wiki)", info_issue: "Signaler un problème", info_changelog: "Nouveautés", a_auto: "Commandes vocales et automatisations",
     shop_finish: "Bouton « Courses terminées »", shop_finish_shopping: "seulement en mode courses", shop_finish_always: "toujours", shop_finish_never: "jamais", l_show_title: "Nom de la liste", share_password_on: "Protéger par mot de passe",
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -795,6 +798,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    share_edit: "Editar enlace", share_edit_help: "Los cambios se aplican de inmediato para quien tenga el enlace. El enlace no cambia.", share_keep: "sin cambios", share_pw_keep: "dejar vacío = la contraseña no cambia",
     a_info: "Información", a_info_sub: "Versión, ayuda y configuración", info_version: "Versión", info_help: "Ayuda", info_docs: "Guía (wiki)", info_issue: "Informar de un problema", info_changelog: "Novedades", a_auto: "Comandos de voz y automatizaciones",
     shop_finish: "Botón «Compra terminada»", shop_finish_shopping: "solo en modo compra", shop_finish_always: "siempre", shop_finish_never: "nunca", l_show_title: "Nombre de la lista", share_password_on: "Proteger con contraseña",
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1060,6 +1064,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    share_edit: "Modifica link", share_edit_help: "Le modifiche valgono subito per chi ha il link. Il link resta lo stesso.", share_keep: "invariato", share_pw_keep: "lascia vuoto = la password resta",
     a_info: "Info", a_info_sub: "Versione, aiuto e configurazione", info_version: "Versione", info_help: "Aiuto", info_docs: "Guida (wiki)", info_issue: "Segnala un problema", info_changelog: "Novità", a_auto: "Comandi vocali e automazioni",
     shop_finish: "Pulsante «Spesa finita»", shop_finish_shopping: "solo in modalità spesa", shop_finish_always: "sempre", shop_finish_never: "mai", l_show_title: "Nome della lista", share_password_on: "Proteggi con password",
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1325,6 +1330,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    share_edit: "Edytuj link", share_edit_help: "Zmiany działają od razu dla wszystkich, którzy mają link. Sam link się nie zmienia.", share_keep: "bez zmian", share_pw_keep: "puste = hasło bez zmian",
     a_info: "Informacje", a_info_sub: "Wersja, pomoc i konfiguracja", info_version: "Wersja", info_help: "Pomoc", info_docs: "Instrukcja (wiki)", info_issue: "Zgłoś problem", info_changelog: "Co nowego?", a_auto: "Polecenia głosowe i automatyzacje",
     shop_finish: "Przycisk „Zakupy zakończone”", shop_finish_shopping: "tylko w trybie zakupów", shop_finish_always: "zawsze", shop_finish_never: "nigdy", l_show_title: "Nazwa listy", share_password_on: "Chroń hasłem",
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",

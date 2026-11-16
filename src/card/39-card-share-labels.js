@@ -8,6 +8,8 @@
     let approve = false;
     let check = "off", add = false, notes = false, password = "", password2 = "", usePw = false, hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
     let url = null, lastId = null;
+    // 4.0: bestehenden Link bearbeiten – das Formular oben zeigt dann dessen Werte, der Link bleibt gleich
+    let edit = null, keepHours = false;
     const lang = this._hass.language;
     // Grenzen des Admins für Nicht-Admins (Global → Teilen und Rechte)
     const rights = this._isAdmin ? {} : (this._cfg && this._cfg.rights) || {};
@@ -43,6 +45,7 @@
       if (!mayAdd) add = false;
       const isLocal = !!url && /\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|[^/]*\.local)/i.test(url);
       fill(body,
+        edit ? h("div", { class: "shelp", style: "padding:0 0 8px;color:var(--sl-accent)" }, `✎ ${t.share_edit} – ${t.share_edit_help}`) : null,
         h("div", { class: "sharegrid" }, qr, h("div", {},
           this._setRow(t.share_mode, seg(check, checkOpts, (v) => { check = v; url = null; draw(); }), check === "soft" ? t.share_mode_help : null),
           this._setRow(t.share_add, this._switch(add, (v) => { add = v; url = null; draw(); }, t.share_add), mayAdd ? null : t.share_add_locked),
@@ -51,15 +54,16 @@
           this._setRow(t.share_password_on, this._switch(usePw, (v) => { usePw = v; if (!v) { password = ""; password2 = ""; } url = null; draw(); }, t.share_password_on), t.share_password_help),
           ...(usePw ? [
           this._setRow(t.share_password, h("input", { class: "search2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
-            placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } })),
+            placeholder: edit && edit.password ? t.share_pw_keep : t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } })),
           // Passwort zur Sicherheit ein zweites Mal – erst wenn beide gleich sind, lässt sich der Link erstellen
           this._setRow(t.share_password2, h("input", { class: "search2 pw2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
             value: password2, "aria-label": t.share_password2, oninput: (e) => { password2 = e.target.value; pwState(); } }), pwHint),
           ] : []),
-          this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { hours = e.target.value ? Number(e.target.value) : null; } },
+          this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { keepHours = e.target.value === "keep"; if (!keepHours) hours = e.target.value ? Number(e.target.value) : null; } },
+            edit ? h("option", { value: "keep", selected: keepHours }, `${t.share_keep} (${edit.expires ? `${t.share_until} ${fmtDate(edit.expires)}` : t.share_forever})`) : null,
             [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]]
               .filter(([v]) => !maxHours || (v !== "" && v <= maxHours)).map(([v, l]) =>
-              h("option", { value: String(v), selected: String(hours ?? "") === String(v) }, l)))),
+              h("option", { value: String(v), selected: !keepHours && String(hours ?? "") === String(v) }, l)))),
           url ? h("div", { class: "sharelink" }, url) : null,
           url ? h("div", { class: "shelp" }, t.share_once) : null,
           isLocal ? h("div", { class: "shelp", style: "color:var(--warning-color,#ff9800)" }, "⚠️ " + t.share_local) : null,
@@ -67,19 +71,37 @@
             url ? h("button", { class: "btn2", type: "button", onclick: async () => { try { await navigator.clipboard.writeText(url); status.textContent = "✓ " + t.share_copied; } catch (e) { status.textContent = url; } } }, t.share_copy) : null,
             url && navigator.share ? h("button", { class: "btn2", type: "button", onclick: () => navigator.share({ title: d ? d.name : "SmartLists", url }).catch(() => {}) }, t.share_send) : null,
             url && lastId ? h("button", { class: "btn2 danger", type: "button", onclick: async () => { links = (await this._call("share_revoke", { link_id: lastId })).links; url = null; lastId = null; draw(); } }, t.share_revoke) : null,
-            url ? null : h("button", { class: "btn2 primary mkLink", type: "button", onclick: create }, "🔗 " + t.share_create),
+            edit ? h("button", { class: "btn2", type: "button", onclick: () => stopEdit() }, t.cancel) : null,
+            edit ? h("button", { class: "btn2 primary mkLink", type: "button", onclick: saveEdit }, t.save) : null,
+            url || edit ? null : h("button", { class: "btn2 primary mkLink", type: "button", onclick: create }, "🔗 " + t.share_create),
             status))),
         d && d.type === "combined" ? h("div", { class: "shelp", style: "padding:6px 0" }, "⚠️ " + t.share_combined) : null,
         h("div", { class: "shelp", style: "padding:4px 0" }, pub.public_mode === "ha" ? "ℹ️ " + t.share_leak
           : `🛡️ ${pub.public_mode === "tunnel" ? t.pub_tunnel : pub.public_mode === "named" ? t.pub_named : t.pub_proxy}${pub.public_base ? ": " + pub.public_base : " – " + t.pub_not_ready}`),
         links.length ? h("div", { class: "grp" }, t.share_active) : null,
-        ...links.map((l) => this._setRow(modeText(l),
-          iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; if (l.id === lastId) { url = null; lastId = null; } draw(); }, "danger"),
+        ...links.map((l) => this._setRow([modeText(l), edit && edit.id === l.id ? h("span", { class: "own" }, ` · ${t.share_edit}`) : null],
+          h("span", { style: "display:flex;gap:2px" }, iconBtn(ICON.pencil, t.share_edit, () => startEdit(l)), iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; if (l.id === lastId) { url = null; lastId = null; } if (edit && edit.id === l.id) edit = null; draw(); }, "danger")),
           `${l.expired ? "⚠️ " + t.share_expired : l.expires ? `${t.share_until} ${fmtDate(l.expires)}` : t.share_forever} · ${l.opens}× ${t.share_opened}`
           + (l.base && l.base !== pub.public_base ? ` · ⚠️ ${t.share_old_address}` : ""))),
         withPeople ? h("div", { class: "grp" }, "👥 " + t.people_title) : null,
         withPeople ? people : null);
       pwState();
+    };
+    const startEdit = (l) => {
+      edit = l; url = null; lastId = null; keepHours = true;
+      check = l.check; add = !!l.add; approve = !!l.approve; notes = !!l.notes; usePw = !!l.password; password = ""; password2 = "";
+      status.textContent = ""; draw();
+      if (body.scrollIntoView) body.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    };
+    const stopEdit = () => { edit = null; keepHours = false; usePw = false; password = ""; password2 = ""; status.textContent = ""; draw(); };
+    const saveEdit = async () => {
+      if (!pwOk()) { status.textContent = "✗ " + t.share_pw_mismatch; return; }
+      const msg = { link_id: edit.id, check, add, notes, approve: add && approve };
+      if (!keepHours) msg.hours = hours;
+      // Schalter aus = Schutz entfernen; an + neues Passwort = ändern; an + leer = bleibt
+      if (!usePw && edit.password) msg.password = ""; else if (usePw && password) msg.password = password;
+      try { links = (await this._call("share_update", msg)).links; stopEdit(); status.textContent = "✓ " + t.saved; }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const create = async () => {
       if (!pwOk()) { status.textContent = "✗ " + t.share_pw_mismatch; return; }

@@ -17,6 +17,15 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
 - **Narrow cards (phone) hide pencil and bin** in each row – edit and delete via the gesture set under
   Settings → Controls. Wide cards keep the buttons.
 
+### Changed – sharing
+
+- **Share links can be edited afterwards** (✎ next to a link): permissions, validity and password – the link itself
+  stays the same. A changed or removed password takes effect immediately.
+- **Shared page in the new design:** tinted category bars, count and size highlighted, badges and offer below the
+  name, round checkboxes, own sections for "Waiting for approval", "Marked" and "Done". 🔑 in the footer shows that
+  the link is password-protected.
+- **Phone: sharing window** no longer cuts off choices and password fields.
+
 ### Changed – settings
 
 - **"Language, backup, defaults" is split up** into *Voice commands & automations*, *Backup & transfer* and

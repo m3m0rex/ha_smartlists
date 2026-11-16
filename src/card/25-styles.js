@@ -542,6 +542,12 @@ const LIST_DIALOG_STYLE = `
   .dlg.lsheet .look-row input[type=color], .dlg .look-row input[type=color] { width:44px; min-width:44px; height:32px; padding:2px; margin:0;
     border:1px solid var(--divider-color,#ccc); border-radius:8px; background:none; cursor:pointer; flex:none; box-sizing:border-box; }
   .dlg.lsheet .srow2 select { width:180px; }
+  /* 4.0 – Handy: auch im Listen-/Teilen-Fenster die Beschriftung über Auswahl und Eingabefeld (nichts abgeschnitten) */
+  @media (max-width: 520px) {
+    .dlg.lsheet .srow2 { flex-wrap:wrap; row-gap:6px; }
+    .dlg.lsheet .srow2 > .sl { flex:1 1 60%; min-width:150px; }
+    .dlg.lsheet .srow2 > select, .dlg.lsheet .srow2 > input:not([type=checkbox]):not([type=color]) { flex:1 1 100%; width:auto; max-width:100%; min-width:0; margin:0; }
+  }
   .dlg.lsheet button { height:auto; }
   .dlg.lsheet .btn2 { height:36px; } .dlg.lsheet .icon-btn { border:none; padding:0; }
   .dlg.lsheet .lfoot .ok { height:38px; }

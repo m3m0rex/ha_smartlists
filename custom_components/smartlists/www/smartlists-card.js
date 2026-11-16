@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    share_edit: "Link bearbeiten", share_edit_help: "Änderungen gelten sofort für alle, die den Link haben. Der Link selbst bleibt gleich.", share_keep: "unverändert", share_pw_keep: "leer lassen = Passwort bleibt",
     a_info: "Info", a_info_sub: "Version, Hilfe und neu einrichten", info_version: "Version", info_help: "Hilfe", info_docs: "Anleitung (Wiki)", info_issue: "Fehler melden", info_changelog: "Was ist neu?", a_auto: "Sprachbefehle & Automationen",
     shop_finish: "Knopf „Einkauf beendet“", shop_finish_shopping: "nur im Einkaufsmodus", shop_finish_always: "immer", shop_finish_never: "nie", l_show_title: "Name der Liste", share_password_on: "Mit Passwort schützen",
     add_placeholder: "z. B. 2 kg Äpfel {store}", add_ph_store: "Markt", note: "Notiz", save: "Speichern", cancel: "Abbrechen",
@@ -392,6 +393,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    share_edit: "Edit link", share_edit_help: "Changes apply immediately for everyone who has the link. The link itself stays the same.", share_keep: "unchanged", share_pw_keep: "leave empty = password stays",
     a_info: "About", a_info_sub: "Version, help and setup", info_version: "Version", info_help: "Help", info_docs: "Guide (wiki)", info_issue: "Report a problem", info_changelog: "What's new?", a_auto: "Voice commands & automations",
     shop_finish: "\"Shopping done\" button", shop_finish_shopping: "only in shopping mode", shop_finish_always: "always", shop_finish_never: "never", l_show_title: "List name", share_password_on: "Protect with a password",
     add_placeholder: "e.g. 2 kg apples {store}", add_ph_store: "Store", note: "Note", save: "Save", cancel: "Cancel",
@@ -657,6 +659,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    share_edit: "Modifier le lien", share_edit_help: "Les modifications s'appliquent immédiatement pour tous ceux qui ont le lien. Le lien reste le même.", share_keep: "inchangé", share_pw_keep: "laisser vide = mot de passe inchangé",
     a_info: "Infos", a_info_sub: "Version, aide et configuration", info_version: "Version", info_help: "Aide", info_docs: "Guide (wiki)", info_issue: "Signaler un problème", info_changelog: "Nouveautés", a_auto: "Commandes vocales et automatisations",
     shop_finish: "Bouton « Courses terminées »", shop_finish_shopping: "seulement en mode courses", shop_finish_always: "toujours", shop_finish_never: "jamais", l_show_title: "Nom de la liste", share_password_on: "Protéger par mot de passe",
     add_placeholder: "p. ex. 2 kg pommes {store}", add_ph_store: "Magasin", note: "Note", save: "Enregistrer", cancel: "Annuler",
@@ -922,6 +925,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    share_edit: "Editar enlace", share_edit_help: "Los cambios se aplican de inmediato para quien tenga el enlace. El enlace no cambia.", share_keep: "sin cambios", share_pw_keep: "dejar vacío = la contraseña no cambia",
     a_info: "Información", a_info_sub: "Versión, ayuda y configuración", info_version: "Versión", info_help: "Ayuda", info_docs: "Guía (wiki)", info_issue: "Informar de un problema", info_changelog: "Novedades", a_auto: "Comandos de voz y automatizaciones",
     shop_finish: "Botón «Compra terminada»", shop_finish_shopping: "solo en modo compra", shop_finish_always: "siempre", shop_finish_never: "nunca", l_show_title: "Nombre de la lista", share_password_on: "Proteger con contraseña",
     add_placeholder: "p. ej. 2 kg manzanas {store}", add_ph_store: "Tienda", note: "Nota", save: "Guardar", cancel: "Cancelar",
@@ -1187,6 +1191,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    share_edit: "Modifica link", share_edit_help: "Le modifiche valgono subito per chi ha il link. Il link resta lo stesso.", share_keep: "invariato", share_pw_keep: "lascia vuoto = la password resta",
     a_info: "Info", a_info_sub: "Versione, aiuto e configurazione", info_version: "Versione", info_help: "Aiuto", info_docs: "Guida (wiki)", info_issue: "Segnala un problema", info_changelog: "Novità", a_auto: "Comandi vocali e automazioni",
     shop_finish: "Pulsante «Spesa finita»", shop_finish_shopping: "solo in modalità spesa", shop_finish_always: "sempre", shop_finish_never: "mai", l_show_title: "Nome della lista", share_password_on: "Proteggi con password",
     add_placeholder: "es. 2 kg mele {store}", add_ph_store: "Negozio", note: "Nota", save: "Salva", cancel: "Annulla",
@@ -1452,6 +1457,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    share_edit: "Edytuj link", share_edit_help: "Zmiany działają od razu dla wszystkich, którzy mają link. Sam link się nie zmienia.", share_keep: "bez zmian", share_pw_keep: "puste = hasło bez zmian",
     a_info: "Informacje", a_info_sub: "Wersja, pomoc i konfiguracja", info_version: "Wersja", info_help: "Pomoc", info_docs: "Instrukcja (wiki)", info_issue: "Zgłoś problem", info_changelog: "Co nowego?", a_auto: "Polecenia głosowe i automatyzacje",
     shop_finish: "Przycisk „Zakupy zakończone”", shop_finish_shopping: "tylko w trybie zakupów", shop_finish_always: "zawsze", shop_finish_never: "nigdy", l_show_title: "Nazwa listy", share_password_on: "Chroń hasłem",
     add_placeholder: "np. 2 kg jabłek {store}", add_ph_store: "Sklep", note: "Notatka", save: "Zapisz", cancel: "Anuluj",
@@ -2854,6 +2860,12 @@ const LIST_DIALOG_STYLE = `
   .dlg.lsheet .look-row input[type=color], .dlg .look-row input[type=color] { width:44px; min-width:44px; height:32px; padding:2px; margin:0;
     border:1px solid var(--divider-color,#ccc); border-radius:8px; background:none; cursor:pointer; flex:none; box-sizing:border-box; }
   .dlg.lsheet .srow2 select { width:180px; }
+  /* 4.0 – Handy: auch im Listen-/Teilen-Fenster die Beschriftung über Auswahl und Eingabefeld (nichts abgeschnitten) */
+  @media (max-width: 520px) {
+    .dlg.lsheet .srow2 { flex-wrap:wrap; row-gap:6px; }
+    .dlg.lsheet .srow2 > .sl { flex:1 1 60%; min-width:150px; }
+    .dlg.lsheet .srow2 > select, .dlg.lsheet .srow2 > input:not([type=checkbox]):not([type=color]) { flex:1 1 100%; width:auto; max-width:100%; min-width:0; margin:0; }
+  }
   .dlg.lsheet button { height:auto; }
   .dlg.lsheet .btn2 { height:36px; } .dlg.lsheet .icon-btn { border:none; padding:0; }
   .dlg.lsheet .lfoot .ok { height:38px; }
@@ -6430,6 +6442,8 @@ class SmartListsCard extends HTMLElement {
     let approve = false;
     let check = "off", add = false, notes = false, password = "", password2 = "", usePw = false, hours = 168, links = [], pub = { public_mode: "ha", public_base: null };
     let url = null, lastId = null;
+    // 4.0: bestehenden Link bearbeiten – das Formular oben zeigt dann dessen Werte, der Link bleibt gleich
+    let edit = null, keepHours = false;
     const lang = this._hass.language;
     // Grenzen des Admins für Nicht-Admins (Global → Teilen und Rechte)
     const rights = this._isAdmin ? {} : (this._cfg && this._cfg.rights) || {};
@@ -6465,6 +6479,7 @@ class SmartListsCard extends HTMLElement {
       if (!mayAdd) add = false;
       const isLocal = !!url && /\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|[^/]*\.local)/i.test(url);
       fill(body,
+        edit ? h("div", { class: "shelp", style: "padding:0 0 8px;color:var(--sl-accent)" }, `✎ ${t.share_edit} – ${t.share_edit_help}`) : null,
         h("div", { class: "sharegrid" }, qr, h("div", {},
           this._setRow(t.share_mode, seg(check, checkOpts, (v) => { check = v; url = null; draw(); }), check === "soft" ? t.share_mode_help : null),
           this._setRow(t.share_add, this._switch(add, (v) => { add = v; url = null; draw(); }, t.share_add), mayAdd ? null : t.share_add_locked),
@@ -6473,15 +6488,16 @@ class SmartListsCard extends HTMLElement {
           this._setRow(t.share_password_on, this._switch(usePw, (v) => { usePw = v; if (!v) { password = ""; password2 = ""; } url = null; draw(); }, t.share_password_on), t.share_password_help),
           ...(usePw ? [
           this._setRow(t.share_password, h("input", { class: "search2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
-            placeholder: t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } })),
+            placeholder: edit && edit.password ? t.share_pw_keep : t.share_password_ph, value: password, "aria-label": t.share_password, oninput: (e) => { password = e.target.value; pwState(); } })),
           // Passwort zur Sicherheit ein zweites Mal – erst wenn beide gleich sind, lässt sich der Link erstellen
           this._setRow(t.share_password2, h("input", { class: "search2 pw2", style: "min-width:150px;margin:0", type: "password", autocomplete: "new-password",
             value: password2, "aria-label": t.share_password2, oninput: (e) => { password2 = e.target.value; pwState(); } }), pwHint),
           ] : []),
-          this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { hours = e.target.value ? Number(e.target.value) : null; } },
+          this._setRow(t.share_valid, h("select", { "aria-label": t.share_valid, onchange: (e) => { keepHours = e.target.value === "keep"; if (!keepHours) hours = e.target.value ? Number(e.target.value) : null; } },
+            edit ? h("option", { value: "keep", selected: keepHours }, `${t.share_keep} (${edit.expires ? `${t.share_until} ${fmtDate(edit.expires)}` : t.share_forever})`) : null,
             [[2, t.share_2h], [24, t.share_1d], [168, t.share_7d], [720, t.share_30d], ["", t.share_forever]]
               .filter(([v]) => !maxHours || (v !== "" && v <= maxHours)).map(([v, l]) =>
-              h("option", { value: String(v), selected: String(hours ?? "") === String(v) }, l)))),
+              h("option", { value: String(v), selected: !keepHours && String(hours ?? "") === String(v) }, l)))),
           url ? h("div", { class: "sharelink" }, url) : null,
           url ? h("div", { class: "shelp" }, t.share_once) : null,
           isLocal ? h("div", { class: "shelp", style: "color:var(--warning-color,#ff9800)" }, "⚠️ " + t.share_local) : null,
@@ -6489,19 +6505,37 @@ class SmartListsCard extends HTMLElement {
             url ? h("button", { class: "btn2", type: "button", onclick: async () => { try { await navigator.clipboard.writeText(url); status.textContent = "✓ " + t.share_copied; } catch (e) { status.textContent = url; } } }, t.share_copy) : null,
             url && navigator.share ? h("button", { class: "btn2", type: "button", onclick: () => navigator.share({ title: d ? d.name : "SmartLists", url }).catch(() => {}) }, t.share_send) : null,
             url && lastId ? h("button", { class: "btn2 danger", type: "button", onclick: async () => { links = (await this._call("share_revoke", { link_id: lastId })).links; url = null; lastId = null; draw(); } }, t.share_revoke) : null,
-            url ? null : h("button", { class: "btn2 primary mkLink", type: "button", onclick: create }, "🔗 " + t.share_create),
+            edit ? h("button", { class: "btn2", type: "button", onclick: () => stopEdit() }, t.cancel) : null,
+            edit ? h("button", { class: "btn2 primary mkLink", type: "button", onclick: saveEdit }, t.save) : null,
+            url || edit ? null : h("button", { class: "btn2 primary mkLink", type: "button", onclick: create }, "🔗 " + t.share_create),
             status))),
         d && d.type === "combined" ? h("div", { class: "shelp", style: "padding:6px 0" }, "⚠️ " + t.share_combined) : null,
         h("div", { class: "shelp", style: "padding:4px 0" }, pub.public_mode === "ha" ? "ℹ️ " + t.share_leak
           : `🛡️ ${pub.public_mode === "tunnel" ? t.pub_tunnel : pub.public_mode === "named" ? t.pub_named : t.pub_proxy}${pub.public_base ? ": " + pub.public_base : " – " + t.pub_not_ready}`),
         links.length ? h("div", { class: "grp" }, t.share_active) : null,
-        ...links.map((l) => this._setRow(modeText(l),
-          iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; if (l.id === lastId) { url = null; lastId = null; } draw(); }, "danger"),
+        ...links.map((l) => this._setRow([modeText(l), edit && edit.id === l.id ? h("span", { class: "own" }, ` · ${t.share_edit}`) : null],
+          h("span", { style: "display:flex;gap:2px" }, iconBtn(ICON.pencil, t.share_edit, () => startEdit(l)), iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; if (l.id === lastId) { url = null; lastId = null; } if (edit && edit.id === l.id) edit = null; draw(); }, "danger")),
           `${l.expired ? "⚠️ " + t.share_expired : l.expires ? `${t.share_until} ${fmtDate(l.expires)}` : t.share_forever} · ${l.opens}× ${t.share_opened}`
           + (l.base && l.base !== pub.public_base ? ` · ⚠️ ${t.share_old_address}` : ""))),
         withPeople ? h("div", { class: "grp" }, "👥 " + t.people_title) : null,
         withPeople ? people : null);
       pwState();
+    };
+    const startEdit = (l) => {
+      edit = l; url = null; lastId = null; keepHours = true;
+      check = l.check; add = !!l.add; approve = !!l.approve; notes = !!l.notes; usePw = !!l.password; password = ""; password2 = "";
+      status.textContent = ""; draw();
+      if (body.scrollIntoView) body.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    };
+    const stopEdit = () => { edit = null; keepHours = false; usePw = false; password = ""; password2 = ""; status.textContent = ""; draw(); };
+    const saveEdit = async () => {
+      if (!pwOk()) { status.textContent = "✗ " + t.share_pw_mismatch; return; }
+      const msg = { link_id: edit.id, check, add, notes, approve: add && approve };
+      if (!keepHours) msg.hours = hours;
+      // Schalter aus = Schutz entfernen; an + neues Passwort = ändern; an + leer = bleibt
+      if (!usePw && edit.password) msg.password = ""; else if (usePw && password) msg.password = password;
+      try { links = (await this._call("share_update", msg)).links; stopEdit(); status.textContent = "✓ " + t.saved; }
+      catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const create = async () => {
       if (!pwOk()) { status.textContent = "✗ " + t.share_pw_mismatch; return; }

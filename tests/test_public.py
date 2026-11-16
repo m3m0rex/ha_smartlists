@@ -167,3 +167,24 @@ def test_named_tunnel_token_and_settings():
     with pytest.raises(ValueError):
         _public("named", _runner=object(), url="https://liste.example.org").base_url()  # noch nicht verbunden
     assert _public("named", _runner=object(), url="https://x.org", tunnel_url="https://x.org").base_url() == "https://x.org"
+
+
+def test_share_link_update_keeps_address():
+    """4.0: Rechte, Laufzeit und Passwort eines Links lassen sich nachträglich ändern – der Link bleibt gleich."""
+    import types
+
+    from smartlists import shares
+    from smartlists.shares import Shares
+
+    sh = Shares(types.SimpleNamespace(data={}))
+    r = sh.create("todo.a", "u1", "off", False, 24)
+    h = next(iter(sh.links))
+    out = sh.update(r["id"], "todo.a", check="soft", add=True, approve=True, notes=True, hours=None, password="geheim")
+    assert next(iter(sh.links)) == h and out["id"] == r["id"]  # derselbe Link
+    assert (out["check"], out["add"], out["approve"], out["notes"], out["expires"], out["password"]) == ("soft", True, True, True, None, True)
+    assert shares.check_password(sh.links[h], "geheim")
+    # nichts angegeben → alles bleibt; Passwort "" entfernt den Schutz; ohne „hinzufügen“ keine Freigabe-Pflicht
+    assert sh.update(r["id"], "todo.a")["password"] is True
+    out = sh.update(r["id"], "todo.a", add=False, password="")
+    assert out["password"] is False and out["approve"] is False and "pw" not in sh.links[h]
+    assert sh.update(r["id"], "todo.b", check="on") is None and sh.update("x" * 16, "todo.a") is None

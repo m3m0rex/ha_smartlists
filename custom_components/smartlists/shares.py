@@ -266,6 +266,44 @@ class Shares:
                 return True
         return False
 
+    @callback
+    def update(self, link_id: str, entity_id: str, *, check: str | None = None, add: bool | None = None,
+               notes: bool | None = None, approve: bool | None = None, hours: int | None | bool = False,
+               password: str | None = None) -> dict[str, Any] | None:
+        """Bestehenden Link ändern – die Adresse (der Schlüssel) bleibt gleich. Nicht angegebene Werte bleiben.
+        hours: False = Ablauf unverändert, None = unbegrenzt, Zahl = ab jetzt so viele Stunden.
+        password: None = unverändert, "" = Schutz entfernen, sonst neues Passwort."""
+        if len(link_id) != 16:
+            return None
+        h = next((x for x, link in self.links.items() if x[:16] == link_id and link["entity_id"] == entity_id), None)
+        if h is None:
+            return None
+        link = self.links[h]
+        if check is not None:
+            if check not in CHECK_MODES:
+                raise ValueError("check: off, soft, on")
+            link["check"] = check
+        if add is not None:
+            link["add"] = bool(add)
+        if notes is not None:
+            link["notes"] = bool(notes)
+        if approve is not None or add is not None:
+            link["approve"] = bool((link.get("approve") if approve is None else approve) and link["add"])
+        if hours is not False:
+            link["expires"] = int(time.time()) + int(hours) * 3600 if hours else None
+        if password is not None:
+            if len(password) > MAX_PASSWORD:
+                raise ValueError("Passwort zu lang")
+            if password:
+                link["pw"] = make_password(password)
+            else:
+                link.pop("pw", None)
+            # altes Passwort bzw. gemerkte Zugänge gelten sofort nicht mehr
+            _PW_OK.clear()
+            _PW_FAILS.pop(h, None)
+        self._save()
+        return self.describe(h)
+
     def soft_checked(self, entity_id: str) -> dict[str, str]:
         """uid → Name (oder ""), wer über einen Link „soft“ abgehakt hat (für die Anzeige in der Karte)."""
         return self._marks(entity_id, "soft")
@@ -411,6 +449,8 @@ class ShareApiView(HomeAssistantView):
                         qty=(f"{info['pack_count']}× " if (info.get("pack_count") or 1) > 1 else "")
                         + (f"{qty:g}".replace(".", ",") if isinstance(qty, (int, float)) else "") if qty is not None else "",
                         unit=info.get("unit") or "",
+                        # 4.0 – wie in der Karte: Anzahl („2×“) vor dem Namen, Größe („1 l“) dahinter
+                        count=_count_label(info), size=_size_label(info),
                         tags=[{k: t.get(k) for k in ("kind", "value", "label", "color")} for t in info.get("tags") or []],
                         cat=info.get("category") if grouped else None)
                     # Angebot (aus der App / Angebots-Karte): steht in der Notiz – übernommen wird nur das Angebot
@@ -430,6 +470,7 @@ class ShareApiView(HomeAssistantView):
             out_items.append(entry)
         return {
             "name": name, "check": link["check"], "add": link["add"], "expires": link["expires"],
+            "password": bool(link.get("pw")),
             "items": out_items,
             # über diesen Link hinzugefügt, wartet noch auf Freigabe
             "pending": [{"text": p.get("text", ""), "by": p.get("by", "")} for p in (link.get("pending") or {}).values()],
@@ -537,6 +578,20 @@ class SharePageView(HomeAssistantView):
                             content_type="text/html", headers={**SECURITY_HEADERS, "Content-Security-Policy": PAGE_CSP})
 
 
+def _fmt_num(value: Any) -> str:
+    return f"{value:g}".replace(".", ",") if isinstance(value, (int, float)) else ""
+
+
+def _count_label(info: dict[str, Any]) -> str:
+    """„2×“: mit Einheit zählt pack_count („Milch 2x 1 l“), ohne Einheit die Menge selbst („Bananen 6“)."""
+    n = info.get("pack_count") if info.get("unit") else info.get("quantity")
+    return f"{_fmt_num(n)}×" if isinstance(n, (int, float)) and n != 1 else ""
+
+
+def _size_label(info: dict[str, Any]) -> str:
+    return f"{_fmt_num(info.get('quantity'))}\u00a0{info['unit']}" if info.get("unit") and info.get("quantity") is not None else ""
+
+
 SHARE_TEXTS = {
     "de": {"marked_h": "Markiert", "open": "offen", "done": "erledigt", "add": "Hinzufügen", "placeholder": "Artikel hinzufügen …", "gone": "Dieser Link ist abgelaufen oder wurde widerrufen.", "until": "gültig bis", "soft": "von dir markiert", "error": "Das hat nicht geklappt – bitte neu laden.", "name_ask": "Wie heißt du?", "name_help": "Bitte gib deinen Namen an. Er erscheint bei dem, was du markierst oder hinzufügst – so sieht man, von wem es kommt. Er wird nur auf diesem Gerät gemerkt.", "name_ph": "Vorname", "name_go": "Weiter", "name_skip": "ohne Namen weiter", "you": "du bist", "anon": "ohne Namen", "change": "ändern", "offer": "Angebot", "offer_expired": "abgelaufen", "pw_help": "Diese Liste ist mit einem Passwort geschützt.", "pw_ph": "Passwort", "pw_wrong": "Passwort falsch – bitte noch einmal.", "pw_ask": "Passwort eingeben", "added_by": "von {name} hinzugefügt", "you_short": "dir", "search": "Suchen", "search_ph": "Artikel suchen …", "no_hits": "Nichts gefunden.", "sort": "Sortierung", "sort_cat": "Kategorie", "sort_store": "Markt", "sort_alpha": "A–Z", "sort_added": "Hinzugefügt", "no_store": "ohne Markt", "shared_until": "Geteilt bis {date}", "left_days": "noch {n} Tage", "left_hours": "noch {n} Std.", "shared_forever": "Geteilt, bis der Link widerrufen wird", "hello": "Hallo {name}", "pending": "Wartet auf Freigabe"},
     "en": {"marked_h": "Marked", "open": "open", "done": "done", "add": "Add", "placeholder": "Add an item …", "gone": "This link has expired or was revoked.", "until": "valid until", "soft": "marked by you", "error": "That did not work – please reload.", "name_ask": "What's your name?", "name_help": "Please enter your name. It is shown with what you mark or add – so everyone sees who it came from. It is only remembered on this device.", "name_ph": "First name", "name_go": "Continue", "name_skip": "continue without a name", "you": "you are", "anon": "without a name", "change": "change", "offer": "Offer", "offer_expired": "expired", "pw_help": "This list is protected with a password.", "pw_ph": "Password", "pw_wrong": "Wrong password – please try again.", "pw_ask": "Enter password", "added_by": "added by {name}", "you_short": "you", "search": "Search", "search_ph": "Search items …", "no_hits": "Nothing found.", "sort": "Sort", "sort_cat": "Category", "sort_store": "Store", "sort_alpha": "A–Z", "sort_added": "Added", "no_store": "no store", "shared_until": "Shared until {date}", "left_days": "{n} days left", "left_hours": "{n} h left", "shared_forever": "Shared until the link is revoked", "hello": "Hello {name}", "pending": "Waiting for approval"},
@@ -581,6 +636,21 @@ h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--m)
 .row.done .tag{opacity:.55}.nt{font-size:.8rem;color:var(--m);white-space:pre-line}
 .nmw{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.offer{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.8rem;color:var(--m)}
 .offer .ol{color:#e6a700;font-weight:600}.offer b{color:var(--t)}.offer s{opacity:.7}.offer.exp{opacity:.6}
+/* 4.0 – gleiches Design wie die Karte: getönte Balken, Anzahl/Größe fest markiert, runde Haken */
+:root{--q:#c77800}@media(prefers-color-scheme:dark){:root{--a:#3d9be9;--q:#f0a830;--bg:#111315;--card:#1c1e21;--d:#2e3236}}
+.card{background:none;box-shadow:none;border-radius:0}.row{padding:9px 6px;gap:10px;align-items:flex-start}
+.row input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin:1px 0 0;border:2px solid var(--m);border-radius:50%;background:none;display:grid;place-items:center;cursor:pointer}
+.row input[type=checkbox]:checked{background:var(--a);border-color:var(--a)}.row input[type=checkbox]:checked::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
+.row.soft input[type=checkbox]:checked{background:color-mix(in srgb,var(--a) 30%,transparent)}.row.soft input[type=checkbox]:checked::after{color:var(--a)}
+.row input[type=checkbox]:disabled{opacity:.45;cursor:default}
+.nm{align-items:baseline}.in{overflow-wrap:anywhere}.row.done .in{color:var(--m);text-decoration:line-through}.row.soft .in{color:var(--t)}
+.qp,.sz{color:var(--q);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:.86rem;border-radius:8px}
+.qp{background:color-mix(in srgb,var(--q) 18%,transparent);padding:0 7px}.sz{border:1.5px solid color-mix(in srgb,var(--q) 70%,transparent);padding:0 6px;line-height:1.35}
+.row.done .qp,.row.done .sz{color:var(--m);border-color:var(--d);background:none}
+.subl{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px}.by{font-size:.76rem;color:var(--a)}.by.w{color:#d9960a}
+.bar{--cc:var(--m);display:flex;align-items:center;gap:8px;margin:12px 0 2px;padding:6px 10px;border-radius:10px;background:color-mix(in srgb,var(--cc) 16%,transparent);color:var(--cc);font-size:.92rem;font-weight:700}
+.bar small{color:var(--m);font-weight:400;font-size:.78rem}
+.add button.plus{width:42px;padding:0;border-radius:12px;font-size:1.5rem;line-height:1;font-weight:400}.add input{border-radius:12px}
 </style></head><body><main id="app"><div class="msg">…</div></main>
 <script>
 (function(){
@@ -632,6 +702,8 @@ function badge(t,look){look=look||{};var kind=t.kind==="store"||t.kind==="person
   var b=el("span",{class:"tag "+kind+" s-"+k.style,text:(k.icon?(kind==="person"?k.icon+" ":k.icon):"")+label});
   if(color){if(k.style==="filled"){b.style.background=color;b.style.color=tx||textOn(color)}else if(k.style==="soft"){b.style.background="color-mix(in srgb, "+color+" 18%, transparent)";b.style.color=tx||color}else b.style.color=tx||color}
   else if(tx)b.style.color=tx;return b}
+var CC={obst_gemuese:"#5fae4c",fleisch:"#d9655b",kuehlung:"#4a8fd8",grundnahrung:"#c8973a",backwaren:"#d5964a",getraenke:"#35a3bd",suessigkeiten:"#c56fb0",haushalt:"#7d8f9c",drogerie:"#9b74dc",tiefkuehl:"#5bb6d6",tierbedarf:"#a0855b",sonstiges:"#7d8790"};
+function bar(text,n,color){var b=el("div",{class:"bar",role:"heading","aria-level":"2"},[el("span",{text:text}),el("small",{text:String(n)})]);if(color)b.style.setProperty("--cc",color);return b}
 function draw(d){cur=d;
   /* Suche (🔍 klappt das Feld auf): filtert nach Name, Text und Notiz */
   var norm=function(x){return String(x||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")};
@@ -641,7 +713,8 @@ function draw(d){cur=d;
     done=d.items.filter(function(i){return i.checked&&hit(i)});
   var row=function(i){var can=d.check!=="off";var box=el("input",{type:"checkbox"});box.checked=i.checked||i.soft;box.disabled=!can;
     box.addEventListener("change",function(){call({action:box.checked?"check":"uncheck",uid:i.uid}).then(draw,function(e){e==="gone"?fail():e==="name"?0:alert(T.error)})});
-    var name=el("span",{class:"nm"},[el("span",{text:i.name||i.text})].concat((i.tags||[]).map(function(t){return badge(t,d.look)})));
+    var name=el("span",{class:"nm"},[i.count?el("span",{class:"qp",text:i.count}):null,el("span",{class:"in",text:i.name||i.text}),i.size?el("span",{class:"sz",text:i.size}):null]);
+    var tagEls=(i.tags||[]).map(function(t){return badge(t,d.look)});
     /* Angebot wie in der Karte: Markt, 🏷️ Angebot, Preis, alter Preis, gültig bis */
     var euro=function(v){return v.toFixed(2).replace(".",",")+" €"},day=function(x){var p=String(x).slice(0,10).split("-");return p.length===3?p[2]+"."+p[1]+".":x};
     var o=i.offer,extra=null;
@@ -650,11 +723,12 @@ function draw(d){cur=d;
         el("span",{class:"ol",text:"🏷️ "+T.offer}),o.price!=null?el("b",{text:euro(o.price)}):null,o.old_price!=null?el("s",{text:euro(o.old_price)}):null,
         o.discount?el("span",{class:"od",text:o.discount}):null,o.valid_until?el("span",{class:"od",text:(o.expired?T.offer_expired:T.until)+" "+day(o.valid_until)}):null])}
     else if(i.price!=null)extra=el("span",{class:"offer"},[el("b",{text:euro(i.price)})]);
-    if(extra)name=el("span",{class:"nmw"},[name,extra]);
-    return el("label",{class:"row"+(i.checked?" done":i.soft?" soft":"")},[box,name,i.soft&&!i.checked?el("small",{text:"✓ "+(i.soft_by&&i.soft_by!==getName()?i.soft_by:T.soft)}):null,
-      i.qty?el("span",{class:"q",text:i.qty+(i.unit?" "+i.unit:"")}):null])};
+    var subl=tagEls.concat(extra?[extra]:[]);
+    name=el("span",{class:"nmw"},[name,subl.length?el("span",{class:"subl"},subl):null,
+      i.soft&&!i.checked?el("span",{class:"by",text:"✓ "+(i.soft_by&&i.soft_by!==getName()?i.soft_by:T.soft)}):null]);
+    return el("label",{class:"row"+(i.checked?" done":i.soft?" soft":"")},[box,name])};
   var row0=row;row=function(i){var r=row0(i);
-    if(i.added_by&&!i.checked){var ab=el("span",{class:"nt",text:"🔗 "+T.added_by.replace("{name}",i.added_by===getName()?T.you_short:i.added_by)}),w0=r.querySelector(".nmw");
+    if(i.added_by&&!i.checked){var ab=el("span",{class:"by",text:"↗ "+T.added_by.replace("{name}",i.added_by===getName()?T.you_short:i.added_by)}),w0=r.querySelector(".nmw");
       if(w0)w0.append(ab);else{var nm0=r.querySelector(".nm");w0=el("span",{class:"nmw"});nm0.replaceWith(w0);w0.append(nm0,ab)}}
     if(i.note){var nt=el("span",{class:"nt",text:i.note}),w=r.querySelector(".nmw");
     if(w)w.append(nt);else{var nm=r.querySelector(".nm");w=el("span",{class:"nmw"});nm.replaceWith(w);w.append(nm,nt)}}return r};
@@ -667,11 +741,11 @@ function draw(d){cur=d;
     var sg={},order=[];open.forEach(function(i){var st=(i.tags||[]).filter(function(t){return t.kind==="store"})[0]||(i.offer?{label:i.offer.store_label}:null);
       var k=st?String(st.label||st.value):"";if(!(k in sg)){sg[k]=[];order.push(k)}sg[k].push(i)});
     order.sort(function(a,b){return (a==="")-(b==="")||a.localeCompare(b)});
-    order.forEach(function(k){body.push(el("h3",{text:(k||T.no_store)+" · "+sg[k].length}));body.push(el("div",{class:"card"},sg[k].sort(byName).map(row)))});
+    order.forEach(function(k){body.push(bar(k||T.no_store,sg[k].length,null));body.push(el("div",{class:"card"},sg[k].sort(byName).map(row)))});
   }
   else if(mode==="cat"){
     var groups={};open.forEach(function(i){var c=i.cat||"sonstiges";(groups[c]=groups[c]||[]).push(i)});
-    d.categories.forEach(function(c){if(groups[c.id]){body.push(el("h3",{text:c.label+" · "+groups[c.id].length}));body.push(el("div",{class:"card"},groups[c.id].map(row)));delete groups[c.id]}});
+    d.categories.forEach(function(c){if(groups[c.id]){body.push(bar(c.label,groups[c.id].length,CC[c.id]||hashColor(c.id)));body.push(el("div",{class:"card"},groups[c.id].map(row)));delete groups[c.id]}});
     Object.keys(groups).forEach(function(c){body.push(el("div",{class:"card"},groups[c].map(row)))});
   }else body.push(el("div",{class:"card"},open.map(row)));
   var me=getName(),interact=d.check!=="off"||d.add;
@@ -695,21 +769,21 @@ function draw(d){cur=d;
   if(d.add){var inp=el("input",{placeholder:T.placeholder,maxlength:"120","aria-label":T.placeholder});
     var send=function(){var v=inp.value.trim();if(!v)return;call({action:"add",text:v}).then(function(x){inp.value="";draw(x)},function(e){e==="gone"?fail():e==="name"?0:alert(T.error)})};
     inp.addEventListener("keydown",function(e){if(e.key==="Enter")send()});
-    kids.push(el("div",{class:"add top-add"},[inp,el("button",{type:"button",text:T.add,onclick:send})]))}
-  if(d.pending&&d.pending.length){kids.push(el("h3",{text:"⏳ "+T.pending+" · "+d.pending.length}));
+    kids.push(el("div",{class:"add top-add"},[inp,el("button",{type:"button",class:"plus",text:"+","aria-label":T.add,title:T.add,onclick:send})]))}
+  if(d.pending&&d.pending.length){kids.push(bar("⏳ "+T.pending,d.pending.length,"#d9960a"));
     kids.push(el("div",{class:"card"},d.pending.map(function(p){return el("div",{class:"row soft"},[el("span",{class:"nmw"},[el("span",{text:p.text}),
-      el("span",{class:"nt",text:T.added_by.replace("{name}",p.by===getName()?T.you_short:(p.by||"?"))})])])})))}
+      el("span",{class:"by w",text:"↗ "+T.added_by.replace("{name}",p.by===getName()?T.you_short:(p.by||"?"))})])])})))}
   if(query&&!open.length&&!marked.length&&!done.length)kids.push(el("div",{class:"msg",text:T.no_hits}));
   kids=kids.concat(body);
-  if(marked.length){kids.push(el("h2",{text:"✓ "+T.marked_h+" · "+marked.length}));kids.push(el("div",{class:"card"},marked.map(row)))}
-  if(done.length){kids.push(el("h2",{text:T.done+" · "+done.length}));kids.push(el("div",{class:"card"},done.map(row)))}
+  if(marked.length){kids.push(bar("✓ "+T.marked_h,marked.length,"var(--a)"));kids.push(el("div",{class:"card"},marked.map(row)))}
+  if(done.length){kids.push(bar("✓ "+T.done.charAt(0).toUpperCase()+T.done.slice(1),done.length,null));kids.push(el("div",{class:"card"},done.map(row)))}
   /* Fußzeile: wie lange die Liste noch geteilt ist */
   var foot;
   if(d.expires){var ms=d.expires*1000-Date.now(),days=Math.floor(ms/864e5),hrs=Math.max(0,Math.floor(ms/36e5));
     var left=days>=1?T.left_days.replace("{n}",days):T.left_hours.replace("{n}",hrs);
     foot=T.shared_until.replace("{date}",new Date(d.expires*1000).toLocaleString(document.documentElement.lang,{dateStyle:"medium",timeStyle:"short"}))+" ("+left+")"}
   else foot=T.shared_forever;
-  kids.push(el("footer",{class:"foot",text:"🔗 "+foot}));
+  kids.push(el("footer",{class:"foot",text:(d.password?"🔑 ":"🔗 ")+foot}));
   app.replaceChildren.apply(app,kids)}
 function ask(d){asking=true;
   var inp=el("input",{placeholder:T.name_ph,maxlength:"30","aria-label":T.name_ask,value:getName()||""});

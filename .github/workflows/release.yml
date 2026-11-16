@@ -1,8 +1,7 @@
 name: Release
 
 # Releases entstehen automatisch:
-#   - Push auf main, bei dem sich die Version in manifest.json ändert → Tag vX.Y.Z + Release (kein Tag-Push nötig)
-#   - Push eines Tags vX.Y.Z (wie bisher)
+#   - Push auf main, bei dem sich die Version in manifest.json ändert → Tag vX.Y.Z + Release
 #   - von Hand: Actions → Release → Run workflow → Tag (z. B. um ein Release nachzuholen)
 # Immer erst Hassfest + HACS, dann das Release mit dem Text aus CHANGELOG.md (HACS verlangt diese Reihenfolge).
 # Ein vorhandenes Release wird aktualisiert und – falls GitHub es zum Entwurf gemacht hat – wieder veröffentlicht.
@@ -126,15 +125,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # „latest“ nur für die höchste Version (beim Nachholen älterer Releases nicht umstellen)
-          HIGHEST=$( (git tag -l 'v*'; echo "$TAG") | sort -uV | tail -1)
+          # Vorabversionen (v4.0.0-beta.1, -rc.1 …) werden als Pre-release markiert
+          # HACS bietet sie nur an, wenn dort „Beta-Versionen anzeigen“ eingeschaltet ist.
+          HIGHEST=$( { git tag -l 'v*'; echo "$TAG"; } | { grep -v -- '-' || true; } | sort -uV | tail -1)
           LATEST=$([ "$TAG" = "$HIGHEST" ] && echo true || echo false)
+          PRE=$(case "$TAG" in *-*) echo true ;; *) echo false ;; esac)
           if gh release view "$TAG" >/dev/null 2>&1; then
-            # nach dem Neu-Pushen eines Tags macht GitHub das Release zum Entwurf → wieder veröffentlichen
-            gh release edit "$TAG" --title "${TAG#v}" --notes-file notes.md --draft=false --latest=$LATEST
+            gh release edit "$TAG" --title "${TAG#v}" --notes-file notes.md --draft=false --latest=$LATEST --prerelease=$PRE
           elif git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --verify-tag --latest=$LATEST
+            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --verify-tag --latest=$LATEST --prerelease=$PRE
           else
-            # Push auf main ohne Tag: Tag auf genau diesen Commit setzen
-            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --target "$REF" --latest=$LATEST
+            gh release create "$TAG" --title "${TAG#v}" --notes-file notes.md --target "$REF" --latest=$LATEST --prerelease=$PRE
           fi

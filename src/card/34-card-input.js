@@ -629,6 +629,12 @@
     this._sel = new Set(it ? [it.uid] : []);
     this._closeMenu(); this._moreOpen = false; this._renderMore && this._renderMore();
     this._editing = null; this._renderList();
+    // Ziel-Listen für „Verschieben“ und „Kopieren“ laden – sonst fehlen die beiden Knöpfe, bis man sie einmal
+    // über das Menü eines Artikels geöffnet hat
+    if (!this._targets) {
+      this._call("lists", {}, false).then((r) => { this._targets = (r && r.lists) || []; }, () => { this._targets = []; })
+        .then(() => { if (this._sel) this._renderList(); });
+    }
   }
   _endSelect() { this._sel = null; this._renderList(); }
   _selBar(d, visible) {

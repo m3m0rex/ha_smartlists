@@ -9,7 +9,7 @@ switch on **"Show beta versions"**. The full list is in the
 ## What looks different
 
 - **Count before, size after the name.** "2×" stands in front of the name and "1 l" behind it – no longer in columns
-  on the right. Glued notations such as `Milk 1l`, `2,5kg` or `4x 150g` are recognised, and "2x" counts wherever it stands (`Milk 2l 2x`). To keep it as text, put it in quotes: `Persil "2x"`.
+  on the right. Glued notations such as `Milk 1l`, `2,5kg` or `4x 150g` are recognised, and "2x" counts wherever it stands (`Milk 2l 2x`). To keep it as text, put it in quotes: `Detergent "2x"`.
 - **Tinted categories.** Every category has its own colour and can be collapsed, and so can "Bought often".
 - **Badges below the name.** Store, tag, person, price and note share one line; the order can be changed in the
   settings.

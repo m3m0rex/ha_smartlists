@@ -45,7 +45,7 @@ The card speaks German, English, French, Spanish, Italian and Polish and follows
 | `max_per_store` | `10` | Offers per store before "all →" (1–20) |
 | `currency` | `EUR` | ISO currency code |
 | `currency_symbol` | – | Own symbol instead of `currency`, e.g. `₺` |
-| `watch` | – | Watch list: fixed products, e.g. `[coffee, Nutella]` |
+| `watch` | – | Watch list: fixed products, e.g. `[coffee, chocolate spread]` |
 | `watch_list` | – | Watch list as a to-do list – the same on all devices |
 | `notify` | `false` | Home Assistant notification when a watched product is newly on offer |
 | `notify_service` | – | Also send it to this service, e.g. `notify.mobile_app_pixel` |

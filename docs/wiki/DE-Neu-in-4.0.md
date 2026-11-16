@@ -10,7 +10,7 @@ herunterladen* und **„Beta-Versionen anzeigen“** einschalten. Die vollständ
 
 - **Anzahl vor, Größe hinter dem Namen.** „2ד steht vor dem Namen, „1 l“ dahinter – nicht mehr in Spalten rechts.
   Schreibweisen ohne Leerzeichen wie `Milch 1l`, `2,5kg` oder `4x 150g` werden erkannt, und „2x“ zählt an jeder Stelle
-  als Anzahl (`Milch 2l 2x`). Soll es Text bleiben, setze es in Anführungszeichen: `Persil "2x"`.
+  als Anzahl (`Milch 2l 2x`). Soll es Text bleiben, setze es in Anführungszeichen: `Waschmittel "2x"`.
 - **Getönte Kategorien.** Jede Kategorie hat ihre Farbe und lässt sich einklappen, ebenso „Häufig gekauft“.
 - **Badges unter dem Namen.** Markt, Schlagwort, Person, Preis und Notiz stehen in einer Zeile; die Reihenfolge ist in
   den Einstellungen änderbar.

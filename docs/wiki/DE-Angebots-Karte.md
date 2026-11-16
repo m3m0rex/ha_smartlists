@@ -48,7 +48,7 @@ von Home Assistant.
 | `max_per_store` | `10` | Angebote je Markt, bevor „alle →“ erscheint (1–20) |
 | `currency` | `EUR` | ISO-Code der Währung |
 | `currency_symbol` | – | eigenes Symbol statt `currency`, z. B. `₺` |
-| `watch` | – | Merkliste: feste Produkte, z. B. `[Kaffee, Nutella]` |
+| `watch` | – | Merkliste: feste Produkte, z. B. `[Kaffee, Schokocreme]` |
 | `watch_list` | – | Merkliste als To-do-Liste – gilt auf allen Geräten |
 | `notify` | `false` | Benachrichtigung, wenn etwas von der Merkliste neu im Angebot ist |
 | `notify_service` | – | zusätzlich an diesen Dienst senden, z. B. `notify.mobile_app_pixel` |

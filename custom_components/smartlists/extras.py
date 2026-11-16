@@ -32,10 +32,23 @@ MAX_BARCODES = 3000
 _PRICE = re.compile(r"(?<!\S)(?:[-–—]\s+)?(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?!\S)")
 
 
-def split_price(text: str) -> tuple[str, float | None]:
-    """Preis-Angabe am Ende des Textes abtrennen (kommt nicht in den Artikelnamen)."""
+_PRICE_CACHE: dict[tuple[str, ...], re.Pattern[str]] = {}
+
+
+def _price_re(symbols: tuple[str, ...]) -> re.Pattern[str]:
+    """Wie _PRICE, aber für die Währung des Haushalts ("CHF 2.50", "2,50 Fr.", "£1.20", "12 kr")."""
+    if symbols not in _PRICE_CACHE:
+        sym = "|".join(re.escape(s) for s in sorted(symbols, key=len, reverse=True))
+        num = r"\d+(?:[.,]\d{1,2})?"
+        _PRICE_CACHE[symbols] = re.compile(rf"(?<!\S)(?:[-–—]\s+)?(?:(?:{sym})\s?({num})|({num})\s?(?:{sym}))(?!\S)", re.IGNORECASE)
+    return _PRICE_CACHE[symbols]
+
+
+def split_price(text: str, symbols: tuple[str, ...] | None = None) -> tuple[str, float | None]:
+    """Preis-Angabe am Ende des Textes abtrennen (kommt nicht in den Artikelnamen).
+    symbols = Schreibweisen der Haushalts-Währung (Standard: €, EUR)."""
     m = None
-    for m in _PRICE.finditer(text):
+    for m in (_price_re(tuple(symbols)) if symbols else _PRICE).finditer(text):
         pass  # bei mehreren Angaben zählt die letzte
     if not m:
         return text, None

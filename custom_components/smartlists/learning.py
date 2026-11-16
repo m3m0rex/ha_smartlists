@@ -752,6 +752,17 @@ class Learning:
 
 
 _COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
+# Währungen: ISO-Code → Schreibweisen, die beim Eintippen als Preis erkannt werden (gleiche Liste in der Karte)
+CURRENCIES: dict[str, tuple[str, ...]] = {
+    "EUR": ("€", "EUR"), "CHF": ("CHF", "Fr.", "SFr"), "GBP": ("£", "GBP"), "USD": ("$", "USD"), "PLN": ("zł", "PLN"),
+    "SEK": ("kr", "SEK"), "DKK": ("kr", "DKK"), "NOK": ("kr", "NOK"), "CZK": ("Kč", "CZK"), "HUF": ("Ft", "HUF"),
+}
+# Angaben in der Zeile unter dem Artikelnamen (Standard-Reihenfolge)
+ROW_ORDER = ("store", "tag", "person", "price", "note")
+
+
+def currency_symbols(appearance: dict[str, Any] | None) -> tuple[str, ...]:
+    return CURRENCIES.get((appearance or {}).get("currency") or "EUR", CURRENCIES["EUR"])
 BADGE_STYLES = ("filled", "soft", "outline", "text")
 
 
@@ -804,6 +815,14 @@ def validate_appearance(raw: Any) -> dict[str, Any]:
             clean["label"] = v["label"].strip()[:30]
         if clean:
             out["values"][f"{kind}:{value.strip().lower()}"] = clean
+    # 4.0: Währung des Haushalts und Reihenfolge der Angaben unter dem Artikelnamen (nur wenn gesetzt)
+    if raw.get("currency") in CURRENCIES and raw["currency"] != "EUR":
+        out["currency"] = raw["currency"]
+    order = [x for x in dict.fromkeys(raw.get("order") or []) if x in ROW_ORDER] if isinstance(raw.get("order"), list) else []
+    if order:
+        order = [*order, *(x for x in ROW_ORDER if x not in order)]
+        if order != list(ROW_ORDER):
+            out["order"] = order
     return out
 
 

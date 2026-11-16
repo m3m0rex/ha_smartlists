@@ -127,6 +127,7 @@ const UI_KEY = "smartlists-ui";
 const LONG_PRESS_MS = 500;
 const TEXTS = {
   de: {
+    a_price: "Preise & Währung", cur_label: "Währung", cur_help: "Für Preise, Summe und Ausgaben. Beim Eintippen als Preis erkannt: {symbols}", price_how: "So entsteht der Preis eines Artikels", price_how_note: "Die erste Quelle mit Preis gewinnt. In der Liste steht Preis × Menge; beim Abhaken wird der Betrag als Ausgabe gebucht.", price_how_1: "Angebot (aus der App oder der Angebots-Karte) – gilt für den ganzen Artikel, bis es abläuft.", price_how_2: "Preis im Text einer anderen Quelle („… - 0,99 €“) – je Stück.", price_how_3: "Eigener Preis – im Artikel eingetragen oder beim Hinzufügen getippt („Milch 2 l 2,38 €“ merkt 1,19 je l).", price_how_4: "Zuletzt bezahlt (mit ~ gekennzeichnet) – beim letzten Abhaken gebucht.", order_title: "Reihenfolge unter dem Namen", order_help: "Was in der Zeile unter dem Artikelnamen zuerst steht. Gilt für alle – auch in der App und auf geteilten Seiten.",
     share_edit: "Link bearbeiten", share_edit_help: "Änderungen gelten sofort für alle, die den Link haben. Der Link selbst bleibt gleich.", share_keep: "unverändert", share_pw_keep: "leer lassen = Passwort bleibt",
     a_info: "Info", a_info_sub: "Version, Hilfe und neu einrichten", info_version: "Version", info_help: "Hilfe", info_docs: "Anleitung (Wiki)", info_issue: "Fehler melden", info_changelog: "Was ist neu?", a_auto: "Sprachbefehle & Automationen",
     shop_finish: "Knopf „Einkauf beendet“", shop_finish_shopping: "nur im Einkaufsmodus", shop_finish_always: "immer", shop_finish_never: "nie", l_show_title: "Name der Liste", share_password_on: "Mit Passwort schützen",
@@ -393,6 +394,7 @@ const TEXTS = {
     lb_colors: "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
   },
   en: {
+    a_price: "Prices & currency", cur_label: "Currency", cur_help: "For prices, totals and expenses. Recognised as a price while typing: {symbols}", price_how: "How an item gets its price", price_how_note: "The first source with a price wins. The list shows price × quantity; checking an item books the amount as an expense.", price_how_1: "Offer (from the app or the offers card) – applies to the whole item until it expires.", price_how_2: "Price in the text from another source (\"… - 0,99 €\") – per piece.", price_how_3: "Own price – entered in the item or typed when adding (\"Milk 2 l 2,38 €\" remembers 1,19 per l).", price_how_4: "Last paid (marked with ~) – booked when last checked off.", order_title: "Order below the name", order_help: "What comes first in the line below the item name. Applies to everyone – also in the app and on shared pages.",
     share_edit: "Edit link", share_edit_help: "Changes apply immediately for everyone who has the link. The link itself stays the same.", share_keep: "unchanged", share_pw_keep: "leave empty = password stays",
     a_info: "About", a_info_sub: "Version, help and setup", info_version: "Version", info_help: "Help", info_docs: "Guide (wiki)", info_issue: "Report a problem", info_changelog: "What's new?", a_auto: "Voice commands & automations",
     shop_finish: "\"Shopping done\" button", shop_finish_shopping: "only in shopping mode", shop_finish_always: "always", shop_finish_never: "never", l_show_title: "List name", share_password_on: "Protect with a password",
@@ -659,6 +661,7 @@ const TEXTS = {
     lb_colors: "Colour per source list (default: automatic, a different one per list)",
   },
   fr: {
+    a_price: "Prix et devise", cur_label: "Devise", cur_help: "Pour les prix, le total et les dépenses. Reconnu comme prix à la saisie : {symbols}", price_how: "D'où vient le prix d'un article", price_how_note: "La première source avec un prix l'emporte. La liste affiche prix × quantité ; cocher un article enregistre la dépense.", price_how_1: "Promo (de l'appli ou de la carte des promos) – vaut pour tout l'article jusqu'à expiration.", price_how_2: "Prix dans le texte d'une autre source (« … - 0,99 € ») – à l'unité.", price_how_3: "Prix personnel – saisi dans l'article ou à l'ajout (« Lait 2 l 2,38 € » retient 1,19 par l).", price_how_4: "Dernier prix payé (marqué ~) – enregistré au dernier cochage.", order_title: "Ordre sous le nom", order_help: "Ce qui vient en premier sous le nom de l'article. Vaut pour tous – aussi dans l'appli et sur les pages partagées.",
     share_edit: "Modifier le lien", share_edit_help: "Les modifications s'appliquent immédiatement pour tous ceux qui ont le lien. Le lien reste le même.", share_keep: "inchangé", share_pw_keep: "laisser vide = mot de passe inchangé",
     a_info: "Infos", a_info_sub: "Version, aide et configuration", info_version: "Version", info_help: "Aide", info_docs: "Guide (wiki)", info_issue: "Signaler un problème", info_changelog: "Nouveautés", a_auto: "Commandes vocales et automatisations",
     shop_finish: "Bouton « Courses terminées »", shop_finish_shopping: "seulement en mode courses", shop_finish_always: "toujours", shop_finish_never: "jamais", l_show_title: "Nom de la liste", share_password_on: "Protéger par mot de passe",
@@ -925,6 +928,7 @@ const TEXTS = {
     lb_colors: "Couleur par liste source (par défaut : automatique, une différente par liste)",
   },
   es: {
+    a_price: "Precios y moneda", cur_label: "Moneda", cur_help: "Para precios, total y gastos. Se reconoce como precio al escribir: {symbols}", price_how: "De dónde sale el precio de un artículo", price_how_note: "Gana la primera fuente con precio. La lista muestra precio × cantidad; al marcar se registra el gasto.", price_how_1: "Oferta (de la app o de la tarjeta de ofertas) – vale para todo el artículo hasta que caduque.", price_how_2: "Precio en el texto de otra fuente («… - 0,99 €») – por unidad.", price_how_3: "Precio propio – introducido en el artículo o al añadir («Leche 2 l 2,38 €» recuerda 1,19 por l).", price_how_4: "Último pagado (marcado con ~) – registrado al marcar por última vez.", order_title: "Orden bajo el nombre", order_help: "Qué aparece primero bajo el nombre del artículo. Vale para todos – también en la app y en páginas compartidas.",
     share_edit: "Editar enlace", share_edit_help: "Los cambios se aplican de inmediato para quien tenga el enlace. El enlace no cambia.", share_keep: "sin cambios", share_pw_keep: "dejar vacío = la contraseña no cambia",
     a_info: "Información", a_info_sub: "Versión, ayuda y configuración", info_version: "Versión", info_help: "Ayuda", info_docs: "Guía (wiki)", info_issue: "Informar de un problema", info_changelog: "Novedades", a_auto: "Comandos de voz y automatizaciones",
     shop_finish: "Botón «Compra terminada»", shop_finish_shopping: "solo en modo compra", shop_finish_always: "siempre", shop_finish_never: "nunca", l_show_title: "Nombre de la lista", share_password_on: "Proteger con contraseña",
@@ -1191,6 +1195,7 @@ const TEXTS = {
     lb_colors: "Color por lista de origen (por defecto: automático, uno distinto por lista)",
   },
   it: {
+    a_price: "Prezzi e valuta", cur_label: "Valuta", cur_help: "Per prezzi, totale e spese. Riconosciuto come prezzo durante la digitazione: {symbols}", price_how: "Come nasce il prezzo di un articolo", price_how_note: "Vince la prima fonte con un prezzo. La lista mostra prezzo × quantità; spuntando si registra la spesa.", price_how_1: "Offerta (dall'app o dalla scheda offerte) – vale per l'intero articolo fino alla scadenza.", price_how_2: "Prezzo nel testo di un'altra fonte («… - 0,99 €») – al pezzo.", price_how_3: "Prezzo proprio – inserito nell'articolo o digitato all'aggiunta («Latte 2 l 2,38 €» ricorda 1,19 al l).", price_how_4: "Ultimo pagato (segnato con ~) – registrato all'ultima spunta.", order_title: "Ordine sotto il nome", order_help: "Cosa viene prima sotto il nome dell'articolo. Vale per tutti – anche nell'app e nelle pagine condivise.",
     share_edit: "Modifica link", share_edit_help: "Le modifiche valgono subito per chi ha il link. Il link resta lo stesso.", share_keep: "invariato", share_pw_keep: "lascia vuoto = la password resta",
     a_info: "Info", a_info_sub: "Versione, aiuto e configurazione", info_version: "Versione", info_help: "Aiuto", info_docs: "Guida (wiki)", info_issue: "Segnala un problema", info_changelog: "Novità", a_auto: "Comandi vocali e automazioni",
     shop_finish: "Pulsante «Spesa finita»", shop_finish_shopping: "solo in modalità spesa", shop_finish_always: "sempre", shop_finish_never: "mai", l_show_title: "Nome della lista", share_password_on: "Proteggi con password",
@@ -1457,6 +1462,7 @@ const TEXTS = {
     lb_colors: "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
   },
   pl: {
+    a_price: "Ceny i waluta", cur_label: "Waluta", cur_help: "Dla cen, sumy i wydatków. Rozpoznawane jako cena podczas pisania: {symbols}", price_how: "Skąd bierze się cena produktu", price_how_note: "Wygrywa pierwsze źródło z ceną. Lista pokazuje cenę × ilość; odhaczenie księguje wydatek.", price_how_1: "Promocja (z aplikacji lub karty promocji) – dotyczy całego produktu do wygaśnięcia.", price_how_2: "Cena w tekście z innego źródła („… - 0,99 €”) – za sztukę.", price_how_3: "Własna cena – wpisana w produkcie lub przy dodawaniu („Mleko 2 l 2,38 €” zapamiętuje 1,19 za l).", price_how_4: "Ostatnio zapłacono (oznaczone ~) – zaksięgowane przy ostatnim odhaczeniu.", order_title: "Kolejność pod nazwą", order_help: "Co jest pierwsze w wierszu pod nazwą produktu. Dotyczy wszystkich – także aplikacji i udostępnionych stron.",
     share_edit: "Edytuj link", share_edit_help: "Zmiany działają od razu dla wszystkich, którzy mają link. Sam link się nie zmienia.", share_keep: "bez zmian", share_pw_keep: "puste = hasło bez zmian",
     a_info: "Informacje", a_info_sub: "Wersja, pomoc i konfiguracja", info_version: "Wersja", info_help: "Pomoc", info_docs: "Instrukcja (wiki)", info_issue: "Zgłoś problem", info_changelog: "Co nowego?", a_auto: "Polecenia głosowe i automatyzacje",
     shop_finish: "Przycisk „Zakupy zakończone”", shop_finish_shopping: "tylko w trybie zakupów", shop_finish_always: "zawsze", shop_finish_never: "nigdy", l_show_title: "Nazwa listy", share_password_on: "Chroń hasłem",
@@ -1769,10 +1775,20 @@ function splitTags(text, rules, stores) {
   return [text.replace(re, " ").split(/\s+/).filter(Boolean).join(" "), tags];
 }
 // Preis im Text (wie extras.split_price): "Milch 2 l 1,19€ @REWE" → ["Milch 2 l @REWE", 1.19]
-const PRICE_RE = /(^|\s)(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?=\s|$)/g;
+// Die Schreibweisen richten sich nach der Währung des Haushalts ("CHF 2.50", "2,50 Fr.", "£1.20").
+const PRICE_RES = {};
+const priceRe = () => {
+  const code = slCurrency();
+  if (!PRICE_RES[code]) {
+    const sym = [...CURRENCIES[code]].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+    const n = "\\d+(?:[.,]\\d{1,2})?";
+    PRICE_RES[code] = new RegExp(`(^|\\s)(?:(?:${sym})\\s?(${n})|(${n})\\s?(?:${sym}))(?=\\s|$)`, "gi");
+  }
+  return PRICE_RES[code];
+};
 function splitPrice(text) {
   let last = null;
-  for (const m of String(text).matchAll(PRICE_RE)) last = m;
+  for (const m of String(text).matchAll(priceRe())) last = m;
   if (!last) return [text, null];
   const start = last.index + last[1].length, end = last.index + last[0].length;
   return [(text.slice(0, start) + " " + text.slice(end)).split(/\s+/).filter(Boolean).join(" "), Number((last[2] || last[3]).replace(",", "."))];
@@ -2156,7 +2172,14 @@ function qrSvg(text, px = 4) {
 // Anzeigename eines Marktes ("rewe" → "REWE") aus den bekannten Märkten
 const itemStoreLabel = (key, cfg) => { const k = ((cfg && cfg.known_stores) || []).find((x) => String(x.value).toLowerCase() === key); return k ? k.value : key; };
 // Geldbetrag in der Sprache von HA ("2,38 €")
-const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: "EUR" }).format(v));
+// Währung des Haushalts (Einstellungen → Preise & Währung); gleiche Liste wie learning.CURRENCIES
+const CURRENCIES = { EUR: ["€", "EUR"], CHF: ["CHF", "Fr.", "SFr"], GBP: ["£", "GBP"], USD: ["$", "USD"], PLN: ["zł", "PLN"],
+  SEK: ["kr", "SEK"], DKK: ["kr", "DKK"], NOK: ["kr", "NOK"], CZK: ["Kč", "CZK"], HUF: ["Ft", "HUF"] };
+const slCurrency = () => (SL_LOOK && CURRENCIES[SL_LOOK.currency] ? SL_LOOK.currency : "EUR");
+const slCurrencySymbol = () => CURRENCIES[slCurrency()][0];
+const ROW_ORDER = ["store", "tag", "person", "price", "note"];
+const slRowOrder = () => (SL_LOOK && Array.isArray(SL_LOOK.order) && SL_LOOK.order.length ? [...SL_LOOK.order, ...ROW_ORDER.filter((x) => !SL_LOOK.order.includes(x))] : ROW_ORDER);
+const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: slCurrency() }).format(v));
 
 /* Symbol-Auswahl (Emoji) für Vorlagen und Badges: Raster nach Gruppen + freie Eingabe.
  * slEmojiPicker(root, current, t) → Promise<string | null> ("" = ohne Symbol) */
@@ -2217,7 +2240,7 @@ function parseOfferNote(note, stores) {
     const j = JSON.parse(note.slice(m.index + m[0].length).trim());
     if (!j || !j.s) return { note: clean, offer: null };
     const k = (stores || []).find((x) => x.value.toLowerCase() === String(j.s).toLowerCase());
-    const num = (v) => (v == null || v === "" ? null : Number(String(v).replace(",", ".").replace("€", "").trim()));
+    const num = (v) => (v == null || v === "" ? null : Number(String(v).replace(",", ".").replace(/[^0-9.\-]/g, "")));
     return { note: clean, offer: { store: j.s, store_label: k ? k.value : j.s, color: k ? k.color : null, price: num(j.p), old_price: num(j.o),
       discount: j.d || null, valid_from: j.v || null, valid_until: j.e || null, expired: !!j.e && String(j.e).slice(0, 10) < new Date().toISOString().slice(0, 10) } };
   } catch (e) { return { note: clean, offer: null }; }
@@ -3852,7 +3875,7 @@ class SmartListsCard extends HTMLElement {
   _offerLine(it, tags) {
     const o = it.offer;
     const t = this._t;
-    const euro = (v) => `${v.toFixed(2).replace(".", ",")} €`;
+    const euro = (v) => fmtMoney(v, this._hass.language);
     const day = (iso) => { const p = String(iso).slice(0, 10).split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : iso; };
     const hasStoreTag = tags.some((x) => x.kind === "store" && x.label.toLowerCase() === String(o.store_label).toLowerCase());
     return h("div", { class: `offer ${o.expired ? "expired" : ""}` },
@@ -4205,7 +4228,7 @@ class SmartListsCard extends HTMLElement {
     }
     // Preis aus dem Text mitschicken – die Integration merkt ihn sich (je Einheit) und nimmt ihn aus dem Namen
     const price = textOverride ? null : this._draft.price;
-    const text = encodeText(p, cfg.tag_rules) + (price != null ? ` ${String(price).replace(".", ",")}€` : "");
+    const text = encodeText(p, cfg.tag_rules) + (price != null ? ` ${String(price).replace(".", ",")} ${slCurrencySymbol()}` : "");
     this._resetDraft();
     if (this._input) { this._input.value = ""; this._renderPreview(); this._closeSugg(); if (this._pickEl) this._pickEl.hidden = true; }
     if (picked) {
@@ -4432,13 +4455,17 @@ class SmartListsCard extends HTMLElement {
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
     const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
-    const sub = [
-      ...tags.map(badge),
-      // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
-      this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null,
-      !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
-      this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null,
-    ];
+    // Reihenfolge der Angaben unter dem Namen: Haushalt (Einstellungen → Badges & Farben)
+    const part = {
+      store: tags.filter((x) => x.kind === "store").map(badge),
+      tag: tags.filter((x) => x.kind !== "store" && x.kind !== "person").map(badge),
+      person: [...tags.filter((x) => x.kind === "person").map(badge),
+        // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
+        this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null],
+      price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null],
+      note: [this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
+    };
+    const sub = slRowOrder().flatMap((k) => part[k] || []);
     const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
       onclick: (e) => {
         if (this._suppressClick) { this._suppressClick = false; return; }
@@ -4571,7 +4598,7 @@ class SmartListsCard extends HTMLElement {
     const canNote = d.permissions.note !== false;
     const note = canNote ? h("input", { class: "note-in", placeholder: t.note, value: it.note || "" }) : null;
     // Preis je Einheit (bzw. Stück) – gilt für diesen Artikel, auch wenn er später wieder auf die Liste kommt
-    const priceIn = h("input", { class: "price-in", type: "number", min: "0", step: "0.01", inputmode: "decimal", placeholder: `${t.price} €${it.unit ? " / " + it.unit : ""}`,
+    const priceIn = h("input", { class: "price-in", type: "number", min: "0", step: "0.01", inputmode: "decimal", placeholder: `${t.price} ${slCurrencySymbol()}${it.unit ? " / " + it.unit : ""}`,
       "aria-label": t.price, value: it.price && it.price.source !== "offer" && it.price.unit_price != null ? String(it.price.unit_price) : "" });
     const save = async () => {
       this._editing = null;
@@ -4758,7 +4785,8 @@ class SmartListsCard extends HTMLElement {
       { g: "me", id: "notify", label: t.notify, sub: t.a_me_sub, kw: [t.notify_to, t.notify_quiet], build: () => [this._notifySection()] },
     ];
     const global = !this._isAdmin ? [] : [
-      { g: "global", id: "look", label: t.a_look, sub: t.a_global_sub, kw: [t.naming, t.look, t.look_color], build: () => [this._namingSection(), this._appearanceSection()] },
+      { g: "global", id: "look", label: t.a_look, sub: t.a_global_sub, kw: [t.naming, t.look, t.look_color], build: () => [this._namingSection(), this._appearanceSection(), this._orderSection()] },
+      { g: "global", id: "price", label: t.a_price, sub: t.a_global_sub, kw: [t.cur_label, t.price, t.price_how, "currency", "CHF", "€"], build: () => this._priceSection() },
       { g: "global", id: "stores", label: t.stores, sub: t.a_global_sub, kw: [t.zone, t.aisle], build: () => [this._storesSection()] },
       { g: "global", id: "cats", label: t.a_cats, sub: t.learned_help, kw: [t.packs, t.learned, t.category], build: () => [this._packsSection(), this._learnedSection()] },
       { g: "global", id: "extras", label: t.x_title, sub: t.x_help, kw: [t.notes, t.mp_title, t.x_notes, t.x_mealplan, t.x_stats, t.stats, t.exp], build: () => [this._extrasSection()] },
@@ -5368,6 +5396,55 @@ class SmartListsCard extends HTMLElement {
 
   // Badges & Farben: Aussehen je Art (Markt/Person/Schlagwort) und einzelner Badges, Farben/Namen der Märkte.
   // Alles optional – leere Angaben = eingebautes Aussehen. Gilt für den Haushalt (auch für die App: Märkte).
+  // Haushalt: einen Teil von „appearance“ (Währung, Reihenfolge) speichern, ohne den Rest anzufassen
+  async _saveLook(patch, status) {
+    try {
+      const cur = (await this._call("appearance", {}, false)).appearance || {};
+      const r = await this._call("set_appearance", { appearance: { ...cur, ...patch } }, false);
+      SL_LOOK = r.appearance;
+      if (this._cfg) this._cfg = { ...this._cfg, appearance: r.appearance };
+      if (status) status.textContent = "✓ " + this._t.saved;
+      window.dispatchEvent(new CustomEvent("smartlists-look-changed"));
+    } catch (err) { if (status) status.textContent = (err && err.message) || this._t.error; }
+  }
+  // Global → Badges & Farben: Reihenfolge der Angaben unter dem Artikelnamen
+  _orderSection() {
+    const t = this._t;
+    const status = h("span", { class: "ok2" });
+    const body = h("div");
+    let order = slRowOrder();
+    const label = { store: t.kind_store, tag: t.kind_tag, person: t.kind_person, price: t.price, note: t.note };
+    const sample = { name: "Milch", tags: [{ kind: "store", value: "\u0000rewe", label: "REWE", color: "#cc071e" }, { kind: "tag", value: "bio", label: "bio" }, { kind: "person", value: "\u0000anna", label: "Anna" }] };
+    const draw = () => {
+      const part = { store: [badge(sample.tags[0])], tag: [badge(sample.tags[1])], person: [badge(sample.tags[2])],
+        price: [h("span", { class: "priceline" }, h("b", {}, fmtMoney(2.38, this._hass.language)))], note: [h("span", { class: "note" }, t.note)] };
+      fill(body,
+        h("div", { class: "nprev", style: "margin-bottom:8px" }, h("div", { class: "name-line" }, h("span", { class: "qpill" }, "2×"), h("span", { class: "iname" }, sample.name), h("span", { class: "sizechip" }, "1\u00a0l")),
+          h("div", { class: "subline" }, order.flatMap((k) => part[k]))),
+        ...order.map((k, i) => this._setRow(`${i + 1}. ${label[k] || k}`, h("span", { style: "display:flex;gap:2px" },
+          h("button", { class: "icon-btn up", type: "button", disabled: i === 0, title: t.p_order, "aria-label": `${label[k]} ↑`, onclick: () => move(i, -1) }, svg(ICON.chevron, 18)),
+          h("button", { class: "icon-btn", type: "button", disabled: i === order.length - 1, title: t.p_order, "aria-label": `${label[k]} ↓`, onclick: () => move(i, 1) }, svg(ICON.chevron, 18))))),
+        h("div", { class: "srow" }, status, h("button", { class: "linkbtn", type: "button", onclick: () => { order = [...ROW_ORDER]; draw(); this._saveLook({ order }, status); } }, t.reset_default)));
+    };
+    const move = (i, d) => { const o = [...order]; [o[i], o[i + d]] = [o[i + d], o[i]]; order = o; draw(); this._saveLook({ order }, status); };
+    draw();
+    return this._sec("", t.order_title, t.order_help, [body]);
+  }
+  // Global → Preise & Währung: Währung des Haushalts und woher ein Preis kommt
+  _priceSection() {
+    const t = this._t;
+    const status = h("span", { class: "ok2" });
+    const help = h("small", {});
+    const setHelp = () => { help.textContent = t.cur_help.replace("{symbols}", CURRENCIES[slCurrency()].join(", ")); };
+    setHelp();
+    const names = (() => { try { return new Intl.DisplayNames([this._lang || "en"], { type: "currency" }); } catch (e) { return null; } })();
+    const sel = h("select", { "aria-label": t.cur_label, onchange: async (e) => { await this._saveLook({ currency: e.target.value }, status); setHelp(); this._renderList(); } },
+      Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)));
+    return [
+      this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), h("div", { class: "srow" }, status)]),
+      this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
+    ];
+  }
   _appearanceSection() {
     const t = this._t;
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
@@ -5375,6 +5452,8 @@ class SmartListsCard extends HTMLElement {
     let look = { kinds: {}, values: {} }, tags = [], query = "";
     const save = debounce(async () => {
       try {
+        // Währung/Reihenfolge werden in eigenen Abschnitten gespeichert – hier nicht mit altem Stand überschreiben
+        look = { ...look, currency: SL_LOOK.currency, order: SL_LOOK.order };
         const r = await this._call("set_appearance", { appearance: look }, false);
         look = r.appearance; tags = r.tags; SL_LOOK = look;
         if (this._cfg) this._cfg = { ...this._cfg, appearance: look };

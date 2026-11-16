@@ -433,7 +433,7 @@
   _offerLine(it, tags) {
     const o = it.offer;
     const t = this._t;
-    const euro = (v) => `${v.toFixed(2).replace(".", ",")} €`;
+    const euro = (v) => fmtMoney(v, this._hass.language);
     const day = (iso) => { const p = String(iso).slice(0, 10).split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.` : iso; };
     const hasStoreTag = tags.some((x) => x.kind === "store" && x.label.toLowerCase() === String(o.store_label).toLowerCase());
     return h("div", { class: `offer ${o.expired ? "expired" : ""}` },

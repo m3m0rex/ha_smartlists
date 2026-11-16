@@ -75,7 +75,8 @@
       { g: "me", id: "notify", label: t.notify, sub: t.a_me_sub, kw: [t.notify_to, t.notify_quiet], build: () => [this._notifySection()] },
     ];
     const global = !this._isAdmin ? [] : [
-      { g: "global", id: "look", label: t.a_look, sub: t.a_global_sub, kw: [t.naming, t.look, t.look_color], build: () => [this._namingSection(), this._appearanceSection()] },
+      { g: "global", id: "look", label: t.a_look, sub: t.a_global_sub, kw: [t.naming, t.look, t.look_color], build: () => [this._namingSection(), this._appearanceSection(), this._orderSection()] },
+      { g: "global", id: "price", label: t.a_price, sub: t.a_global_sub, kw: [t.cur_label, t.price, t.price_how, "currency", "CHF", "€"], build: () => this._priceSection() },
       { g: "global", id: "stores", label: t.stores, sub: t.a_global_sub, kw: [t.zone, t.aisle], build: () => [this._storesSection()] },
       { g: "global", id: "cats", label: t.a_cats, sub: t.learned_help, kw: [t.packs, t.learned, t.category], build: () => [this._packsSection(), this._learnedSection()] },
       { g: "global", id: "extras", label: t.x_title, sub: t.x_help, kw: [t.notes, t.mp_title, t.x_notes, t.x_mealplan, t.x_stats, t.stats, t.exp], build: () => [this._extrasSection()] },
@@ -685,6 +686,55 @@
 
   // Badges & Farben: Aussehen je Art (Markt/Person/Schlagwort) und einzelner Badges, Farben/Namen der Märkte.
   // Alles optional – leere Angaben = eingebautes Aussehen. Gilt für den Haushalt (auch für die App: Märkte).
+  // Haushalt: einen Teil von „appearance“ (Währung, Reihenfolge) speichern, ohne den Rest anzufassen
+  async _saveLook(patch, status) {
+    try {
+      const cur = (await this._call("appearance", {}, false)).appearance || {};
+      const r = await this._call("set_appearance", { appearance: { ...cur, ...patch } }, false);
+      SL_LOOK = r.appearance;
+      if (this._cfg) this._cfg = { ...this._cfg, appearance: r.appearance };
+      if (status) status.textContent = "✓ " + this._t.saved;
+      window.dispatchEvent(new CustomEvent("smartlists-look-changed"));
+    } catch (err) { if (status) status.textContent = (err && err.message) || this._t.error; }
+  }
+  // Global → Badges & Farben: Reihenfolge der Angaben unter dem Artikelnamen
+  _orderSection() {
+    const t = this._t;
+    const status = h("span", { class: "ok2" });
+    const body = h("div");
+    let order = slRowOrder();
+    const label = { store: t.kind_store, tag: t.kind_tag, person: t.kind_person, price: t.price, note: t.note };
+    const sample = { name: "Milch", tags: [{ kind: "store", value: "\u0000rewe", label: "REWE", color: "#cc071e" }, { kind: "tag", value: "bio", label: "bio" }, { kind: "person", value: "\u0000anna", label: "Anna" }] };
+    const draw = () => {
+      const part = { store: [badge(sample.tags[0])], tag: [badge(sample.tags[1])], person: [badge(sample.tags[2])],
+        price: [h("span", { class: "priceline" }, h("b", {}, fmtMoney(2.38, this._hass.language)))], note: [h("span", { class: "note" }, t.note)] };
+      fill(body,
+        h("div", { class: "nprev", style: "margin-bottom:8px" }, h("div", { class: "name-line" }, h("span", { class: "qpill" }, "2×"), h("span", { class: "iname" }, sample.name), h("span", { class: "sizechip" }, "1\u00a0l")),
+          h("div", { class: "subline" }, order.flatMap((k) => part[k]))),
+        ...order.map((k, i) => this._setRow(`${i + 1}. ${label[k] || k}`, h("span", { style: "display:flex;gap:2px" },
+          h("button", { class: "icon-btn up", type: "button", disabled: i === 0, title: t.p_order, "aria-label": `${label[k]} ↑`, onclick: () => move(i, -1) }, svg(ICON.chevron, 18)),
+          h("button", { class: "icon-btn", type: "button", disabled: i === order.length - 1, title: t.p_order, "aria-label": `${label[k]} ↓`, onclick: () => move(i, 1) }, svg(ICON.chevron, 18))))),
+        h("div", { class: "srow" }, status, h("button", { class: "linkbtn", type: "button", onclick: () => { order = [...ROW_ORDER]; draw(); this._saveLook({ order }, status); } }, t.reset_default)));
+    };
+    const move = (i, d) => { const o = [...order]; [o[i], o[i + d]] = [o[i + d], o[i]]; order = o; draw(); this._saveLook({ order }, status); };
+    draw();
+    return this._sec("", t.order_title, t.order_help, [body]);
+  }
+  // Global → Preise & Währung: Währung des Haushalts und woher ein Preis kommt
+  _priceSection() {
+    const t = this._t;
+    const status = h("span", { class: "ok2" });
+    const help = h("small", {});
+    const setHelp = () => { help.textContent = t.cur_help.replace("{symbols}", CURRENCIES[slCurrency()].join(", ")); };
+    setHelp();
+    const names = (() => { try { return new Intl.DisplayNames([this._lang || "en"], { type: "currency" }); } catch (e) { return null; } })();
+    const sel = h("select", { "aria-label": t.cur_label, onchange: async (e) => { await this._saveLook({ currency: e.target.value }, status); setHelp(); this._renderList(); } },
+      Object.keys(CURRENCIES).map((c) => h("option", { value: c, selected: c === slCurrency() }, `${c} – ${names ? names.of(c) : c}`)));
+    return [
+      this._sec("", t.cur_label, null, [h("div", { class: "srow2" }, h("div", { class: "sl" }, t.cur_label, help), sel), h("div", { class: "srow" }, status)]),
+      this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
+    ];
+  }
   _appearanceSection() {
     const t = this._t;
     const body = h("div", {}, h("div", { class: "shelp", style: "padding:6px 0" }, t.loading));
@@ -692,6 +742,8 @@
     let look = { kinds: {}, values: {} }, tags = [], query = "";
     const save = debounce(async () => {
       try {
+        // Währung/Reihenfolge werden in eigenen Abschnitten gespeichert – hier nicht mit altem Stand überschreiben
+        look = { ...look, currency: SL_LOOK.currency, order: SL_LOOK.order };
         const r = await this._call("set_appearance", { appearance: look }, false);
         look = r.appearance; tags = r.tags; SL_LOOK = look;
         if (this._cfg) this._cfg = { ...this._cfg, appearance: look };

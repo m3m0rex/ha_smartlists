@@ -29,6 +29,15 @@ First pre-release of 4.0. Only offered in HACS when "Show beta versions" is enab
   integrations are detected automatically, own sensors too (field names are recognised or set with `map:`).
 - **Also available on its own** (repository `ha_smartdiscounts-card`): it only needs a to-do list, not SmartLists.
 
+### Added – prices & currency
+
+- **Currency of the household** (Settings → Prices & currency): EUR, CHF, GBP, USD, PLN, SEK, DKK, NOK, CZK or HUF.
+  Prices, totals, the shared page and the price field use it, and typing recognises its spellings
+  ("CHF 2.50", "2,50 Fr.", "£1.20"). Default stays €.
+- **"How an item gets its price"** is explained in the same place: offer → price in the text → own price → last paid.
+- **Order below the item name is configurable** (Settings → Badges & colours): store, tag, person, price and note can
+  be moved; applies to everyone and to shared pages.
+
 ### Changed – sharing
 
 - **Share links can be edited afterwards** (✎ next to a link): permissions, validity and password – the link itself

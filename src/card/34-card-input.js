@@ -266,7 +266,7 @@
     }
     // Preis aus dem Text mitschicken – die Integration merkt ihn sich (je Einheit) und nimmt ihn aus dem Namen
     const price = textOverride ? null : this._draft.price;
-    const text = encodeText(p, cfg.tag_rules) + (price != null ? ` ${String(price).replace(".", ",")}€` : "");
+    const text = encodeText(p, cfg.tag_rules) + (price != null ? ` ${String(price).replace(".", ",")} ${slCurrencySymbol()}` : "");
     this._resetDraft();
     if (this._input) { this._input.value = ""; this._renderPreview(); this._closeSugg(); if (this._pickEl) this._pickEl.hidden = true; }
     if (picked) {
@@ -493,13 +493,17 @@
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
     const nameEl = h("span", { class: "iname" }, this._highlight(it.name));
-    const sub = [
-      ...tags.map(badge),
-      // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
-      this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null,
-      !it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null,
-      this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null,
-    ];
+    // Reihenfolge der Angaben unter dem Namen: Haushalt (Einstellungen → Badges & Farben)
+    const part = {
+      store: tags.filter((x) => x.kind === "store").map(badge),
+      tag: tags.filter((x) => x.kind !== "store" && x.kind !== "person").map(badge),
+      person: [...tags.filter((x) => x.kind === "person").map(badge),
+        // Quelle nur als Text, wenn sie nicht schon als Person-Badge erscheint (todo.peter → 👤 Peter)
+        this._config.show_source && it.source && !tags.some((x) => x.implicit) ? h("span", { class: "chip" }, it.source) : null],
+      price: [!it.offer && it.price && this._config.show_prices !== false ? this._priceLine(it) : null],
+      note: [this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
+    };
+    const sub = slRowOrder().flatMap((k) => part[k] || []);
     const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
       onclick: (e) => {
         if (this._suppressClick) { this._suppressClick = false; return; }
@@ -632,7 +636,7 @@
     const canNote = d.permissions.note !== false;
     const note = canNote ? h("input", { class: "note-in", placeholder: t.note, value: it.note || "" }) : null;
     // Preis je Einheit (bzw. Stück) – gilt für diesen Artikel, auch wenn er später wieder auf die Liste kommt
-    const priceIn = h("input", { class: "price-in", type: "number", min: "0", step: "0.01", inputmode: "decimal", placeholder: `${t.price} €${it.unit ? " / " + it.unit : ""}`,
+    const priceIn = h("input", { class: "price-in", type: "number", min: "0", step: "0.01", inputmode: "decimal", placeholder: `${t.price} ${slCurrencySymbol()}${it.unit ? " / " + it.unit : ""}`,
       "aria-label": t.price, value: it.price && it.price.source !== "offer" && it.price.unit_price != null ? String(it.price.unit_price) : "" });
     const save = async () => {
       this._editing = null;

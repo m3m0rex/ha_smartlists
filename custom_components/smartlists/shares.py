@@ -716,14 +716,16 @@ function draw(d){cur=d;
     var name=el("span",{class:"nm"},[i.count?el("span",{class:"qp",text:i.count}):null,el("span",{class:"in",text:i.name||i.text}),i.size?el("span",{class:"sz",text:i.size}):null]);
     var tagEls=(i.tags||[]).map(function(t){return badge(t,d.look)});
     /* Angebot wie in der Karte: Markt, 🏷️ Angebot, Preis, alter Preis, gültig bis */
-    var euro=function(v){return v.toFixed(2).replace(".",",")+" €"},day=function(x){var p=String(x).slice(0,10).split("-");return p.length===3?p[2]+"."+p[1]+".":x};
+    var euro=function(v){try{return new Intl.NumberFormat(document.documentElement.lang,{style:"currency",currency:(d.look&&d.look.currency)||"EUR"}).format(v)}catch(e){return v.toFixed(2).replace(".",",")+" €"}},day=function(x){var p=String(x).slice(0,10).split("-");return p.length===3?p[2]+"."+p[1]+".":x};
     var o=i.offer,extra=null;
     if(o){var hasStore=(i.tags||[]).some(function(t){return t.kind==="store"&&String(t.label||t.value).toLowerCase()===String(o.store_label).toLowerCase()});
       extra=el("span",{class:"offer"+(o.expired?" exp":"")},[hasStore?null:badge({kind:"store",value:o.store,label:o.store_label,color:o.color},d.look),
         el("span",{class:"ol",text:"🏷️ "+T.offer}),o.price!=null?el("b",{text:euro(o.price)}):null,o.old_price!=null?el("s",{text:euro(o.old_price)}):null,
         o.discount?el("span",{class:"od",text:o.discount}):null,o.valid_until?el("span",{class:"od",text:(o.expired?T.offer_expired:T.until)+" "+day(o.valid_until)}):null])}
     else if(i.price!=null)extra=el("span",{class:"offer"},[el("b",{text:euro(i.price)})]);
-    var subl=tagEls.concat(extra?[extra]:[]);
+    /* Reihenfolge unter dem Namen wie im Haushalt eingestellt (Markt · Schlagwort · Person · Preis) */
+    var ord=(d.look&&d.look.order)||["store","tag","person","price","note"],subl=[];
+    ord.forEach(function(k){if(k==="price"){if(extra)subl.push(extra)}else if(k!=="note")(i.tags||[]).forEach(function(t,n){var kind=t.kind==="store"||t.kind==="person"?t.kind:"tag";if(kind===k)subl.push(tagEls[n])})});
     name=el("span",{class:"nmw"},[name,subl.length?el("span",{class:"subl"},subl):null,
       i.soft&&!i.checked?el("span",{class:"by",text:"✓ "+(i.soft_by&&i.soft_by!==getName()?i.soft_by:T.soft)}):null]);
     return el("label",{class:"row"+(i.checked?" done":i.soft?" soft":"")},[box,name])};

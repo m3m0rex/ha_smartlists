@@ -129,3 +129,23 @@ def test_list_settings_categories_and_suggest_scope():
     assert ex.set_list_settings("todo.a", categories=False, suggest_scope="all") == {"categories": False, "suggest_scope": "all"}
     assert ex.set_list_settings("todo.a", categories=True, suggest_scope="list") == {}
     assert "todo.a" not in ex.list_settings
+
+
+def test_currency_of_the_household():
+    """4.0: andere Währungen – Schreibweisen werden beim Eintippen erkannt, € bleibt Standard."""
+    from smartlists.extras import split_price
+    from smartlists.learning import ROW_ORDER, currency_symbols, validate_appearance
+
+    assert split_price("Milch 2 l 1,19€ @REWE") == ("Milch 2 l @REWE", 1.19)
+    chf = currency_symbols({"currency": "CHF"})
+    assert split_price("Milch 2 l CHF 2.50", chf) == ("Milch 2 l", 2.5)
+    assert split_price("Brot 3,20 Fr. @Migros", chf) == ("Brot @Migros", 3.2)
+    assert split_price("Milch 1,19€", chf) == ("Milch 1,19€", None)  # € ist dann kein Preis mehr
+    assert split_price("Tea £1.20", currency_symbols({"currency": "GBP"})) == ("Tea", 1.2)
+    assert split_price("Mjölk 12 kr", currency_symbols({"currency": "SEK"})) == ("Mjölk", 12.0)
+    assert currency_symbols({}) == ("€", "EUR") and currency_symbols({"currency": "XXX"}) == ("€", "EUR")
+    # Aussehen: nur gültige Währung / Reihenfolge, Standard wird nicht gespeichert
+    assert validate_appearance({"currency": "CHF", "order": ["price", "store", "bogus"]}) == {
+        "kinds": {}, "values": {}, "currency": "CHF", "order": ["price", "store", "tag", "person", "note"]}
+    assert validate_appearance({"currency": "EUR", "order": list(ROW_ORDER)}) == {"kinds": {}, "values": {}}
+    assert validate_appearance({"currency": "DOGE", "order": "x"}) == {"kinds": {}, "values": {}}

@@ -307,7 +307,14 @@ function qrSvg(text, px = 4) {
 // Anzeigename eines Marktes ("rewe" → "REWE") aus den bekannten Märkten
 const itemStoreLabel = (key, cfg) => { const k = ((cfg && cfg.known_stores) || []).find((x) => String(x.value).toLowerCase() === key); return k ? k.value : key; };
 // Geldbetrag in der Sprache von HA ("2,38 €")
-const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: "EUR" }).format(v));
+// Währung des Haushalts (Einstellungen → Preise & Währung); gleiche Liste wie learning.CURRENCIES
+const CURRENCIES = { EUR: ["€", "EUR"], CHF: ["CHF", "Fr.", "SFr"], GBP: ["£", "GBP"], USD: ["$", "USD"], PLN: ["zł", "PLN"],
+  SEK: ["kr", "SEK"], DKK: ["kr", "DKK"], NOK: ["kr", "NOK"], CZK: ["Kč", "CZK"], HUF: ["Ft", "HUF"] };
+const slCurrency = () => (SL_LOOK && CURRENCIES[SL_LOOK.currency] ? SL_LOOK.currency : "EUR");
+const slCurrencySymbol = () => CURRENCIES[slCurrency()][0];
+const ROW_ORDER = ["store", "tag", "person", "price", "note"];
+const slRowOrder = () => (SL_LOOK && Array.isArray(SL_LOOK.order) && SL_LOOK.order.length ? [...SL_LOOK.order, ...ROW_ORDER.filter((x) => !SL_LOOK.order.includes(x))] : ROW_ORDER);
+const fmtMoney = (v, lang) => (v == null ? "" : new Intl.NumberFormat(lang || "de", { style: "currency", currency: slCurrency() }).format(v));
 
 /* Symbol-Auswahl (Emoji) für Vorlagen und Badges: Raster nach Gruppen + freie Eingabe.
  * slEmojiPicker(root, current, t) → Promise<string | null> ("" = ohne Symbol) */
@@ -368,7 +375,7 @@ function parseOfferNote(note, stores) {
     const j = JSON.parse(note.slice(m.index + m[0].length).trim());
     if (!j || !j.s) return { note: clean, offer: null };
     const k = (stores || []).find((x) => x.value.toLowerCase() === String(j.s).toLowerCase());
-    const num = (v) => (v == null || v === "" ? null : Number(String(v).replace(",", ".").replace("€", "").trim()));
+    const num = (v) => (v == null || v === "" ? null : Number(String(v).replace(",", ".").replace(/[^0-9.\-]/g, "")));
     return { note: clean, offer: { store: j.s, store_label: k ? k.value : j.s, color: k ? k.color : null, price: num(j.p), old_price: num(j.o),
       discount: j.d || null, valid_from: j.v || null, valid_until: j.e || null, expired: !!j.e && String(j.e).slice(0, 10) < new Date().toISOString().slice(0, 10) } };
   } catch (e) { return { note: clean, offer: null }; }

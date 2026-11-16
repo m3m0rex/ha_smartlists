@@ -295,7 +295,9 @@ def _take_price(hass: HomeAssistant, entity_id: str, text: str) -> str:
         return text  # einfache Liste: Preis bleibt im Text, wird nicht gemerkt
     from .extras import split_price
 
-    text, price = split_price(text)
+    from .learning import currency_symbols
+
+    text, price = split_price(text, currency_symbols(_learning(hass).appearance))
     if price is not None and text:
         item = _learning(hass).parse(text)
         store = next((t["value"] for t in item.tags if t["kind"] == "store"), None)

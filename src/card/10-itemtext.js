@@ -25,10 +25,20 @@ function splitTags(text, rules, stores) {
   return [text.replace(re, " ").split(/\s+/).filter(Boolean).join(" "), tags];
 }
 // Preis im Text (wie extras.split_price): "Milch 2 l 1,19€ @REWE" → ["Milch 2 l @REWE", 1.19]
-const PRICE_RE = /(^|\s)(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?=\s|$)/g;
+// Die Schreibweisen richten sich nach der Währung des Haushalts ("CHF 2.50", "2,50 Fr.", "£1.20").
+const PRICE_RES = {};
+const priceRe = () => {
+  const code = slCurrency();
+  if (!PRICE_RES[code]) {
+    const sym = [...CURRENCIES[code]].sort((a, b) => b.length - a.length).map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+    const n = "\\d+(?:[.,]\\d{1,2})?";
+    PRICE_RES[code] = new RegExp(`(^|\\s)(?:(?:${sym})\\s?(${n})|(${n})\\s?(?:${sym}))(?=\\s|$)`, "gi");
+  }
+  return PRICE_RES[code];
+};
 function splitPrice(text) {
   let last = null;
-  for (const m of String(text).matchAll(PRICE_RE)) last = m;
+  for (const m of String(text).matchAll(priceRe())) last = m;
   if (!last) return [text, null];
   const start = last.index + last[1].length, end = last.index + last[0].length;
   return [(text.slice(0, start) + " " + text.slice(end)).split(/\s+/).filter(Boolean).join(" "), Number((last[2] || last[3]).replace(",", "."))];

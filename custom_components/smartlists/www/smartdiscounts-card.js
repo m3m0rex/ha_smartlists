@@ -10,7 +10,7 @@
  * base_price/price_per_unit, category) und lassen sich je Quelle mit `map:` festlegen.
  * Keine externen Abhängigkeiten; nutzt die Theme-Variablen von Home Assistant. */
 (() => {
-const VERSION = "4.0.0-beta.5";
+const VERSION = "4.0.0-beta.6";
 const TAG = "smartdiscounts-card";
 if (customElements.get(TAG)) return;  // schon geladen (SmartLists UND eigenes Repository installiert)
 

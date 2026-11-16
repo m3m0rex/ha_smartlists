@@ -31,21 +31,31 @@ HA SmartLists Android app (separate project).
 
 - All data stays in your Home Assistant instance (`.storage/smartlists.*`). There is no telemetry. The
   integration connects to the outside only in two cases:
-  - **Barcode lookup** (off by default): if you switch it on, the scanned code – nothing else, no account – is
-    sent to the lookup services you have selected, one after the other until one knows the product. Only Open
-    Food Facts is preselected; the others are contacted only if you add them:
+  - **Barcode lookup** (off by default): if you switch it on, the scanned code is sent to the lookup services
+    you have selected, one after the other until one knows the product. No service is preselected – a service
+    is contacted only after you have picked it:
 
     | Service | Host |
     | --- | --- |
-    | Open Food Facts (preselected) | `world.openfoodfacts.org` |
+    | Open Food Facts | `world.openfoodfacts.org` |
     | Open Beauty Facts | `world.openbeautyfacts.org` |
     | Open Pet Food Facts | `world.openpetfoodfacts.org` |
     | Open Products Facts | `world.openproductsfacts.org` |
     | UPCitemdb | `api.upcitemdb.com` |
     | Your own service | the `https://` address you enter |
 
-    A product that was found is remembered, so the same code is not asked again. Without the lookup the scanner
-    only knows codes it has already learned.
+    What a request contains: the barcode, the language of your Home Assistant (to get the product name in it)
+    and a `User-Agent` header of the form `SmartLists-HomeAssistant/<version> (https://github.com/m3m0rex/ha_smartlists)`.
+    The Open … Facts databases require such a header – app name, version and a contact – and may block requests
+    without it. The contact is the project page: **no e-mail address, no account, no API key and nothing about
+    your household is sent**, and none of the services needs you to register. As with any connection, the
+    service sees the IP address of your Home Assistant.
+
+    Limits of the free services: 100 product lookups per minute for the Open … Facts databases; 100 per day
+    and 6 per minute for UPCitemdb. If a service answers "too many requests", SmartLists skips it for a while
+    (UPCitemdb one hour, the others five minutes) instead of asking again. A product that was found is
+    remembered, so the same code is not asked twice. Without the lookup the scanner only knows codes it has
+    already learned.
   - **Cloudflare tunnel** for shared links (off by default): if you enable it, SmartLists starts `cloudflared`,
     which connects to Cloudflare.
 

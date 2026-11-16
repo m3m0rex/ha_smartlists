@@ -224,7 +224,7 @@
       draw();
     };
     const draw = () => {
-      const order = cur.barcode_providers && cur.barcode_providers.length ? cur.barcode_providers : ["off"];
+      const order = cur.barcode_providers && cur.barcode_providers.length ? cur.barcode_providers : [];  // nichts vorausgewählt
       fill(box, h("div", { class: "grp" }, t.barcode_providers),
         h("div", { class: "chips" }, BARCODE_PROVIDERS.map(([id, name]) => {
           const pos = order.indexOf(id);

@@ -3,6 +3,22 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.6] – 2026-11-16
+
+Sixth pre-release of 4.0.
+
+### Changed
+
+- **No barcode lookup service is preselected any more.** With *Look up barcodes online* switched on, a code is sent only
+  to the services you have picked under *Lookup services* – Open Food Facts is no longer used automatically. If you had
+  the lookup on without ever choosing a service, pick one once (Settings → Global); the scanner points you there. The
+  switch in the setup wizard, which names Open Food Facts, selects exactly that service.
+- **Barcode lookup identifies itself properly and backs off.** The request header now carries the real version
+  (`SmartLists-HomeAssistant/<version> (project page)`), as the Open … Facts databases ask for; no e-mail address,
+  account or API key is involved. A service that answers "too many requests" is skipped for a while (UPCitemdb one
+  hour, the others five minutes).
+- **SECURITY.md lists every lookup service, the host it contacts, what a request contains and the limits.**
+
 ## [4.0.0-beta.5] – 2026-11-16
 
 Fifth pre-release of 4.0.

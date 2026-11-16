@@ -318,8 +318,56 @@ def test_barcode_lookup_is_off_unless_switched_on():
     assert not asked
     # schon gelernte Codes gehen auch ohne Online-Suche
     assert asyncio.run(barcode.async_lookup(hass({}), "4000000000001"))["source"] == "memory" and not asked
+    # eingeschaltet, aber kein Dienst gewählt: weiterhin nichts nach außen (nichts ist vorausgewählt)
+    assert asyncio.run(barcode.async_lookup(hass({"barcode_lookup": True}), "4999999999999"))["source"] == "off" and not asked
     try:
-        asyncio.run(barcode.async_lookup(hass({"barcode_lookup": True}), "4999999999999"))
+        asyncio.run(barcode.async_lookup(hass({"barcode_lookup": True, "barcode_providers": ["off"]}), "4999999999999"))
     except RuntimeError:
         pass
     assert asked == [1]
+
+
+def test_barcode_request_identifies_the_app_and_respects_429():
+    """Open * Facts verlangen „AppName/Version (Kontakt)“ als User-Agent; nach „zu viele Anfragen“ macht der Dienst Pause."""
+    import asyncio
+    import types
+
+    from smartlists import barcode
+    from smartlists.const import DOMAIN
+
+    calls = []
+
+    class _Resp:
+        def __init__(self, status, data):
+            self.status, self._data = status, data
+
+        async def json(self, content_type=None):
+            return self._data
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *a):
+            return False
+
+    class _Session:
+        def get(self, url, headers=None, timeout=None):
+            calls.append((url, headers))
+            if "upcitemdb" in url:
+                return _Resp(429, None)
+            return _Resp(200, {"product": {"product_name": "Hafermilch", "brands": "Hofgut", "quantity": "1 l"}})
+
+    barcode.async_get_clientsession = lambda hass: _Session()
+    remembered = {}
+    data = {"version": "4.0.0", "extras": types.SimpleNamespace(barcodes={}, remember_barcode=lambda c, i: remembered.update({c: i})),
+            "learning": types.SimpleNamespace(automation={"barcode_lookup": True, "barcode_providers": ["upcitemdb", "off"]})}
+    hass = types.SimpleNamespace(config=types.SimpleNamespace(language="de-DE"), data={DOMAIN: data})
+    first = asyncio.run(barcode.async_lookup(hass, "4999999999999"))
+    assert first["found"] and first["source"] == "off" and first["name"] == "Hafermilch" and "4999999999999" in remembered
+    assert [h["User-Agent"] for _, h in calls] == ["SmartLists-HomeAssistant/4.0.0 (https://github.com/m3m0rex/ha_smartlists)"] * 2
+    # kein Konto, keine E-Mail: nur der Code (und die Sprache für den Produktnamen) stehen in der Adresse
+    assert "@" not in calls[1][0] + calls[1][1]["User-Agent"] and "product_name_de" in calls[1][0]
+    # UPCitemdb hat 429 gemeldet → beim nächsten Code wird es übersprungen
+    calls.clear()
+    asyncio.run(barcode.async_lookup(hass, "4888888888888"))
+    assert len(calls) == 1 and "openfoodfacts" in calls[0][0]

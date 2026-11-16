@@ -163,7 +163,8 @@ A failing target does not stop the others; *Send test message* shows which one f
 The barcode button next to the input opens the scanner. In the Home Assistant companion app (Android/iOS)
 its own full-screen scanner is used; in a browser the camera (Chrome) or a field to type the number.
 The product name comes from SmartLists' own memory. Online lookup is **off by default**: only when you switch on
-*Look up barcodes online* is the number (nothing else) sent to a lookup service.
+*Look up barcodes online* **and** pick at least one lookup service is the number (nothing else) sent there.
+No service is preselected.
 
 - *For me → Shopping and scanning*: the **target list** (this card's list or any other) and whether a
   scanned product goes into the input field to check or is **added directly**.

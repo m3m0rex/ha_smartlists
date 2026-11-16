@@ -1,7 +1,7 @@
 """Strichcode → Produktname.
 
 Reihenfolge: zuerst der eigene Speicher (schon einmal gefundene Codes), dann die im Haushalt gewählten
-Dienste nacheinander (Einstellung automation["barcode_providers"], Standard: Open Food Facts). Gesendet wird
+Dienste nacheinander (Einstellung automation["barcode_providers"], Standard: keiner). Gesendet wird
 immer nur der Code, ohne Konto. Nur wenn barcode_lookup = True (Standard: aus) – sonst nur eigener Speicher.
 
 Eigener Dienst: automation["barcode_custom_url"] mit {code}, z. B. https://example.org/api/{code}, und
@@ -12,6 +12,7 @@ automation["barcode_custom_field"] = Pfad zum Namen in der JSON-Antwort, z. B. "
 from __future__ import annotations
 
 import logging
+import time
 from typing import Any
 
 from homeassistant.core import HomeAssistant
@@ -21,7 +22,32 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-USER_AGENT = "SmartLists-HomeAssistant/1.0 (https://github.com/m3m0rex/ha_smartlists)"
+# Open Food Facts (und die Schwester-Datenbanken) verlangen einen eigenen User-Agent in der Form
+# „AppName/Version (Kontakt)“ – sonst kann die Abfrage als Bot gesperrt werden. Kontakt ist die Projektseite;
+# es wird bewusst keine E-Mail-Adresse und nichts über den Haushalt mitgesendet.
+CONTACT = "https://github.com/m3m0rex/ha_smartlists"
+USER_AGENT = f"SmartLists-HomeAssistant/1.0 ({CONTACT})"
+# Grenzen der Dienste (frei, ohne Konto): Open * Facts 100 Produkt-Abfragen je Minute, UPCitemdb 100 am Tag und
+# 6 je Minute. Antwortet ein Dienst mit „zu viele Anfragen“ (429), wird er so lange übersprungen.
+PAUSE_SECONDS = {"upcitemdb": 3600}
+PAUSE_DEFAULT = 300
+
+
+async def _version(hass: HomeAssistant) -> str:
+    data = hass.data[DOMAIN]
+    if "version" not in data:
+        try:
+            from homeassistant.loader import async_get_integration
+
+            data["version"] = str((await async_get_integration(hass, DOMAIN)).version or "")
+        except Exception:  # noqa: BLE001 – dann ohne genaue Version
+            data["version"] = ""
+    return data["version"]
+
+
+def user_agent(version: str | None = None) -> str:
+    """User-Agent mit der echten Version der Integration."""
+    return f"SmartLists-HomeAssistant/{version or '1.0'} ({CONTACT})"
 _OFF_FIELDS = "product_name,product_name_{lang},generic_name,brands,quantity"
 PROVIDERS: dict[str, dict[str, str]] = {
     # Familie Open Food Facts: gleiche Schnittstelle, verschiedene Datenbanken
@@ -33,7 +59,8 @@ PROVIDERS: dict[str, dict[str, str]] = {
     "upcitemdb": {"name": "UPCitemdb", "url": "https://api.upcitemdb.com/prod/trial/lookup?upc={code}"},
     "custom": {"name": "custom", "url": ""},
 }
-DEFAULT_PROVIDERS = ["off"]
+# kein Dienst ist vorausgewählt: gefragt wird nur, wen der Haushalt ausdrücklich ausgewählt hat
+DEFAULT_PROVIDERS: list[str] = []
 
 
 def _path(data: Any, path: str) -> Any:
@@ -78,13 +105,22 @@ async def async_lookup(hass: HomeAssistant, code: str) -> dict[str, Any]:
         return {"code": code, "found": False, "source": "off"}
     lang = (hass.config.language or "en").split("-")[0]
     order = [p for p in (settings.get("barcode_providers") or DEFAULT_PROVIDERS) if p in PROVIDERS]
+    if not order:
+        return {"code": code, "found": False, "source": "off"}
     session = async_get_clientsession(hass)
+    headers = {"User-Agent": user_agent(await _version(hass)), "Accept": "application/json"}
+    paused: dict[str, float] = hass.data[DOMAIN].setdefault("barcode_paused", {})
     for provider in order:
         url = settings.get("barcode_custom_url", "") if provider == "custom" else PROVIDERS[provider]["url"]
         if not url or "{code}" not in url or not url.startswith("https://"):
             continue
+        if paused.get(provider, 0) > time.monotonic():
+            continue  # der Dienst hat „zu viele Anfragen“ gemeldet – erst nach der Pause wieder fragen
         try:
-            async with session.get(url.replace("{lang}", lang).replace("{code}", code), headers={"User-Agent": USER_AGENT, "Accept": "application/json"}, timeout=8) as resp:
+            async with session.get(url.replace("{lang}", lang).replace("{code}", code), headers=headers, timeout=8) as resp:
+                if resp.status == 429:
+                    paused[provider] = time.monotonic() + PAUSE_SECONDS.get(provider, PAUSE_DEFAULT)
+                    _LOGGER.warning("SmartLists: Strichcode-Dienst %s meldet zu viele Anfragen – Pause", provider)
                 data = await resp.json(content_type=None) if resp.status == 200 else None
         except Exception as err:  # noqa: BLE001 – offline, Zeitüberschreitung, kein JSON
             _LOGGER.debug("Strichcode-Dienst %s nicht erreichbar: %s", provider, err)

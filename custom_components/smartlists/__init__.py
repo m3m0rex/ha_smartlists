@@ -96,6 +96,7 @@ async def _async_register_card(hass: HomeAssistant) -> None:
         return  # bereits registriert (z.B. Neuladen der Integration)
     hass.http.register_view(ManifestView())
     version = (await async_get_integration(hass, DOMAIN)).version
+    hass.data[DOMAIN]["version"] = str(version)
     hass.data[DOMAIN]["card_url"] = f"{CARD_URL}?v={version}"
     add_extra_js_url(hass, hass.data[DOMAIN]["card_url"])
     add_extra_js_url(hass, f"{DISCOUNTS_URL}?v={version}")

@@ -18,6 +18,7 @@ Fourth pre-release of 4.0.
 
 - **Offers card: tiles run top to bottom** in a grid instead of one row with a sideways scroll bar. The old behaviour
   is still available with `tile_flow: scroll`.
+- **Offers card: 10 offers per store by default** (`max_per_store`, was 12).
 - **Offers card: tidier visual editor.** Only title, list and stores are shown at the top; everything else sits in
   the sections "Appearance", "All offers", "Watch list & notifications" and "Advanced". Options that only do something
   with SmartLists are hidden when SmartLists is not installed.

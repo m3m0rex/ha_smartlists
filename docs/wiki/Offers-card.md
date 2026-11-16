@@ -41,7 +41,7 @@ The card speaks German, English, French, Spanish, Italian and Polish and follows
 | `show_unit_price` | `true` | Unit price (€/kg, €/l) |
 | `show_valid_until` | `true` | "until 21.11." |
 | `hide_without_offer` | `false` | Hide list items without an offer |
-| `max_per_store` | `12` | Offers per store before "all →" |
+| `max_per_store` | `10` | Offers per store before "all →" |
 | `currency` | `EUR` | ISO currency code |
 | `currency_symbol` | – | Own symbol instead of `currency`, e.g. `₺` |
 | `watch` | – | Watch list: fixed products, e.g. `[coffee, Nutella]` |

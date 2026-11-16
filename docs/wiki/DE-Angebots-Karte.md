@@ -44,7 +44,7 @@ von Home Assistant.
 | `show_unit_price` | `true` | Grundpreis (€/kg, €/l) |
 | `show_valid_until` | `true` | „bis 21.11.“ |
 | `hide_without_offer` | `false` | Artikel ohne Angebot ausblenden |
-| `max_per_store` | `12` | Angebote je Markt, bevor „alle →“ erscheint |
+| `max_per_store` | `10` | Angebote je Markt, bevor „alle →“ erscheint |
 | `currency` | `EUR` | ISO-Code der Währung |
 | `currency_symbol` | – | eigenes Symbol statt `currency`, z. B. `₺` |
 | `watch` | – | Merkliste: feste Produkte, z. B. `[Kaffee, Nutella]` |

@@ -289,7 +289,11 @@ icon in the card; admins can change the global settings there as well – both s
 
 ## License
 
-MIT – see [LICENSE](LICENSE). The HA SmartLists Android app is a separate project with its own license.
+MIT – see [LICENSE](LICENSE). The app SmartLists Go is a separate project with its own license.
+
+## Legal notice
+
+[Legal notice (Impressum)](https://ha-smartlists.com/en/legal-notice/) · [Privacy policy](https://ha-smartlists.com/en/privacy/)
 
 ## Structure
 

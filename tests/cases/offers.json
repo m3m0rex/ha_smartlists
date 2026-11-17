@@ -1,0 +1,18 @@
+{
+  "_": "Gemeinsame Fälle für die Angebots-Karte (JavaScript) und die Hintergrund-Prüfung (Python) – beide müssen gleich rechnen.",
+  "matches": [
+    ["Butter", "Landliebe Butter", true],
+    ["Butter", "Butterkeks", false],
+    ["Kaffee", "Melitta Filterkaffee", true],
+    ["Bananen", "Banane Chiquita", true],
+    ["Pizza", "Steinofen Pizza Speciale", true],
+    ["Milch", "Vollmilch 3,5 %", true],
+    ["Milch", "Milchreis", false],
+    ["Pils", "Premium Pils Kasten", true],
+    ["Brot", "Brötchen", false],
+    ["", "Butter", false]
+  ],
+  "num": [
+    ["11,49 €", 11.49], ["1.11 €", 1.11], ["€ 10.98", 10.98], [5.49, 5.49], ["gratis", null], ["", null], ["0,79", 0.79]
+  ]
+}

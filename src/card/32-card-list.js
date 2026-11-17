@@ -388,6 +388,7 @@
       }, a === "delete" ? "danger" : ""))];
       if (!actions.length) body.push(h("div", { class: "empty" }, t.readonly));
       if (d.type !== "notes") body.push(item(ICON.check, t.m_select, () => this._startSelect(it)));
+      body.push(item(ICON.copy, t.m_copy_text, () => { this._closeMenu(); this._copyText([it]); }));
       if (d.type !== "notes") body.push(item(ICON.history, t.ih_title, () => this._openMenu(it, m.row, "history")));
       // 4.0: Produkt merken – SmartLists meldet, wenn es im Angebot ist (Einstellungen → Preise & Währung)
       if (d.type !== "notes" && !this._plain && it.name) body.push(item(ICON.star || ICON.check, t.wl_menu, async () => {

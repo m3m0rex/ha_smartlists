@@ -3,8 +3,10 @@
 🇬🇧 [English version](Offers-card)
 
 `custom:smartdiscounts-card` zeigt die Angebote deiner Supermärkte und gleicht sie mit einer Einkaufsliste ab. Sie ist
-in SmartLists 4.0 enthalten und läuft auch **ohne SmartLists** – dann wird sie aus ihrem
-[eigenen Repository](https://github.com/m3m0rex/ha_smartdiscounts-card) installiert. Dessen
+ein eigenes Projekt mit eigener Versionsnummer und läuft mit und **ohne SmartLists**. Seit SmartLists 4.0.0-beta.7 wird
+sie nicht mehr mitgeliefert: in HACS das [eigene Repository](https://github.com/m3m0rex/ha_smartdiscounts-card) als benutzerdefiniertes
+Repository (Typ *Dashboard*) hinzufügen, „SmartDiscounts Card“ installieren, Browser neu laden. Fehlt sie, obwohl sie auf
+einem Dashboard steht oder eine Merkliste geführt wird, weist SmartLists unter *Einstellungen → Reparaturen* darauf hin. Das
 [deutsches README](https://github.com/m3m0rex/ha_smartdiscounts-card/blob/main/README.de.md) führt jede Option mit
 Beispielen auf.
 
@@ -41,7 +43,6 @@ von Home Assistant.
 | `list_view` | `chips` | „Meine Liste“: `chips` (Preise nebeneinander), `rows` (ein Angebot je Zeile), `compact` (eine Zeile je Artikel) oder `table` (Märkte als Spalten) – in der Karte umschaltbar |
 | `all_view` | `tiles` | „Alle Angebote“ als `tiles` (Kacheln) oder `list` (Liste mit kleinen Bildern) |
 | `show_images` | `true` | Produktbilder |
-| `compact` | `false` | kompakte Zeilen |
 | `show_unit_price` | `true` | Grundpreis (€/kg, €/l) |
 | `show_valid_until` | `true` | „bis 21.11.“ |
 | `hide_without_offer` | `false` | Artikel ohne Angebot ausblenden |
@@ -51,7 +52,9 @@ von Home Assistant.
 | `watch` | – | Merkliste: feste Produkte, z. B. `[Kaffee, Schokocreme]` |
 | `watch_list` | – | Merkliste als To-do-Liste – gilt auf allen Geräten |
 | `notify` | `false` | Benachrichtigung, wenn etwas von der Merkliste neu im Angebot ist |
-| `notify_service` | – | zusätzlich an diesen Dienst senden, z. B. `notify.mobile_app_pixel` |
+| `notify_targets` | – | zusätzlich an diese Ziele senden, z. B. `[notify.mobile_app_pixel]` (mehrere möglich) |
+| `category_map` | – | Markt-Kategorien mit eigenen verknüpfen, z. B. `{ Molkereiprodukte: Kühlung, Store: "" }` |
+| `locked` | – | Ansicht festlegen, die sich in der Karte nicht umschalten lässt: `[list_view, all_view, group_by, add_to]` oder `true` |
 
 ## Eigene Sensoren: alle Felder von `map:`
 

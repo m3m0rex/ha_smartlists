@@ -528,7 +528,7 @@
     };
     // Ziel hinzufügen: Dienst | Entität | eigener Dienst (Admins, z. B. telegram_bot.send_message mit {"target": 123})
     const addTarget = () => {
-      let kind = services.length ? "service" : entities.length ? "entity" : "custom";
+      let kind = "custom";  // Dienste und Entitäten wählt man direkt in der Liste – das Fenster ist nur noch für den eigenen Dienst
       const box = h("div", {});
       const err = h("div", { class: "shelp" });
       const fields = {};
@@ -542,7 +542,7 @@
           h("span", { class: "ni" }, icon), h("span", { class: "nn" }, lab.slice(icon.length).trim(), it.sub ? h("small", {}, it.sub) : null), h("span", { class: "nc" }, on ? "✓" : ""));
       }));
       const drawBox = () => {
-        const tabs = [["service", t.nt_service], ["entity", t.nt_entity], ...(customAllowed ? [["custom", t.nt_custom]] : [])];
+        const tabs = [];
         fields.select = null; fields.id = null; fields.data = null;
         fill(box,
           h("div", { class: "chips", style: "margin-bottom:10px" }, tabs.map(([k, l]) => h("button", { type: "button", class: `chip2 ${kind === k ? "on" : ""}`, onclick: () => { kind = k; drawBox(); } }, l))),
@@ -558,7 +558,7 @@
           h("p", { class: "shelp" }, t.nt_help), err);
       };
       drawBox();
-      const dlg = this._dialog(t.nt_add, box, [
+      const dlg = this._dialog(t.nt_custom, box, [
         h("button", { type: "button", onclick: () => dlg.remove() }, t.cancel),
         h("button", { type: "button", class: "ok", onclick: async () => {
           let target;
@@ -578,16 +578,41 @@
           await save({ targets: [...cur.targets, target] });
         } }, t.nt_add)]);
     };
+    // Auswahl wie die Entitäts-Auswahl von Home Assistant: gewählte Ziele als Zeilen, darunter ein Feld, das eine
+    // durchsuchbare Liste aufklappt (Geräte, Dienste, Entitäten – mit Name und Kennung). Antippen fügt sofort hinzu.
+    let pickOpen = false, pickQ = "";
+    const iconOf = (x) => targetLabel(x).split(" ")[0];
+    const nameOf = (x) => { const l = targetLabel(x); return l.slice(l.split(" ")[0].length).trim(); };
+    const picker = () => {
+      const has = (id) => cur.targets.some((x) => x.id === id);
+      const all = [...services.map((sv) => ({ id: "notify." + sv, kind: "service", dev: sv.startsWith("mobile_app_") })), ...entities.map((e) => ({ id: e.id, kind: "entity" }))].filter((x) => !has(x.id));
+      const list = h("div", { class: "tlist", role: "listbox" });
+      const fillList = () => {
+        const q = pickQ.trim().toLowerCase();
+        const hit = all.filter((x) => !q || `${nameOf(x)} ${x.id}`.toLowerCase().includes(q));
+        const opt = (x) => h("button", { type: "button", class: "topt", role: "option", onclick: () => save({ targets: [...cur.targets, { kind: x.kind, id: x.id }] }) },
+          h("span", { class: "ti" }, iconOf(x)), h("span", { class: "tn" }, nameOf(x), h("small", {}, x.id)), h("span", { "aria-hidden": "true" }, "＋"));
+        const dev = hit.filter((x) => x.dev), rest = hit.filter((x) => !x.dev);
+        fill(list, dev.length ? [h("div", { class: "tgrp" }, t.wl_grp_dev), dev.map(opt)] : null, rest.length ? [h("div", { class: "tgrp" }, t.wl_grp_other), rest.map(opt)] : null,
+          hit.length ? null : h("div", { class: "shelp", style: "padding:10px 14px" }, all.length ? t.wl_none : t.nt_all_added),
+          customAllowed && !q ? h("button", { type: "button", class: "topt", onclick: () => addTarget() }, h("span", { class: "ti" }, "⚙️"), h("span", { class: "tn" }, t.nt_custom + " …", h("small", {}, "script.*, telegram_bot.send_message …"))) : null);
+      };
+      fillList();
+      const search = h("input", { class: "tsearch", type: "search", placeholder: t.wl_search, "aria-label": t.wl_search, value: pickQ });
+      search.addEventListener("input", () => { pickQ = search.value; fillList(); });
+      return h("div", { class: "tpop" }, search, list);
+    };
     const draw = () => {
       const q = cur.quiet;
       fill(body,
         // Ziele: beliebig viele – Companion-App, andere notify-Dienste (Telegram, E-Mail …), notify-Entitäten, eigene Dienste
         h("div", { class: "grp" }, t.notify_to),
-        h("div", { class: "ntiles" }, cur.targets.map((x, i) => {
-          const lab = targetLabel(x), icon = lab.split(" ")[0];
-          return h("div", { class: "ntile on" }, h("span", { class: "ni" }, icon), h("span", { class: "nn" }, lab.slice(icon.length).trim()),
-            iconBtn(ICON.close, t.delete, () => save({ targets: cur.targets.filter((_, j) => j !== i) }), "danger"));
-        }), h("button", { type: "button", class: "ntile add", onclick: () => addTarget() }, h("span", { class: "ni" }, "＋"), h("span", { class: "nn" }, t.nt_add))),
+        h("div", { class: "nrows" }, cur.targets.map((x, i) => h("div", { class: "nrow" }, h("span", { class: "ti" }, iconOf(x)),
+          h("span", { class: "tn" }, nameOf(x), h("small", {}, x.id)),
+          iconBtn(ICON.close, t.delete, () => save({ targets: cur.targets.filter((_, j) => j !== i) })))),
+          h("button", { type: "button", class: `nfield ${pickOpen ? "open" : ""}`, "aria-expanded": String(pickOpen), onclick: () => { pickOpen = !pickOpen; pickQ = ""; draw(); } },
+            h("span", {}, "＋ " + t.nt_add), h("span", { class: "chev", "aria-hidden": "true" }, pickOpen ? "▴" : "▾")),
+          pickOpen ? picker() : null),
         cur.targets.length ? null : h("div", { class: "shelp" }, t.nt_none),
         this._setRow(t.notify_added, this._switch(cur.added, (v) => save({ added: v }), t.notify_added)),
         this._setRow(t.notify_checked, this._switch(cur.checked, (v) => save({ checked: v }), t.notify_checked)),

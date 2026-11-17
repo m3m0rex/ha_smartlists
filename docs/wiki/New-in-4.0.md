@@ -22,7 +22,7 @@ switch on **"Show beta versions"**. The full list is in the
 
 | | |
 |---|---|
-| 🏷️ **Offers card** | `custom:smartdiscounts-card` shows supermarket offers matched with your list – see [[Offers card]]. |
+| 🏷️ **Offers card** | `custom:smartdiscounts-card` shows supermarket offers matched with your list; installed separately through HACS – see [[Offers card]]. |
 | 🏷️ **Offers in the list** | A hint on items that are on offer, and a note when offers on the list have expired – see [[Offers and prices]]. |
 | ⭐ **Watch list** | Products you are waiting to see on offer; Home Assistant reports new offers even with no dashboard open. |
 | 🧾 **Templates** | Quicker to create: suggestions from "bought often", from checked items, pasted text is tidied up. |
@@ -36,4 +36,4 @@ switch on **"Show beta versions"**. The full list is in the
 No. Lists, settings, learned categories and share links are kept. New card options (`show_title`,
 `show_offer_hints`, `shop_finish`) have defaults that match the new design.
 
-If you used a third-party offers card: the bundled card can replace it, but you can also keep both.
+If you used a third-party offers card: the SmartDiscounts card can replace it, but you can also keep both. Since 4.0.0-beta.7 it is installed separately through HACS – see [[Offers card]].

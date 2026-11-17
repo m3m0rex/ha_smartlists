@@ -270,9 +270,7 @@ async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
                 _LOGGER.warning("SmartLists: Sprachbefehle konnten nicht eingerichtet werden", exc_info=True)
             done.append("voice")
         learning.automation["barcode_lookup"] = bool(msg["barcode"])
-        # der Schalter im Assistenten nennt Open Food Facts ausdrücklich – nur dann wird dieser Dienst eingetragen
-        if msg["barcode"] and not learning.automation.get("barcode_providers"):
-            learning.automation["barcode_providers"] = ["off"]
+        # kein Dienst wird dabei eingetragen: welche Datenbank gefragt wird, wählt man selbst in den Einstellungen
         rights = learning.rights()
         rights["share_who"] = "owners" if msg["share_links"] else "admins"
         learning.automation["rights"] = rights

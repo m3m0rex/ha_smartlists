@@ -3,6 +3,88 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.7] – 2026-11-17
+
+Seventh pre-release of 4.0.
+
+### ⚠️ Breaking changes
+
+**The offers card is no longer part of SmartLists.** `custom:smartdiscounts-card` is now a project of its own with its
+own releases: [m3m0rex/ha_smartdiscounts-card](https://github.com/m3m0rex/ha_smartdiscounts-card). After this update the
+card on your dashboard shows "Custom element doesn't exist" and the SmartLists card shows no offer hints until you
+install it:
+
+1. HACS → top right *Custom repositories* → add `https://github.com/m3m0rex/ha_smartdiscounts-card` as *Dashboard*.
+2. Download *SmartDiscounts Card*, then reload the browser (Ctrl+F5).
+
+Your cards and settings are kept. If you use the card on a dashboard or keep a watch list, SmartLists reminds you under
+*Settings → Repairs* until the card is installed; the watch-list section and the setup wizard show the same hint. The
+background check of the watch list and its notifications keep working without the card.
+
+Why: the card can now be updated without a new SmartLists release, and SmartLists releases no longer change it.
+
+Three options of the offers card (`custom:smartdiscounts-card`) existed twice and were removed. The old spelling is
+ignored from now on – if your card uses one of them, change it once:
+
+| Removed | Use instead |
+| --- | --- |
+| `show_list_tab: false` | `tabs: [all, watch]` – list the tabs you want, in the order you want |
+| `notify_service: notify.mobile_app_x` | `notify_targets: [notify.mobile_app_x]` |
+| `compact: true` | `list_view: compact` |
+
+Cards set up with the visual editor: open the card once and choose the tabs and the notification targets again. Also
+new: each offers card remembers its own view, so after the update every card starts once with the view set in the
+editor.
+
+### Added
+
+- **"Copy as text"** in the menu of an item (long press) and in "Select several": puts the item or the selected items
+  on the clipboard as readable text ("2× Milk 1 l – note", one per line) to paste into a message.
+- **Offers card: fix the look.** `locked` lists what can no longer be switched inside the card – the view of "My list"
+  (`list_view`), tiles/list (`all_view`) and store/category (`group_by`) of "All offers", and the target list
+  (`add_to`). The button disappears and the value from the configuration applies instead of the choice the browser
+  remembered. In the visual editor under *Look*; `locked: true` fixes everything. Default: everything stays switchable.
+- **Offers card with a combined list: everyone picks where new items go.** With SmartLists installed and a combined
+  list, the card shows "New items go to" with your own source lists (the ones that belong to you and that you may add
+  to). The choice is remembered per user and browser, so several people can share one dashboard; `add_to` stays the
+  default for those who have not chosen. Together with `mine_only: true` the card then only looks at your items and
+  adds to your list.
+
+- **Offers card: link store categories by clicking.** The visual editor lists every category the sensors currently
+  report, with a field for the name you want (suggestions: the SmartLists categories) and a ∅ button for "does not count
+  as a category".
+
+- **Translations are one file per language** (`src/lang/card/*.json`, `src/lang/discounts/*.json`), so a text can be
+  corrected or a language added with a small pull request – see `src/lang/README.md`. Entries a language does not have
+  yet are shown in English. A new language file is picked up by the cards automatically.
+
+### Changed
+
+- **Offers card: the remembered view belongs to the card, not to the browser.** Two offers cards on one dashboard (for
+  example "only REWE" and "only ALDI") no longer change each other's view when you switch one of them.
+- **The offers card is built from parts** (`src/discounts/`) like the SmartLists card, and the matching of items and
+  offers is tested with the same cases in the card (JavaScript) and in the background check (Python).
+- **Notifications: targets are picked like entities in Home Assistant.** The chosen targets are listed as rows with name
+  and id; "Add target" opens a searchable list of devices, services and notify entities right in the settings, and a tap
+  adds one. The window with three tabs and tiles is gone; "Custom service" (admins) is the last entry of the list.
+- **Setup wizard tidied up.** The check boxes for the lists were drawn as large blue circles, the close button had a
+  border and sat off-centre (and over the progress bar on a smartphone), and the choices were written in the accent
+  colour – a general button style was overriding the wizard's own. The title also read "Watch list" instead of "Set up
+  SmartLists".
+- **The barcode switch in the setup wizard no longer selects Open Food Facts.** It only switches the lookup on; which
+  service is asked is always your own choice under Settings → Global. Texts now say that the language is sent along
+  with the number.
+- **Offers card: searching no longer redraws the whole card on every key press.** Only the results below the search
+  field are replaced, after a short pause.
+- **Offers card: store categories that say nothing about the product no longer count.** Some sensors only report the
+  sales channel ("Store", "Online" – Lidl) or a headline ("Top-Angebote …"). Such offers now get their category from
+  SmartLists, also with `category_source: store`; without SmartLists they land under "Other" instead of a group called
+  "Store".
+- **Offers card: link store categories to your own** with `category_map`, e.g.
+  `category_map: { Molkereiprodukte: Kühlung, Tiefkühlkost: Tiefkühl, Aktion: "" }` – the left side is the category the
+  store reports, the right side the name you want (for example a SmartLists category); an empty value means "no
+  category".
+
 ## [4.0.0-beta.6] – 2026-11-16
 
 Sixth pre-release of 4.0.

@@ -3,8 +3,11 @@
 🇩🇪 [Deutsche Fassung](DE-Angebots-Karte)
 
 `custom:smartdiscounts-card` shows the offers of your supermarkets and matches them with a shopping list. It is
-included in SmartLists 4.0 and also runs **without SmartLists** – then it is installed from its
-[own repository](https://github.com/m3m0rex/ha_smartdiscounts-card), whose README lists every option with examples.
+a project of its own with its own version number and runs with and **without SmartLists**. Since SmartLists 4.0.0-beta.7
+it is no longer shipped with SmartLists: add its [own repository](https://github.com/m3m0rex/ha_smartdiscounts-card) to HACS as a custom
+repository (type *Dashboard*), install "SmartDiscounts Card" and reload the browser. When it is missing although a
+dashboard uses it or a watch list is kept, SmartLists says so under *Settings → Repairs*. The README there lists every
+option with examples.
 
 ## What you need
 
@@ -38,7 +41,6 @@ The card speaks German, English, French, Spanish, Italian and Polish and follows
 | `list_view` | `chips` | "My list": `chips` (prices side by side), `rows` (one offer per row), `compact` (one line per item) or `table` (stores as columns) – switchable in the card |
 | `all_view` | `tiles` | "All offers" as `tiles` or as a `list` with small images |
 | `show_images` | `true` | Product images |
-| `compact` | `false` | Compact rows |
 | `show_unit_price` | `true` | Unit price (€/kg, €/l) |
 | `show_valid_until` | `true` | "until 21.11." |
 | `hide_without_offer` | `false` | Hide list items without an offer |
@@ -48,7 +50,9 @@ The card speaks German, English, French, Spanish, Italian and Polish and follows
 | `watch` | – | Watch list: fixed products, e.g. `[coffee, chocolate spread]` |
 | `watch_list` | – | Watch list as a to-do list – the same on all devices |
 | `notify` | `false` | Home Assistant notification when a watched product is newly on offer |
-| `notify_service` | – | Also send it to this service, e.g. `notify.mobile_app_pixel` |
+| `notify_targets` | – | Also send to these targets, e.g. `[notify.mobile_app_pixel]` (several possible) |
+| `category_map` | – | Link store categories to your own, e.g. `{ Dairy: Chilled, Store: "" }` |
+| `locked` | – | Fix a view so it cannot be switched inside the card: `[list_view, all_view, group_by, add_to]` or `true` |
 
 ## Your own sensors: all fields of `map:`
 

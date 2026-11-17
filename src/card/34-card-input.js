@@ -653,7 +653,23 @@
       d.permissions.toggle ? btn("✓ " + t.sel_check, () => this._selCheck(items)) : null,
       canDel && canAdd ? btn(t.m_move, () => this._selMove(items, false)) : null,
       canAdd ? btn(t.m_copy, () => this._selMove(items, true)) : null,
+      btn(t.m_copy_text, () => this._copyText(items)),
       canDel ? btn(t.delete, () => this._selDelete(items), "danger") : null);
+  }
+  // Artikel als lesbaren Text in die Zwischenablage (zum Weiterschicken): „2× Milch 1 l – Notiz“, mehrere je Zeile
+  async _copyText(items) {
+    if (!items.length) return;
+    const line = (it) => [countOf(it), showName(it.name) || it.text, sizeOf(it)].filter(Boolean).join(" ") + (it.note ? ` – ${it.note}` : "");
+    const text = items.length > 1 ? items.map((it) => `• ${line(it)}`).join("\n") : line(items[0]);
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      // ohne https gibt es navigator.clipboard nicht – dann über ein unsichtbares Textfeld
+      try {
+        const ta = h("textarea", { style: "position:fixed;left:-999px;top:0;opacity:0", "aria-hidden": "true" });
+        ta.value = text; this.shadowRoot.append(ta); ta.select(); ok = document.execCommand("copy"); ta.remove();
+      } catch (e2) { ok = false; }
+    }
+    this._toast(ok ? `✓ ${this._t.copied_text}` : this._t.copy_failed);
   }
   async _selDelete(items) {
     const t = this._t;

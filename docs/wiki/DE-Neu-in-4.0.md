@@ -24,7 +24,7 @@ herunterladen* und **„Beta-Versionen anzeigen“** einschalten. Die vollständ
 
 | | |
 |---|---|
-| 🏷️ **Angebots-Karte** | `custom:smartdiscounts-card` zeigt Supermarkt-Angebote, abgeglichen mit deiner Liste – siehe [Angebots-Karte](DE-Angebots-Karte). |
+| 🏷️ **Angebots-Karte** | `custom:smartdiscounts-card` zeigt Supermarkt-Angebote, abgeglichen mit deiner Liste; eigene Installation über HACS – siehe [Angebots-Karte](DE-Angebots-Karte). |
 | 🏷️ **Angebote in der Liste** | Hinweis an Artikeln, die im Angebot sind, und eine Meldung bei abgelaufenen Angeboten – siehe [Angebote und Preise](DE-Angebote-und-Preise). |
 | ⭐ **Merkliste** | Produkte, bei denen du auf ein Angebot wartest; Home Assistant meldet neue Angebote auch ohne geöffnetes Dashboard. |
 | 💱 **Währung** | Währung des Haushalts wählbar, auch ein eigenes Symbol. |
@@ -38,5 +38,5 @@ herunterladen* und **„Beta-Versionen anzeigen“** einschalten. Die vollständ
 Nein. Listen, Einstellungen, gelernte Kategorien und Teilen-Links bleiben erhalten. Neue Optionen der Karte
 (`show_title`, `show_offer_hints`, `shop_finish`) haben Standardwerte, die zum neuen Design passen.
 
-Wenn du bisher eine andere Angebots-Karte genutzt hast: Die mitgelieferte kann sie ersetzen, du kannst aber auch beide
-behalten.
+Wenn du bisher eine andere Angebots-Karte genutzt hast: Die SmartDiscounts-Karte kann sie ersetzen, du kannst aber auch beide
+behalten. Sie wird seit 4.0.0-beta.7 getrennt über HACS installiert – siehe [Angebots-Karte](DE-Angebots-Karte).

@@ -408,6 +408,7 @@
             services.map((sv) => h("option", { value: sv, selected: S.notify === sv }, sv.replace(/^mobile_app_/, "").replace(/_/g, " ")))) : null),
         row(t.w_x_voice, t.w_x_voice_sub, this._switch(S.voice, (v) => { S.voice = v; }, t.w_x_voice)),
         row(t.w_x_prices, t.w_x_prices_sub, this._switch(S.prices, (v) => { S.prices = v; }, t.w_x_prices)),
+        this._discountsNote(),
         row(t.w_x_barcode, t.w_x_barcode_sub, this._switch(S.barcode, (v) => { S.barcode = v; }, t.w_x_barcode)),
         row(t.w_x_share, t.w_x_share_sub, this._switch(S.share, (v) => { S.share = v; }, t.w_x_share)),
         h("div", { class: "grp" }, t.w_x_optional),
@@ -460,14 +461,14 @@
     };
     const back = h("div", { class: "dlg-back wiz-back" },
       h("style", {}, DIALOG_STYLE + STYLE + WIZARD_STYLE),
-      h("div", { class: "dlg wiz", role: "dialog", "aria-modal": "true", "aria-label": t.wl_title },
-        h("aside", { class: "wside" }, h("h1", {}, t.wl_title), h("p", { class: "m small" }, t.w_time), stepsEl),
+      h("div", { class: "dlg wiz", role: "dialog", "aria-modal": "true", "aria-label": t.w_title },
+        h("aside", { class: "wside" }, h("h1", {}, t.w_title), h("p", { class: "m small" }, t.w_time), stepsEl),
         h("div", { class: "wpane" }, barEl, body,
           h("div", { class: "wfoot" }, prev, h("span", { class: "m small wl" }, t.w_later), h("span", { class: "grow" }), status, skip, next)),
         h("button", { type: "button", class: "wx", "aria-label": t.w_close, title: t.w_close, onclick: async () => {
           try { await this._call("setup", { skip: true }, false); } catch (e) { slWarn("setup", e); }
           close();
-        } }, "✕")));
+        } }, svg(ICON.close, 20))));
     this.shadowRoot.append(back);
     draw();
   }
@@ -803,7 +804,16 @@
         w.notify ? targets : null, h("div", { class: "srow" }, status));
     };
     this._call("watch", {}, false).then(draw).catch((e) => { slWarn("watch", e); fill(box, h("div", { class: "shelp" }, t.error)); });
-    return this._sec("", "⭐ " + t.wl_title, t.wl_help, [box]);
+    return this._sec("", "⭐ " + t.wl_title, t.wl_help, [this._discountsNote(), box]);
+  }
+  // Die Angebots-Karte ist ein eigenes Projekt (HACS). Fehlt sie, gibt es keine Angebots-Hinweise in der Liste und
+  // keine Karte fürs Dashboard – dann hier sagen, wo man sie bekommt. Die Merkliste selbst funktioniert auch ohne.
+  _discountsNote() {
+    if (window.SmartDiscounts || customElements.get("smartdiscounts-card")) return null;
+    const t = this._t, url = "https://github.com/m3m0rex/ha_smartdiscounts-card";
+    return h("div", { class: "shelp", role: "note", style: "margin:6px 0 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--warning-color,#f0a020)" },
+      h("b", {}, t.dc_missing), h("br"), t.dc_missing_sub, " ",
+      h("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, "SmartDiscounts Card"));
   }
   _appearanceSection() {
     const t = this._t;

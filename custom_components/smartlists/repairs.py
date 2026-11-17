@@ -80,6 +80,10 @@ def async_setup_checks(hass: HomeAssistant, entry: ConfigEntry) -> Any:
     @callback
     def _run(_now: Any) -> None:
         async_check(hass, entry)
+        # Angebots-Karte: wird sie benutzt, ist aber nicht (mehr) installiert? (liest Dateien → eigene Aufgabe)
+        from .discounts_card import async_check as async_check_discounts_card
+
+        hass.async_create_task(async_check_discounts_card(hass))
 
     cancel_first = async_call_later(hass, 90, _run)
     cancel_hourly = async_track_time_interval(hass, _run, timedelta(hours=1))

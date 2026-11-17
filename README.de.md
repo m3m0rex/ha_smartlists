@@ -34,7 +34,7 @@ Zum Ausprobieren ohne Installation: Auf [ha-smartlists.com](https://ha-smartlist
 ## Neu in 4.0 (Beta)
 
 - **Neues Listen-Design:** Anzahl und Größe fest markiert, getönte Kategorien zum Einklappen, Badges unter dem Namen.
-- **Angebots-Karte `custom:smartdiscounts-card`:** Supermarkt-Angebote, abgeglichen mit deiner Liste, mit Merkliste und Benachrichtigung – auch [einzeln installierbar](https://github.com/m3m0rex/ha_smartdiscounts-card).
+- **Angebots-Karte `custom:smartdiscounts-card`:** Supermarkt-Angebote, abgeglichen mit deiner Liste, mit Merkliste und Benachrichtigung. Sie gehört seit 4.0.0-beta.7 nicht mehr zu SmartLists und wird über HACS aus ihrem [eigenen Repository](https://github.com/m3m0rex/ha_smartdiscounts-card) installiert (Typ *Dashboard*); fehlt sie, weist SmartLists unter *Einstellungen → Reparaturen* darauf hin.
 - **Angebote in der Einkaufsliste:** Hinweis 🏷️ am Artikel, abgelaufene Angebote mit einem Tipp entfernen.
 - **Preise:** Währung wählbar (auch eigenes Symbol), Preis-Verlauf je Artikel, automatisches Eintragen abschaltbar.
 - **Merkliste:** Produkte merken und benachrichtigt werden, sobald sie im Angebot sind – auch ohne geöffnetes Dashboard.

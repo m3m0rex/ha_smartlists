@@ -525,6 +525,10 @@
           "failed": "Übernehmen fehlgeschlagen: {error}"
         }
       }
+    },
+    "discounts_card_missing": {
+      "title": "Die Angebots-Karte muss neu installiert werden",
+      "description": "Die **SmartDiscounts Card** (`custom:smartdiscounts-card`) ist seit SmartLists 4.0 ein eigenes Projekt und wird nicht mehr mitgeliefert. Du benutzt sie auf einem Dashboard oder führst eine Merkliste.\n\nSo geht es weiter:\n1. HACS öffnen → oben rechts **Benutzerdefinierte Repositories** → `{url}` als **Dashboard** hinzufügen.\n2. **SmartDiscounts Card** herunterladen.\n3. Den Browser neu laden (Strg+F5).\n\nDeine Karten und Einstellungen bleiben erhalten. Die Hintergrund-Prüfung der Merkliste läuft unabhängig davon weiter."
     }
   }
 }

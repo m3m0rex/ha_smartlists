@@ -34,7 +34,7 @@ To try it without installing: on [ha-smartlists.com](https://ha-smartlists.com/)
 ## New in 4.0 (beta)
 
 - **New list design:** count and size clearly marked, tinted categories that collapse, badges below the name.
-- **Offers card `custom:smartdiscounts-card`:** supermarket offers matched with your list, with a watch list and notifications – also [available on its own](https://github.com/m3m0rex/ha_smartdiscounts-card).
+- **Offers card `custom:smartdiscounts-card`:** supermarket offers matched with your list, with a watch list and notifications. Since 4.0.0-beta.7 it is no longer part of SmartLists and is installed through HACS from its [own repository](https://github.com/m3m0rex/ha_smartdiscounts-card) (type *Dashboard*); when it is missing, SmartLists says so under *Settings → Repairs*.
 - **Offers in the shopping list:** a 🏷️ hint on the item, expired offers removed with one tap.
 - **Prices:** choose your currency (or your own symbol), price history per item, automatic fill-in can be switched off.
 - **Watch list:** watch products and get notified as soon as they are on offer – even with no dashboard open.

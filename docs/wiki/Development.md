@@ -10,8 +10,9 @@ python scripts/build_card.py          # build
 python scripts/build_card.py --check  # fail if the built file is out of date
 ```
 
-Texts for all six languages live in `src/card/05-texts.js`. The offers card is a single file,
-`custom_components/smartlists/www/smartdiscounts-card.js`, without dependencies on SmartLists.
+Texts live in one file per language under `src/lang/card/` (`de.json` is the reference, `en.json` the fallback); a new
+file there is picked up by the build. The offers card is a project of its own in the repository
+`ha_smartdiscounts-card` and is no longer part of this one.
 
 ## Tests
 
@@ -26,8 +27,7 @@ Tests of the cards' pure functions need Node.js and are skipped without it.
 ## Releases
 
 A push to `main` with a new version in `manifest.json` creates the tag and the GitHub release. Versions with a
-hyphen (`4.0.0-beta.1`) become **pre-releases**: HACS only offers them with "Show beta versions". The offers card is
-copied to the repository `ha_smartdiscounts-card` with every release.
+hyphen (`4.0.0-beta.1`) become **pre-releases**: HACS only offers them with "Show beta versions".
 
 ## Interface for the app
 

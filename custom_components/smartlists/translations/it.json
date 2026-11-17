@@ -525,6 +525,10 @@
           "failed": "Trasferimento non riuscito: {error}"
         }
       }
+    },
+    "discounts_card_missing": {
+      "title": "La scheda delle offerte va reinstallata",
+      "description": "La **SmartDiscounts Card** (`custom:smartdiscounts-card`) è un progetto a sé da SmartLists 4.0 e non è più inclusa nell'integrazione. La usi in una dashboard o tieni una lista da tenere d'occhio.\n\nCosa fare:\n1. Apri HACS → in alto a destra **Repository personalizzati** → aggiungi `{url}` come **Dashboard**.\n2. Scarica **SmartDiscounts Card**.\n3. Ricarica il browser (Ctrl+F5).\n\nLe tue schede e impostazioni restano. Il controllo in background della lista continua a funzionare."
     }
   }
 }

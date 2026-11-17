@@ -525,6 +525,10 @@
           "failed": "Przeniesienie nie powiodło się: {error}"
         }
       }
+    },
+    "discounts_card_missing": {
+      "title": "Kartę promocji trzeba zainstalować ponownie",
+      "description": "**SmartDiscounts Card** (`custom:smartdiscounts-card`) jest od SmartLists 4.0 osobnym projektem i nie jest już dostarczana z integracją. Używasz jej na pulpicie lub prowadzisz listę obserwowanych.\n\nCo zrobić:\n1. Otwórz HACS → w prawym górnym rogu **Niestandardowe repozytoria** → dodaj `{url}` jako **Pulpit**.\n2. Pobierz **SmartDiscounts Card**.\n3. Odśwież przeglądarkę (Ctrl+F5).\n\nTwoje karty i ustawienia zostają. Sprawdzanie listy obserwowanych w tle działa dalej."
     }
   }
 }

@@ -62,7 +62,7 @@ function offLoad(key, fallback) { try { const v = localStorage.getItem(key); ret
 function offSave(key, value) { try { if (value == null || (Array.isArray(value) && !value.length)) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* voll */ } }
 
 /* Sprache der SmartLists-Oberfläche: eigene Wahl (Für mich → Sprache, auf dem Gerät gemerkt) oder die von Home Assistant */
-const SL_LANGS = ["de", "en", "fr", "es", "it", "pl"];
+const SL_LANGS = Object.keys(TEXTS);  // jede Sprachdatei in src/lang/card/ ist wählbar
 function slLang(hass) {
   try { const v = localStorage.getItem("smartlists-ui-lang"); if (v && SL_LANGS.includes(v)) return v; } catch (e) { /* */ }
   const l = ((hass && hass.language) || "en").slice(0, 2);

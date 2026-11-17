@@ -1,6 +1,6 @@
 """Angebote aus den Angebots-Sensoren lesen und mit der Merkliste abgleichen.
 
-Gleiche Regeln wie die Karte www/smartdiscounts-card.js (Felder, Preise, Treffer „ganzes Wort“) – hier in Python,
+Gleiche Regeln wie die SmartDiscounts-Karte (eigenes Repository ha_smartdiscounts-card) (Felder, Preise, Treffer „ganzes Wort“) – hier in Python,
 damit Home Assistant auch ohne geöffnetes Dashboard melden kann, wenn etwas von der Merkliste im Angebot ist.
 """
 

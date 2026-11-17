@@ -25,6 +25,10 @@ FIELDS: dict[str, tuple[str, ...]] = {
     "price": ("price", "new_price", "discount_price", "offer_price", "sale_price", "price_euro", "current_price"),
     "until": ("valid_until", "end_date", "valid_to", "until"),
     "store": ("store", "market", "retailer", "advertiser"),
+    # optional – for the offers view of the app (category sections, old price, price per unit)
+    "old": ("old_price", "regular_price", "original_price", "price_before", "was_price", "uvp"),
+    "unit": ("price_per_unit", "base_price", "unit_price", "grundpreis"),
+    "category": ("category", "categories", "group"),
 }
 STORES = (("rewe", "REWE"), ("edeka", "EDEKA"), ("lidl", "Lidl"), ("aldi", "ALDI"), ("norma", "Norma"), ("penny", "Penny"),
           ("kaufland", "Kaufland"), ("netto", "Netto"), ("rossmann", "Rossmann"), ("globus", "Globus"))
@@ -134,6 +138,15 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
             if until and re.fullmatch(r"\d{4}-\d\d-\d\d", until) and until < today:
                 continue
             offer = {"name": str(name), "price": price, "until": until, "store": str(pick(row, "store") or label)}
+            old, unit, cat = num(pick(row, "old")), pick(row, "unit"), pick(row, "category")
+            if isinstance(cat, (list, tuple)):
+                cat = cat[0] if cat else None
+            if old is not None and old > price:
+                offer["old"] = old
+            if isinstance(unit, (str, int, float)) and str(unit).strip():
+                offer["unit"] = str(unit).strip()[:40]
+            if isinstance(cat, str) and cat.strip():
+                offer["category"] = cat.strip()[:60]
             # the same offer from two sensors (e.g. two integrations for one store) counts once
             key = (norm(offer["store"]), norm(offer["name"]), price, until)
             if key in seen:

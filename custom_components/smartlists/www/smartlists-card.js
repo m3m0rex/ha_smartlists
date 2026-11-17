@@ -963,10 +963,14 @@ const STYLE = `
   .iname .fav { color:#e3a008; }
   .chip.due { background:color-mix(in srgb, var(--primary-color,#03a9f4) 14%, transparent); color:var(--primary-text-color); }
   .chip.due.today { background:color-mix(in srgb, #f0b429 20%, transparent); color:#c98a00; font-weight:600; }
-  .row.d-over { background:color-mix(in srgb, var(--error-color,#db4437) 13%, transparent); }
-  .row.d-today { background:color-mix(in srgb, #f0b429 12%, transparent); }
-  .row.d-over:hover { background:color-mix(in srgb, var(--error-color,#db4437) 20%, transparent); }
-  .row.d-today:hover { background:color-mix(in srgb, #f0b429 19%, transparent); }
+  /* fällig: ein abgerundetes Feld in der Breite der Abschnitts-Überschrift, nicht die Zeile von Rand zu Rand –
+     der Inhalt der Zeile bleibt dabei, wo er in ungefärbten Zeilen steht */
+  .row.d-over, .row.d-today { position:relative; isolation:isolate; background:none; }
+  .row.d-over::before, .row.d-today::before { content:""; position:absolute; inset:1px 10px; border-radius:10px; z-index:-1; pointer-events:none; }
+  .row.d-over::before { background:color-mix(in srgb, var(--error-color,#db4437) 13%, transparent); }
+  .row.d-today::before { background:color-mix(in srgb, #f0b429 12%, transparent); }
+  .row.d-over:hover::before { background:color-mix(in srgb, var(--error-color,#db4437) 20%, transparent); }
+  .row.d-today:hover::before { background:color-mix(in srgb, #f0b429 19%, transparent); }
   .group-title.bar.duehead { --cc: var(--error-color,#db4437); }
   .duebox select { font:inherit; padding:8px 10px; border-radius:8px; border:1px solid var(--divider-color,#ccc); background:var(--card-background-color,#fff); color:var(--primary-text-color); min-height:40px; max-width:60%; }
   .chip.due.over { background:color-mix(in srgb, var(--error-color,#db4437) 18%, transparent); color:var(--error-color,#db4437); font-weight:600; }

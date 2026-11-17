@@ -11,9 +11,12 @@ real `todo.*` entity, so the companion app's To-do list widget can show it – s
 [Card](Card#home-screen-widgets). The sidebar page can also be saved as an **app icon** on the home screen
 (see [[Sidebar page]]).
 
-**New in 4.0 (beta):** a new list design, the offers card `custom:smartdiscounts-card`, offers and expired offers
-right in the shopping list, a selectable currency, a price history and editable share links – see
-[[New in 4.0]] and the [changelog](https://github.com/m3m0rex/ha_smartlists/blob/main/CHANGELOG.md).
+**New in 3.9:** share links through a Quick Tunnel or your own proxy (your HA address stays private), optional
+extras (notes, meal plan), tap the whole row in shopping mode with 3 s undo, app icon for the home screen,
+suggestions per list, **plain lists** that remember nothing, categories off per list, app lists to take over
+under *Repairs*, offline shopping, Template widget text, Cloudflare Tunnel with a fixed address, a new share window
+with password, notes and "Who may do what?", a shared page with search, sorting and offers, long press deletes in
+shopping mode, statistics reset, a dashboard with one sub-page per list and a tidier toolbar. See the [changelog](https://github.com/m3m0rex/ha_smartlists/blob/main/CHANGELOG.md).
 
 > ℹ️ **The HA SmartLists Android app is not published yet.** SmartLists works fully without it (Home Assistant,
 > card, sidebar page, official Home Assistant app and widgets). Pages and sections about the app – pairing,
@@ -21,7 +24,6 @@ right in the shopping list, a selectable currency, a price history and editable 
 
 ## Pages
 
-- [[New in 4.0]] – for everyone coming from 3.9
 - [[Installation]]
 - [[Setup]] – setup assistant, combined lists, start from scratch
 - [[Settings]] – general settings, settings per list, permissions
@@ -33,10 +35,7 @@ right in the shopping list, a selectable currency, a price history and editable 
 - [[Automations and voice]] – "I'm at the store", store reminder, Assist, due items
 - [[App pairing and devices]] – for the HA SmartLists app (not published yet)
 - [[Shopping helpers]] – aisle order, prices, templates, share via link (tunnel/proxy), meal plan, notifications
-- [[Offers card]] – `custom:smartdiscounts-card`, all options, own sensors, watch list
-- [[Offers and prices]] – where a price comes from, currency, price history, expired offers
 - [[Troubleshooting]]
-- [[Development]] – building the card, tests, releases, structure
 
 🌐 Website: [ha-smartlists.com](https://ha-smartlists.com/) – overview of the integration and the Android app.
 

@@ -18,7 +18,8 @@ Ninth pre-release of 4.0.
 - **Due items stand out.** Overdue items and those due today are in a section "Due" at the very top, with a red or
   yellow background; later ones show "tomorrow" or the weekday and date.
 - **Add to calendar.** "Due on" has "Add to calendar" for calendars of Home Assistant that accept new events. The
-  event follows a changed date and is removed together with the item (where the calendar allows deleting).
+  event follows a changed date and is removed when the item is ticked or deleted (where the calendar allows
+  deleting); re-opening the item enters it again.
 - **For the app.** New commands `smartlists/set_item_marks` and `smartlists/offers`; every item in `get_list` has
   `favorite`, `due`, `remind` and `overdue`. `docs/app-api.md` describes sign-in, sync, offers and the app backup.
 

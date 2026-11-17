@@ -94,3 +94,30 @@ def test_calendar_event_data():
         "start_date_time": "2026-11-20 18:00:00", "end_date_time": "2026-11-20 18:30:00"}
     assert event_data("Milch", "2026-11-30") == {"summary": "Milch", "description": "SmartLists",
                                                  "start_date": "2026-11-30", "end_date": "2026-12-01"}
+
+
+def test_calendar_follows_ticking(monkeypatch):
+    """Abgehakt → Termin weg (gemerkt als „off“), wieder geöffnet → wieder eingetragen."""
+    from smartlists import calendar_sync
+
+    calls = []
+
+    async def fake_remove(hass, cal):
+        calls.append(("remove", cal["entity"]))
+        return True
+
+    async def fake_add(hass, entity, summary, due, list_name=""):
+        calls.append(("add", entity, summary, due))
+        return {"entity": entity, "due": due, "summary": summary, "list": list_name}
+
+    monkeypatch.setattr(calendar_sync, "async_remove", fake_remove)
+    monkeypatch.setattr(calendar_sync, "async_add", fake_add)
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20"})
+    e.set_item_mark("todo.a", "u1", {"cal": {"entity": "calendar.x", "due": "2026-11-20", "summary": "Milch", "list": "A"}})
+    asyncio.run(calendar_sync.async_follow(None, e, "todo.a", "u1", True))
+    assert e.item_mark("todo.a", "u1")["cal"]["off"] is True
+    asyncio.run(calendar_sync.async_follow(None, e, "todo.a", "u1", True))  # schon entfernt: nichts mehr
+    asyncio.run(calendar_sync.async_follow(None, e, "todo.a", "u1", False))
+    assert "off" not in e.item_mark("todo.a", "u1")["cal"]
+    assert calls == [("remove", "calendar.x"), ("add", "calendar.x", "Milch", "2026-11-20")]

@@ -420,6 +420,9 @@ async def _book(hass: HomeAssistant, entity_id: str, uid: str, checked: bool, co
     _, offer, _ = split_offer(current.get("note"))
     store = next((t["value"] for t in item.tags if t["kind"] == "store"), None) or (offer or {}).get("store")
     extras.mark_checked(entity_id, uid, checked)
+    from .calendar_sync import async_follow
+
+    await async_follow(hass, extras, entity_id, uid, checked)
     if checked:
         offer_price = offer.get("price") if offer else None
         qty = (item.quantity or 1) * (item.pack_count or 1)

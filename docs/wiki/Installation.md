@@ -23,13 +23,3 @@ and add the integration as above.
 Update in HACS, restart Home Assistant and reload the browser page (Ctrl+F5). In the Companion app:
 *Settings → Companion app → Troubleshooting → Reset frontend cache*. The card's gear menu shows the
 installed versions.
-
-## Good to know
-
-- Combined lists cannot be nested (protection against loops).
-- In "this combined list only" mode the local checkmarks are stored in Home Assistant
-  (`.storage/smartlists.<id>`) and removed together with the integration.
-- Items without a unique ID (very old integrations) are skipped.
-- Requires Home Assistant 2025.3 or newer (sub-entries for the lists).
-- The user interface (card, sidebar page, setup dialogs, Assist sentences) is available in German, English,
-  French, Spanish, Italian and Polish. Category names follow the Home Assistant language.

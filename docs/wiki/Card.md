@@ -173,6 +173,11 @@ layout: columns
   and Enter pick suggestions; tap the category chip to change it (remembered for similar items).
 - **Long press** (or right click / double click, see the gear menu) opens the item menu: edit, move,
   copy, change category, delete, **select**.
+- **Favourite**: *Favourite – move to the top* in the item menu. Favourites carry a ★ and stand first, in every
+  sort order and within their category.
+- **Due on**: in the item menu – a date, optionally a time, *Remind me when it is due* and *Add to calendar*.
+  Overdue items (red) and those due today (yellow) are in a section **Due** at the very top; later ones show
+  "tomorrow" or weekday and date. See [[Shopping helpers]] → *Due dates, reminders and calendar*.
 - **Select several**: *Select* in the item menu or *⋯ → Select several*. Tap rows to mark them; the bar at the
   top moves, copies, checks off or deletes all marked items at once (*All* / *None*, ✕ ends it). ↶ undoes it.
 - **Price in the text**: `Milk 2 l 1,19€ @REWE` – the price (anywhere in the text, also `€1.19` or

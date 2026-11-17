@@ -158,19 +158,34 @@ notification permission; failed messages are logged in *Settings → System → 
 
 A failing target does not stop the others; *Send test message* shows which one failed.
 
+## Due dates, reminders and calendar
+
+Item menu → **Due on**. Everyone who may tick items on a list may set this.
+
+- **Date and time**: the time is optional; without one the item counts as due from 09:00.
+- **Remind me when it is due**: Home Assistant sends one message when the time has come – to the notification
+  targets of whoever switched the reminder on (*General settings → For me → Notifications → Send to*). Without
+  targets a notification appears in Home Assistant. Ticked or deleted items are not reminded; a changed date
+  reminds again.
+- **Add to calendar**: enters the item in a Home Assistant calendar that accepts new events (for example *Local
+  calendar*). With a time the event lasts 30 minutes, without one it is an all-day event. With several calendars
+  you choose one; the choice is remembered on the device. The event moves with a changed date and is removed when
+  the item is ticked or deleted; re-opening the item enters it again. Removing only works for calendars that allow
+  deleting events – the local calendar does, for others the old event stays.
+- In a combined list favourites and due dates are stored with the source list, so they are the same everywhere
+  the item appears.
+
 ## Barcode scan
 
 The barcode button next to the input opens the scanner. In the Home Assistant companion app (Android/iOS)
 its own full-screen scanner is used; in a browser the camera (Chrome) or a field to type the number.
-The product name comes from SmartLists' own memory. Online lookup is **off by default**: only when you switch on
-*Look up barcodes online* **and** pick at least one lookup service is the number (nothing else) sent there.
-No service is preselected.
+The product name comes from SmartLists' own memory or a lookup service (only the number is sent).
 
 - *For me → Shopping and scanning*: the **target list** (this card's list or any other) and whether a
   scanned product goes into the input field to check or is **added directly**.
 - *Global → Voice, backup, defaults*: which **lookup services** in which order – Open Food Facts, Open
   Beauty Facts, Open Pet Food Facts, Open Products Facts, UPCitemdb, or your own (URL with `{code}` and the
-  JSON field holding the name). *Look up barcodes online* switches the lookup on; without it nothing is sent.
+  JSON field holding the name). *Look up barcodes online* turns the lookup off altogether.
 
 ## Statistics
 

@@ -3,6 +3,18 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.10] – 2026-11-17
+
+Tenth pre-release of 4.0.
+
+### Changed
+
+- **Due rows look tidier.** The red or yellow background of overdue items and those due today is now a rounded field
+  as wide as the section header "Due", instead of running from edge to edge.
+- **Calendar follows ticking.** When an item with a calendar entry is ticked, the event is removed; re-opening the
+  item enters it again (where the calendar allows deleting).
+- Wiki and README describe favourites, due dates, reminders and the calendar.
+
 ## [4.0.0-beta.9] – 2026-11-17
 
 Ninth pre-release of 4.0.
@@ -18,8 +30,7 @@ Ninth pre-release of 4.0.
 - **Due items stand out.** Overdue items and those due today are in a section "Due" at the very top, with a red or
   yellow background; later ones show "tomorrow" or the weekday and date.
 - **Add to calendar.** "Due on" has "Add to calendar" for calendars of Home Assistant that accept new events. The
-  event follows a changed date and is removed when the item is ticked or deleted (where the calendar allows
-  deleting); re-opening the item enters it again.
+  event follows a changed date and is removed together with the item (where the calendar allows deleting).
 - **For the app.** New commands `smartlists/set_item_marks` and `smartlists/offers`; every item in `get_list` has
   `favorite`, `due`, `remind` and `overdue`. `docs/app-api.md` describes sign-in, sync, offers and the app backup.
 

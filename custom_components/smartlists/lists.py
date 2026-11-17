@@ -438,6 +438,10 @@ async def remove_items(hass: HomeAssistant, entity_id: str, uids: list[str], con
         if (extras := _extras(hass)) is not None:
             for uid in uids:
                 extras.set_item_price(entity_id, uid, None)
+                if (cal := extras.item_mark(entity_id, uid).get("cal")):
+                    from .calendar_sync import async_remove
+
+                    hass.async_create_task(async_remove(hass, cal))  # Termin zum gelöschten Eintrag entfernen
                 extras.clear_item_mark(entity_id, uid)
     return {}
 

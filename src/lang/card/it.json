@@ -989,5 +989,10 @@
   "due_date": "Data",
   "due_time": "Ora (facoltativa)",
   "due_remind": "Ricordamelo alla scadenza",
-  "due_clear": "Rimuovi"
+  "due_clear": "Rimuovi",
+  "due_head": "In scadenza",
+  "due_over": "scaduto",
+  "due_today": "oggi",
+  "due_tomorrow": "domani",
+  "due_cal": "Aggiungi al calendario"
 }

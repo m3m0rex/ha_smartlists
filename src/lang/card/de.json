@@ -989,5 +989,10 @@
   "due_date": "Datum",
   "due_time": "Uhrzeit (optional)",
   "due_remind": "Erinnern, wenn es so weit ist",
-  "due_clear": "Entfernen"
+  "due_clear": "Entfernen",
+  "due_head": "Fällig",
+  "due_over": "überfällig",
+  "due_today": "heute",
+  "due_tomorrow": "morgen",
+  "due_cal": "In Kalender eintragen"
 }

@@ -461,6 +461,16 @@
     if (open.some((i) => i.favorite)) open = [...open].sort(favFirst);  // stabil: innerhalb bleibt die Reihenfolge
     const rows = [];
     let emoji = false;
+    // 4.0: Überfälliges und heute Fälliges steht in einem eigenen Abschnitt ganz oben (nicht bei der Suche)
+    const openAll = open, today = slToday();
+    const urgent = searching ? [] : open.filter((i) => i.due && i.due.slice(0, 10) <= today);
+    if (urgent.length) {
+      open = open.filter((i) => !urgent.includes(i));
+      const flat = !(mode === "category" && this._config.show_category_titles !== false) && !(mode === "list" && d.type === "combined");
+      urgent.sort((a, b) => a.due.localeCompare(b.due));
+      rows.push(h("div", { class: "group-title full bar duehead" }, h("span", { class: "gt" }, "⏰ " + t.due_head), h("small", {}, String(urgent.length))),
+        urgent.map((i) => this._row(i, d, flat)));
+    }
     const grouped = (keyOf, groupsInOrder, labelOf, colorOf = () => null) => {
       const groups = new Map();
       for (const it of open) {
@@ -486,7 +496,7 @@
         d.permissions.add ? h("div", {}, h("button", { class: "btn primary", type: "button",
           onclick: () => { this._toggleSearch(); this._submit(term); } }, `„${term}“ ${t.add_this}`)) : null));
     } else if (!open.length && searching) { /* nur erledigte Treffer – unten anzeigen */ }
-    else if (!open.length) out.push(h("div", { class: "empty" }, t.empty));
+    else if (!openAll.length) out.push(h("div", { class: "empty" }, t.empty));
     else if (mode === "category" && this._config.show_category_titles === false) {
       // nach Kategorie, aber ohne Überschriften: eine Liste mit Kategorie-Symbol vorne
       const order = this._catOrder(d);
@@ -505,7 +515,8 @@
       emoji = true;
       rows.push(items.map((i) => this._row(i, d, true)));
     }
-    if (this._config.view === "tiles" && open.length) {
+    if (this._config.view === "tiles" && openAll.length) {
+      open = openAll;
       // Kacheln: gleiche Reihenfolge wie die Liste, ohne Gruppen-Überschriften
       const order = this._catOrder(d);
       const tiles = mode === "category" ? [...open].sort((a, b) => (order.indexOf(a.category) - order.indexOf(b.category)) || byName(a, b))
@@ -518,7 +529,7 @@
     if (this._config.show_prices !== false && d.items.some((i) => i.price)) {
       // „im Wagen“ = seit dem letzten „Einkauf beendet“ abgehakt
       const inTrip = done.filter((i) => !d.trip_start || (i.checked_at && i.checked_at >= d.trip_start));
-      const openSum = sumOf(open), cartSum = sumOf(inTrip);
+      const openSum = sumOf(openAll), cartSum = sumOf(inTrip);
       out.push(h("div", { class: "sumbar" }, h("span", {}, t.price_sum, " ", h("small", {}, `${t.open} ${fmtMoney(openSum, this._hass.language)}${cartSum ? ` · ${t.in_cart} ${fmtMoney(cartSum, this._hass.language)}` : ""}`)),
         h("b", {}, fmtMoney(openSum + cartSum, this._hass.language)),
         done.length && d.permissions.toggle && this._showFinish() ? h("button", { class: "btn2", type: "button", style: "height:30px", onclick: () => this._finishShopping(done.length) }, "✓ " + t.trip_done) : null));
@@ -574,11 +585,11 @@
           `🏷️ ${(deals.length > 1 ? t.deal_from : "{price}").replace("{price}", fmtMoney(deals[0].price, this._hass.language))}`,
           deals[0].until ? h("span", { class: "duntil" }, `${t.offer_until || "bis"} ${String(deals[0].until).slice(8, 10)}.${String(deals[0].until).slice(5, 7)}.`) : null,
           deals.length > 1 ? h("span", { class: "dmore" }, `+${deals.length - 1}`) : null) : null],
-      note: [it.due && !it.checked ? h("span", { class: `chip due ${it.overdue ? "over" : ""}`, title: it.remind ? t.due_remind : "" }, `${it.remind ? "⏰" : "📅"} ${slDue(it.due)}`) : null,
+      note: [it.due && !it.checked ? h("span", { class: `chip due ${slDueState(it.due)}`, title: slDue(it.due) }, `${it.remind ? "⏰ " : ""}${it.calendar ? "📅 " : ""}${slDueText(it.due, t, this._hass.language)}`) : null,
         this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
     };
     const sub = slRowOrder().flatMap((k) => part[k] || []);
-    const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
+    const row = h("div", { class: `row ${it.due && !it.checked ? "d-" + slDueState(it.due) : ""} ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,
       onclick: (e) => {
         if (this._suppressClick) { this._suppressClick = false; return; }
         if (tapRow && !e.target.closest("button")) this._toggleItem(it);

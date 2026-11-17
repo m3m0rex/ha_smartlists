@@ -146,23 +146,47 @@ def ws_remove_device(hass: HomeAssistant, connection: websocket_api.ActiveConnec
 
 @_list_command({vol.Required("type"): "smartlists/set_item_marks", vol.Required("entity_id"): str, vol.Required("uid"): str,
                 vol.Optional("favorite"): bool, vol.Optional("due"): vol.Any(str, None), vol.Optional("remind"): bool,
+                vol.Optional("calendar"): vol.Any(str, None),
                 vol.Optional("name"): str, vol.Optional("op_id"): _OP_ID})
 async def ws_set_item_marks(hass: HomeAssistant, msg: dict[str, Any], context: Any) -> dict[str, Any]:
-    """Stern, Fälligkeit und Erinnerung eines Eintrags. Wer abhaken darf, darf auch das."""
+    """Stern, Fälligkeit, Erinnerung und Kalender-Termin eines Eintrags. Wer abhaken darf, darf auch das."""
+    from . import calendar_sync
+
     if not lists.list_permissions(hass, msg["entity_id"]).get("toggle"):
         raise lists.ListError("Auf dieser Liste darfst du das nicht.")
     extras = hass.data.get(DOMAIN, {}).get("extras")
     if extras is None:
         raise lists.ListError("SmartLists ist noch nicht bereit.")
+    if msg.get("calendar") and not str(msg["calendar"]).startswith("calendar."):
+        raise lists.ListError("Das ist kein Kalender.")
     changes = {k: msg[k] for k in ("favorite", "due", "remind", "name") if k in msg}
     user = msg.get("_user")
     if changes.get("remind") and user is not None:
         changes["by"] = user.id
+    old_cal = dict(extras.item_mark(msg["entity_id"], msg["uid"]).get("cal") or {})
     try:
         mark = extras.set_item_mark(msg["entity_id"], msg["uid"], changes)
     except ValueError as err:
         raise lists.ListError(str(err)) from err
-    return {"favorite": bool(mark.get("fav")), "due": mark.get("due"), "remind": bool(mark.get("remind"))}
+    # Kalender: gewünscht ist der neu genannte, sonst der bisherige; der Termin folgt der Fälligkeit
+    wanted = msg["calendar"] if "calendar" in msg else old_cal.get("entity")
+    due = mark.get("due")
+    if not due or not wanted:
+        wanted = None
+    if old_cal and (wanted != old_cal.get("entity") or due != old_cal.get("due")):
+        await calendar_sync.async_remove(hass, old_cal)
+        old_cal = {}
+        mark = extras.set_item_mark(msg["entity_id"], msg["uid"], {"cal": None})
+    if wanted and not old_cal:
+        state = hass.states.get(extras.mark_key(msg["entity_id"], msg["uid"])[0])
+        try:
+            cal = await calendar_sync.async_add(hass, wanted, str(msg.get("name") or mark.get("name") or "SmartLists"), due,
+                                                state.name if state else "")
+        except Exception as err:  # noqa: BLE001 – Fälligkeit bleibt, nur der Termin fehlt
+            raise lists.ListError(f"Fälligkeit gespeichert, aber der Kalender hat den Termin nicht angenommen: {err}") from err
+        mark = extras.set_item_mark(msg["entity_id"], msg["uid"], {"cal": cal})
+    return {"favorite": bool(mark.get("fav")), "due": mark.get("due"), "remind": bool(mark.get("remind")),
+            "calendar": (mark.get("cal") or {}).get("entity")}
 
 
 @_list_command({vol.Required("type"): "smartlists/offers", vol.Optional("entity_id"): str})

@@ -106,3 +106,26 @@ function slDue(due) {
   const d = String(due || "");
   return d.length < 10 ? "" : `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.length > 10 ? " " + d.slice(11, 16) : ""}`;
 }
+
+function slToday(offset = 0) {
+  const n = new Date(); n.setDate(n.getDate() + offset);
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+}
+
+// "over" (vor heute), "today" oder "later"
+function slDueState(due) {
+  const day = String(due || "").slice(0, 10), today = slToday();
+  return day < today ? "over" : day === today ? "today" : "later";
+}
+
+// Klartext: "überfällig · 10.11.", "heute 18:00", "morgen", sonst "So 22.11."
+function slDueText(due, t, lang) {
+  const d = String(due || ""), day = d.slice(0, 10), time = d.length > 10 ? " " + d.slice(11, 16) : "";
+  const state = slDueState(d);
+  if (state === "over") return `${t.due_over} · ${slDue(day)}`;
+  if (state === "today") return t.due_today + time;
+  if (day === slToday(1)) return t.due_tomorrow + time;
+  let wd = "";
+  try { wd = new Date(day + "T12:00").toLocaleDateString(lang || "de", { weekday: "short" }) + " "; } catch (e) { /* ohne Wochentag */ }
+  return wd + slDue(d);
+}

@@ -989,5 +989,10 @@
   "due_date": "Data",
   "due_time": "Godzina (opcjonalnie)",
   "due_remind": "Przypomnij w terminie",
-  "due_clear": "Usuń"
+  "due_clear": "Usuń",
+  "due_head": "Do zrobienia",
+  "due_over": "po terminie",
+  "due_today": "dziś",
+  "due_tomorrow": "jutro",
+  "due_cal": "Dodaj do kalendarza"
 }

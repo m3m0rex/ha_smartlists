@@ -989,5 +989,10 @@
   "due_date": "Fecha",
   "due_time": "Hora (opcional)",
   "due_remind": "Recordármelo cuando venza",
-  "due_clear": "Quitar"
+  "due_clear": "Quitar",
+  "due_head": "Pendiente",
+  "due_over": "atrasado",
+  "due_today": "hoy",
+  "due_tomorrow": "mañana",
+  "due_cal": "Añadir al calendario"
 }

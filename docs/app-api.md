@@ -276,6 +276,10 @@ Change them (allowed for everyone who may tick items on that list):
  "favorite": true, "due": "2026-11-20T18:00", "remind": true, "name": "Milk"}
 ```
 
+Optional `"calendar": "calendar.family"` also enters the item in that Home Assistant calendar (all-day without a time,
+otherwise 30 minutes); `"calendar": null` removes the entry again. The item then has `calendar` set. The event follows
+a changed due date and is removed with the item where the calendar allows deleting (the local calendar does).
+
 Send only the fields that change. `"due": null` removes the due date and the reminder. `name` is optional and only
 used as a fallback text for the notification. Response: `{"favorite", "due", "remind"}`.
 

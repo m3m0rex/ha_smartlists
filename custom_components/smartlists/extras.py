@@ -83,7 +83,7 @@ def item_marks(extras: Any, entity_id: str, uid: str, today: str | None = None) 
 
         today = datetime.date.today().isoformat()
     return {"favorite": bool(mark.get("fav")), "due": due or None, "remind": bool(mark.get("remind")),
-            "overdue": bool(due) and str(due)[:10] < str(today)}
+            "overdue": bool(due) and str(due)[:10] < str(today), "calendar": (mark.get("cal") or {}).get("entity") if due else None}
 
 
 class Extras:
@@ -266,7 +266,7 @@ class Extras:
         if "due" in changes:
             due = changes["due"]
             if due is None or due == "":
-                for k in ("due", "remind", "sent", "by"):
+                for k in ("due", "remind", "sent", "by", "cal"):
                     mark.pop(k, None)
             else:
                 if not DUE_RE.match(str(due)):
@@ -281,6 +281,11 @@ class Extras:
                     mark["by"] = changes["by"]
             else:
                 mark.pop("remind", None)
+        if "cal" in changes:  # gemerkter Kalender-Termin ({"entity", "due", "summary"}) – nur mit Fälligkeit
+            if changes["cal"] and mark.get("due"):
+                mark["cal"] = dict(changes["cal"])
+            else:
+                mark.pop("cal", None)
         if changes.get("name"):
             mark["name"] = str(changes["name"])[:120]
         if mark.get("fav") or mark.get("due"):

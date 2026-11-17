@@ -422,13 +422,23 @@
       const time = h("input", { type: "time", value: (it.due || "").slice(11, 16), "aria-label": t.due_time });
       const remind = h("input", { type: "checkbox" });
       remind.checked = it.due ? !!it.remind : true;
+      // Kalender von Home Assistant, in die man eintragen kann (zuletzt gewählter auf diesem Gerät gemerkt)
+      const cals = Object.values(this._hass.states).filter((s) => s.entity_id.startsWith("calendar.") && ((s.attributes.supported_features || 0) & 1));
+      let last = ""; try { last = localStorage.getItem("smartlists-calendar") || ""; } catch (e) { /* ohne Merken */ }
+      const cal = h("input", { type: "checkbox" });
+      cal.checked = !!it.calendar;
+      const calSel = h("select", { "aria-label": t.due_cal }, cals.map((s) => h("option", { value: s.entity_id }, s.attributes.friendly_name || s.entity_id)));
+      calSel.value = it.calendar || (cals.some((s) => s.entity_id === last) ? last : (cals[0] ? cals[0].entity_id : ""));
       const save = async (due) => {
         this._closeMenu();
-        try { await this._call("set_item_marks", { uid: it.uid, due, ...(due ? { remind: remind.checked } : {}), name: it.name }, true); this._load(); } catch (e) { this._toast((e && e.message) || t.error); }
+        const calendar = due && cal.checked && calSel.value ? calSel.value : null;
+        if (calendar) { try { localStorage.setItem("smartlists-calendar", calendar); } catch (e) { /* ohne Merken */ } }
+        try { await this._call("set_item_marks", { uid: it.uid, due, ...(due ? { remind: remind.checked } : {}), ...(cals.length || it.calendar ? { calendar } : {}), name: it.name }, true); this._load(); } catch (e) { this._toast((e && e.message) || t.error); }
       };
       body = [head(t.m_due, true), h("div", { class: "duebox" },
         h("label", {}, h("span", {}, t.due_date), date), h("label", {}, h("span", {}, t.due_time), time),
         h("label", { class: "chk" }, remind, h("span", {}, t.due_remind)),
+        cals.length ? h("label", { class: "chk" }, cal, h("span", {}, t.due_cal), cals.length > 1 ? calSel : null) : null,
         h("div", { class: "acts" },
           it.due ? h("button", { class: "btn2", type: "button", onclick: () => save(null) }, t.due_clear) : null,
           h("button", { class: "btn2 primary", type: "button", onclick: () => { if (date.value) save(date.value + (time.value ? "T" + time.value : "")); } }, t.save)))];

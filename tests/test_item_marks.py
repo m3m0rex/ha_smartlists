@@ -19,9 +19,9 @@ def _extras():
 def test_favourite_and_due_are_kept_and_removed():
     e = _extras()
     e.set_item_mark("todo.a", "u1", {"favorite": True})
-    assert item_marks(e, "todo.a", "u1") == {"favorite": True, "due": None, "remind": False, "overdue": False}
+    assert item_marks(e, "todo.a", "u1") == {"favorite": True, "due": None, "remind": False, "overdue": False, "calendar": None}
     e.set_item_mark("todo.a", "u1", {"due": "2026-11-20T18:00", "remind": True, "by": "user1", "name": "Milch"})
-    assert item_marks(e, "todo.a", "u1", today="2026-11-17") == {"favorite": True, "due": "2026-11-20T18:00", "remind": True, "overdue": False}
+    assert item_marks(e, "todo.a", "u1", today="2026-11-17") == {"favorite": True, "due": "2026-11-20T18:00", "remind": True, "overdue": False, "calendar": None}
     assert item_marks(e, "todo.a", "u1", today="2026-11-21")["overdue"] is True
     assert item_marks(e, "todo.a", "u1", today="2026-11-20")["overdue"] is False  # am Tag selbst noch nicht überfällig
     e.set_item_mark("todo.a", "u1", {"due": None})
@@ -73,3 +73,24 @@ def test_marks_survive_a_reload():
 def test_message():
     assert message("Milch", "Familie", "2026-11-20T18:00") == "Milch – Familie (20.11. 18:00)"
     assert message("Milch", "", "2026-11-20") == "Milch (20.11.)"
+
+
+def test_calendar_event_is_remembered_and_goes_with_the_due_date():
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"cal": {"entity": "calendar.x", "due": "2026-11-20", "summary": "Milch"}})
+    assert e.item_marks == {}  # ohne Fälligkeit kein Termin
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20"})
+    e.set_item_mark("todo.a", "u1", {"cal": {"entity": "calendar.x", "due": "2026-11-20", "summary": "Milch"}})
+    assert item_marks(e, "todo.a", "u1", today="2026-11-17")["calendar"] == "calendar.x"
+    e.set_item_mark("todo.a", "u1", {"due": None})
+    assert e.item_marks == {}
+
+
+def test_calendar_event_data():
+    from smartlists.calendar_sync import event_data
+
+    assert event_data("Milch", "2026-11-20T18:00", "Familie") == {
+        "summary": "Milch", "description": "SmartLists · Familie",
+        "start_date_time": "2026-11-20 18:00:00", "end_date_time": "2026-11-20 18:30:00"}
+    assert event_data("Milch", "2026-11-30") == {"summary": "Milch", "description": "SmartLists",
+                                                 "start_date": "2026-11-30", "end_date": "2026-12-01"}

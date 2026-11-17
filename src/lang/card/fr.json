@@ -989,5 +989,10 @@
   "due_date": "Date",
   "due_time": "Heure (facultatif)",
   "due_remind": "Me rappeler à l’échéance",
-  "due_clear": "Retirer"
+  "due_clear": "Retirer",
+  "due_head": "À faire",
+  "due_over": "en retard",
+  "due_today": "aujourd’hui",
+  "due_tomorrow": "demain",
+  "due_cal": "Ajouter au calendrier"
 }

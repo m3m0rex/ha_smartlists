@@ -989,5 +989,10 @@
   "due_date": "Date",
   "due_time": "Time (optional)",
   "due_remind": "Remind me when it is due",
-  "due_clear": "Remove"
+  "due_clear": "Remove",
+  "due_head": "Due",
+  "due_over": "overdue",
+  "due_today": "today",
+  "due_tomorrow": "tomorrow",
+  "due_cal": "Add to calendar"
 }

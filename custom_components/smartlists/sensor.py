@@ -20,7 +20,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .devices import SIGNAL_DEVICES_CHANGED, Devices
 
-MANUFACTURER_FALLBACK = "HA SmartLists App"
+MANUFACTURER_FALLBACK = "SmartLists Go"
+# parent device of all connected apps (they are shown as "connected via SmartLists Go")
+APPS_DEVICE = (DOMAIN, "apps")
 
 
 def device_identifier(device_id: str) -> tuple[str, str]:
@@ -39,12 +41,18 @@ def app_device_info(hass: HomeAssistant, device_id: str) -> DeviceInfo | None:
         manufacturer=d.get("manufacturer") or MANUFACTURER_FALLBACK,
         model=d.get("model"),
         sw_version=d.get("app_version"),
+        via_device=APPS_DEVICE,
     )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     devices: Devices = hass.data[DOMAIN]["devices"]
     known: set[str] = set()
+    # "SmartLists Go" as the parent of all connected apps: the apps are listed below it (connected via)
+    dr.async_get(hass).async_get_or_create(
+        config_entry_id=entry.entry_id, identifiers={APPS_DEVICE}, name="SmartLists Go", manufacturer="SmartLists",
+        model="App", entry_type=dr.DeviceEntryType.SERVICE,
+    )
 
     @callback
     def _add(device_id: str) -> None:
@@ -87,7 +95,11 @@ def _update_device_info(hass: HomeAssistant, devices: Devices, device_id: str) -
     if device is None:
         return
     d = devices.devices[device_id]
-    registry.async_update_device(device.id, sw_version=d.get("app_version"), model=d.get("model"))
+    parent = registry.async_get_device(identifiers={APPS_DEVICE})
+    # the name follows the app (system, user, device); a name the user gave the device in Home Assistant stays
+    registry.async_update_device(device.id, sw_version=d.get("app_version"), model=d.get("model"), name=d.get("name") or device.name,
+                                 manufacturer=d.get("manufacturer") or device.manufacturer,
+                                 **({"via_device_id": parent.id} if parent is not None else {}))
 
 
 class ExpensesMonthSensor(SensorEntity):
@@ -164,6 +176,7 @@ class _DeviceSensor(SensorEntity):
             manufacturer=d.get("manufacturer") or MANUFACTURER_FALLBACK,
             model=d.get("model"),
             sw_version=d.get("app_version"),
+            via_device=APPS_DEVICE,
         )
 
     @property

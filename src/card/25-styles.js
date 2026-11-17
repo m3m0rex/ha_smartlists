@@ -161,6 +161,7 @@ const STYLE = `
   .row.d-over:hover::before { background:color-mix(in srgb, var(--error-color,#db4437) 20%, transparent); }
   .row.d-today:hover::before { background:color-mix(in srgb, #f0b429 19%, transparent); }
   .group-title.bar.duehead { --cc: var(--error-color,#db4437); }
+  .duebox label select { flex:none; }
   .duebox select { font:inherit; padding:8px 10px; border-radius:8px; border:1px solid var(--divider-color,#ccc); background:var(--card-background-color,#fff); color:var(--primary-text-color); min-height:40px; max-width:60%; }
   .chip.due.over { background:color-mix(in srgb, var(--error-color,#db4437) 18%, transparent); color:var(--error-color,#db4437); font-weight:600; }
   .duebox { display:flex; flex-direction:column; gap:10px; padding:8px 10px 10px; }

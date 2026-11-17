@@ -585,7 +585,7 @@
           `🏷️ ${(deals.length > 1 ? t.deal_from : "{price}").replace("{price}", fmtMoney(deals[0].price, this._hass.language))}`,
           deals[0].until ? h("span", { class: "duntil" }, `${t.offer_until || "bis"} ${String(deals[0].until).slice(8, 10)}.${String(deals[0].until).slice(5, 7)}.`) : null,
           deals.length > 1 ? h("span", { class: "dmore" }, `+${deals.length - 1}`) : null) : null],
-      note: [it.due && !it.checked ? h("span", { class: `chip due ${slDueState(it.due)}`, title: slDue(it.due) }, `${it.remind ? "⏰ " : ""}${it.calendar ? "📅 " : ""}${slDueText(it.due, t, this._hass.language)}`) : null,
+      note: [it.due && !it.checked ? h("span", { class: `chip due ${slDueState(it.due)}`, title: slDue(it.due) }, `${it.remind ? "⏰ " : ""}${it.repeat ? "🔁 " : ""}${it.calendar ? "📅 " : ""}${slDueText(it.due, t, this._hass.language)}`) : null,
         this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
     };
     const sub = slRowOrder().flatMap((k) => part[k] || []);

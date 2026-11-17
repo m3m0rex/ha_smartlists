@@ -147,6 +147,7 @@ def ws_remove_device(hass: HomeAssistant, connection: websocket_api.ActiveConnec
 @_list_command({vol.Required("type"): "smartlists/set_item_marks", vol.Required("entity_id"): str, vol.Required("uid"): str,
                 vol.Optional("favorite"): bool, vol.Optional("due"): vol.Any(str, None), vol.Optional("remind"): bool,
                 vol.Optional("calendar"): vol.Any(str, None),
+                vol.Optional("repeat"): vol.Any(vol.In(["daily", "weekly", "monthly", ""]), None),
                 vol.Optional("name"): str, vol.Optional("op_id"): _OP_ID})
 async def ws_set_item_marks(hass: HomeAssistant, msg: dict[str, Any], context: Any) -> dict[str, Any]:
     """Stern, Fälligkeit, Erinnerung und Kalender-Termin eines Eintrags. Wer abhaken darf, darf auch das."""
@@ -159,7 +160,7 @@ async def ws_set_item_marks(hass: HomeAssistant, msg: dict[str, Any], context: A
         raise lists.ListError("SmartLists ist noch nicht bereit.")
     if msg.get("calendar") and not str(msg["calendar"]).startswith("calendar."):
         raise lists.ListError("Das ist kein Kalender.")
-    changes = {k: msg[k] for k in ("favorite", "due", "remind", "name") if k in msg}
+    changes = {k: msg[k] for k in ("favorite", "due", "remind", "name", "repeat") if k in msg}
     user = msg.get("_user")
     if changes.get("remind") and user is not None:
         changes["by"] = user.id
@@ -186,7 +187,7 @@ async def ws_set_item_marks(hass: HomeAssistant, msg: dict[str, Any], context: A
             raise lists.ListError(f"Fälligkeit gespeichert, aber der Kalender hat den Termin nicht angenommen: {err}") from err
         mark = extras.set_item_mark(msg["entity_id"], msg["uid"], {"cal": cal})
     return {"favorite": bool(mark.get("fav")), "due": mark.get("due"), "remind": bool(mark.get("remind")),
-            "calendar": (mark.get("cal") or {}).get("entity")}
+            "repeat": mark.get("repeat"), "calendar": (mark.get("cal") or {}).get("entity")}
 
 
 @_list_command({vol.Required("type"): "smartlists/offers", vol.Optional("entity_id"): str})

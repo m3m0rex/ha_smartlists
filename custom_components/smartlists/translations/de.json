@@ -443,6 +443,9 @@
       },
       "expenses_month": {
         "name": "Ausgaben diesen Monat"
+      },
+      "due": {
+        "name": "Fällig"
       }
     },
     "calendar": {

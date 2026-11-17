@@ -443,6 +443,9 @@
       },
       "expenses_month": {
         "name": "Expenses this month"
+      },
+      "due": {
+        "name": "Due"
       }
     },
     "calendar": {

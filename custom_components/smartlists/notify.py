@@ -142,7 +142,7 @@ class Notifier:
                     return f"Unbekannter Dienst: {t['id']}"
         return None
 
-    async def _deliver(self, target: dict[str, Any], title: str, message: str, tag: str) -> None:
+    async def _deliver(self, target: dict[str, Any], title: str, message: str, tag: str, actions: list[dict[str, str]] | None = None) -> None:
         domain, _, name = target["id"].partition(".")
         if target["kind"] == "entity":
             await self.hass.services.async_call("notify", "send_message", {"entity_id": target["id"], "title": title, "message": message}, blocking=True)
@@ -150,6 +150,8 @@ class Notifier:
             data: dict[str, Any] = {"title": title, "message": message}
             if name.startswith("mobile_app_"):  # Companion-App: gruppieren, ersetzen, antippen öffnet SmartLists
                 data["data"] = {"tag": tag, "group": "smartlists", "clickAction": "/smartlists"}
+                if actions:  # Knöpfe in der Benachrichtigung (Erinnerungen: „Erledigt“, „Morgen erinnern“)
+                    data["data"]["actions"] = actions
             await self.hass.services.async_call("notify", name, data, blocking=True)
         else:
             # eigener Dienst: {title}/{message} in Texten ersetzen; ohne Platzhalter kommen title/message dazu
@@ -169,11 +171,11 @@ class Notifier:
                 payload = {"title": title, "message": message, **raw}
             await self.hass.services.async_call(domain, name, payload, blocking=True)
 
-    async def _deliver_all(self, s: dict[str, Any], title: str, message: str, tag: str) -> list[str]:
+    async def _deliver_all(self, s: dict[str, Any], title: str, message: str, tag: str, actions: list[dict[str, str]] | None = None) -> list[str]:
         errors = []
         for t in s["targets"]:
             try:
-                await self._deliver(t, title, message, tag)
+                await self._deliver(t, title, message, tag, actions)
             except Exception as err:  # noqa: BLE001 – ein falsches Ziel soll die anderen nicht aufhalten
                 _LOGGER.warning("SmartLists: Benachrichtigung an %s fehlgeschlagen: %s", t["id"], err)
                 errors.append(f"{t.get('label') or t['id']}: {err}")

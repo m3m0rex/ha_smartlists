@@ -994,5 +994,10 @@
   "due_over": "overdue",
   "due_today": "today",
   "due_tomorrow": "tomorrow",
-  "due_cal": "Add to calendar"
+  "due_cal": "Add to calendar",
+  "due_repeat": "Repeat",
+  "rep_never": "never",
+  "rep_daily": "daily",
+  "rep_weekly": "weekly",
+  "rep_monthly": "monthly"
 }

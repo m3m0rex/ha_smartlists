@@ -63,17 +63,34 @@ async def async_remove(hass: HomeAssistant, cal: dict[str, Any] | None) -> bool:
 
 
 async def async_follow(hass: HomeAssistant, extras: Any, entity_id: str, uid: str, checked: bool) -> None:
-    """Kalender-Termin eines fälligen Eintrags: abgehakt → Termin entfernen, wieder geöffnet → wieder eintragen."""
+    """Was beim Abhaken eines Eintrags mit Fälligkeit folgt: Er zählt nicht mehr als fällig; ein wiederkehrender bekommt
+    seine nächste Fälligkeit (und wird an dem Tag wieder geöffnet); der Kalender-Termin verschwindet bzw. zieht mit.
+    Wieder geöffnet: wieder fällig, Termin wieder eingetragen."""
     mark = extras.item_mark(entity_id, uid)
-    cal = mark.get("cal")
-    if not cal or not cal.get("entity"):
+    if not mark.get("due"):
         return
+    cal = mark.get("cal")
     try:
-        if checked and not cal.get("off"):
-            await async_remove(hass, cal)
-            extras.set_item_mark(entity_id, uid, {"cal": {**cal, "off": True}})
-        elif not checked and cal.get("off") and mark.get("due"):
-            new = await async_add(hass, cal["entity"], str(cal.get("summary") or ""), str(mark["due"]), str(cal.get("list") or ""))
-            extras.set_item_mark(entity_id, uid, {"cal": new})
-    except Exception:  # noqa: BLE001 – der Kalender darf das Abhaken nicht aufhalten
-        _LOGGER.warning("Kalender-Termin zu %s nicht angepasst", entity_id, exc_info=True)
+        if checked:
+            if cal and cal.get("entity") and not cal.get("off"):
+                await async_remove(hass, cal)
+                cal = {**cal, "off": True}
+                extras.set_item_mark(entity_id, uid, {"cal": cal})
+            changes: dict[str, Any] = {"closed": True}
+            if mark.get("repeat"):
+                from .extras import next_due
+
+                changes["due"] = next_due(str(mark["due"]), str(mark["repeat"]), dt_util.now().strftime("%Y-%m-%d"))
+            extras.set_item_mark(entity_id, uid, changes)
+            if mark.get("repeat") and cal and cal.get("entity"):  # der nächste Termin steht schon im Kalender
+                new = await async_add(hass, cal["entity"], str(cal.get("summary") or ""), str(changes["due"]), str(cal.get("list") or ""))
+                extras.set_item_mark(entity_id, uid, {"cal": new})
+        else:
+            extras.set_item_mark(entity_id, uid, {"closed": False})
+            mark = extras.item_mark(entity_id, uid)
+            cal = mark.get("cal")
+            if cal and cal.get("entity") and cal.get("off") and mark.get("due"):
+                new = await async_add(hass, cal["entity"], str(cal.get("summary") or ""), str(mark["due"]), str(cal.get("list") or ""))
+                extras.set_item_mark(entity_id, uid, {"cal": new})
+    except Exception:  # noqa: BLE001 – das darf das Abhaken nicht aufhalten
+        _LOGGER.warning("Fälligkeit zu %s nicht nachgeführt", entity_id, exc_info=True)

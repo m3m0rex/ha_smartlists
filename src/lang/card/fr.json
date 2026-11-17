@@ -994,5 +994,10 @@
   "due_over": "en retard",
   "due_today": "aujourd’hui",
   "due_tomorrow": "demain",
-  "due_cal": "Ajouter au calendrier"
+  "due_cal": "Ajouter au calendrier",
+  "due_repeat": "Répéter",
+  "rep_never": "jamais",
+  "rep_daily": "chaque jour",
+  "rep_weekly": "chaque semaine",
+  "rep_monthly": "chaque mois"
 }

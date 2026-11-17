@@ -443,6 +443,9 @@
       },
       "expenses_month": {
         "name": "Gastos este mes"
+      },
+      "due": {
+        "name": "Pendiente"
       }
     },
     "calendar": {

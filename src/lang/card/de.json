@@ -994,5 +994,10 @@
   "due_over": "überfällig",
   "due_today": "heute",
   "due_tomorrow": "morgen",
-  "due_cal": "In Kalender eintragen"
+  "due_cal": "In Kalender eintragen",
+  "due_repeat": "Wiederholen",
+  "rep_never": "nie",
+  "rep_daily": "täglich",
+  "rep_weekly": "wöchentlich",
+  "rep_monthly": "monatlich"
 }

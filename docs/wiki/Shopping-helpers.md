@@ -167,6 +167,13 @@ Item menu → **Due on**. Everyone who may tick items on a list may set this.
   targets of whoever switched the reminder on (*General settings → For me → Notifications → Send to*). Without
   targets a notification appears in Home Assistant. Ticked or deleted items are not reminded; a changed date
   reminds again.
+- **Repeat**: daily, weekly or monthly. Ticking the item sets its next date; on that day it is opened again and –
+  with a reminder – reminds again. Ticked early, it returns one period later.
+- **Buttons in the reminder**: on a device with the companion app the reminder has *Done* (ticks the item) and
+  *Remind me tomorrow* (moves the due date by one day).
+- **Sensor**: `sensor.smartlists_due` counts the open items that are due today or overdue; the items are in the
+  attribute `items`, the number of overdue ones in `overdue`. An item ticked outside SmartLists (for example in Home
+  Assistant's own to-do view) is noticed when its reminder would be sent.
 - **Add to calendar**: enters the item in a Home Assistant calendar that accepts new events (for example *Local
   calendar*). With a time the event lasts 30 minutes, without one it is an all-day event. With several calendars
   you choose one; the choice is remembered on the device. The event moves with a changed date and is removed when

@@ -443,6 +443,9 @@
       },
       "expenses_month": {
         "name": "Spese di questo mese"
+      },
+      "due": {
+        "name": "In scadenza"
       }
     },
     "calendar": {

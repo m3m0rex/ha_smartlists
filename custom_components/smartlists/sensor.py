@@ -59,7 +59,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     expenses = ExpensesMonthSensor(hass)
     # Statistik und Ausgaben unter Extras ausgeschaltet → neu angelegt wird der Sensor gleich deaktiviert
     expenses._attr_entity_registry_enabled_default = get_features(hass)["stats"]
-    async_add_entities([expenses])
+    async_add_entities([expenses, DueSensor(hass)])
 
     for device_id in list(devices.devices):
         _add(device_id)
@@ -111,6 +111,40 @@ class ExpensesMonthSensor(SensorEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         rows = self._extras.expense_report("month", 1)["rows"]
         return {"stores": rows[-1]["stores"] if rows else {}}
+
+
+class DueSensor(SensorEntity):
+    """Wie viele offene Einträge heute fällig oder überfällig sind – für Dashboards und Automationen
+    („wenn > 0, um 18 Uhr ansagen“). Die Einträge selbst stehen in den Attributen."""
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "due"
+    _attr_icon = "mdi:calendar-clock"
+    _attr_unique_id = "smartlists_due"
+    _attr_should_poll = True  # alle 30 s – Fälligkeiten ändern sich mit der Uhr und beim Abhaken
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        self._extras = hass.data[DOMAIN]["extras"]
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, "household")}, name="SmartLists", manufacturer="SmartLists")
+
+    def _items(self) -> list[dict[str, Any]]:
+        from homeassistant.util import dt as dt_util
+
+        items = self._extras.due_now(dt_util.now())
+        for item in items:
+            state = self.hass.states.get(item["entity_id"]) if self.hass else None
+            item["list"] = state.name if state else item["entity_id"]
+        return items
+
+    @property
+    def native_value(self) -> int:
+        return len(self._items())
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        items = self._items()
+        return {"overdue": sum(1 for i in items if i["overdue"]),
+                "items": [{"name": i["name"], "list": i["list"], "due": i["due"], "overdue": i["overdue"]} for i in items[:50]]}
 
 
 class _DeviceSensor(SensorEntity):

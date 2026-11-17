@@ -443,6 +443,9 @@
       },
       "expenses_month": {
         "name": "Dépenses ce mois-ci"
+      },
+      "due": {
+        "name": "À faire"
       }
     },
     "calendar": {

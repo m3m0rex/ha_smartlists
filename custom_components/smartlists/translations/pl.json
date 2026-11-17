@@ -443,6 +443,9 @@
       },
       "expenses_month": {
         "name": "Wydatki w tym miesiącu"
+      },
+      "due": {
+        "name": "Do zrobienia"
       }
     },
     "calendar": {

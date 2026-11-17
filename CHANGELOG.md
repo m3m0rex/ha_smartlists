@@ -3,6 +3,19 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.11] – 2026-11-17
+
+Eleventh pre-release of 4.0.
+
+### Added
+
+- **Repeating items.** "Due on" has "Repeat": daily, weekly or monthly. Ticking such an item gives it its next date;
+  on that day it is opened again (and reminds again). Ticked early – the rolls for Friday on Thursday – it comes back
+  the Friday after.
+- **Sensor "Due"** (`sensor.smartlists_due`): the number of open items that are due today or overdue, with the items
+  in the attributes – for dashboards and automations.
+- **Buttons in the reminder** (companion app): "Done" ticks the item, "Remind me tomorrow" moves the due date by a day.
+
 ## [4.0.0-beta.10] – 2026-11-17
 
 Tenth pre-release of 4.0.

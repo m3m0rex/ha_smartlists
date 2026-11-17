@@ -281,6 +281,9 @@ otherwise 30 minutes); `"calendar": null` removes the entry again. The item then
 a changed due date and is removed when the item is ticked or deleted (and entered again when it is re-opened) where
 the calendar allows deleting – the local calendar does.
 
+Optional `"repeat": "daily" | "weekly" | "monthly"` (or `""` for never) makes the item come back: ticking it sets the
+next due date and it is re-opened on that day. `get_list` returns `repeat` per item.
+
 Send only the fields that change. `"due": null` removes the due date and the reminder. `name` is optional and only
 used as a fallback text for the notification. Response: `{"favorite", "due", "remind"}`.
 

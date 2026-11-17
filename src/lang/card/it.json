@@ -994,5 +994,10 @@
   "due_over": "scaduto",
   "due_today": "oggi",
   "due_tomorrow": "domani",
-  "due_cal": "Aggiungi al calendario"
+  "due_cal": "Aggiungi al calendario",
+  "due_repeat": "Ripeti",
+  "rep_never": "mai",
+  "rep_daily": "ogni giorno",
+  "rep_weekly": "ogni settimana",
+  "rep_monthly": "ogni mese"
 }

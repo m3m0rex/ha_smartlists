@@ -19,9 +19,9 @@ def _extras():
 def test_favourite_and_due_are_kept_and_removed():
     e = _extras()
     e.set_item_mark("todo.a", "u1", {"favorite": True})
-    assert item_marks(e, "todo.a", "u1") == {"favorite": True, "due": None, "remind": False, "overdue": False, "calendar": None}
+    assert item_marks(e, "todo.a", "u1") == {"favorite": True, "due": None, "remind": False, "repeat": None, "overdue": False, "calendar": None}
     e.set_item_mark("todo.a", "u1", {"due": "2026-11-20T18:00", "remind": True, "by": "user1", "name": "Milch"})
-    assert item_marks(e, "todo.a", "u1", today="2026-11-17") == {"favorite": True, "due": "2026-11-20T18:00", "remind": True, "overdue": False, "calendar": None}
+    assert item_marks(e, "todo.a", "u1", today="2026-11-17") == {"favorite": True, "due": "2026-11-20T18:00", "remind": True, "repeat": None, "overdue": False, "calendar": None}
     assert item_marks(e, "todo.a", "u1", today="2026-11-21")["overdue"] is True
     assert item_marks(e, "todo.a", "u1", today="2026-11-20")["overdue"] is False  # am Tag selbst noch nicht überfällig
     e.set_item_mark("todo.a", "u1", {"due": None})
@@ -121,3 +121,49 @@ def test_calendar_follows_ticking(monkeypatch):
     asyncio.run(calendar_sync.async_follow(None, e, "todo.a", "u1", False))
     assert "off" not in e.item_mark("todo.a", "u1")["cal"]
     assert calls == [("remove", "calendar.x"), ("add", "calendar.x", "Milch", "2026-11-20")]
+
+
+def test_next_due_of_a_repeating_item():
+    from smartlists.extras import next_due
+
+    assert next_due("2026-11-20", "weekly", "2026-11-20") == "2026-11-27"
+    assert next_due("2026-11-20", "weekly", "2026-11-19") == "2026-11-27"   # früh abgehakt: trotzdem erst die Woche darauf
+    assert next_due("2026-11-06", "weekly", "2026-11-20") == "2026-11-27"   # lange überfällig: nächster Termin nach heute
+    assert next_due("2026-11-20T07:30", "daily", "2026-11-20") == "2026-11-21T07:30"
+    assert next_due("2026-01-31", "monthly", "2026-01-31") == "2026-02-28"
+    assert next_due("2026-12-15", "monthly", "2026-12-15") == "2027-01-15"
+
+
+def test_repeating_item_gets_its_next_date_when_ticked_and_is_reopened(monkeypatch):
+    from smartlists import calendar_sync
+
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20", "remind": True, "repeat": "weekly", "name": "Brötchen"})
+    assert item_marks(e, "todo.a", "u1", today="2026-11-20")["repeat"] == "weekly"
+    monkeypatch.setattr(calendar_sync.dt_util, "now", lambda: datetime(2026, 11, 20, 10, 0))
+    asyncio.run(calendar_sync.async_follow(None, e, "todo.a", "u1", True))
+    mark = e.item_mark("todo.a", "u1")
+    assert mark["due"] == "2026-11-27" and mark["closed"] is True
+    assert e.due_now(datetime(2026, 11, 27, 8, 0)) == []                       # abgehakt: zählt nicht als fällig
+    assert e.to_reopen(datetime(2026, 11, 26, 23, 59)) == []
+    assert [u for _, u, _ in e.to_reopen(datetime(2026, 11, 27, 0, 1))] == ["u1"]
+    e.set_item_mark("todo.a", "u1", {"closed": False})
+    assert [i["name"] for i in e.due_now(datetime(2026, 11, 27, 8, 0))] == ["Brötchen"]
+    assert [u for _, u, _ in e.due_reminders(datetime(2026, 11, 27, 9, 0))] == ["u1"]   # und erinnert wieder
+
+
+def test_quick_actions_from_a_notification():
+    from smartlists import reminders
+
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20T18:00", "remind": True})
+    token = e.mark_token("todo.a", "u1")
+    assert token and e.mark_token("todo.a", "u1") == token
+    assert e.mark_by_token(token)[:2] == ("todo.a", "u1") and e.mark_by_token("nope") is None
+    assert reminders.later("2026-11-20T18:00") == "2026-11-21T18:00" and reminders.later("2026-12-31") == "2027-01-01"
+    e.mark_reminded("todo.a", "u1")
+    hass = types.SimpleNamespace(data={"smartlists": {"extras": e}})
+    assert asyncio.run(reminders.async_handle_action(hass, reminders.ACTION_LATER + token)) is True
+    mark = e.item_mark("todo.a", "u1")
+    assert mark["due"] == "2026-11-21T18:00" and "sent" not in mark   # neuer Tag: es wird wieder erinnert
+    assert asyncio.run(reminders.async_handle_action(hass, "SMARTLISTS_DONE_unknown")) is False

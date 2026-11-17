@@ -429,14 +429,18 @@
       cal.checked = !!it.calendar;
       const calSel = h("select", { "aria-label": t.due_cal }, cals.map((s) => h("option", { value: s.entity_id }, s.attributes.friendly_name || s.entity_id)));
       calSel.value = it.calendar || (cals.some((s) => s.entity_id === last) ? last : (cals[0] ? cals[0].entity_id : ""));
+      // wiederkehrend: nach dem Abhaken kommt der Eintrag am nächsten Tag / in der nächsten Woche / im nächsten Monat wieder
+      const rep = h("select", { "aria-label": t.due_repeat }, [["", t.rep_never], ["daily", t.rep_daily], ["weekly", t.rep_weekly], ["monthly", t.rep_monthly]].map(([v, label]) => h("option", { value: v }, label)));
+      rep.value = it.repeat || "";
       const save = async (due) => {
         this._closeMenu();
         const calendar = due && cal.checked && calSel.value ? calSel.value : null;
         if (calendar) { try { localStorage.setItem("smartlists-calendar", calendar); } catch (e) { /* ohne Merken */ } }
-        try { await this._call("set_item_marks", { uid: it.uid, due, ...(due ? { remind: remind.checked } : {}), ...(cals.length || it.calendar ? { calendar } : {}), name: it.name }, true); this._load(); } catch (e) { this._toast((e && e.message) || t.error); }
+        try { await this._call("set_item_marks", { uid: it.uid, due, ...(due ? { remind: remind.checked, repeat: rep.value } : {}), ...(cals.length || it.calendar ? { calendar } : {}), name: it.name }, true); this._load(); } catch (e) { this._toast((e && e.message) || t.error); }
       };
       body = [head(t.m_due, true), h("div", { class: "duebox" },
         h("label", {}, h("span", {}, t.due_date), date), h("label", {}, h("span", {}, t.due_time), time),
+        h("label", {}, h("span", {}, t.due_repeat), rep),
         h("label", { class: "chk" }, remind, h("span", {}, t.due_remind)),
         cals.length ? h("label", { class: "chk" }, cal, h("span", {}, t.due_cal), cals.length > 1 ? calSel : null) : null,
         h("div", { class: "acts" },

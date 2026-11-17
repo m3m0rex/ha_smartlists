@@ -28,6 +28,30 @@ MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
 MAX_BARCODES = 3000
 MAX_PRICE_LOG = 12  # Einträge im Preis-Verlauf je Artikel
+REPEATS = ("daily", "weekly", "monthly")
+
+
+def next_due(due: str, repeat: str, today: str) -> str:
+    """Nächste Fälligkeit eines wiederkehrenden Eintrags: so oft weiterzählen, bis sie nach [today] liegt – mindestens
+    einmal (wer die Brötchen für Freitag schon am Donnerstag abhakt, sieht sie erst am Freitag darauf wieder)."""
+    import calendar
+    from datetime import date, timedelta
+
+    day, rest = date.fromisoformat(due[:10]), due[10:]
+    anchor = day.day
+    for _ in range(4000):
+        if repeat == "daily":
+            day += timedelta(days=1)
+        elif repeat == "weekly":
+            day += timedelta(days=7)
+        else:
+            year, month = (day.year + 1, 1) if day.month == 12 else (day.year, day.month + 1)
+            day = date(year, month, min(anchor, calendar.monthrange(year, month)[1]))
+        if day.isoformat() > today:
+            break
+    return day.isoformat() + rest
+
+
 DUE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$")
 # Preis am Ende des Textes: "Milch 2 l 1,19€", "Butter 1.79 €", "Kaffee €6,49"
 # Preis als eigenes Wort irgendwo im Text ("Milch 2 l 1,19€ @REWE", "€6,49 Kaffee"), auch "EUR"
@@ -83,6 +107,7 @@ def item_marks(extras: Any, entity_id: str, uid: str, today: str | None = None) 
 
         today = datetime.date.today().isoformat()
     return {"favorite": bool(mark.get("fav")), "due": due or None, "remind": bool(mark.get("remind")),
+            "repeat": (mark.get("repeat") or None) if due else None,
             "overdue": bool(due) and str(due)[:10] < str(today), "calendar": (mark.get("cal") or {}).get("entity") if due else None}
 
 
@@ -266,7 +291,7 @@ class Extras:
         if "due" in changes:
             due = changes["due"]
             if due is None or due == "":
-                for k in ("due", "remind", "sent", "by", "cal"):
+                for k in ("due", "remind", "sent", "by", "cal", "repeat"):
                     mark.pop(k, None)
             else:
                 if not DUE_RE.match(str(due)):
@@ -281,6 +306,16 @@ class Extras:
                     mark["by"] = changes["by"]
             else:
                 mark.pop("remind", None)
+        if "repeat" in changes:  # wiederkehrend: "daily" | "weekly" | "monthly", sonst aus – nur mit Fälligkeit
+            if changes["repeat"] in REPEATS and mark.get("due"):
+                mark["repeat"] = changes["repeat"]
+            else:
+                mark.pop("repeat", None)
+        if "closed" in changes:  # abgehakt (für den Sensor „Fällig“ und das Wieder-Öffnen wiederkehrender Einträge)
+            if changes["closed"]:
+                mark["closed"] = True
+            else:
+                mark.pop("closed", None)
         if "cal" in changes:  # gemerkter Kalender-Termin ({"entity", "due", "summary"}) – nur mit Fälligkeit
             if changes["cal"] and mark.get("due"):
                 mark["cal"] = dict(changes["cal"])
@@ -315,11 +350,44 @@ class Extras:
         for entity_id, marks in self.item_marks.items():
             for uid, mark in marks.items():
                 due = str(mark.get("due") or "")
-                if not due or not mark.get("remind") or mark.get("sent"):
+                if not due or not mark.get("remind") or mark.get("sent") or mark.get("closed"):
                     continue
                 if (due if "T" in due else due + "T09:00") <= stamp:
                     found.append((entity_id, uid, mark))
         return found
+
+    def to_reopen(self, now_local: Any) -> list[tuple[str, str, dict[str, Any]]]:
+        """Wiederkehrende, abgehakte Einträge, deren nächster Tag gekommen ist: (Liste, uid, Angaben)."""
+        today = now_local.strftime("%Y-%m-%d")
+        return [(entity_id, uid, mark) for entity_id, marks in self.item_marks.items() for uid, mark in marks.items()
+                if mark.get("repeat") and mark.get("closed") and str(mark.get("due") or "9999")[:10] <= today]
+
+    def due_now(self, now_local: Any) -> list[dict[str, Any]]:
+        """Offene Einträge, die heute fällig oder überfällig sind – für den Sensor „Fällig“."""
+        today = now_local.strftime("%Y-%m-%d")
+        found = [{"entity_id": entity_id, "uid": uid, "name": mark.get("name") or "", "due": mark["due"], "overdue": str(mark["due"])[:10] < today}
+                 for entity_id, marks in self.item_marks.items() for uid, mark in marks.items()
+                 if mark.get("due") and not mark.get("closed") and str(mark["due"])[:10] <= today]
+        return sorted(found, key=lambda x: str(x["due"]))
+
+    def mark_by_token(self, token: str) -> tuple[str, str, dict[str, Any]] | None:
+        """Eintrag zu einer Schnell-Aktion aus einer Benachrichtigung."""
+        for entity_id, marks in self.item_marks.items():
+            for uid, mark in marks.items():
+                if token and mark.get("tok") == token:
+                    return entity_id, uid, mark
+        return None
+
+    @callback
+    def mark_token(self, entity_id: str, uid: str) -> str:
+        """Kurzes Kennzeichen des Eintrags für die Knöpfe in der Benachrichtigung."""
+        mark = (self.item_marks.get(entity_id) or {}).get(uid)
+        if mark is None:
+            return ""
+        if not mark.get("tok"):
+            mark["tok"] = secrets.token_hex(6)
+            self._save()
+        return mark["tok"]
 
     @callback
     def mark_reminded(self, entity_id: str, uid: str) -> None:

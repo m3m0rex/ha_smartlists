@@ -18,6 +18,10 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 INTERVAL = timedelta(minutes=1)
+# Knöpfe in der Benachrichtigung der Companion-App: (Erledigt, Morgen erinnern)
+_ACTIONS = {"de": ("Erledigt", "Morgen erinnern"), "en": ("Done", "Remind me tomorrow"), "fr": ("Fait", "Rappeler demain"),
+            "es": ("Hecho", "Recordar mañana"), "it": ("Fatto", "Ricordamelo domani"), "pl": ("Gotowe", "Przypomnij jutro")}
+ACTION_DONE, ACTION_LATER = "SMARTLISTS_DONE_", "SMARTLISTS_LATER_"
 _TITLE = {"de": "⏰ Fällig", "en": "⏰ Due", "fr": "⏰ À faire", "es": "⏰ Pendiente", "it": "⏰ In scadenza", "pl": "⏰ Termin"}
 
 
@@ -46,6 +50,13 @@ async def async_check(hass: HomeAssistant) -> int:
     if extras is None or not extras.item_marks:
         return 0
     sent = 0
+    # wiederkehrende Einträge: am nächsten fälligen Tag wieder öffnen
+    for entity_id, uid, mark in extras.to_reopen(dt_util.now()):
+        try:
+            await hass.services.async_call("todo", "update_item", {"entity_id": entity_id, "item": uid, "status": "needs_action"}, blocking=True)
+        except Exception:  # noqa: BLE001 – Eintrag gelöscht oder Liste nicht erreichbar
+            _LOGGER.debug("Wiederkehrenden Eintrag in %s nicht geöffnet", entity_id, exc_info=True)
+        extras.set_item_mark(entity_id, uid, {"closed": False})
     for entity_id, uid, mark in extras.due_reminders(dt_util.now()):
         item = await _open_item(hass, entity_id, uid)
         if item is None:
@@ -65,7 +76,10 @@ async def async_check(hass: HomeAssistant) -> int:
                 settings = notifier.get(mark["by"])
                 targets = settings.get("targets") or []
                 if targets:
-                    errors = await notifier._deliver_all(settings, title, text, f"smartlists_due_{uid}")
+                    token = extras.mark_token(entity_id, uid)
+                    done, later = _ACTIONS.get(str(hass.config.language)[:2], _ACTIONS["en"])
+                    actions = [{"action": ACTION_DONE + token, "title": done}, {"action": ACTION_LATER + token, "title": later}] if token else None
+                    errors = await notifier._deliver_all(settings, title, text, f"smartlists_due_{uid}", actions)
                     delivered = len(errors) < len(targets)
             if not delivered:
                 await hass.services.async_call("persistent_notification", "create",
@@ -76,8 +90,47 @@ async def async_check(hass: HomeAssistant) -> int:
     return sent
 
 
+def later(due: str) -> str:
+    """„Morgen erinnern“: einen Tag weiter, die Uhrzeit bleibt."""
+    from datetime import date, timedelta
+
+    return (date.fromisoformat(due[:10]) + timedelta(days=1)).isoformat() + due[10:]
+
+
+async def async_handle_action(hass: HomeAssistant, action: str) -> bool:
+    """Knopf in einer Erinnerung: „Erledigt“ hakt den Eintrag ab, „Morgen erinnern“ verschiebt die Fälligkeit um einen Tag."""
+    extras = hass.data.get(DOMAIN, {}).get("extras")
+    kind = ACTION_DONE if action.startswith(ACTION_DONE) else ACTION_LATER if action.startswith(ACTION_LATER) else ""
+    found = extras.mark_by_token(action[len(kind):]) if extras is not None and kind else None
+    if found is None:
+        return False
+    entity_id, uid, mark = found
+    if kind == ACTION_DONE:
+        from . import lists
+
+        await lists.update_item(hass, entity_id, uid, checked=True)
+    else:
+        extras.set_item_mark(entity_id, uid, {"due": later(str(mark["due"]))})
+    return True
+
+
 def async_setup_timer(hass: HomeAssistant):
     async def _tick(_now: Any) -> None:
         await async_check(hass)
 
-    return async_track_time_interval(hass, _tick, INTERVAL)
+    async def _action(event: Any) -> None:
+        action = str((event.data or {}).get("action") or "")
+        if action.startswith("SMARTLISTS_"):
+            try:
+                await async_handle_action(hass, action)
+            except Exception:  # noqa: BLE001 – ein Knopfdruck darf nichts zum Absturz bringen
+                _LOGGER.warning("Schnell-Aktion %s fehlgeschlagen", action, exc_info=True)
+
+    stop_timer = async_track_time_interval(hass, _tick, INTERVAL)
+    stop_events = hass.bus.async_listen("mobile_app_notification_action", _action)
+
+    def _stop() -> None:
+        stop_timer()
+        stop_events()
+
+    return _stop

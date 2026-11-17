@@ -48,7 +48,9 @@ class AppBackups:
         import json
 
         try:
-            encrypted = json.loads(data).get("smartlists_encrypted") == 1
+            parsed = json.loads(data)
+            # frühere App: "smartlists_encrypted"; SmartLists Go: kind = "smartlists-backup-encrypted"
+            encrypted = parsed.get("smartlists_encrypted") == 1 or parsed.get("kind") == "smartlists-backup-encrypted"
         except (ValueError, AttributeError):
             encrypted = False
         self.backups[device_id] = {

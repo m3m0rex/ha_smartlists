@@ -28,6 +28,7 @@ MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
 MAX_BARCODES = 3000
 MAX_PRICE_LOG = 12  # Einträge im Preis-Verlauf je Artikel
+DUE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$")
 # Preis am Ende des Textes: "Milch 2 l 1,19€", "Butter 1.79 €", "Kaffee €6,49"
 # Preis als eigenes Wort irgendwo im Text ("Milch 2 l 1,19€ @REWE", "€6,49 Kaffee"), auch "EUR"
 _PRICE = re.compile(r"(?<!\S)(?:[-–—]\s+)?(?:€\s?(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?)\s?(?:€|EUR\b|eur\b))(?!\S)")
@@ -73,6 +74,18 @@ def clean_watch_targets(raw: Any) -> list[dict[str, str]]:
     return out[:12]
 
 
+def item_marks(extras: Any, entity_id: str, uid: str, today: str | None = None) -> dict[str, Any]:
+    """Felder eines Eintrags für Karte und App: favorite, due, remind, overdue."""
+    mark = extras.item_mark(entity_id, uid) if extras else {}
+    due = mark.get("due")
+    if due and today is None:
+        import datetime
+
+        today = datetime.date.today().isoformat()
+    return {"favorite": bool(mark.get("fav")), "due": due or None, "remind": bool(mark.get("remind")),
+            "overdue": bool(due) and str(due)[:10] < str(today)}
+
+
 class Extras:
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
@@ -96,6 +109,8 @@ class Extras:
         # 4.0: Preis, der für genau EINEN Eintrag getippt wurde (Liste → uid → Preis je Einheit) – unabhängig davon,
         # ob gemerkte Preise automatisch eingetragen werden
         self.item_prices: dict[str, dict[str, float]] = {}
+        # 4.0: Stern, Fälligkeit und Erinnerung je Eintrag (Liste → uid → {"fav", "due", "remind", "by", "name", "sent"})
+        self.item_marks: dict[str, dict[str, dict[str, Any]]] = {}
         # Preis-Verlauf je Artikel (normalisierter Name → letzte Einträge {"price", "store", "at", "source"})
         self.price_log: dict[str, list[dict[str, Any]]] = {}
         # Merkliste des Haushalts: Produkte, bei denen man auf ein Angebot wartet; {"notify": bool, "service": "notify.…"}
@@ -114,6 +129,8 @@ class Extras:
         self.trips = dict(data.get("trips") or {})
         self.list_settings = dict(data.get("list_settings") or {})
         self.item_prices = {k: dict(v) for k, v in (data.get("item_prices") or {}).items() if isinstance(v, dict)}
+        self.item_marks = {k: {u: dict(m) for u, m in v.items() if isinstance(m, dict)}
+                           for k, v in (data.get("item_marks") or {}).items() if isinstance(v, dict)}
         self.watch = [str(x) for x in (data.get("watch") or []) if isinstance(x, str) and x.strip()][:60]
         self.watch_settings = dict(data.get("watch_settings") or {})
         if "targets" not in self.watch_settings:  # bis beta.1 der Karte: ein Dienst als Text
@@ -128,7 +145,7 @@ class Extras:
         return {"store_order": self.store_order, "prices": self.prices, "expenses": self.expenses,
                 "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips,
                 "list_settings": self.list_settings, "mealplan": self.mealplan,
-                "item_prices": self.item_prices, "price_log": self.price_log,
+                "item_prices": self.item_prices, "price_log": self.price_log, "item_marks": self.item_marks,
                 "watch": self.watch, "watch_settings": self.watch_settings, "watch_seen": self.watch_seen}
 
     def _save(self) -> None:
@@ -218,6 +235,93 @@ class Extras:
 
     def item_price(self, entity_id: str, uid: str) -> float | None:
         return (self.item_prices.get(entity_id) or {}).get(uid)
+
+    # ---------- Stern, Fälligkeit, Erinnerung ----------
+    @staticmethod
+    def mark_key(entity_id: str, uid: str) -> tuple[str, str]:
+        """In einer kombinierten Liste heißt ein Eintrag „quelle::uid“ – gemerkt wird bei der Quell-Liste, damit
+        Stern und Fälligkeit überall gleich sind, wo der Eintrag erscheint."""
+        if "::" in uid:
+            source, _, inner = uid.partition("::")
+            if source.startswith("todo."):
+                return source, inner
+        return entity_id, uid
+
+    def item_mark(self, entity_id: str, uid: str) -> dict[str, Any]:
+        key, inner = self.mark_key(entity_id, uid)
+        return (self.item_marks.get(key) or {}).get(inner) or {}
+
+    @callback
+    def set_item_mark(self, entity_id: str, uid: str, changes: dict[str, Any]) -> dict[str, Any]:
+        """changes: favorite (bool), due ("JJJJ-MM-TT" oder "JJJJ-MM-TTThh:mm", None = entfernen), remind (bool),
+        by (Benutzer, der erinnert werden will), name (Text des Eintrags für die Meldung)."""
+        key, inner = self.mark_key(entity_id, uid)
+        marks = self.item_marks.setdefault(key, {})
+        mark = dict(marks.get(inner) or {})
+        if "favorite" in changes:
+            if changes["favorite"]:
+                mark["fav"] = True
+            else:
+                mark.pop("fav", None)
+        if "due" in changes:
+            due = changes["due"]
+            if due is None or due == "":
+                for k in ("due", "remind", "sent", "by"):
+                    mark.pop(k, None)
+            else:
+                if not DUE_RE.match(str(due)):
+                    raise ValueError("Datum ungültig")
+                if mark.get("due") != due:
+                    mark.pop("sent", None)  # neues Datum: wieder erinnern
+                mark["due"] = str(due)
+        if "remind" in changes and mark.get("due"):
+            if changes["remind"]:
+                mark["remind"] = True
+                if changes.get("by"):
+                    mark["by"] = changes["by"]
+            else:
+                mark.pop("remind", None)
+        if changes.get("name"):
+            mark["name"] = str(changes["name"])[:120]
+        if mark.get("fav") or mark.get("due"):
+            marks[inner] = mark
+            for k in list(marks)[: max(0, len(marks) - 500)]:
+                marks.pop(k)
+        else:
+            marks.pop(inner, None)
+            mark = {}
+        if not marks:
+            self.item_marks.pop(key, None)
+        self._save()
+        return mark
+
+    @callback
+    def clear_item_mark(self, entity_id: str, uid: str) -> None:
+        key, inner = self.mark_key(entity_id, uid)
+        if (self.item_marks.get(key) or {}).pop(inner, None) is not None:
+            if not self.item_marks[key]:
+                self.item_marks.pop(key)
+            self._save()
+
+    def due_reminders(self, now_local: Any) -> list[tuple[str, str, dict[str, Any]]]:
+        """Fällige, noch nicht gemeldete Erinnerungen: (Liste, uid, Angaben). Ein Datum ohne Uhrzeit gilt ab 9 Uhr."""
+        stamp = now_local.strftime("%Y-%m-%dT%H:%M")
+        found = []
+        for entity_id, marks in self.item_marks.items():
+            for uid, mark in marks.items():
+                due = str(mark.get("due") or "")
+                if not due or not mark.get("remind") or mark.get("sent"):
+                    continue
+                if (due if "T" in due else due + "T09:00") <= stamp:
+                    found.append((entity_id, uid, mark))
+        return found
+
+    @callback
+    def mark_reminded(self, entity_id: str, uid: str) -> None:
+        mark = (self.item_marks.get(entity_id) or {}).get(uid)
+        if mark is not None:
+            mark["sent"] = True
+            self._save()
 
     @callback
     def book(self, name: str, quantity: float | None, store: str | None, user: str | None, entity_id: str,

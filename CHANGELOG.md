@@ -3,6 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.9] – 2026-11-17
+
+Ninth pre-release of 4.0.
+
+### Added
+
+- **Favourites.** The item menu has "Favourite – move to the top". Favourites carry a star and stand first, in every
+  sort order and within their category.
+- **Due dates and reminders.** The item menu has "Due on": a date, optionally a time, and "Remind me when it is due".
+  The item shows the date (red once it is overdue). Home Assistant sends the reminder once, to the notification
+  targets of whoever switched it on, otherwise as a notification in Home Assistant. Ticked or deleted items are not
+  reminded.
+- **For the app.** New commands `smartlists/set_item_marks` and `smartlists/offers`; every item in `get_list` has
+  `favorite`, `due`, `remind` and `overdue`. `docs/app-api.md` describes sign-in, sync, offers and the app backup.
+
 ## [4.0.0-beta.8] – 2026-11-17
 
 Eighth pre-release of 4.0.

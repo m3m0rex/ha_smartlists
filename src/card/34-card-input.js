@@ -426,7 +426,7 @@
     const filtered = d.items.filter((i) => this._passesFilters(i));
     const visible = searching ? filtered.filter((i) => this._matches(i, d)) : filtered;
     this._hitCount = visible.length;
-    const open = visible.filter((i) => !i.checked);
+    let open = visible.filter((i) => !i.checked);
     const done = visible.filter((i) => i.checked);
     const out = [];
     if (this._sel) out.push(this._selBar(d, visible));
@@ -456,7 +456,9 @@
           h("button", { class: "btn2", type: "button", title: t.pending_no, "aria-label": `${t.pending_no}: ${pi.text}`, onclick: () => decide(pi.id, false) }, "✕")))));
     }
     const mode = this._noCats && this._sortMode === "category" ? "added" : this._sortMode;
-    const byName = (a, b) => a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
+    const favFirst = (a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0);
+    const byName = (a, b) => favFirst(a, b) || a.name.localeCompare(b.name, this._hass.language || "de", { sensitivity: "base", numeric: true });
+    if (open.some((i) => i.favorite)) open = [...open].sort(favFirst);  // stabil: innerhalb bleibt die Reihenfolge
     const rows = [];
     let emoji = false;
     const grouped = (keyOf, groupsInOrder, labelOf, colorOf = () => null) => {
@@ -556,7 +558,7 @@
     // Einkaufsmodus: Tipp irgendwo auf die Zeile hakt ab (nicht nur das kleine Kästchen); Fehltipper fängt
     // die Rückgängig-Leiste unten auf (3 s)
     const tapRow = shop && ui.shop_tap_row !== false && p.toggle;
-    const nameEl = h("span", { class: "iname" }, this._highlight(showName(it.name)));
+    const nameEl = h("span", { class: "iname" }, it.favorite ? h("span", { class: "fav", title: t.fav, "aria-label": t.fav }, "★ ") : null, this._highlight(showName(it.name)));
     const deals = this._config.show_offer_hints !== false && !shop ? this._dealsFor(it) : [];
     // Reihenfolge der Angaben unter dem Namen: Haushalt (Einstellungen → Badges & Farben)
     const part = {
@@ -572,7 +574,8 @@
           `🏷️ ${(deals.length > 1 ? t.deal_from : "{price}").replace("{price}", fmtMoney(deals[0].price, this._hass.language))}`,
           deals[0].until ? h("span", { class: "duntil" }, `${t.offer_until || "bis"} ${String(deals[0].until).slice(8, 10)}.${String(deals[0].until).slice(5, 7)}.`) : null,
           deals.length > 1 ? h("span", { class: "dmore" }, `+${deals.length - 1}`) : null) : null],
-      note: [this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
+      note: [it.due && !it.checked ? h("span", { class: `chip due ${it.overdue ? "over" : ""}`, title: it.remind ? t.due_remind : "" }, `${it.remind ? "⏰" : "📅"} ${slDue(it.due)}`) : null,
+        this._config.show_note && it.note ? h("span", { class: "note" }, it.note) : null],
     };
     const sub = slRowOrder().flatMap((k) => part[k] || []);
     const row = h("div", { class: `row ${showEmoji ? "emoji" : ""} ${it.checked ? "checked" : ""} ${shop && ui.shop_large ? "large" : ""} ${tapRow ? "tap" : ""} ${shop && buttons ? "btns" : ""}`,

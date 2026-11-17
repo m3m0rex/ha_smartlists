@@ -149,6 +149,15 @@ const STYLE = `
   .iname { overflow-wrap:anywhere; hyphens:auto; min-width:0; }
   .row.checked .iname { text-decoration:line-through; color:var(--secondary-text-color); }
   .row.checked .tag { opacity:.55; }
+  .iname .fav { color:#e3a008; }
+  .chip.due { background:color-mix(in srgb, var(--primary-color,#03a9f4) 14%, transparent); color:var(--primary-text-color); }
+  .chip.due.over { background:color-mix(in srgb, var(--error-color,#db4437) 18%, transparent); color:var(--error-color,#db4437); font-weight:600; }
+  .duebox { display:flex; flex-direction:column; gap:10px; padding:8px 10px 10px; }
+  .duebox label { display:flex; align-items:center; gap:10px; font-size:.9rem; }
+  .duebox label span { flex:1; }
+  .duebox input[type=date], .duebox input[type=time] { font:inherit; padding:8px 10px; border-radius:8px; border:1px solid var(--divider-color,#ccc); background:var(--card-background-color,#fff); color:var(--primary-text-color); min-height:40px; }
+  .duebox label.chk input { width:20px; height:20px; }
+  .duebox label.chk span { order:2; }
   .chip { font-size:.72rem; padding:1px 7px; border-radius:9px; background:var(--secondary-background-color,#eee); color:var(--secondary-text-color); white-space:nowrap; }
   button.chip { border:0; cursor:pointer; font:inherit; font-size:.8rem; padding:4px 10px; border-radius:999px; }
   .chip.qty { background:color-mix(in srgb, var(--sl-accent) 14%, transparent); color:var(--sl-accent); font-weight:600; }

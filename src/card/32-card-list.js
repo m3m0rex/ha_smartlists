@@ -389,6 +389,14 @@
       if (!actions.length) body.push(h("div", { class: "empty" }, t.readonly));
       if (d.type !== "notes") body.push(item(ICON.check, t.m_select, () => this._startSelect(it)));
       body.push(item(ICON.copy, t.m_copy_text, () => { this._closeMenu(); this._copyText([it]); }));
+      // 4.0: Stern (Favoriten stehen oben) und Fälligkeit mit Erinnerung – für alle, die abhaken dürfen
+      if (d.type !== "notes" && p.toggle) {
+        body.push(item(ICON.star, it.favorite ? t.m_unfav : t.m_fav, async () => {
+          this._closeMenu();
+          try { await this._call("set_item_marks", { uid: it.uid, favorite: !it.favorite, name: it.name }, true); this._load(); } catch (e) { this._toast((e && e.message) || t.error); }
+        }));
+        body.push(item(ICON.clock, it.due ? `${t.m_due}: ${slDue(it.due)}` : t.m_due, () => this._openMenu(it, m.row, "due")));
+      }
       if (d.type !== "notes") body.push(item(ICON.history, t.ih_title, () => this._openMenu(it, m.row, "history")));
       // 4.0: Produkt merken – SmartLists meldet, wenn es im Angebot ist (Einstellungen → Preise & Währung)
       if (d.type !== "notes" && !this._plain && it.name) body.push(item(ICON.star || ICON.check, t.wl_menu, async () => {
@@ -409,6 +417,21 @@
               : this._call("move_item", { entity_id: l.entity_id, uid: res.uid, target: source, copy: false }, false));
         }))
         : h("div", { class: "empty" }, t.no_targets)];
+    } else if (m.view === "due") {
+      const date = h("input", { type: "date", value: (it.due || "").slice(0, 10), "aria-label": t.due_date });
+      const time = h("input", { type: "time", value: (it.due || "").slice(11, 16), "aria-label": t.due_time });
+      const remind = h("input", { type: "checkbox" });
+      remind.checked = it.due ? !!it.remind : true;
+      const save = async (due) => {
+        this._closeMenu();
+        try { await this._call("set_item_marks", { uid: it.uid, due, ...(due ? { remind: remind.checked } : {}), name: it.name }, true); this._load(); } catch (e) { this._toast((e && e.message) || t.error); }
+      };
+      body = [head(t.m_due, true), h("div", { class: "duebox" },
+        h("label", {}, h("span", {}, t.due_date), date), h("label", {}, h("span", {}, t.due_time), time),
+        h("label", { class: "chk" }, remind, h("span", {}, t.due_remind)),
+        h("div", { class: "acts" },
+          it.due ? h("button", { class: "btn2", type: "button", onclick: () => save(null) }, t.due_clear) : null,
+          h("button", { class: "btn2 primary", type: "button", onclick: () => { if (date.value) save(date.value + (time.value ? "T" + time.value : "")); } }, t.save)))];
     } else if (m.view === "history") {
       // Wer hat den Artikel wann hinzugefügt, abgehakt, umbenannt, gelöscht
       const listEl = h("div", { class: "empty" }, t.loading);

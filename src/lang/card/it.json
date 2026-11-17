@@ -981,5 +981,13 @@
   "bk_count": "{n} articoli",
   "bk_shares": "{n} condivisioni",
   "bk_sources": "da {n} liste",
-  "bk_more": "Inoltre: {n} impostazioni, permessi, categorie apprese e cronologia, note, link di condivisione, lista dei preferiti, modelli, dispositivi associati e notifiche."
+  "bk_more": "Inoltre: {n} impostazioni, permessi, categorie apprese e cronologia, note, link di condivisione, lista dei preferiti, modelli, dispositivi associati e notifiche.",
+  "fav": "Preferito",
+  "m_fav": "Preferito – in alto",
+  "m_unfav": "Rimuovi dai preferiti",
+  "m_due": "Scade il",
+  "due_date": "Data",
+  "due_time": "Ora (facoltativa)",
+  "due_remind": "Ricordamelo alla scadenza",
+  "due_clear": "Rimuovi"
 }

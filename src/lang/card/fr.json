@@ -981,5 +981,13 @@
   "bk_count": "{n} articles",
   "bk_shares": "{n} partages",
   "bk_sources": "de {n} listes",
-  "bk_more": "Aussi : {n} réglages, droits, catégories apprises et historique, notes, liens de partage, liste de suivi, modèles, appareils associés et notifications."
+  "bk_more": "Aussi : {n} réglages, droits, catégories apprises et historique, notes, liens de partage, liste de suivi, modèles, appareils associés et notifications.",
+  "fav": "Favori",
+  "m_fav": "Favori – en haut",
+  "m_unfav": "Retirer des favoris",
+  "m_due": "À faire le",
+  "due_date": "Date",
+  "due_time": "Heure (facultatif)",
+  "due_remind": "Me rappeler à l’échéance",
+  "due_clear": "Retirer"
 }

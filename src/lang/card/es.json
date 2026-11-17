@@ -981,5 +981,13 @@
   "bk_count": "{n} artículos",
   "bk_shares": "{n} permisos compartidos",
   "bk_sources": "de {n} listas",
-  "bk_more": "Además: {n} ajustes, permisos, categorías aprendidas e historial, notas, enlaces compartidos, lista de seguimiento, plantillas, dispositivos vinculados y avisos."
+  "bk_more": "Además: {n} ajustes, permisos, categorías aprendidas e historial, notas, enlaces compartidos, lista de seguimiento, plantillas, dispositivos vinculados y avisos.",
+  "fav": "Favorito",
+  "m_fav": "Favorito: arriba",
+  "m_unfav": "Quitar de favoritos",
+  "m_due": "Vence el",
+  "due_date": "Fecha",
+  "due_time": "Hora (opcional)",
+  "due_remind": "Recordármelo cuando venza",
+  "due_clear": "Quitar"
 }

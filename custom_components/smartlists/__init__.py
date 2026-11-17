@@ -163,6 +163,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     from .offers import async_setup_watch_timer
 
     entry.async_on_unload(async_setup_watch_timer(hass))
+    from .reminders import async_setup_timer as async_setup_reminders
+
+    entry.async_on_unload(async_setup_reminders(hass))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True

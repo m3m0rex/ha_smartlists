@@ -258,6 +258,65 @@ Keys: `press_gesture` (long/double/right/off), `press_target` (row/name),
 `row_buttons`, `shop_hide_checked`, `shop_keep_awake`, `shop_large`, `shop_tap_row` (on/off).
 The user is derived from the token – use one token per person so everyone has their own settings.
 
+## 10. Favourites, due dates and reminders
+
+Every item in `smartlists/get_list` carries four more fields:
+
+| Field | Meaning |
+|---|---|
+| `favorite` | `true` – the item is a favourite; the card shows it first (within its group) |
+| `due` | `"YYYY-MM-DD"` or `"YYYY-MM-DDTHH:MM"` (local time of Home Assistant), otherwise `null` |
+| `remind` | `true` – Home Assistant sends a reminder when the item is due |
+| `overdue` | `true` – the due day is in the past |
+
+Change them (allowed for everyone who may tick items on that list):
+
+```json
+{"id": 7, "type": "smartlists/set_item_marks", "entity_id": "todo.family", "uid": "…",
+ "favorite": true, "due": "2026-11-20T18:00", "remind": true, "name": "Milk"}
+```
+
+Send only the fields that change. `"due": null` removes the due date and the reminder. `name` is optional and only
+used as a fallback text for the notification. Response: `{"favorite", "due", "remind"}`.
+
+Reminders are sent by Home Assistant, once per item, to the notification targets of the user who switched the
+reminder on (the same targets as in *Settings → Notifications*); without targets a notification appears in Home
+Assistant. A date without a time counts from 09:00. Ticked or deleted items are not reminded. The marks are removed
+together with the item. In a combined list they are stored with the source list, so they are the same everywhere.
+
+The app may additionally schedule a local notification on the device from `due` – then switch `remind` off, otherwise
+the user is reminded twice.
+
+## 11. Offers
+
+```json
+{"id": 8, "type": "smartlists/offers", "entity_id": "todo.family"}
+```
+
+Response:
+
+- `offers` – all valid offers SmartLists finds in the offer sensors: `name`, `store`, `price`, `until`, …
+- `sources` – number of sensors/stores that delivered offers. `0` means: no offer sensors in Home Assistant – explain
+  to the user what is missing instead of showing an empty page.
+- `matches` – only with `entity_id`: `{uid: [offer, …]}` for every open item with a matching offer, cheapest first.
+
+The watch list is unchanged: `smartlists/watch` and `smartlists/watch_set`.
+
+## 12. What the app needs, in order
+
+1. **Sign in** – Home Assistant's normal sign-in (OAuth 2 / IndieAuth, `…/auth/authorize` with the app's client id),
+   then keep the refresh token in the device's secure storage. No long-lived token has to be typed in. After
+   connecting: `smartlists/info` (see 1), then `smartlists/register_device`.
+2. **Read** – `smartlists/lists`, `smartlists/get_list`; `smartlists/info` delivers `tag_rules` (the markers for
+   shop, person and tag can be changed by administrators – do not hard-code `@ * #`) and `features`.
+3. **Change and sync** – `add_item`, `update_item`, `remove_items`, `move_item`, `set_item_marks`. Send an `op_id`
+   (any unique text) with `add_item`, `update_item`, `remove_items` and `set_item_marks` when the change was made offline: repeating the same `op_id` after a lost connection returns the
+   first answer instead of doing the change twice. Subscribe to `smartlists/subscribe` (feature `live`) to reload.
+4. **Offers** – see 11.
+5. **Backup of the app** – see 8; the content is encrypted on the device, Home Assistant only stores it.
+
+Check `features` from `smartlists/info` before using a command: `item_marks` and `offers` exist since 4.0.0-beta.9.
+
 ## Versioning
 
 `api_version` only increases for incompatible changes. New response fields and new commands are not

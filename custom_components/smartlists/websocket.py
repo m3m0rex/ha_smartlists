@@ -32,6 +32,8 @@ from .ws_lists import (
     ws_update_item,
     ws_remove_items,
     ws_clear_expired_offers,
+    ws_set_item_marks,
+    ws_offers,
     ws_clear_completed,
     ws_move_item,
     ws_register_device,
@@ -238,6 +240,8 @@ def async_register(hass: HomeAssistant) -> None:
         ws_remove_items,
         ws_clear_completed,
         ws_clear_expired_offers,
+        ws_set_item_marks,
+        ws_offers,
         ws_move_item,
     ):
         websocket_api.async_register_command(hass, handler)

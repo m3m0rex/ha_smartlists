@@ -101,3 +101,8 @@ function badge(tag, look = SL_LOOK) {
   return h("span", { class: `tag ${cls} s-${k.style}`, style: css, title: label }, icon, label);
 }
 
+// Fälligkeit kurz: "2026-11-20" → "20.11.", "2026-11-20T18:00" → "20.11. 18:00"
+function slDue(due) {
+  const d = String(due || "");
+  return d.length < 10 ? "" : `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.length > 10 ? " " + d.slice(11, 16) : ""}`;
+}

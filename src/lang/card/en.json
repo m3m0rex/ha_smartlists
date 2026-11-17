@@ -981,5 +981,13 @@
   "bk_count": "{n} items",
   "bk_shares": "{n} shares",
   "bk_sources": "from {n} lists",
-  "bk_more": "Also: {n} settings, permissions, learned categories and history, notes, share links, watch list, templates, paired devices and notifications."
+  "bk_more": "Also: {n} settings, permissions, learned categories and history, notes, share links, watch list, templates, paired devices and notifications.",
+  "fav": "Favourite",
+  "m_fav": "Favourite – move to the top",
+  "m_unfav": "Remove favourite",
+  "m_due": "Due on",
+  "due_date": "Date",
+  "due_time": "Time (optional)",
+  "due_remind": "Remind me when it is due",
+  "due_clear": "Remove"
 }

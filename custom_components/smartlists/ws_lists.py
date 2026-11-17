@@ -142,3 +142,43 @@ def ws_devices(hass: HomeAssistant, connection: websocket_api.ActiveConnection, 
 def ws_remove_device(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     hass.data[DOMAIN]["devices"].remove(msg["device_id"])
     connection.send_result(msg["id"], {"devices": hass.data[DOMAIN]["devices"].entries()})
+
+
+@_list_command({vol.Required("type"): "smartlists/set_item_marks", vol.Required("entity_id"): str, vol.Required("uid"): str,
+                vol.Optional("favorite"): bool, vol.Optional("due"): vol.Any(str, None), vol.Optional("remind"): bool,
+                vol.Optional("name"): str, vol.Optional("op_id"): _OP_ID})
+async def ws_set_item_marks(hass: HomeAssistant, msg: dict[str, Any], context: Any) -> dict[str, Any]:
+    """Stern, Fälligkeit und Erinnerung eines Eintrags. Wer abhaken darf, darf auch das."""
+    if not lists.list_permissions(hass, msg["entity_id"]).get("toggle"):
+        raise lists.ListError("Auf dieser Liste darfst du das nicht.")
+    extras = hass.data.get(DOMAIN, {}).get("extras")
+    if extras is None:
+        raise lists.ListError("SmartLists ist noch nicht bereit.")
+    changes = {k: msg[k] for k in ("favorite", "due", "remind", "name") if k in msg}
+    user = msg.get("_user")
+    if changes.get("remind") and user is not None:
+        changes["by"] = user.id
+    try:
+        mark = extras.set_item_mark(msg["entity_id"], msg["uid"], changes)
+    except ValueError as err:
+        raise lists.ListError(str(err)) from err
+    return {"favorite": bool(mark.get("fav")), "due": mark.get("due"), "remind": bool(mark.get("remind"))}
+
+
+@_list_command({vol.Required("type"): "smartlists/offers", vol.Optional("entity_id"): str})
+async def ws_offers(hass: HomeAssistant, msg: dict[str, Any], context: Any) -> dict[str, Any]:
+    """Angebote für die App: alle Angebote aus den Sensoren und – mit entity_id – je offenem Artikel die passenden.
+    `sources` sagt, ob überhaupt Angebots-Sensoren da sind (die App erklärt sonst, was fehlt)."""
+    from . import offers as offers_mod
+
+    extras = hass.data.get(DOMAIN, {}).get("extras")
+    found = offers_mod.collect(hass, (extras.watch_settings.get("sources") if extras else None))
+    result: dict[str, Any] = {"offers": found, "sources": len({o.get("entity_id") or o.get("store") for o in found}), "matches": {}}
+    if msg.get("entity_id"):
+        data = await lists.get_list(hass, msg["entity_id"], msg.get("_user"))
+        for item in data["items"]:
+            if not item.get("checked") and item.get("name"):
+                deals = offers_mod.deals_for(found, item["name"])
+                if deals:
+                    result["matches"][item["uid"]] = deals
+    return result

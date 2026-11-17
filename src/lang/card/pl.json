@@ -981,5 +981,13 @@
   "bk_count": "produkty: {n}",
   "bk_shares": "udostępnienia: {n}",
   "bk_sources": "z {n} list",
-  "bk_more": "Ponadto: ustawienia ({n}), uprawnienia, wyuczone kategorie i historia, notatki, linki udostępniania, lista obserwowanych, szablony, sparowane urządzenia i powiadomienia."
+  "bk_more": "Ponadto: ustawienia ({n}), uprawnienia, wyuczone kategorie i historia, notatki, linki udostępniania, lista obserwowanych, szablony, sparowane urządzenia i powiadomienia.",
+  "fav": "Ulubione",
+  "m_fav": "Ulubione – na górę",
+  "m_unfav": "Usuń z ulubionych",
+  "m_due": "Termin",
+  "due_date": "Data",
+  "due_time": "Godzina (opcjonalnie)",
+  "due_remind": "Przypomnij w terminie",
+  "due_clear": "Usuń"
 }

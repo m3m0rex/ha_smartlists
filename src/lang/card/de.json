@@ -981,5 +981,13 @@
   "bk_count": "{n} Artikel",
   "bk_shares": "{n} Freigaben",
   "bk_sources": "aus {n} Listen",
-  "bk_more": "Außerdem: {n} Einstellungen, Rechte, gemerkte Kategorien und Verlauf, Notizen, Freigabe-Links, Merkliste, Vorlagen, gekoppelte Geräte und Benachrichtigungen."
+  "bk_more": "Außerdem: {n} Einstellungen, Rechte, gemerkte Kategorien und Verlauf, Notizen, Freigabe-Links, Merkliste, Vorlagen, gekoppelte Geräte und Benachrichtigungen.",
+  "fav": "Favorit",
+  "m_fav": "Als Favorit nach oben",
+  "m_unfav": "Favorit entfernen",
+  "m_due": "Fällig am",
+  "due_date": "Datum",
+  "due_time": "Uhrzeit (optional)",
+  "due_remind": "Erinnern, wenn es so weit ist",
+  "due_clear": "Entfernen"
 }

@@ -185,7 +185,7 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history", "migrate"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history", "migrate", "item_marks", "offers"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
             **_learning(hass).config(),
         },

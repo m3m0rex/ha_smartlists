@@ -20,6 +20,7 @@ from homeassistant.core import Context, HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 
 from .const import DOMAIN
+from .extras import item_marks
 from .itemtext import join_offer, split_offer
 from .own import permissions_for, role_for
 from .learning import Learning
@@ -240,6 +241,8 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
                 "link_added": raw["uid"] in via_link,
                 "link_by": via_link.get(raw["uid"]) or None,
                 "checked_at": (extras.checked_at.get(entity_id) or {}).get(raw["uid"]) if extras else None,
+                # 4.0: Stern (Favoriten stehen oben), Fälligkeit und Erinnerung je Eintrag
+                **item_marks(extras, entity_id, raw["uid"]),
                 "uid": raw["uid"],
                 "text": raw["text"],
                 # umgeformter Text ("Butcher's Burger Buns 2 @REWE") zum Bearbeiten, wenn der Text aus einer anderen Quelle kam
@@ -435,6 +438,7 @@ async def remove_items(hass: HomeAssistant, entity_id: str, uids: list[str], con
         if (extras := _extras(hass)) is not None:
             for uid in uids:
                 extras.set_item_price(entity_id, uid, None)
+                extras.clear_item_mark(entity_id, uid)
     return {}
 
 

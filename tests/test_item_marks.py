@@ -1,0 +1,75 @@
+"""Stern, Fälligkeit und Erinnerung je Eintrag."""
+
+import asyncio
+import types
+from datetime import datetime
+
+import pytest
+
+from smartlists.extras import Extras, item_marks
+from smartlists.reminders import message
+
+
+def _extras():
+    e = Extras(types.SimpleNamespace(data={}))
+    asyncio.run(e.async_load())
+    return e
+
+
+def test_favourite_and_due_are_kept_and_removed():
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"favorite": True})
+    assert item_marks(e, "todo.a", "u1") == {"favorite": True, "due": None, "remind": False, "overdue": False}
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20T18:00", "remind": True, "by": "user1", "name": "Milch"})
+    assert item_marks(e, "todo.a", "u1", today="2026-11-17") == {"favorite": True, "due": "2026-11-20T18:00", "remind": True, "overdue": False}
+    assert item_marks(e, "todo.a", "u1", today="2026-11-21")["overdue"] is True
+    assert item_marks(e, "todo.a", "u1", today="2026-11-20")["overdue"] is False  # am Tag selbst noch nicht überfällig
+    e.set_item_mark("todo.a", "u1", {"due": None})
+    assert item_marks(e, "todo.a", "u1")["remind"] is False
+    e.set_item_mark("todo.a", "u1", {"favorite": False})
+    assert e.item_marks == {}  # nichts mehr gemerkt: kein Rest im Speicher
+
+
+def test_bad_date_is_refused_and_reminder_needs_a_date():
+    e = _extras()
+    with pytest.raises(ValueError):
+        e.set_item_mark("todo.a", "u1", {"due": "morgen"})
+    e.set_item_mark("todo.a", "u1", {"remind": True})
+    assert e.item_marks == {}
+
+
+def test_combined_list_marks_live_with_the_source_list():
+    e = _extras()
+    e.set_item_mark("todo.kombi", "todo.rewe::u7", {"favorite": True})
+    assert e.item_marks == {"todo.rewe": {"u7": {"fav": True}}}
+    assert item_marks(e, "todo.rewe", "u7")["favorite"] is True
+    assert item_marks(e, "todo.kombi", "todo.rewe::u7")["favorite"] is True
+    e.clear_item_mark("todo.kombi", "todo.rewe::u7")
+    assert e.item_marks == {}
+
+
+def test_due_reminders_fire_once_and_again_after_a_new_date():
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20T18:00", "remind": True, "by": "x"})
+    e.set_item_mark("todo.a", "u2", {"due": "2026-11-20", "remind": True})   # ohne Uhrzeit: ab 9 Uhr
+    e.set_item_mark("todo.a", "u3", {"due": "2026-11-20T08:00"})              # ohne Erinnerung
+    assert e.due_reminders(datetime(2026, 11, 20, 8, 59)) == []
+    assert [u for _, u, _ in e.due_reminders(datetime(2026, 11, 20, 9, 0))] == ["u2"]
+    assert sorted(u for _, u, _ in e.due_reminders(datetime(2026, 11, 20, 18, 0))) == ["u1", "u2"]
+    e.mark_reminded("todo.a", "u1")
+    e.mark_reminded("todo.a", "u2")
+    assert e.due_reminders(datetime(2026, 11, 21, 12, 0)) == []
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-22T10:00"})
+    assert [u for _, u, _ in e.due_reminders(datetime(2026, 11, 22, 10, 0))] == ["u1"]
+
+
+def test_marks_survive_a_reload():
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"favorite": True, "due": "2026-12-01"})
+    saved = e._data() if hasattr(e, "_data") else None
+    assert saved and saved["item_marks"] == {"todo.a": {"u1": {"fav": True, "due": "2026-12-01"}}}
+
+
+def test_message():
+    assert message("Milch", "Familie", "2026-11-20T18:00") == "Milch – Familie (20.11. 18:00)"
+    assert message("Milch", "", "2026-11-20") == "Milch (20.11.)"

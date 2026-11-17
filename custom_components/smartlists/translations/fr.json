@@ -12,6 +12,13 @@
         "data_description": {
           "combine": "Par ex. les listes de courses de plusieurs personnes."
         }
+      },
+      "restore": {
+        "title": "Restaurer tes listes ?",
+        "description": "Une sauvegarde du {date} a été trouvée, créée lors de la suppression de SmartLists : {own} listes propres et {combined} listes combinées.\n\nFichier : `{path}`",
+        "data": {
+          "restore": "Restaurer les listes et les réglages"
+        }
       }
     },
     "abort": {
@@ -496,6 +503,10 @@
           "description": "Facultatif ; adapte les quantités."
         }
       }
+    },
+    "create_backup": {
+      "name": "Créer une sauvegarde",
+      "description": "Écrit tout ce que SmartLists enregistre dans un fichier du dossier de configuration et répond avec un rapport de son contenu. Réservé aux administrateurs."
     }
   },
   "issues": {
@@ -528,7 +539,7 @@
     },
     "discounts_card_missing": {
       "title": "La carte des promos doit être réinstallée",
-      "description": "La **SmartDiscounts Card** (`custom:smartdiscounts-card`) est un projet à part depuis SmartLists 4.0 et n'est plus fournie avec l'intégration. Tu l'utilises sur un tableau de bord ou tu tiens une liste à surveiller.\n\nMarche à suivre :\n1. Ouvre HACS → en haut à droite **Dépôts personnalisés** → ajoute `{url}` comme **Tableau de bord**.\n2. Télécharge **SmartDiscounts Card**.\n3. Recharge le navigateur (Ctrl+F5).\n\nTes cartes et réglages sont conservés. La vérification en arrière-plan de la liste à surveiller continue de fonctionner."
+      "description": "La tarjeta **SmartDiscounts** (`custom:smartdiscounts-card`) est un projet à part depuis SmartLists 4.0 et n'est plus fournie avec l'intégration. Tu l'utilises sur un tableau de bord ou tu tiens une liste à surveiller.\n\nMarche à suivre :\n1. Ouvre HACS → en haut à droite **Dépôts personnalisés** → ajoute `{url}` comme **Tableau de bord**.\n2. Télécharge **SmartDiscounts**.\n3. Recharge le navigateur (Ctrl+F5).\n\nTes cartes et réglages sont conservés. La vérification en arrière-plan de la liste à surveiller continue de fonctionner."
     }
   }
 }

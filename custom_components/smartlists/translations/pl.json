@@ -12,6 +12,13 @@
         "data_description": {
           "combine": "Np. listy zakupów kilku osób."
         }
+      },
+      "restore": {
+        "title": "Przywrócić listy?",
+        "description": "Znaleziono kopię z {date}, utworzoną przy usuwaniu SmartLists: własne listy: {own}, listy łączone: {combined}.\n\nPlik: `{path}`",
+        "data": {
+          "restore": "Przywróć listy i ustawienia"
+        }
       }
     },
     "abort": {
@@ -496,6 +503,10 @@
           "description": "Opcjonalnie; przelicza ilości."
         }
       }
+    },
+    "create_backup": {
+      "name": "Utwórz kopię zapasową",
+      "description": "Zapisuje wszystko, co przechowuje SmartLists, do pliku w folderze konfiguracji i odpowiada raportem z zawartością. Tylko dla administratorów."
     }
   },
   "issues": {
@@ -528,7 +539,7 @@
     },
     "discounts_card_missing": {
       "title": "Kartę promocji trzeba zainstalować ponownie",
-      "description": "**SmartDiscounts Card** (`custom:smartdiscounts-card`) jest od SmartLists 4.0 osobnym projektem i nie jest już dostarczana z integracją. Używasz jej na pulpicie lub prowadzisz listę obserwowanych.\n\nCo zrobić:\n1. Otwórz HACS → w prawym górnym rogu **Niestandardowe repozytoria** → dodaj `{url}` jako **Pulpit**.\n2. Pobierz **SmartDiscounts Card**.\n3. Odśwież przeglądarkę (Ctrl+F5).\n\nTwoje karty i ustawienia zostają. Sprawdzanie listy obserwowanych w tle działa dalej."
+      "description": "**SmartDiscounts** (`custom:smartdiscounts-card`) jest od SmartLists 4.0 osobnym projektem i nie jest już dostarczana z integracją. Używasz jej na pulpicie lub prowadzisz listę obserwowanych.\n\nCo zrobić:\n1. Otwórz HACS → w prawym górnym rogu **Niestandardowe repozytoria** → dodaj `{url}` jako **Pulpit**.\n2. Pobierz **SmartDiscounts**.\n3. Odśwież przeglądarkę (Ctrl+F5).\n\nTwoje karty i ustawienia zostają. Sprawdzanie listy obserwowanych w tle działa dalej."
     }
   }
 }

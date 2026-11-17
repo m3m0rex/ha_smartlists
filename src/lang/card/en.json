@@ -965,6 +965,21 @@
   "lb_only": "Only from these lists",
   "lb_all": "all",
   "lb_colors": "Colour per source list (default: automatic, a different one per list)",
-  "dc_missing": "The SmartDiscounts Card is missing for offers",
-  "dc_missing_sub": "Offer hints in the list and the offers card for the dashboard come from a project of their own. Install it through HACS (Dashboard):"
+  "dc_missing": "SmartDiscounts is missing for offers",
+  "dc_missing_sub": "Offer hints in the list and the offers card for the dashboard come from a project of their own. Install it through HACS (Dashboard):",
+  "bk_title": "Backup",
+  "bk_sub": "Writes everything SmartLists stores to a file in Home Assistant’s configuration folder: lists, items, owners, shares, permissions and settings. When the integration is removed this happens automatically.",
+  "bk_create": "Back up now",
+  "bk_done": "Backup created",
+  "bk_file": "File: {path} ({kb} KB)",
+  "bk_checked": "read back and verified",
+  "bk_unchecked": "file could not be verified",
+  "bk_own": "Own lists: {n}",
+  "bk_comb": "Combined lists: {n}",
+  "bk_foreign": "Source lists of other integrations: {n} (copy for safety, not restored)",
+  "bk_items": "{n} items, {o} open",
+  "bk_count": "{n} items",
+  "bk_shares": "{n} shares",
+  "bk_sources": "from {n} lists",
+  "bk_more": "Also: {n} settings, permissions, learned categories and history, notes, share links, watch list, templates, paired devices and notifications."
 }

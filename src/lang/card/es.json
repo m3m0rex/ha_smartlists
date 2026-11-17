@@ -965,6 +965,21 @@
   "lb_only": "Solo de estas listas",
   "lb_all": "todas",
   "lb_colors": "Color por lista de origen (por defecto: automático, uno distinto por lista)",
-  "dc_missing": "Falta la SmartDiscounts Card para las ofertas",
-  "dc_missing_sub": "Los avisos de ofertas en la lista y la tarjeta de ofertas vienen de un proyecto aparte. Instálalo con HACS (Panel):"
+  "dc_missing": "Falta SmartDiscounts para las ofertas",
+  "dc_missing_sub": "Los avisos de ofertas en la lista y la tarjeta de ofertas vienen de un proyecto aparte. Instálalo con HACS (Panel):",
+  "bk_title": "Copia de seguridad",
+  "bk_sub": "Escribe todo lo que guarda SmartLists en un archivo de la carpeta de configuración de Home Assistant: listas, artículos, propietarios, permisos y ajustes. Al eliminar la integración se hace automáticamente.",
+  "bk_create": "Guardar ahora",
+  "bk_done": "Copia creada",
+  "bk_file": "Archivo: {path} ({kb} KB)",
+  "bk_checked": "releído y comprobado",
+  "bk_unchecked": "no se pudo comprobar el archivo",
+  "bk_own": "Listas propias: {n}",
+  "bk_comb": "Listas combinadas: {n}",
+  "bk_foreign": "Listas de origen de otras integraciones: {n} (copia por seguridad, no se restaura)",
+  "bk_items": "{n} artículos, {o} pendientes",
+  "bk_count": "{n} artículos",
+  "bk_shares": "{n} permisos compartidos",
+  "bk_sources": "de {n} listas",
+  "bk_more": "Además: {n} ajustes, permisos, categorías aprendidas e historial, notas, enlaces compartidos, lista de seguimiento, plantillas, dispositivos vinculados y avisos."
 }

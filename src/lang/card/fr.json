@@ -965,6 +965,21 @@
   "lb_only": "Seulement de ces listes",
   "lb_all": "toutes",
   "lb_colors": "Couleur par liste source (par défaut : automatique, une différente par liste)",
-  "dc_missing": "La SmartDiscounts Card manque pour les promos",
-  "dc_missing_sub": "Les indications de promos dans la liste et la carte des promos viennent d'un projet à part. Installe-le via HACS (Tableau de bord) :"
+  "dc_missing": "SmartDiscounts manque pour les promos",
+  "dc_missing_sub": "Les indications de promos dans la liste et la carte des promos viennent d'un projet à part. Installe-le via HACS (Tableau de bord) :",
+  "bk_title": "Sauvegarde",
+  "bk_sub": "Écrit tout ce que SmartLists enregistre dans un fichier du dossier de configuration de Home Assistant : listes, articles, propriétaires, partages, droits et réglages. À la suppression de l’intégration, cela se fait tout seul.",
+  "bk_create": "Sauvegarder maintenant",
+  "bk_done": "Sauvegarde créée",
+  "bk_file": "Fichier : {path} ({kb} Ko)",
+  "bk_checked": "relu et vérifié",
+  "bk_unchecked": "le fichier n’a pas pu être vérifié",
+  "bk_own": "Listes propres : {n}",
+  "bk_comb": "Listes combinées : {n}",
+  "bk_foreign": "Listes sources d’autres intégrations : {n} (copie de sécurité, non restaurée)",
+  "bk_items": "{n} articles, {o} à faire",
+  "bk_count": "{n} articles",
+  "bk_shares": "{n} partages",
+  "bk_sources": "de {n} listes",
+  "bk_more": "Aussi : {n} réglages, droits, catégories apprises et historique, notes, liens de partage, liste de suivi, modèles, appareils associés et notifications."
 }

@@ -965,6 +965,21 @@
   "lb_only": "Nur von diesen Listen",
   "lb_all": "alle",
   "lb_colors": "Farbe je Quell-Liste (ohne Wahl: automatisch, jede Liste eine andere)",
-  "dc_missing": "Für Angebote fehlt die SmartDiscounts Card",
-  "dc_missing_sub": "Angebots-Hinweise in der Liste und die Angebots-Karte fürs Dashboard kommen aus einem eigenen Projekt. Installiere es über HACS (Dashboard):"
+  "dc_missing": "Für Angebote fehlt SmartDiscounts",
+  "dc_missing_sub": "Angebots-Hinweise in der Liste und die Angebots-Karte fürs Dashboard kommen aus einem eigenen Projekt. Installiere es über HACS (Dashboard):",
+  "bk_title": "Sicherung",
+  "bk_sub": "Schreibt alles, was SmartLists speichert, in eine Datei im Konfigurations-Ordner von Home Assistant: Listen, Artikel, Besitzer, Freigaben, Rechte und Einstellungen. Beim Entfernen der Integration geschieht das von selbst.",
+  "bk_create": "Jetzt sichern",
+  "bk_done": "Sicherung erstellt",
+  "bk_file": "Datei: {path} ({kb} KB)",
+  "bk_checked": "wieder eingelesen und geprüft",
+  "bk_unchecked": "Datei ließ sich nicht prüfen",
+  "bk_own": "Eigene Listen: {n}",
+  "bk_comb": "Kombinierte Listen: {n}",
+  "bk_foreign": "Quell-Listen anderer Integrationen: {n} (Kopie zur Sicherheit, wird nicht zurückgespielt)",
+  "bk_items": "{n} Artikel, {o} offen",
+  "bk_count": "{n} Artikel",
+  "bk_shares": "{n} Freigaben",
+  "bk_sources": "aus {n} Listen",
+  "bk_more": "Außerdem: {n} Einstellungen, Rechte, gemerkte Kategorien und Verlauf, Notizen, Freigabe-Links, Merkliste, Vorlagen, gekoppelte Geräte und Benachrichtigungen."
 }

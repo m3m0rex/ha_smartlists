@@ -8,6 +8,26 @@
       help ? h("p", { class: "shelp" }, help) : null,
       h("div", { class: "sbody" }, body));
   }
+  // Sicherung von Hand: Datei schreiben lassen und zeigen, was genau darin steht
+  async _backupNow() {
+    const t = this._t;
+    let r;
+    try { r = (await this._call("backup_create", {}, false)).report; } catch (e) { slWarn("backup_create", e); this._toast((e && e.message) || t.error); return; }
+    if (!r) { this._toast(t.error); return; }
+    const n = (text, map) => Object.keys(map).reduce((s, k) => s.replace("{" + k + "}", map[k]), text);
+    const kb = Math.max(1, Math.round((r.bytes || 0) / 1024));
+    const lines = [n(t.bk_file, { path: r.path, kb }) + (r.verified ? " · ✓ " + t.bk_checked : " · ⚠️ " + t.bk_unchecked), ""];
+    lines.push(n(t.bk_own, { n: r.own.length }));
+    r.own.forEach((x) => lines.push("  • " + x.title + (x.owner ? " (" + x.owner + ")" : "") + " – " + n(t.bk_items, { n: x.items, o: x.open }) + (x.shares ? ", " + n(t.bk_shares, { n: x.shares }) : "")));
+    lines.push(n(t.bk_comb, { n: r.combined.length }));
+    r.combined.forEach((x) => lines.push("  • " + x.title + " – " + n(t.bk_sources, { n: x.sources })));
+    if (r.foreign.length) {
+      lines.push(n(t.bk_foreign, { n: r.foreign.length }));
+      r.foreign.forEach((x) => lines.push("  • " + x.name + " – " + n(t.bk_count, { n: x.items })));
+    }
+    lines.push("", n(t.bk_more, { n: r.settings }));
+    await slDialog(this.shadowRoot, { title: t.bk_done, text: lines.join("\n"), ok: "OK" });
+  }
   _switch(checked, onchange, label) {
     return h("label", { class: "switch", title: label }, h("input", { type: "checkbox", checked: !!checked, "aria-label": label, onchange: (e) => onchange(e.target.checked) }), h("span"));
   }
@@ -102,6 +122,8 @@
       ...(!this._isAdmin ? [] : [
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
+        this._sec("", t.bk_title, t.bk_sub, [h("div", { class: "acts", style: "justify-content:flex-start" },
+          h("button", { class: "btn2", type: "button", onclick: () => this._backupNow() }, t.bk_create))]),
         this._sec("", t.w_restart, t.w_restart_sub, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
           h("button", { class: "btn2", type: "button", onclick: () => this._setupWizard() }, t.w_restart),
           h("button", { class: "btn2 danger", type: "button", onclick: () => this._resetDialog() }, t.rs_title + " …"))])])] }];
@@ -813,7 +835,7 @@
     const t = this._t, url = "https://github.com/m3m0rex/ha_smartdiscounts-card";
     return h("div", { class: "shelp", role: "note", style: "margin:6px 0 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--warning-color,#f0a020)" },
       h("b", {}, t.dc_missing), h("br"), t.dc_missing_sub, " ",
-      h("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, "SmartDiscounts Card"));
+      h("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, "SmartDiscounts"));
   }
   _appearanceSection() {
     const t = this._t;

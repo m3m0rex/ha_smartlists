@@ -12,6 +12,13 @@
         "data_description": {
           "combine": "E.g. the shopping lists of several people."
         }
+      },
+      "restore": {
+        "title": "Restore your lists?",
+        "description": "A backup from {date} was found, written when SmartLists was removed: {own} own lists and {combined} combined lists.\n\nFile: `{path}`",
+        "data": {
+          "restore": "Restore lists and settings"
+        }
       }
     },
     "abort": {
@@ -496,6 +503,10 @@
           "description": "Optional; scales the quantities."
         }
       }
+    },
+    "create_backup": {
+      "name": "Create backup",
+      "description": "Writes everything SmartLists stores to a file in the configuration folder and answers with a report of what it contains. Administrators only."
     }
   },
   "issues": {
@@ -528,7 +539,7 @@
     },
     "discounts_card_missing": {
       "title": "The offers card has to be installed again",
-      "description": "The **SmartDiscounts Card** (`custom:smartdiscounts-card`) has been a project of its own since SmartLists 4.0 and is no longer shipped with the integration. You use it on a dashboard or keep a watch list.\n\nWhat to do:\n1. Open HACS → top right **Custom repositories** → add `{url}` as **Dashboard**.\n2. Download **SmartDiscounts Card**.\n3. Reload the browser (Ctrl+F5).\n\nYour cards and settings are kept. The background check of the watch list keeps running regardless."
+      "description": "The **SmartDiscounts** card (`custom:smartdiscounts-card`) has been a project of its own since SmartLists 4.0 and is no longer shipped with the integration. You use it on a dashboard or keep a watch list.\n\nWhat to do:\n1. Open HACS → top right **Custom repositories** → add `{url}` as **Dashboard**.\n2. Download **SmartDiscounts**.\n3. Reload the browser (Ctrl+F5).\n\nYour cards and settings are kept. The background check of the watch list keeps running regardless."
     }
   }
 }

@@ -3,6 +3,27 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.8] – 2026-11-17
+
+Eighth pre-release of 4.0.
+
+### Added
+
+- **Backup when the integration is removed.** Deleting SmartLists under *Devices & services* used to lose your own
+  lists: their names, owners and shares lived in the integration's entry. SmartLists now writes everything needed to
+  `smartlists_backup_<date>.json` in the configuration folder at that moment and shows a notification with the path.
+- **Backup by hand, with a report.** *Settings → General* has a new section "Backup" with "Back up now" (administrators),
+  and there is a service `smartlists.create_backup`. The file is read back and verified; a report then lists what it
+  contains: every own list with owner, shares and number of items, the combined lists, and the rest (settings,
+  permissions, learned categories, notes, share links, watch list, templates, paired devices). The items of source
+  lists that belong to other integrations are included as a copy for safety.
+- **Restore when setting up again.** The setup dialog finds the newest backup and offers to bring back the lists,
+  their owners and the settings. Items already present are left alone. The five newest backups are kept.
+
+### Changed
+
+- The offers card is called **SmartDiscounts** in the hints (repairs, setup wizard) – the name it now has in HACS.
+
 ## [4.0.0-beta.7] – 2026-11-17
 
 Seventh pre-release of 4.0.

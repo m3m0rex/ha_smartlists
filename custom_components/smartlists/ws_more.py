@@ -457,3 +457,17 @@ async def ws_migrate(hass: HomeAssistant, connection: websocket_api.ActiveConnec
         connection.send_error(msg["id"], "invalid", str(err))
         return
     connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/backup_create"})
+@websocket_api.async_response
+async def ws_backup_create(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Sicherung von Hand anlegen; die Antwort ist der Bericht, was genau gesichert wurde."""
+    from . import removal_backup
+
+    entries = hass.config_entries.async_entries(DOMAIN)
+    if not entries:
+        connection.send_error(msg["id"], "not_found", "SmartLists ist nicht eingerichtet")
+        return
+    connection.send_result(msg["id"], {"report": await removal_backup.async_create(hass, entries[0], "manual")})

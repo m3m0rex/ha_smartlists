@@ -965,6 +965,21 @@
   "lb_only": "Solo da queste liste",
   "lb_all": "tutte",
   "lb_colors": "Colore per lista di origine (predefinito: automatico, uno diverso per lista)",
-  "dc_missing": "Per le offerte manca la SmartDiscounts Card",
-  "dc_missing_sub": "I suggerimenti di offerte nella lista e la scheda delle offerte arrivano da un progetto a parte. Installalo con HACS (Dashboard):"
+  "dc_missing": "Per le offerte manca SmartDiscounts",
+  "dc_missing_sub": "I suggerimenti di offerte nella lista e la scheda delle offerte arrivano da un progetto a parte. Installalo con HACS (Dashboard):",
+  "bk_title": "Backup",
+  "bk_sub": "Scrive tutto ciò che SmartLists salva in un file nella cartella di configurazione di Home Assistant: liste, articoli, proprietari, condivisioni, permessi e impostazioni. Alla rimozione dell’integrazione avviene da sé.",
+  "bk_create": "Salva ora",
+  "bk_done": "Backup creato",
+  "bk_file": "File: {path} ({kb} KB)",
+  "bk_checked": "riletto e verificato",
+  "bk_unchecked": "impossibile verificare il file",
+  "bk_own": "Liste proprie: {n}",
+  "bk_comb": "Liste combinate: {n}",
+  "bk_foreign": "Liste sorgente di altre integrazioni: {n} (copia di sicurezza, non ripristinata)",
+  "bk_items": "{n} articoli, {o} da fare",
+  "bk_count": "{n} articoli",
+  "bk_shares": "{n} condivisioni",
+  "bk_sources": "da {n} liste",
+  "bk_more": "Inoltre: {n} impostazioni, permessi, categorie apprese e cronologia, note, link di condivisione, lista dei preferiti, modelli, dispositivi associati e notifiche."
 }

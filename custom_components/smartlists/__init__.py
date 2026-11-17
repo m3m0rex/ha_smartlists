@@ -202,11 +202,17 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Integration gelöscht: lokale Häkchen aller kombinierten Listen mit entfernen.
-    Das Gedächtnis (gemerkte Kategorien, Verlauf) bleibt erhalten, falls man neu einrichtet."""
+    """Integration gelöscht: erst alles sichern (removal_backup.py), dann die lokalen Häkchen der kombinierten
+    Listen entfernen. Das Gedächtnis (gemerkte Kategorien, Verlauf) bleibt erhalten, falls man neu einrichtet."""
     from homeassistant.helpers.storage import Store
 
+    from .removal_backup import async_backup_on_remove
     from .todo import list_key
+
+    try:
+        await async_backup_on_remove(hass, entry)
+    except Exception:  # noqa: BLE001 – das Löschen darf an der Sicherung nicht scheitern
+        _LOGGER.exception("SmartLists: Sicherung vor dem Entfernen fehlgeschlagen")
 
     for subentry in entry.subentries.values():
         await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{list_key(subentry)}").async_remove()

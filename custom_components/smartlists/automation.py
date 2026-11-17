@@ -315,6 +315,23 @@ def async_setup_services(hass: HomeAssistant) -> None:
 
     hass.services.async_register(DOMAIN, "add_due_items", _add_due, supports_response=SupportsResponse.OPTIONAL)
 
+    async def _create_backup(call: ServiceCall) -> ServiceResponse:
+        """Sicherung von Hand: schreibt die Datei und antwortet mit dem Bericht, was darin steht (nur Administratoren)."""
+        from homeassistant.exceptions import Unauthorized
+
+        from . import removal_backup
+
+        if call.context.user_id:
+            user = await hass.auth.async_get_user(call.context.user_id)
+            if user is not None and not user.is_admin:
+                raise Unauthorized(context=call.context)
+        entries = hass.config_entries.async_entries(DOMAIN)
+        if not entries:
+            raise lists.ListError("SmartLists ist nicht eingerichtet")
+        return await removal_backup.async_create(hass, entries[0], "manual") or {}
+
+    hass.services.async_register(DOMAIN, "create_backup", _create_backup, supports_response=SupportsResponse.OPTIONAL)
+
     async def _add_template(call: ServiceCall) -> ServiceResponse:
         extras = hass.data[DOMAIN]["extras"]
         tid = call.data["template"] if call.data["template"] in extras.templates else extras.find_template(call.data["template"])

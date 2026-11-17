@@ -12,6 +12,13 @@
         "data_description": {
           "combine": "Z. B. die Einkaufslisten mehrerer Personen."
         }
+      },
+      "restore": {
+        "title": "Listen wiederherstellen?",
+        "description": "Es gibt eine Sicherung vom {date}, angelegt beim Entfernen von SmartLists: {own} eigene Listen und {combined} kombinierte Listen.\n\nDatei: `{path}`",
+        "data": {
+          "restore": "Listen und Einstellungen wiederherstellen"
+        }
       }
     },
     "abort": {
@@ -496,6 +503,10 @@
           "description": "Optional; rechnet die Mengen um."
         }
       }
+    },
+    "create_backup": {
+      "name": "Sicherung erstellen",
+      "description": "Schreibt alles, was SmartLists speichert, in eine Datei im Konfigurations-Ordner und antwortet mit einem Bericht, was darin steht. Nur für Administratoren."
     }
   },
   "issues": {
@@ -528,7 +539,7 @@
     },
     "discounts_card_missing": {
       "title": "Die Angebots-Karte muss neu installiert werden",
-      "description": "Die **SmartDiscounts Card** (`custom:smartdiscounts-card`) ist seit SmartLists 4.0 ein eigenes Projekt und wird nicht mehr mitgeliefert. Du benutzt sie auf einem Dashboard oder führst eine Merkliste.\n\nSo geht es weiter:\n1. HACS öffnen → oben rechts **Benutzerdefinierte Repositories** → `{url}` als **Dashboard** hinzufügen.\n2. **SmartDiscounts Card** herunterladen.\n3. Den Browser neu laden (Strg+F5).\n\nDeine Karten und Einstellungen bleiben erhalten. Die Hintergrund-Prüfung der Merkliste läuft unabhängig davon weiter."
+      "description": "Die Karte **SmartDiscounts** (`custom:smartdiscounts-card`) ist seit SmartLists 4.0 ein eigenes Projekt und wird nicht mehr mitgeliefert. Du benutzt sie auf einem Dashboard oder führst eine Merkliste.\n\nSo geht es weiter:\n1. HACS öffnen → oben rechts **Benutzerdefinierte Repositories** → `{url}` als **Dashboard** hinzufügen.\n2. **SmartDiscounts** herunterladen.\n3. Den Browser neu laden (Strg+F5).\n\nDeine Karten und Einstellungen bleiben erhalten. Die Hintergrund-Prüfung der Merkliste läuft unabhängig davon weiter."
     }
   }
 }

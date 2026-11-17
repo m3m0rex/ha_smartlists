@@ -27,7 +27,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er, selector
 
-from . import itemtext
+from . import itemtext, removal_backup
 from .const import (
     CONF_DEFAULT_ADD,
     CONF_FOREIGN,
@@ -138,11 +138,38 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 2
 
+    _restore_asked = False
+    _backup: dict[str, Any] | None = None
+    _backup_path = ""
+
+    async def async_step_restore(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Sicherung vom letzten Entfernen gefunden: Listen zurückholen oder neu anfangen."""
+        backup = self._backup or {}
+        if user_input is not None:
+            if not user_input.get("restore"):
+                return await self.async_step_user()
+            await removal_backup.async_restore_stores(self.hass, backup)
+            return self.async_create_entry(title="SmartLists", data={}, options=dict(backup.get("options") or {}),
+                                          subentries=removal_backup.subentries_for_restore(backup), description="setup",
+                                          description_placeholders={"url": SETUP_URL})
+        counts = removal_backup.summary(backup)
+        return self.async_show_form(
+            step_id="restore", data_schema=vol.Schema({vol.Required("restore", default=True): selector.BooleanSelector()}),
+            description_placeholders={"date": str(backup.get("at", ""))[:16].replace("T", " "), "own": str(counts["own"]),
+                                      "combined": str(counts["combined"]), "path": self._backup_path})
+
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Einrichtungs-Assistent: optional gleich eine kombinierte Liste anlegen.
         Vorgeschlagen werden alle vorhandenen To-do-Listen; mit zwei oder mehr ausgewählten entsteht
         die erste kombinierte Liste direkt mit."""
         errors: dict[str, str] = {}
+        # Liegt eine Sicherung vom letzten Entfernen im Konfigurations-Ordner? Dann zuerst das Wiederherstellen anbieten.
+        if user_input is None and not self._restore_asked:
+            self._restore_asked = True
+            found = await self.hass.async_add_executor_job(removal_backup.newest, self.hass.config.config_dir)
+            if found:
+                self._backup_path, self._backup = found
+                return await self.async_step_restore()
         notes = _notes_ids(self.hass)
         todo_ids = sorted(s.entity_id for s in self.hass.states.async_all("todo") if s.entity_id not in notes)
         if user_input is not None:

@@ -965,6 +965,21 @@
   "lb_only": "Tylko z tych list",
   "lb_all": "wszystkie",
   "lb_colors": "Kolor dla listy źródłowej (domyślnie: automatycznie, inny dla każdej listy)",
-  "dc_missing": "Do promocji brakuje SmartDiscounts Card",
-  "dc_missing_sub": "Podpowiedzi promocji na liście i karta promocji pochodzą z osobnego projektu. Zainstaluj go przez HACS (Pulpit):"
+  "dc_missing": "Do promocji brakuje SmartDiscounts",
+  "dc_missing_sub": "Podpowiedzi promocji na liście i karta promocji pochodzą z osobnego projektu. Zainstaluj go przez HACS (Pulpit):",
+  "bk_title": "Kopia zapasowa",
+  "bk_sub": "Zapisuje wszystko, co przechowuje SmartLists, do pliku w folderze konfiguracji Home Assistant: listy, produkty, właścicieli, udostępnienia, uprawnienia i ustawienia. Przy usuwaniu integracji dzieje się to samo.",
+  "bk_create": "Zapisz teraz",
+  "bk_done": "Kopia utworzona",
+  "bk_file": "Plik: {path} ({kb} KB)",
+  "bk_checked": "odczytano ponownie i sprawdzono",
+  "bk_unchecked": "nie udało się sprawdzić pliku",
+  "bk_own": "Własne listy: {n}",
+  "bk_comb": "Listy łączone: {n}",
+  "bk_foreign": "Listy źródłowe innych integracji: {n} (kopia dla bezpieczeństwa, nie jest przywracana)",
+  "bk_items": "produkty: {n}, do kupienia: {o}",
+  "bk_count": "produkty: {n}",
+  "bk_shares": "udostępnienia: {n}",
+  "bk_sources": "z {n} list",
+  "bk_more": "Ponadto: ustawienia ({n}), uprawnienia, wyuczone kategorie i historia, notatki, linki udostępniania, lista obserwowanych, szablony, sparowane urządzenia i powiadomienia."
 }

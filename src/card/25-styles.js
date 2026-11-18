@@ -15,6 +15,7 @@ const STYLE = `
   button.badge { border:none; font:inherit; font-size:.7rem; cursor:pointer; line-height:inherit; }
   button.badge:hover { filter:brightness(1.1); }
   .badge.combined { background:var(--info-color,#2196f3); }
+  .badge.linked { background:none; color:var(--secondary-text-color); border:1px solid var(--divider-color,#ccc); }
   /* schmale Karte (Handy): „Kombiniert“ / „privat“ / „geteilt“ nur als Symbol, der Text steht im Tooltip */
   .head { container-type:inline-size; }
   .badge .bi { display:none; } .badge .bi.on { display:inline; }

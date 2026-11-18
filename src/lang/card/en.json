@@ -1026,5 +1026,7 @@
   "xt_done": "Copied",
   "xt_combined": "combined",
   "xt_none": "No SmartLists lists found.",
-  "xt_working": "Copying …"
+  "xt_working": "Copying …",
+  "linked_via": "via {name}",
+  "linked_help": "This list belongs to another service. The items are stored there; SmartLists shows them and passes changes on."
 }

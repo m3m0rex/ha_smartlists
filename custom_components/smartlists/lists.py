@@ -137,6 +137,17 @@ async def _call(hass: HomeAssistant, service: str, data: dict[str, Any], context
         raise ListError(str(err) or "Für diese Liste nicht erlaubt") from err
 
 
+def _platform(hass: HomeAssistant, entity_id: str) -> str | None:
+    """Integration, der eine To-do-Liste gehört (bring, todoist, local_todo …)."""
+    try:
+        from homeassistant.helpers import entity_registry as er
+
+        entry = er.async_get(hass).async_get(entity_id)
+        return str(entry.platform) if entry is not None and entry.platform else None
+    except Exception:  # noqa: BLE001 – nur eine Zusatzangabe
+        return None
+
+
 async def raw_items(hass: HomeAssistant, entity_id: str) -> list[dict[str, Any]]:
     """Einträge einer Liste: uid, text, note, checked (+ source/foreign bei kombinierten)."""
     entity = combined_entity(hass, entity_id)
@@ -265,6 +276,8 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         "entity_id": entity_id,
         "name": state.attributes.get(ATTR_FRIENDLY_NAME, entity_id),
         "type": "combined" if entity is not None else "own" if own is not None else "notes" if is_notes(hass, entity_id) else "list",
+        # „list“ = eine Liste, die nicht SmartLists gehört (Bring!, Todoist, Local To-do …): woher sie kommt
+        "platform": _platform(hass, entity_id) if entity is None and own is None else None,
         # fremd = Liste besteht nur aus fremden Quellen
         "foreign": bool(entity is not None and entity.all_foreign),
         "source_lists": entity.source_names if entity is not None else [],

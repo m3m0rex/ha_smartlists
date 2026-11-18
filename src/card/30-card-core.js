@@ -396,6 +396,9 @@ class SmartListsCard extends HTMLElement {
     fill(this._headEl, 
       this._config.show_title === false ? h("span", { class: "grow" }) : h("div", { class: "title" }, this._config.title || d.name),
       d.type === "combined" ? h("span", { class: "badge combined", title: t.combined, "aria-label": t.combined }, h("span", { class: "bi" }, "🔗"), h("span", { class: "bt" }, t.combined)) : null,
+      // Liste eines anderen Dienstes (Bring!, Todoist, Local To-do …): die Einträge liegen dort, SmartLists zeigt sie nur an
+      d.type === "list" ? (() => { const label = t.linked_via.replace("{name}", slPlatformName(d.platform, t));
+        return h("span", { class: "badge linked", title: t.linked_help, "aria-label": `${label}. ${t.linked_help}` }, h("span", { class: "bi on" }, "⛓ "), h("span", { class: "bt" }, label)); })() : null,
       // Antippen: mit wem die Liste geteilt ist (nur Anzeige; ändern im Zahnrad der Liste).
       // „privat“ nur, solange auch kein Link aktiv ist – sonst wäre das irreführend
       d.own && !(d.own.role === "owner" && !Object.keys(d.own.shares || {}).length && d.links) ? h("button", { type: "button", class: "badge own", title: `${t.owner}: ${d.own.owner || "?"} – ${t.sharing}`,

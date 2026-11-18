@@ -38,6 +38,12 @@ function slDialog(root, opts) {
   });
 }
 
+// Lesbarer Name der Integration, der eine fremde To-do-Liste gehört („bring“ → „Bring!“, „google_tasks“ → „Google Tasks“)
+function slPlatformName(platform, t) {
+  const known = { local_todo: t.mg_pf_local, shopping_list: t.mg_pf_shopping, bring: "Bring!", todoist: "Todoist", google_tasks: "Google Tasks", mealie: "Mealie", caldav: "CalDAV", ourgroceries: "OurGroceries" };
+  return known[platform] || (platform ? String(platform).replace(/_/g, " ").replace(/\b\w/g, (x) => x.toUpperCase()) : t.mg_pf_other);
+}
+
 /* „Fehler melden“: erst fragen, wo der Fehler aufgetreten ist (nichts vorbelegt – wer über die Seitenleiste in die
  * Einstellungen kommt, hat den Fehler nicht unbedingt dort gesehen), dann zeigen, was verschickt wird: in normalen Worten
  * und auf Wunsch der genaue Text. Verschickt wird nichts von hier – „Auf GitHub öffnen“ öffnet ein vorausgefülltes Issue.

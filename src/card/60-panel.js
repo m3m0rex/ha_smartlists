@@ -271,7 +271,7 @@ class SmartListsPanel extends HTMLElement {
         "aria-selected": String(sel.includes(l.e)), draggable: "true", onclick: () => { if (!this._ordering) this._select(l.e); } },
         this._ordering && i > 0 ? h("span", { class: "mv", role: "button", "aria-label": this._t.p_left, title: this._t.p_left,
           onclick: (e) => { e.stopPropagation(); this._move(lists, l.e, group[i - 1].e, false); } }, "◀") : null,
-        l.notes ? "📝 " : "", chipName(l.name), h("span", { class: "n" }, String(l.open)),
+        l.notes ? "📝 " : "", this._visible && this._visible.get(l.e) === "list" ? h("span", { title: this._t.linked_help, "aria-label": this._t.linked_help }, "⛓ ") : "", chipName(l.name), h("span", { class: "n" }, String(l.open)),
         this._ordering && i < group.length - 1 ? h("span", { class: "mv", role: "button", "aria-label": this._t.p_right, title: this._t.p_right,
           onclick: (e) => { e.stopPropagation(); this._move(lists, l.e, group[i + 1].e, true); } }, "▶") : null);
       // Ziehen & Ablegen mit der Maus: Chip auf einen anderen ziehen = davor einsortieren

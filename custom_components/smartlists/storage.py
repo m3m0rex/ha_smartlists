@@ -2,7 +2,7 @@
 
     .storage/smartlists/<name>                       Speicherdateien (extras, learning, shares, own.<Kennung>, …)
     .storage/smartlists/watch/<Benutzer>             Merklisten eines Benutzers (alle seine Listen in einer Datei)
-    .storage/smartlists/backups/app/<Benutzer>       Sicherungen aus SmartLists Go (je Benutzer eine Datei)
+    .storage/smartlists/backups/apps/<Benutzer>      Sicherungen aus SmartLists Go (je Benutzer eine Datei, darin je Gerät)
     .storage/smartlists/backups/integration/*.json   Sicherungen von SmartLists selbst (von Hand, beim Entfernen)
     .storage/smartlists/backups/integration/before-move/   Kopie der alten Dateien vom Umzug (für ein Zurück auf eine ältere Version)
     .storage/smartlists/backups/deleted/             Speicherdateien gelöschter Listen (die letzten KEEP_DELETED)
@@ -37,10 +37,12 @@ KEEP_DELETED = 30
 # Speicherdateien, die es einmal gibt (neben denen je Liste). JEDE neue Speicherdatei hier eintragen: was beim Start
 # unter .storage/smartlists/ liegt und weder hier steht noch zu einer Liste gehört, gilt als Rest einer gelöschten
 # Liste und wird nach backups/deleted/ gelegt (tests/test_storage.py prüft, dass nichts fehlt).
-GLOBAL_STORES = ("learning", "notes", "shares", "public", "extras", "packs", "devices", "notify", "itemlog", "app_backups",
+# Die App-Sicherungen (backups/apps/) gehören nicht dazu: sie liegen schon unter backups/ und bleiben beim Entfernen.
+GLOBAL_STORES = ("learning", "notes", "shares", "public", "extras", "packs", "devices", "notify", "itemlog",
                  "offer_history")
 # alte Namen, die einen eigenen neuen Platz bekommen (alles andere: smartlists.<rest> → smartlists/<rest>)
-_SPECIAL = {"app_backups": f"{BACKUPS}/apps"}
+# app_backups: die alte gemeinsame Datei; beim Start auf backups/apps/<Benutzer> verteilt
+_SPECIAL = {"app_backups": f"{BACKUPS}/apps.old"}
 
 
 def key(name: str) -> str:
@@ -69,12 +71,20 @@ def watch_name(user_id: str) -> str:
     return "".join(c for c in str(user_id) if c.isalnum() or c in "-_")[:64]
 
 
-APP_BACKUP_DIR = f"{BACKUPS}/app"
+APP_BACKUP_DIR = f"{BACKUPS}/apps"
 
 
 def app_backup_files(config_dir: str) -> list[str]:
-    """Namen der App-Sicherungsdateien unter `.storage/smartlists/backups/app/` (blockierend)."""
+    """Namen der App-Sicherungsdateien unter `.storage/smartlists/backups/apps/` (blockierend).
+    Bis 4.0.0-beta.20 war `backups/apps` eine einzelne Datei: die wird zuerst zu `backups/apps.old`, damit der
+    Ordner entstehen kann (verteilt und weggeräumt wird sie von app_backups)."""
     folder = root(config_dir) / APP_BACKUP_DIR
+    old = root(config_dir) / f"{BACKUPS}/apps.old"
+    try:
+        if folder.is_file() and not old.exists():
+            os.replace(folder, old)
+    except OSError:
+        _LOGGER.warning("Alte App-Sicherungen nicht umbenannt", exc_info=True)
     try:
         return sorted(p.name for p in folder.iterdir() if p.is_file() and not p.name.endswith(".tmp"))
     except OSError:

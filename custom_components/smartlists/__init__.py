@@ -187,7 +187,7 @@ async def _async_tidy_files(hass: HomeAssistant, entry: ConfigEntry) -> None:
     from .own_groups import iter_lists
     from .todo import list_key
 
-    known = {name for name in storage.GLOBAL_STORES if name != "app_backups"} | {f"own.{list_id}" for _, list_id, _ in iter_lists(entry)}
+    known = set(storage.GLOBAL_STORES) | {f"own.{list_id}" for _, list_id, _ in iter_lists(entry)}
     for sub in entry.subentries.values():
         known.add(f"own.{sub.subentry_id}" if sub.subentry_type == SUBENTRY_OWN else list_key(sub))
     from .combined_group import refs

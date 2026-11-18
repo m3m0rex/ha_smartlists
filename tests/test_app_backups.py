@@ -33,7 +33,7 @@ class _Hass:
             self.aside.append(args[1])
             FILES.pop(app_backups.LEGACY_KEY, None)
             return "x"
-        return [k.rsplit("/", 1)[1] for k in FILES if k.startswith("smartlists/backups/app/")]
+        return [k.rsplit("/", 1)[1] for k in FILES if k.startswith("smartlists/backups/apps/")]
 
 
 def test_legacy_moves_to_one_file_per_user(monkeypatch):
@@ -45,8 +45,8 @@ def test_legacy_moves_to_one_file_per_user(monkeypatch):
     hass = _Hass()
     store = app_backups.AppBackups(hass)
     asyncio.run(store.async_load())
-    assert set(FILES["smartlists/backups/app/anna"]["backups"]) == {"a1"}
-    assert set(FILES["smartlists/backups/app/ben"]["backups"]) == {"b1"}
+    assert set(FILES["smartlists/backups/apps/anna"]["backups"]) == {"a1"}
+    assert set(FILES["smartlists/backups/apps/ben"]["backups"]) == {"b1"}
     assert hass.aside == ["app_backups"] and app_backups.LEGACY_KEY not in FILES
     # neu laden: kommt aus den Dateien je Benutzer
     again = app_backups.AppBackups(hass)
@@ -60,8 +60,8 @@ def test_save_and_delete_touch_only_own_file(monkeypatch):
     store = app_backups.AppBackups(_Hass())
     store.save("d1", "Smartphone", "{}", "anna", "Anna")
     store.save("d2", "Tablet", "{}", "ben", "Ben")
-    assert set(FILES["smartlists/backups/app/anna"]["backups"]) == {"d1"}
+    assert set(FILES["smartlists/backups/apps/anna"]["backups"]) == {"d1"}
     store.save("d1", "Smartphone", "{}", "ben", "Ben")  # Gerät gehört jetzt Ben
-    assert FILES["smartlists/backups/app/anna"]["backups"] == {}
-    assert set(FILES["smartlists/backups/app/ben"]["backups"]) == {"d1", "d2"}
-    assert store.delete("d2") and set(FILES["smartlists/backups/app/ben"]["backups"]) == {"d1"}
+    assert FILES["smartlists/backups/apps/anna"]["backups"] == {}
+    assert set(FILES["smartlists/backups/apps/ben"]["backups"]) == {"d1", "d2"}
+    assert store.delete("d2") and set(FILES["smartlists/backups/apps/ben"]["backups"]) == {"d1"}

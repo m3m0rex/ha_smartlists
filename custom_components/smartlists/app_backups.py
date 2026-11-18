@@ -1,7 +1,7 @@
 """Backups der HA-SmartLists-App, dauerhaft in Home Assistant gespeichert – eine Datei je HA-Benutzer:
-`.storage/smartlists/backups/app/<Benutzer>`. Darin je Installation (device_id) das neueste Backup.
+`.storage/smartlists/backups/apps/<Benutzer>`. Darin je Installation (device_id) das neueste Backup.
 
-Bis 4.0.0-beta.20 lagen alle in einer Datei (`backups/apps`). Beim Start zieht jeder Benutzer in seine eigene
+Bis 4.0.0-beta.20 lagen alle in einer Datei (`backups/apps`, jetzt in `backups/apps.old` umbenannt). Beim Start zieht jeder Benutzer in seine eigene
 Datei um; erst wenn alle geschrieben sind, wird die alte Datei nach `backups/deleted/` gelegt (nicht gelöscht).
 
 Inhalt ist für die Integration undurchsichtig (JSON-Text der App); ist in der App ein Backup-Passwort gesetzt,
@@ -24,7 +24,7 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-LEGACY_KEY = storage.key("app_backups")  # bis beta.20: alle Benutzer in einer Datei
+LEGACY_KEY = storage.key("app_backups")  # bis beta.20 alle Benutzer in einer Datei (jetzt backups/apps.old)
 MAX_BYTES = 5 * 1024 * 1024  # 5 MB je Backup
 MAX_PER_USER = 10  # Installationen je Benutzer (das älteste fällt weg)
 

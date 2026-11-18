@@ -22,8 +22,8 @@ def _old_install(config: Path) -> None:
 
 def test_keys():
     assert storage.key("extras") == "smartlists/extras" and storage.key("own.abc") == "smartlists/own.abc"
-    assert storage.key("app_backups") == "smartlists/backups/apps"
-    assert storage.key_of("smartlists.extras") == "smartlists/extras" and storage.key_of("smartlists.app_backups") == "smartlists/backups/apps"
+    assert storage.key("app_backups") == "smartlists/backups/apps.old"
+    assert storage.key_of("smartlists.extras") == "smartlists/extras" and storage.key_of("smartlists.app_backups") == "smartlists/backups/apps.old"
 
 
 def test_old_files_move_into_the_subfolder():
@@ -37,7 +37,7 @@ def test_old_files_move_into_the_subfolder():
         root = config / ".storage" / "smartlists"
         moved = json.loads((root / "extras").read_text(encoding="utf-8"))
         assert moved["data"] == {"prices": {"milch": 1.19}} and moved["key"] == "smartlists/extras"
-        assert json.loads((root / "backups" / "apps").read_text(encoding="utf-8"))["key"] == "smartlists/backups/apps"
+        assert json.loads((root / "backups" / "apps.old").read_text(encoding="utf-8"))["key"] == "smartlists/backups/apps.old"
         assert (root / "own.abc").is_file() and (root / "01KOMBI").is_file()
         assert (root / "backups" / "integration" / "smartlists_backup_2026-11-17_201500.json").is_file()
         assert (root / "backups" / "integration" / "before-move" / "smartlists.extras").is_file()     # Kopie für ein Zurück
@@ -83,7 +83,7 @@ def test_files_of_deleted_lists_are_set_aside_and_removal_keeps_only_backups():
         assert [p.name for p in (root / "backups" / "deleted").glob("*Wocheneinkauf*")]
         assert storage.remove_all_but_backups(str(config)) == ["extras"]
         assert sorted(p.name for p in root.iterdir()) == ["backups"]
-        assert (root / "backups" / "apps").is_file() and (root / "backups" / "integration").is_dir()
+        assert (root / "backups" / "apps.old").is_file() and (root / "backups" / "integration").is_dir()
 
 
 def test_every_store_is_registered():
@@ -91,7 +91,8 @@ def test_every_store_is_registered():
     used = set()
     for path in BASE.glob("*.py"):
         used |= set(re.findall(r'storage\.key\("([a-z_]+)"\)', path.read_text(encoding="utf-8")))
-    assert used and used <= set(storage.GLOBAL_STORES), used - set(storage.GLOBAL_STORES)
+    # app_backups: alte Datei unter backups/ (wird dort nie für eine gelöschte Liste gehalten)
+    assert used and used - {"app_backups"} <= set(storage.GLOBAL_STORES), used - set(storage.GLOBAL_STORES)
 
 
 def test_watch_files_one_per_user(tmp_path):
@@ -105,3 +106,15 @@ def test_watch_files_one_per_user(tmp_path):
     # der Ordner gilt beim Aufräumen nicht als Rest einer gelöschten Liste, beim Entfernen verschwindet er
     assert storage.set_aside_unknown(str(tmp_path), set()) == []
     assert storage.remove_all_but_backups(str(tmp_path)) == ["watch"]
+
+
+def test_old_app_backup_file_makes_room_for_the_folder():
+    with tempfile.TemporaryDirectory() as tmp:
+        backups = Path(tmp) / ".storage" / "smartlists" / "backups"
+        backups.mkdir(parents=True)
+        (backups / "apps").write_text("{}", encoding="utf-8")
+        assert storage.app_backup_files(tmp) == []
+        assert (backups / "apps.old").is_file() and not (backups / "apps").exists()
+        (backups / "apps").mkdir()
+        (backups / "apps" / "anna").write_text("{}", encoding="utf-8")
+        assert storage.app_backup_files(tmp) == ["anna"]

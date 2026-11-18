@@ -5,13 +5,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 ## [4.0.0] – 2026-11-18
 
+> **⚠️ To be safe, create a Home Assistant backup before updating** (*Settings → System → Backups*).
+
 The big update after 3.9. Lists, settings, learned categories and share links are kept. Overview with pictures:
 [Wiki → New in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/New-in-4.0).
 
 ### ⚠️ Breaking changes
 
 - **Files moved to `.storage/smartlists/`** (they used to be `smartlists.*` directly in `.storage`). This happens once
-  on the first start; make a Home Assistant backup before updating.
+  on the first start.
 - **Removing the integration deletes its files.** Only `.storage/smartlists/backups/` stays, and setting SmartLists up
   again offers to restore from it.
 - **The online barcode lookup is off by default** and no lookup service is preselected. Switch it on under

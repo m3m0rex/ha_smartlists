@@ -148,7 +148,12 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             if not user_input.get("restore"):
                 return await self.async_step_user()
-            await removal_backup.async_restore_stores(self.hass, backup)
+            try:
+                await removal_backup.async_restore_stores(self.hass, backup)
+            except Exception as err:  # noqa: BLE001 – die Listen werden trotzdem angelegt, der Fehler steht unter „Probleme“
+                from . import problems
+
+                problems.report(self.hass, "SL-BACKUP-02", type(err).__name__)
             return self.async_create_entry(title="SmartLists", data={}, options=dict(backup.get("options") or {}),
                                           subentries=removal_backup.subentries_for_restore(backup), description="setup",
                                           description_placeholders={"url": SETUP_URL})

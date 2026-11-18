@@ -114,22 +114,36 @@ _MODEL = {
 }
 
 
-# Rechte in der Zeile einer eigenen Liste: (bearbeiten, abhaken, sehen, „Nur Besitzer“, „kein Besitzer“)
+# Rechte in der Zeile einer eigenen Liste: (bearbeiten, abhaken, sehen, „Nur Besitzer“, „kein Besitzer“, „Besitzer“)
 _RIGHTS = {
-    "de": ("bearbeiten", "abhaken", "sehen", "Nur Besitzer", "kein Besitzer"), "en": ("edit", "tick", "view", "Owner only", "no owner"),
-    "fr": ("modifier", "cocher", "voir", "Propriétaire seulement", "sans propriétaire"), "es": ("editar", "marcar", "ver", "Solo el propietario", "sin propietario"),
-    "it": ("modificare", "spuntare", "vedere", "Solo il proprietario", "senza proprietario"), "pl": ("edycja", "odhaczanie", "podgląd", "Tylko właściciel", "bez właściciela"),
+    "de": ("bearbeiten", "abhaken", "sehen", "Nur Besitzer", "kein Besitzer", "Besitzer"), "en": ("edit", "tick", "view", "Owner only", "no owner", "Owner"),
+    "fr": ("modifier", "cocher", "voir", "Propriétaire seulement", "sans propriétaire", "Propriétaire"),
+    "es": ("editar", "marcar", "ver", "Solo el propietario", "sin propietario", "Propietario"),
+    "it": ("modificare", "spuntare", "vedere", "Solo il proprietario", "senza proprietario", "Proprietario"),
+    "pl": ("edycja", "odhaczanie", "podgląd", "Tylko właściciel", "bez właściciela", "Właściciel"),
 }
 
 
+def owner_label(hass: HomeAssistant, owner_name: str) -> str:
+    """„Besitzer: Anna“ für die zweite Zeile eines Geräts."""
+    return f"{_RIGHTS.get((hass.config.language or 'en').split('-')[0], _RIGHTS['en'])[5]}: {owner_name}"
+
+
 def own_device_line(hass: HomeAssistant, title: str, owner_name: str, share_names: dict[str, str]) -> tuple[str, str]:
-    """Name und zweite Zeile des Geräts einer eigenen Liste: („Wocheneinkauf (Anna)“, „Ben: abhaken · Max: sehen“).
-    Mehr als drei Freigaben werden gekürzt („… · +2“)."""
-    edit, tick, view, only, nobody = _RIGHTS.get((hass.config.language or "en").split("-")[0], _RIGHTS["en"])
+    """Name und zweite Zeile des Geräts einer eigenen Liste: („Wocheneinkauf“, „Besitzer: Anna · Ben: abhaken ·
+    Max: sehen“), ohne Freigaben „Nur Besitzer: Anna“. Mehr als drei Freigaben werden gekürzt („… · +2“).
+    Der Besitzer steht in der zweiten Zeile und nicht im Namen: Home Assistant setzt den Gerätenamen vor den Namen
+    der Liste, sobald sich beide unterscheiden („Wocheneinkauf (Anna) Wocheneinkauf“)."""
+    edit, tick, view, only, nobody, owner = _RIGHTS.get((hass.config.language or "en").split("-")[0], _RIGHTS["en"])
     label = {"editor": edit, "checker": tick, "viewer": view}
     parts = [f"{name}: {label.get(role, role)}" for name, role in share_names.items()]
-    line = " · ".join(parts[:3]) + (f" · +{len(parts) - 3}" if len(parts) > 3 else "") if parts else only
-    return f"{title} ({owner_name or nobody})", line[:250]
+    if not owner_name:
+        line = " · ".join([nobody, *parts[:3]])
+    elif parts:
+        line = " · ".join([f"{owner}: {owner_name}", *parts[:3]])
+    else:
+        line = f"{only}: {owner_name}"
+    return title, (line + (f" · +{len(parts) - 3}" if len(parts) > 3 else ""))[:250]
 
 
 def list_device(hass: HomeAssistant, key: str, title: str, entity_id: str, sources: list[str] | None = None,
@@ -162,13 +176,25 @@ async def async_setup_entry(
 ) -> None:
     """Je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     learning: Learning = hass.data[DOMAIN]["learning"]
+
+    async def _load(store: Store, kind: str) -> dict[str, Any]:
+        """Speicherdatei einer Liste lesen. Unlesbar → als SL-STORE-02 festhalten; der Fehler geht weiter, damit die
+        Datei nicht mit einer leeren Liste überschrieben wird."""
+        try:
+            return await store.async_load() or {}
+        except Exception:
+            from . import problems
+
+            problems.report(hass, "SL-STORE-02", kind)
+            raise
+
     for subentry in entry.subentries.values():
         if subentry.subentry_type == SUBENTRY_OWN_GROUP:
             # je Besitzer ein Unter-Eintrag, darin seine Listen (own_groups.py)
             for list_id, ldata in (subentry.data.get("lists") or {}).items():
                 owner = ldata.get("owner") or subentry.data.get("owner")  # ab beta.13 bei der Liste, vorher bei der Gruppe
                 own_store = Store(hass, STORAGE_VERSION, storage.key(f"own.{list_id}"))
-                own_stored = await own_store.async_load() or {}
+                own_stored = await _load(own_store, "own list")
                 async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning, list_id=list_id,
                                                       list_data={**ldata, "owner": owner})],
                                    config_subentry_id=subentry.subentry_id)
@@ -176,7 +202,7 @@ async def async_setup_entry(
         if subentry.subentry_type == SUBENTRY_OWN:
             # alte Form (je Liste ein Unter-Eintrag) – nur, falls der Umzug nicht möglich war
             own_store = Store(hass, STORAGE_VERSION, storage.key(f"own.{subentry.subentry_id}"))
-            own_stored = await own_store.async_load() or {}
+            own_stored = await _load(own_store, "own list")
             async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning)],
                                config_subentry_id=subentry.subentry_id)
             continue
@@ -184,7 +210,7 @@ async def async_setup_entry(
             continue
         key = list_key(subentry)
         store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, storage.key(key))
-        stored = await store.async_load() or {}
+        stored = await _load(store, "combined list")
         async_add_entities(
             [CombinedTodoListEntity(hass, dict(subentry.data), subentry.title, key, store, stored, learning)],
             config_subentry_id=subentry.subentry_id,
@@ -528,9 +554,12 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
         if entry is None or not info:
             return
         model = list_device(self.hass, self._attr_unique_id, self._attr_name or "", self.entity_id, self._sources)["model"]
-        # wie bei eigenen Listen: der Besitzer in Klammern hinter dem Namen (ohne Besitzer gilt die Liste für alle)
+        # wie bei eigenen Listen: der Besitzer steht in der zweiten Zeile (ohne Besitzer gilt die Liste für alle) –
+        # im Namen würde Home Assistant ihn vor den Namen der Liste setzen („Einkauf (Anna) Einkauf“)
         owner = getattr(self, "_owner_name", "") if self.data.get("owner") else ""
-        name = f"{self._attr_name} ({owner})" if owner else str(self._attr_name or "")
+        if owner:
+            model = f"{owner_label(self.hass, owner)} · {model}"[:250]
+        name = str(self._attr_name or "")
         if entry.model != model or entry.name != name:
             from homeassistant.helpers import device_registry as dr
 
@@ -777,7 +806,7 @@ class OwnTodoListEntity(_AccessMixin, TodoListEntity):
 
     @callback
     def _update_device_line(self) -> None:
-        """Zeile auf der Seite der Integration: „Wocheneinkauf (Anna)“ und darunter „Ben: abhaken · Max: sehen“."""
+        """Zeile auf der Seite der Integration: „Wocheneinkauf“ und darunter „Besitzer: Anna · Ben: abhaken“."""
         entry = self.device_entry
         if entry is None or not self.grouped:
             return

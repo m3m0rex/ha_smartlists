@@ -19,6 +19,10 @@ STORAGE_KEY = storage.key("itemlog")
 PER_LIST = 400
 
 
+# Ereignis auf dem Bus von Home Assistant: action = add | remove | rename | check | uncheck
+EVENT_ITEM = "smartlists_item"
+
+
 class ItemLog:
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
@@ -45,6 +49,11 @@ class ItemLog:
         rows.append(entry)
         del rows[:-PER_LIST]
         self._save()
+        # Ereignis für Automationen („wenn etwas auf die Liste kommt …“): bleibt in Home Assistant
+        bus = getattr(self.hass, "bus", None)
+        if bus is not None:
+            bus.async_fire(EVENT_ITEM, {"entity_id": entity_id, "action": action, "item": text[:200], "user_id": user_id,
+                                        **({"old": old[:200]} if old else {}), **({"via_link": True} if via_link else {})})
 
     def for_item(self, entity_id: str, name: str, limit: int = 30) -> list[dict[str, Any]]:
         from .itemtext import DEFAULT_TAG_RULES, parse

@@ -42,7 +42,7 @@ from . import repairs
 from .learning import async_get_learning
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.TODO, Platform.SENSOR, Platform.CALENDAR]
+PLATFORMS: list[Platform] = [Platform.TODO, Platform.SENSOR, Platform.CALENDAR, Platform.BUTTON]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 # eigener Pfad, damit er sich nicht mit der Seitenleisten-Seite /smartlists überschneidet
 CARD_URL = "/smartlists-files/smartlists-card.js"

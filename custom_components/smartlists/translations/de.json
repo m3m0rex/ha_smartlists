@@ -481,11 +481,52 @@
       },
       "due": {
         "name": "Fällig"
+      },
+      "list_open": {
+        "name": "Offen"
+      },
+      "list_changed": {
+        "name": "Zuletzt geändert"
+      },
+      "list_next_due": {
+        "name": "Nächste Fälligkeit"
+      },
+      "list_offers": {
+        "name": "Angebote"
+      },
+      "list_total": {
+        "name": "Geschätzte Summe"
+      },
+      "last_backup": {
+        "name": "Letzte Sicherung"
+      },
+      "problems": {
+        "name": "Probleme"
+      },
+      "app_user": {
+        "name": "Benutzer"
+      },
+      "app_last_sync": {
+        "name": "Letzter Abgleich"
+      },
+      "app_pending": {
+        "name": "Ausstehende Änderungen"
+      },
+      "app_latest_version": {
+        "name": "Neueste Version"
+      },
+      "app_backup": {
+        "name": "Letzte App-Sicherung"
       }
     },
     "calendar": {
       "meal_plan": {
         "name": "Essensplan"
+      }
+    },
+    "button": {
+      "list_clear_completed": {
+        "name": "Erledigte entfernen"
       }
     }
   },

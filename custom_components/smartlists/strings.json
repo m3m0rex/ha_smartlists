@@ -481,11 +481,52 @@
       },
       "due": {
         "name": "Due"
+      },
+      "list_open": {
+        "name": "Open"
+      },
+      "list_changed": {
+        "name": "Last changed"
+      },
+      "list_next_due": {
+        "name": "Next due"
+      },
+      "list_offers": {
+        "name": "Offers"
+      },
+      "list_total": {
+        "name": "Estimated total"
+      },
+      "last_backup": {
+        "name": "Last backup"
+      },
+      "problems": {
+        "name": "Problems"
+      },
+      "app_user": {
+        "name": "User"
+      },
+      "app_last_sync": {
+        "name": "Last sync"
+      },
+      "app_pending": {
+        "name": "Pending changes"
+      },
+      "app_latest_version": {
+        "name": "Latest version"
+      },
+      "app_backup": {
+        "name": "Last app backup"
       }
     },
     "calendar": {
       "meal_plan": {
         "name": "Meal plan"
+      }
+    },
+    "button": {
+      "list_clear_completed": {
+        "name": "Remove completed"
       }
     }
   },

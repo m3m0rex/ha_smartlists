@@ -481,11 +481,52 @@
       },
       "due": {
         "name": "In scadenza"
+      },
+      "list_open": {
+        "name": "Aperti"
+      },
+      "list_changed": {
+        "name": "Ultima modifica"
+      },
+      "list_next_due": {
+        "name": "Prossima scadenza"
+      },
+      "list_offers": {
+        "name": "Offerte"
+      },
+      "list_total": {
+        "name": "Totale stimato"
+      },
+      "last_backup": {
+        "name": "Ultimo backup"
+      },
+      "problems": {
+        "name": "Problemi"
+      },
+      "app_user": {
+        "name": "Utente"
+      },
+      "app_last_sync": {
+        "name": "Ultima sincronizzazione"
+      },
+      "app_pending": {
+        "name": "Modifiche in sospeso"
+      },
+      "app_latest_version": {
+        "name": "Ultima versione"
+      },
+      "app_backup": {
+        "name": "Ultimo backup dell'app"
       }
     },
     "calendar": {
       "meal_plan": {
         "name": "Piano dei pasti"
+      }
+    },
+    "button": {
+      "list_clear_completed": {
+        "name": "Rimuovi completati"
       }
     }
   },

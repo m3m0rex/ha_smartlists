@@ -481,11 +481,52 @@
       },
       "due": {
         "name": "À faire"
+      },
+      "list_open": {
+        "name": "Ouverts"
+      },
+      "list_changed": {
+        "name": "Dernière modification"
+      },
+      "list_next_due": {
+        "name": "Prochaine échéance"
+      },
+      "list_offers": {
+        "name": "Offres"
+      },
+      "list_total": {
+        "name": "Total estimé"
+      },
+      "last_backup": {
+        "name": "Dernière sauvegarde"
+      },
+      "problems": {
+        "name": "Problèmes"
+      },
+      "app_user": {
+        "name": "Utilisateur"
+      },
+      "app_last_sync": {
+        "name": "Dernière synchronisation"
+      },
+      "app_pending": {
+        "name": "Modifications en attente"
+      },
+      "app_latest_version": {
+        "name": "Dernière version"
+      },
+      "app_backup": {
+        "name": "Dernière sauvegarde de l'app"
       }
     },
     "calendar": {
       "meal_plan": {
         "name": "Menu de la semaine"
+      }
+    },
+    "button": {
+      "list_clear_completed": {
+        "name": "Supprimer les terminés"
       }
     }
   },

@@ -29,7 +29,10 @@ SIGNAL_DEVICES_CHANGED = f"{DOMAIN}_devices_changed"
 # Ab wann ein Gerät als „lange nicht gesehen“ gilt (Attribut stale am Sensor)
 STALE_AFTER_SECONDS = 7 * 24 * 3600
 MAX_DEVICES = 50
-_FIELDS = {"name": 60, "model": 60, "manufacturer": 40, "app_version": 30, "os_version": 30}
+_FIELDS = {"name": 60, "model": 60, "manufacturer": 40, "app_version": 30, "os_version": 30, "latest_version": 30}
+# Zahlen, die die App beim Abgleich mitschicken kann (Sensoren am Gerät): Zeitpunkt des letzten vollständigen
+# Abgleichs (Sekunden) und wie viele Änderungen noch nicht in Home Assistant angekommen sind
+_NUMBERS = {"last_sync": 4102444800, "pending": 100000}
 
 
 def _clean_app_lists(raw: list[Any]) -> list[dict[str, Any]]:
@@ -75,6 +78,10 @@ class Devices:
         for key, limit in _FIELDS.items():
             if info.get(key):
                 entry[key] = str(info[key]).strip()[:limit]
+        for key, limit in _NUMBERS.items():
+            value = info.get(key)
+            if isinstance(value, (int, float)) and not isinstance(value, bool) and 0 <= value <= limit:
+                entry[key] = int(value)
         entry.setdefault("name", entry.get("model") or "Gerät")
         if isinstance(info.get("app_lists"), list):
             entry["app_lists"] = _clean_app_lists(info["app_lists"])

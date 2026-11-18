@@ -434,3 +434,15 @@ def test_a_learned_modifier_does_not_beat_the_product():
     assert learning.resolve("Cocktail alkoholfrei")[0] == "getraenke"
     learning.set_category("Tomaten", "grundnahrung")
     assert learning.resolve("Roma-Tomaten") == ("grundnahrung", "learned")
+
+
+def test_category_of_the_shop_decides_when_the_name_misleads():
+    from smartlists.itemtext import split_offer
+
+    learning = _learning()
+    assert learning.category_from_text("Obst & Gemüse") == "obst_gemuese"
+    assert learning.category_from_text("Getränke") == "getraenke"
+    assert learning.category_from_text("") is None and learning.category_from_text("Aktionen der Woche") is None
+    _, offer, _ = split_offer('⚙OFFER:{"s":"REWE","p":1.99,"c":"Obst  &  Gemüse"}')
+    assert offer["category_text"] == "Obst & Gemüse"
+    assert split_offer('⚙OFFER:{"s":"REWE","p":1.99}')[1]["category_text"] is None

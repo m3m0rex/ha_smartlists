@@ -228,6 +228,10 @@ async def async_create(hass: Any, entry: Any, reason: str = "manual") -> dict[st
                    foreign=_plain(await _foreign_items(hass, subentries)), users=users)
     path = await hass.async_add_executor_job(write_file, hass.config.config_dir, backup)
     size, verified = await hass.async_add_executor_job(_verify, path, backup)
+    if not verified:
+        from . import problems
+
+        problems.report(hass, "SL-BACKUP-01", "written file differs from what was saved")
     return report(backup, path, size, verified)
 
 

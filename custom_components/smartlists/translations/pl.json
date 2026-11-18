@@ -481,11 +481,52 @@
       },
       "due": {
         "name": "Do zrobienia"
+      },
+      "list_open": {
+        "name": "Otwarte"
+      },
+      "list_changed": {
+        "name": "Ostatnia zmiana"
+      },
+      "list_next_due": {
+        "name": "Najbliższy termin"
+      },
+      "list_offers": {
+        "name": "Oferty"
+      },
+      "list_total": {
+        "name": "Szacowana suma"
+      },
+      "last_backup": {
+        "name": "Ostatnia kopia zapasowa"
+      },
+      "problems": {
+        "name": "Problemy"
+      },
+      "app_user": {
+        "name": "Użytkownik"
+      },
+      "app_last_sync": {
+        "name": "Ostatnia synchronizacja"
+      },
+      "app_pending": {
+        "name": "Oczekujące zmiany"
+      },
+      "app_latest_version": {
+        "name": "Najnowsza wersja"
+      },
+      "app_backup": {
+        "name": "Ostatnia kopia aplikacji"
       }
     },
     "calendar": {
       "meal_plan": {
         "name": "Plan posiłków"
+      }
+    },
+    "button": {
+      "list_clear_completed": {
+        "name": "Usuń ukończone"
       }
     }
   },

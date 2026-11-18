@@ -185,6 +185,22 @@ class Learning:
             return pack[0], "pack"
         return FALLBACK_ID, "fallback"
 
+    def category_from_text(self, text: str | None) -> str | None:
+        """Warengruppe eines Marktes („Obst & Gemüse“, „Getränke“) → eigene Kategorie, wenn sie sich zuordnen lässt:
+        über den Namen einer eigenen Kategorie, sonst über die Wörterlisten. None = unklar."""
+        key = normalize(text or "")
+        if not key:
+            return None
+        words = set(key.replace("&", " ").replace(",", " ").split())
+        for cid in self.categories.order:
+            if cid == FALLBACK_ID:
+                continue
+            label = set(normalize(self.categories.label(cid)).replace("&", " ").replace(",", " ").split()) - {"und", "and", "et", "y", "e", "i"}
+            if label and label <= words or (words - {"und", "and"}) and (words - {"und", "and"}) <= label:
+                return cid
+        hit = self.categories.match(key)
+        return hit[0] if hit and hit[0] != FALLBACK_ID else None
+
     def resolve_text(self, text: str) -> str:
         """Kategorie direkt aus einem gespeicherten HA-Namen ("Milch 2 l @REWE")."""
         return self.resolve(self.parse(text).name)[0]

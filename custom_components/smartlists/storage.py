@@ -78,6 +78,15 @@ def watch_files(config_dir: str) -> list[str]:
         return []
 
 
+def newest_backup(config_dir: str) -> float | None:
+    """Zeitpunkt der neuesten Sicherung von SmartLists (blockierend – über den Executor aufrufen)."""
+    try:
+        times = [p.stat().st_mtime for p in backup_dir(config_dir).glob(f"{BACKUP_PREFIX}*.json")]
+    except OSError:
+        return None
+    return max(times) if times else None
+
+
 def _same_json(a: Path, b: Path) -> bool:
     try:
         return json.loads(a.read_text(encoding="utf-8")) == json.loads(b.read_text(encoding="utf-8"))
@@ -157,7 +166,7 @@ def set_aside(config_dir: str, name: str, label: str = "") -> str | None:
         from datetime import datetime
 
         safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in label)[:40]
-        dst = folder / f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}_{safe + '_' if safe else ''}{name}.json"
+        dst = folder / f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}_{safe + '_' if safe else ''}{name.replace('/', '_')}.json"
         os.replace(src, dst)
         for old in sorted(folder.glob("*.json"), reverse=True)[KEEP_DELETED:]:
             old.unlink(missing_ok=True)

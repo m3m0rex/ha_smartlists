@@ -106,6 +106,11 @@ async def ws_move_item(hass, msg, context):
         vol.Optional("manufacturer"): str,
         vol.Optional("app_version"): str,
         vol.Optional("os_version"): str,
+        # für die Sensoren am Gerät (alle freiwillig): neueste Version laut eigener Prüfung der App, Zeitpunkt des
+        # letzten vollständigen Abgleichs (Sekunden), Zahl der noch nicht übertragenen Änderungen
+        vol.Optional("latest_version"): str,
+        vol.Optional("last_sync"): vol.Any(int, float),
+        vol.Optional("pending"): int,
         vol.Optional("notes_lists"): [str],
         # kombinierte Listen der App (nur aus HA-Listen) – lassen sich in der Integration verbinden
         vol.Optional("app_lists"): [dict],

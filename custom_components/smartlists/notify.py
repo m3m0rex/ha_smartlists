@@ -179,6 +179,9 @@ class Notifier:
                 await self._deliver(t, title, message, tag, actions)
             except Exception as err:  # noqa: BLE001 – ein falsches Ziel soll die anderen nicht aufhalten
                 _LOGGER.warning("SmartLists: Benachrichtigung an %s fehlgeschlagen: %s", t["id"], err)
+                from . import problems
+
+                problems.report(self.hass, "SL-NOTIFY-01", f"{t.get('kind') or 'target'}: {type(err).__name__}")
                 errors.append(f"{t.get('label') or t['id']}: {err}")
         return errors
 

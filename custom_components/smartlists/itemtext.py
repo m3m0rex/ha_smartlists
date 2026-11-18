@@ -318,6 +318,8 @@ def split_offer(note: str | None) -> tuple[str, dict[str, Any] | None, str]:
         "valid_until": until,
         "added_at": int(data["a"]) if str(data.get("a", "")).isdigit() else None,
         "expired": expired,
+        # Warengruppe laut Markt („Obst & Gemüse“) – hilft beim Einordnen, wenn der Name allein in die Irre führt
+        "category_text": " ".join(str(data["c"]).split())[:60] if data.get("c") else None,
     }
     return clean, offer, raw_line
 

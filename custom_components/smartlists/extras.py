@@ -180,7 +180,14 @@ class Extras:
             names = []
         for name in names:
             store: Store[dict[str, Any]] = Store(self.hass, 1, storage.key(f"{storage.WATCH_DIR}/{name}"))
-            content = await store.async_load()
+            try:
+                content = await store.async_load()
+            except Exception:  # noqa: BLE001 – unlesbar: beiseitelegen statt überschreiben, die übrigen laden weiter
+                from . import problems
+
+                problems.report(self.hass, "SL-STORE-02", f"{storage.WATCH_DIR}/…")
+                await self.hass.async_add_executor_job(storage.set_aside, self.hass.config.config_dir, f"{storage.WATCH_DIR}/{name}", "unreadable")
+                continue
             if isinstance(content, dict) and content.get("lists"):
                 user_id = str(content.get("user") or name)
                 self.watch_users[user_id] = {k: v for k, v in content.items() if k != "user"}

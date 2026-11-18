@@ -220,6 +220,11 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         info = learning.describe(raw["text"])
         # Angebot aus der App (⚙OFFER-Zeile in der Notiz) zerlegen statt als Text zeigen
         note, offer, _ = split_offer(raw.get("note"))
+        # Aus einem Angebot übernommen: der Markt nennt die Warengruppe. Sie gilt, solange der Haushalt den Artikel
+        # nicht selbst eingeordnet oder gelernt hat („Cocktailtomaten“ aus „Obst & Gemüse“ sind kein Getränk).
+        if offer and offer.get("category_text") and info.get("category_source") in ("pack", "fallback"):
+            if from_offer := learning.category_from_text(offer["category_text"]):
+                info = {**info, "category": from_offer, "category_source": "offer"}
         # Herkunft als Person (kombinierte Liste, z.B. todo.peter → 👤 Peter) – außer im Artikel
         # steht schon eine Person (*Anna) oder Personen-Tags sind abgeschaltet
         person = raw.get("person")

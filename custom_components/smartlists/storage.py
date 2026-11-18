@@ -36,7 +36,8 @@ KEEP_DELETED = 30
 # Speicherdateien, die es einmal gibt (neben denen je Liste). JEDE neue Speicherdatei hier eintragen: was beim Start
 # unter .storage/smartlists/ liegt und weder hier steht noch zu einer Liste gehört, gilt als Rest einer gelöschten
 # Liste und wird nach backups/deleted/ gelegt (tests/test_storage.py prüft, dass nichts fehlt).
-GLOBAL_STORES = ("learning", "notes", "shares", "public", "extras", "packs", "devices", "notify", "itemlog", "app_backups")
+GLOBAL_STORES = ("learning", "notes", "shares", "public", "extras", "packs", "devices", "notify", "itemlog", "app_backups",
+                 "offer_history")
 # alte Namen, die einen eigenen neuen Platz bekommen (alles andere: smartlists.<rest> → smartlists/<rest>)
 _SPECIAL = {"app_backups": f"{BACKUPS}/apps"}
 

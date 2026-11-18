@@ -10,6 +10,7 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
+from .const import DOMAIN
 from .ws_common import (
     _denied,
     _extras,
@@ -156,6 +157,24 @@ def ws_categorize(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
     learning = _learning(hass)
     connection.send_result(msg["id"], {"map": {name: learning.resolve(name)[0] for name in msg["names"][:3000]},
                                        "categories": learning.categories.as_list(msg.get("language"))})
+
+
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/offer_prices",
+                                  vol.Required("offers"): vol.All([vol.ExactSequence([vol.All(str, vol.Length(min=1, max=200)), vol.Coerce(float)])], vol.Length(max=8000)),
+                                  vol.Optional("local"): dict})
+@callback
+def ws_offer_prices(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Preisverlauf der Angebote, zentral für alle Browser und die App (offer_history.py). Die Karte nennt die Angebote,
+    die sie gerade zeigt (Schlüssel „markt|name“, Preis); zurück kommt je Schlüssel der gemerkte Stand mit dem Preis
+    davor. `local`: das frühere Preis-Gedächtnis dieses Browsers – wird einmal übernommen, soweit es hier fehlt."""
+    history = hass.data.get(DOMAIN, {}).get("offer_history")
+    if history is None:
+        connection.send_error(msg["id"], "not_ready", "SmartLists ist noch nicht bereit.")
+        return
+    adopted = history.adopt(msg["local"]) if msg.get("local") else 0
+    from .offer_history import KEEP_DAYS
+
+    connection.send_result(msg["id"], {"seen": history.merge([(k, float(p)) for k, p in msg["offers"]]), "days": KEEP_DAYS, "adopted": adopted})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_sources", vol.Required("sources"): [dict]})

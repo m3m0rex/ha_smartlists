@@ -196,6 +196,13 @@ async def async_check_watch(hass: HomeAssistant) -> int:
 @callback
 def async_setup_watch_timer(hass: HomeAssistant):
     async def _tick(_now: Any) -> None:
+        try:  # Preisverlauf: alle Angebote merken, auch wenn niemand eine Karte geöffnet hat
+            extras = hass.data.get(DOMAIN, {}).get("extras")
+            history = hass.data.get(DOMAIN, {}).get("offer_history")
+            if history is not None:
+                history.record(collect(hass, extras.watch_settings.get("sources") if extras else None))
+        except Exception:  # noqa: BLE001 – darf die Merkliste nicht aufhalten
+            _LOGGER.warning("Preisverlauf nicht fortgeschrieben", exc_info=True)
         await async_check_watch(hass)
 
     return async_track_time_interval(hass, _tick, WATCH_INTERVAL)

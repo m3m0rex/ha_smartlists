@@ -60,6 +60,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     await async_get_app_backups(hass)
     await async_get_notes(hass)
     await async_get_extras(hass)
+    from .offer_history import async_get_offer_history
+
+    await async_get_offer_history(hass)
     await async_get_shares(hass)
     async_register_views(hass)  # geteilte Links (ohne Anmeldung, nur mit 256-Bit-Schlüssel)
     # Teilen ohne die HA-Adresse zu verraten: eigener kleiner Server + Quick Tunnel / eigener Proxy

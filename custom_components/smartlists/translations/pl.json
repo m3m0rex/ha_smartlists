@@ -318,6 +318,12 @@
       "entry_type": "SmartLists Go – połączone aplikacje",
       "abort": {
         "apps_how": "Aplikację łączysz w SmartLists Go: zaloguj się tam do Home Assistant. Potem smartfon pojawi się tutaj."
+      },
+      "step": {
+        "user": {
+          "title": "Połącz aplikację",
+          "description": "Aplikację łączysz w SmartLists Go: zaloguj się tam do Home Assistant. Potem smartfon pojawi się tutaj."
+        }
       }
     }
   },

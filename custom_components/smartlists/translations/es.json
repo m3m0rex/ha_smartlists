@@ -318,6 +318,12 @@
       "entry_type": "SmartLists Go – apps conectadas",
       "abort": {
         "apps_how": "La app se conecta desde SmartLists Go: inicia sesión allí en Home Assistant. Después el smartphone aparece aquí."
+      },
+      "step": {
+        "user": {
+          "title": "Conectar app",
+          "description": "La app se conecta desde SmartLists Go: inicia sesión allí en Home Assistant. Después el smartphone aparece aquí."
+        }
       }
     }
   },

@@ -318,6 +318,12 @@
       "entry_type": "SmartLists Go – app collegate",
       "abort": {
         "apps_how": "L’app si collega da SmartLists Go: accedi lì a Home Assistant. Poi lo smartphone compare qui."
+      },
+      "step": {
+        "user": {
+          "title": "Collega app",
+          "description": "L’app si collega da SmartLists Go: accedi lì a Home Assistant. Poi lo smartphone compare qui."
+        }
       }
     }
   },

@@ -318,6 +318,12 @@
       "entry_type": "SmartLists Go – connected apps",
       "abort": {
         "apps_how": "You connect an app in SmartLists Go itself: sign in to Home Assistant there. The phone then shows up here."
+      },
+      "step": {
+        "user": {
+          "title": "Connect app",
+          "description": "You connect an app in SmartLists Go itself: sign in to Home Assistant there. The phone then shows up here."
+        }
       }
     }
   },

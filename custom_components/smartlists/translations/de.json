@@ -318,6 +318,12 @@
       "entry_type": "SmartLists Go – verbundene Apps",
       "abort": {
         "apps_how": "Eine App verbindest du in SmartLists Go: dort bei Home Assistant anmelden. Danach steht das Smartphone hier."
+      },
+      "step": {
+        "user": {
+          "title": "App verbinden",
+          "description": "Eine App verbindest du in SmartLists Go: dort bei Home Assistant anmelden. Danach steht das Smartphone hier."
+        }
       }
     }
   },

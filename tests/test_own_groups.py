@@ -121,3 +121,32 @@ def test_add_change_owner_remove():
     assert og.find(entry, a)[1]["title"] == "Wocheneinkauf"
     og.async_remove_list(hass, a)                                                     # letzte Liste weg → die Gruppe verschwindet
     assert og.groups(entry) == []
+
+
+def test_rename_changes_the_list_not_the_entity():
+    """Umbenennen ändert den Namen der Liste (Gruppe bzw. Unter-Eintrag); an der Entität steht kein eigener Name."""
+    import asyncio
+    import types
+
+    from smartlists import own_groups
+    from smartlists.const import SUBENTRY_COMBINED, SUBENTRY_OWN_GROUP
+
+    group = types.SimpleNamespace(subentry_id="g", subentry_type=SUBENTRY_OWN_GROUP, unique_id="own_lists", title="Eigene Listen",
+                                  data={"lists": {"l1": {"title": "Test share", "owner": "u1", "shares": {}}}})
+    combined = types.SimpleNamespace(subentry_id="c1", subentry_type=SUBENTRY_COMBINED, unique_id=None, title="Alt", data={"sources": []})
+    changes = []
+
+    def update(entry, sub, **kw):
+        changes.append((sub.subentry_id, kw))
+        for k, v in kw.items():
+            setattr(sub, k, v)
+
+    entry = types.SimpleNamespace(entry_id="e", subentries={"g": group, "c1": combined})
+    hass = types.SimpleNamespace(config_entries=types.SimpleNamespace(async_entries=lambda domain: [entry], async_update_subentry=update))
+    own = types.SimpleNamespace(grouped=True, list_id="l1", unique_id="own_l1")
+    assert asyncio.run(own_groups.async_rename_list(hass, own, "  xxx  ")) is True
+    assert group.data["lists"]["l1"]["title"] == "xxx" and group.data["lists"]["l1"]["owner"] == "u1"
+    comb = types.SimpleNamespace(grouped=False, unique_id="c1")
+    assert asyncio.run(own_groups.async_rename_list(hass, comb, "Wocheneinkauf")) is True and combined.title == "Wocheneinkauf"
+    assert asyncio.run(own_groups.async_rename_list(hass, types.SimpleNamespace(grouped=False, unique_id="fremd"), "x")) is False
+    assert asyncio.run(own_groups.async_rename_list(hass, own, "   ")) is False

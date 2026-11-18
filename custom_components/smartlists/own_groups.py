@@ -114,6 +114,28 @@ async def async_update_list(hass: HomeAssistant, list_id: str, *, title: str | N
     hass.config_entries.async_update_subentry(entry, g, data={**g.data, "lists": {**g.data["lists"], list_id: new}})
 
 
+async def async_rename_list(hass: HomeAssistant, entity: Any, title: str) -> bool:
+    """Eine Liste von SmartLists umbenennen: eigene in der Gruppe, eigene alter Form oder kombinierte. Der Name steht
+    am Unter-Eintrag bzw. bei der Liste in der Gruppe; Gerät und Entität folgen nach dem Neuladen. False = keine
+    Liste von SmartLists."""
+    entry = main_entry(hass)
+    title = " ".join(str(title).split())[:60]
+    if entry is None or not title:
+        return False
+    if getattr(entity, "grouped", False):
+        await async_update_list(hass, entity.list_id, title=title)
+        return True
+    from .const import LEGACY_UNIQUE_ID
+
+    for sub in entry.subentries.values():
+        own = sub.subentry_type == SUBENTRY_OWN and sub.subentry_id == getattr(entity, "list_id", None)
+        combined = sub.subentry_type == SUBENTRY_COMBINED and str(sub.data.get(LEGACY_UNIQUE_ID) or sub.subentry_id) == entity.unique_id
+        if own or combined:
+            hass.config_entries.async_update_subentry(entry, sub, title=title)
+            return True
+    return False
+
+
 def _remove_from_group(hass: HomeAssistant, entry: ConfigEntry, g: ConfigSubentry, list_id: str) -> None:
     rest = {k: v for k, v in (g.data.get("lists") or {}).items() if k != list_id}
     if rest:

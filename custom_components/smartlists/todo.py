@@ -222,6 +222,36 @@ class _AccessMixin:
 
     data: dict[str, Any]
     _restrict_always = True
+    # Die Liste IST ihr Gerät: ohne eigenen Namen heißt die Entität wie das Gerät. Mit eigenem Namen setzt Home
+    # Assistant den Gerätenamen davor („Einkauf Einkauf“; umbenannt in „xxx“ wurde daraus „Einkauf xxx“).
+    _attr_has_entity_name = True
+
+    @property
+    def name(self) -> None:
+        return None
+
+    @property
+    def list_title(self) -> str:
+        """Name der Liste, wie SmartLists ihn führt (Titel des Unter-Eintrags bzw. der Liste in der Gruppe)."""
+        return str(getattr(self, "_attr_name", "") or "")
+
+    async def _adopt_registry_name(self) -> None:
+        """Bis 4.0.0-beta.15 hieß „Umbenennen“: ein eigener Name an der Entität. Der wird jetzt zum Namen der Liste
+        (und damit des Geräts) und an der Entität gelöscht – sonst stünde er hinter dem Gerätenamen."""
+        entry = self.registry_entry
+        if entry is None or not entry.name:
+            return
+        from homeassistant.helpers import entity_registry as er
+
+        from .own_groups import async_rename_list
+
+        wanted = entry.name.strip()
+        er.async_get(self.hass).async_update_entity(self.entity_id, name=None)
+        if wanted and wanted != self.list_title:
+            try:
+                await async_rename_list(self.hass, self, wanted)
+            except Exception:  # noqa: BLE001 – der Start der Liste geht vor
+                _LOGGER.warning("SmartLists: Name von %s nicht übernommen", self.entity_id, exc_info=True)
 
     # -------- Rechte --------
     async def role_of(self, user_id: str | None) -> str | None:
@@ -249,10 +279,10 @@ class _AccessMixin:
             if perm == "reorder":
                 return
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
-                                         translation_placeholders={"list": self.name or ""})
+                                         translation_placeholders={"list": self.list_title})
         if not permissions_for(await self.role_of(user_id))[perm]:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_permitted",
-                                         translation_placeholders={"list": self.name or ""})
+                                         translation_placeholders={"list": self.list_title})
 
 
 
@@ -338,6 +368,7 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
         registry: dict[str, CombinedTodoListEntity] = self.hass.data[DOMAIN].setdefault("entities", {})
         registry[self.entity_id] = self
         self.async_on_remove(lambda: registry.pop(self.entity_id, None))
+        await self._adopt_registry_name()
         if self.data.get("owner"):
             _, self._owner_name = await async_user_info(self.hass, self.data["owner"])
         if self._sources:
@@ -443,7 +474,7 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
             "unavailable_sources": [s for s in self._sources if s not in self._source_states],
             "open_by_category": self._open_by_category(items),
             # fertig gestalteter Text fürs Template-Widget der HA-App (widget.py) – ohne Herkunfts-Zusatz im Namen
-            "widget": build_widget(self.hass, self.entity_id, self.name or "", [
+            "widget": build_widget(self.hass, self.entity_id, self.list_title, [
                 (self._index[i.uid][2] if i.uid in self._index else (i.summary or ""), i.status == TodoItemStatus.COMPLETED)
                 for i in items]),
         }
@@ -797,6 +828,7 @@ class OwnTodoListEntity(_AccessMixin, TodoListEntity):
         registry: dict[str, OwnTodoListEntity] = self.hass.data[DOMAIN].setdefault("own", {})
         registry[self.entity_id] = self
         self.async_on_remove(lambda: registry.pop(self.entity_id, None))
+        await self._adopt_registry_name()
         _, self._owner_name = await async_user_info(self.hass, self.data.get("owner"))
         for uid, role in (self.data.get("shares") or {}).items():
             _, name = await async_user_info(self.hass, uid)
@@ -825,7 +857,7 @@ class OwnTodoListEntity(_AccessMixin, TodoListEntity):
             "shared_with": self._share_names,
             "open_items": open_items,
             "completed_items": len(self._items) - open_items,
-            "widget": build_widget(self.hass, self.entity_id, self.name or "", [
+            "widget": build_widget(self.hass, self.entity_id, self.list_title, [
                 (i.get("summary", ""), i.get("status") == TodoItemStatus.COMPLETED) for i in self._items]),
         }
 

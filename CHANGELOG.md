@@ -3,6 +3,18 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.16] – 2026-11-18
+
+Sixteenth pre-release of 4.0.
+
+### Fixed
+
+- **List names were doubled, and renaming did not work.** Home Assistant puts the name of the device in front of the
+  name of an entity. A list showed up as "Test share Test share", and renamed to "xxx" it became "Test share xxx".
+  A list of SmartLists is now the unnamed main entity of its device, so it is simply called like the list. Renaming
+  in the settings of a list changes the list itself (and with it the device) for own and combined lists. A name
+  given the old way is taken over as the name of the list on the next start.
+
 ## [4.0.0-beta.15] – 2026-11-18
 
 Fifteenth pre-release of 4.0.

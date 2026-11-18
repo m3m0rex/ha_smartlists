@@ -282,7 +282,11 @@
     const type = !d ? "?" : d.type === "combined" ? t.type_combined : d.type === "own" ? t.type_own : d.type === "notes" ? t.p_group_notes : t.type_list;
     const status = h("span", { class: "ok2" });
     const set = async (patch) => {
-      try { await this._call("set_list_settings", patch); status.textContent = "✓ " + t.saved; this._listSettingsApplied = null; await this._load(); }
+      try {
+        await this._call("set_list_settings", patch); status.textContent = "✓ " + t.saved; this._listSettingsApplied = null; await this._load();
+        // der neue Name kommt erst an, wenn Home Assistant die Liste neu geladen hat: sofort zeigen, kurz darauf nachladen
+        if (patch.name && this._data) { this._data.name = patch.name; this._render(); setTimeout(() => this._load(), 2500); }
+      }
       catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const cur = (d && d.settings) || {};

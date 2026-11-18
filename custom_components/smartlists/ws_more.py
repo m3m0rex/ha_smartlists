@@ -173,7 +173,16 @@ def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveCo
         if registry.async_get(entity_id) is None:
             connection.send_error(msg["id"], "invalid", "Diese Liste lässt sich hier nicht umbenennen.")
             return
-        registry.async_update_entity(entity_id, name=msg["name"].strip())
+        ours = lists.own_entity(hass, entity_id) or lists.combined_entity(hass, entity_id)
+        if ours is not None:
+            # Listen von SmartLists: der Name gehört zur Liste (und ihrem Gerät), nicht als Zusatz an die Entität –
+            # dort setzt Home Assistant den Gerätenamen davor („Einkauf xxx“)
+            from .own_groups import async_rename_list
+
+            registry.async_update_entity(entity_id, name=None)
+            hass.async_create_task(async_rename_list(hass, ours, msg["name"]))
+        else:
+            registry.async_update_entity(entity_id, name=msg["name"].strip())
     settings = _extras(hass).set_list_settings(entity_id, msg.get("sort") if "sort" in msg else None, msg.get("show_prices"),
                                                msg.get("categories"), msg.get("suggest_scope"), msg.get("plain"))
     connection.send_result(msg["id"], {"settings": settings})

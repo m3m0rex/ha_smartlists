@@ -39,7 +39,7 @@ def candidates(hass: HomeAssistant, user: Any | None = None) -> list[dict[str, A
         is_notes = lists.is_notes(hass, eid)
         if is_notes and not lists.notes_allowed(hass, eid, user):
             continue  # fremde Notizen bleiben privat
-        used_in = [e.name or k for k, e in combined.items() if eid in getattr(e, "_sources", [])]
+        used_in = [getattr(e, "list_title", "") or k for k, e in combined.items() if eid in getattr(e, "_sources", [])]
         reg = er.async_get(hass).async_get(eid)
         out.append({"entity_id": eid, "name": st.attributes.get(ATTR_FRIENDLY_NAME, eid), "open": _int(st.state),
                     "platform": reg.platform if reg else None, "used_in": used_in, "notes": is_notes})

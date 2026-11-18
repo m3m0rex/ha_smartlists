@@ -404,3 +404,29 @@ def test_set_automation_keeps_barcode_settings():
     assert learning.automation["barcode_providers"] == ["obf", "off"]
     assert learning.automation["barcode_lookup"] is False
     assert learning.automation["voice_default_list"] == "todo.einkauf"
+
+
+def test_the_end_of_a_compound_word_says_what_it_is():
+    """„Cocktail-Strauchtomaten“ sind Tomaten: der vordere Teil mit Bindestrich und ein Stichwort mitten im Wort
+    („rauch“ in „Strauch“, „wein“ in „Schwein“) bestimmen die Kategorie nicht."""
+    from smartlists.categories import build_index, load_builtin_packs, match_class, normalize
+
+    idx = build_index([load_builtin_packs()["de"]], "de")
+    for name in ("Bio-Sherry-Tomaten", "Cocktail-Strauchtomaten", "Roma-Tomaten", "REWE Bio Cherry Romatomaten", "Strauchtomaten"):
+        assert idx.guess(normalize(name)) == "obst_gemuese", name
+    assert idx.guess(normalize("Schweinefilet")) != "getraenke"
+    assert idx.guess(normalize("Rotwein")) == "getraenke" and idx.guess(normalize("Apfelsaft")) == "getraenke"
+    assert idx.guess(normalize("Erdbeerjoghurt")) == "kuehlung" and idx.guess(normalize("Passierte Tomaten")) == "grundnahrung"
+    assert (match_class("tomaten", "strauchtomaten"), match_class("sherry", "bio-sherry-tomaten"), match_class("tomaten", "tomatensauce"),
+            match_class("rauch", "strauchtomaten"), match_class("joghurt", "erdbeerjoghurtdrink"), match_class("bier", "tomaten")) == (2, 1, 1, -1, 0, -1)
+
+
+def test_a_learned_modifier_does_not_beat_the_product():
+    """Wer „Cocktail“ als Getränk eingeordnet hat, bekommt „Cocktail-Strauchtomaten“ trotzdem beim Gemüse –
+    „Tomaten“ als Getränk gelernt gilt dagegen weiter (das Gelernte gewinnt bei gleicher Stellung)."""
+    learning = _learning()
+    learning.set_category("Cocktail", "getraenke")
+    assert learning.resolve("Cocktail-Strauchtomaten") == ("obst_gemuese", "pack")
+    assert learning.resolve("Cocktail") == ("getraenke", "manual")
+    learning.set_category("Tomaten", "grundnahrung")
+    assert learning.resolve("Roma-Tomaten") == ("grundnahrung", "learned")

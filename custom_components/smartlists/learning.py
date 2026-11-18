@@ -173,11 +173,16 @@ class Learning:
             return FALLBACK_ID, "fallback"
         if (cid := self.manual.get(key)) and self.categories.valid(cid):
             return cid, "manual"
-        for word, cid in self._learned_sorted:
-            if word in key and self.categories.valid(cid):
-                return cid, "learned"
-        if cid := self.categories.guess_or_none(key):
-            return cid, "pack"
+        # Gelerntes und Wörterlisten zusammen: es gewinnt, was am Ende eines Wortes steht („Cocktail-Strauchtomaten“
+        # sind Tomaten, auch wenn „Cocktail“ als Getränk gelernt wurde), bei gleicher Stellung das Gelernte
+        from .categories import best_match
+
+        learned = [(word, cid, 1) for word, cid in self._learned_sorted if word in key and self.categories.valid(cid)]
+        hit = best_match([*learned, *self.categories.candidates(key)], key)
+        if hit and any(hit[1] == word and hit[0] == cid for word, cid, _ in learned):
+            return hit[0], "learned"
+        if pack := self.categories.match(key):
+            return pack[0], "pack"
         return FALLBACK_ID, "fallback"
 
     def resolve_text(self, text: str) -> str:

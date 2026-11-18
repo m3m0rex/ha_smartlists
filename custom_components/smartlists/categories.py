@@ -64,8 +64,56 @@ def _lang(language: str | None) -> str:
     return code if code in LANGUAGES else "en"
 
 
+def match_class(term: str, key: str) -> int:
+    """Wie gut ein Stichwort im Namen steht – damit „Cocktail-Strauchtomaten“ Tomaten sind und kein Getränk:
+
+    2 = das Stichwort ist ein ganzes Wort oder das Ende eines Wortes („Strauch|tomaten“, „Apfel|saft“) –
+        im Deutschen sagt das Ende eines zusammengesetzten Wortes, was es ist
+    1 = es ist der Anfang eines Wortes („Tomaten|sauce“) oder der vordere Teil mit Bindestrich („Sherry-“ in
+        „Bio-Sherry-Tomaten“): nur eine nähere Bestimmung
+    0 = es steckt nur mitten in einem Wort („rauch“ in „Strauchtomaten“) – zählt bei kurzen Stichwörtern (bis
+        fünf Zeichen) gar nicht, bei längeren als schwächster Treffer
+    -1 = kommt nicht vor
+    """
+    best, start = -1, 0
+    while True:
+        i = key.find(term, start)
+        if i < 0:
+            return best
+        before = key[i - 1] if i > 0 else " "
+        after = key[i + len(term)] if i + len(term) < len(key) else " "
+        ends = not after.isalnum() and after != "-"
+        begins = not before.isalnum()
+        cls = 2 if ends else 1 if begins else (0 if len(term) > 5 else -1)
+        if cls > best:
+            best = cls
+            if best == 2:
+                return best
+        start = i + 1
+
+
+def best_match(candidates: list[tuple[str, str, int]], key: str) -> tuple[str, str] | None:
+    """Bestes Stichwort für einen Namen. candidates: (Stichwort, Kategorie, Vorrang) – Vorrang 1 für selbst
+    Gelerntes, 0 für die Wörterlisten. Marken unter „Sonstiges“ verlieren immer; sonst gewinnt die bessere Stellung im Namen
+    (match_class), dann Gelerntes, dann das längere Stichwort. Liefert (Kategorie, Stichwort)."""
+    found: tuple[tuple[int, int, int, int], str, str] | None = None
+    for term, category_id, priority in candidates:
+        if term not in key:
+            continue
+        cls = match_class(term, key)
+        if cls < 0:
+            continue
+        # Marken („REWE Bio“, „ja!“) stehen in den Wörterlisten unter „Sonstiges“: sie verlieren gegen jedes Stichwort,
+        # das sagt, was es ist („REWE Bio Cherry Romatomaten“ → Obst & Gemüse)
+        score = (0 if category_id == FALLBACK_ID and not priority else 1, cls, priority, len(term))
+        if found is None or score > found[0]:
+            found = (score, category_id, term)
+    return (found[1], found[2]) if found else None
+
+
 class CategoryIndex:
-    """Stichwort → Kategorie, längste Stichwörter zuerst (genauere Treffer gewinnen)."""
+    """Stichwort → Kategorie. Es gewinnt das Stichwort, das am Ende eines Wortes steht (siehe match_class),
+    bei gleicher Stellung das längere (genauere)."""
 
     def __init__(self, terms: list[tuple[str, str]], products: list[tuple[str, str, str]], language: str = "de") -> None:
         self.language = _lang(language)
@@ -92,16 +140,27 @@ class CategoryIndex:
         key = normalize(name)
         if key in self._cache:
             return self._cache[key] or None
-        result = ""
-        spaced = key.replace("-", " ")  # "washing-up liquid" wie "washing up liquid"
-        for term, category_id in self.terms:
-            if term in key or term in spaced:
-                result = category_id
-                break
+        hit = self.match(key)
+        result = hit[0] if hit else ""
         if len(self._cache) > 5000:
             self._cache.clear()
         self._cache[key] = result
         return result or None
+
+    def candidates(self, key: str) -> list[tuple[str, str, int]]:
+        """Stichwörter der Wörterlisten, die im Namen vorkommen (für best_match, Vorrang 0)."""
+        spaced = key.replace("-", " ")  # "washing-up liquid" wie "washing up liquid"
+        return [(term, category_id, 0) for term, category_id in self.terms if term in key or term in spaced]
+
+    def match(self, key: str) -> tuple[str, str] | None:
+        """(Kategorie, Stichwort) laut Wörterlisten. Mehrteilige Stichwörter gelten auch mit Bindestrich geschrieben."""
+        spaced = key.replace("-", " ")
+        found = best_match(self.candidates(key), key)
+        if spaced != key:
+            other = best_match([c for c in self.candidates(key) if " " in c[0]], spaced)
+            if other and (found is None or len(other[1]) > len(found[1])):
+                found = other
+        return found
 
     def default_unit(self, name: str) -> str | None:
         """Übliche Einheit, z.B. "kg" für Äpfel, "Fl" für Wasser."""

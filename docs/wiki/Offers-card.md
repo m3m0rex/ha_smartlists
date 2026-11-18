@@ -23,36 +23,23 @@ list: todo.shopping
 ```
 
 - **My list:** for every open item the matching offers per store, the cheapest marked ★. "Pick cheapest" or "only
-  REWE" selects for the whole list; "Apply to list" writes store, price and validity to the items.
+  REWE" selects for the whole list; "Apply to list" writes store, price and validity to the items. Three views: one
+  row per offer, one row per item, or a table with the stores as columns.
+- **Cheapest shopping trip:** one store for as much as possible – and whether two, three or more stores are worth it.
+  Worked out by price per kilo or litre; a bigger pack that is cheaper per litre wins, and "▸ bigger pack" explains
+  what you pay more at the till and what you save for the same amount.
 - **All offers:** one shelf per store with search and categories – as tiles or as a list with small images.
 - **⭐ Watch list:** products you are waiting to see on offer.
+- **Bonus offers** (e.g. REWE Bonus) are marked "only with the bonus app"; `use_bonus: true` compares them with the
+  bonus taken off. **▲ / ▼** show whether a product was cheaper or dearer before.
 
 The card speaks German, English, French, Spanish, Italian and Polish and follows the language of Home Assistant.
 
 ## Options
 
-| Option | Default | Description |
-|---|---|---|
-| `list` | – | To-do list to match offers against |
-| `title` | "Offers" | Heading |
-| `sources` | `auto` | `auto`, or a list of sources (see below) |
-| `match` | `word` | `word` (butter ≠ butter biscuit), `exact`, `part` |
-| `default_tab` | `list` | `list`, `all` or `watch` |
-| `list_view` | `chips` | "My list": `chips` (prices side by side), `rows` (one offer per row), `compact` (one line per item) or `table` (stores as columns) – switchable in the card |
-| `all_view` | `tiles` | "All offers" as `tiles` or as a `list` with small images |
-| `show_images` | `true` | Product images |
-| `show_unit_price` | `true` | Unit price (€/kg, €/l) |
-| `show_valid_until` | `true` | "until 21.11." |
-| `hide_without_offer` | `false` | Hide list items without an offer |
-| `max_per_store` | `10` | Offers per store before "all →" (1–20) |
-| `currency` | `EUR` | ISO currency code |
-| `currency_symbol` | – | Own symbol instead of `currency`, e.g. `₺` |
-| `watch` | – | Watch list: fixed products, e.g. `[coffee, chocolate spread]` |
-| `watch_list` | – | Watch list as a to-do list – the same on all devices |
-| `notify` | `false` | Home Assistant notification when a watched product is newly on offer |
-| `notify_targets` | – | Also send to these targets, e.g. `[notify.mobile_app_pixel]` (several possible) |
-| `category_map` | – | Link store categories to your own, e.g. `{ Dairy: Chilled, Store: "" }` |
-| `locked` | – | Fix a view so it cannot be switched inside the card: `[list_view, all_view, group_by, add_to]` or `true` |
+Every option with its default and examples is listed in the [README of the card](https://github.com/m3m0rex/ha_smartdiscounts-card#readme)
+– the one place that is kept up to date with each release. Most used: `list`, `sources`, `match`, `list_view`,
+`all_view`, `use_bonus`, `watch`, `notify`.
 
 ## Your own sensors: all fields of `map:`
 
@@ -92,15 +79,15 @@ sources:
 
 ## Watch list and notifications
 
-**With SmartLists** the card uses the household's watch list (see [[Offers and prices]]): it is the same on all
-devices, and Home Assistant reports new offers even with no dashboard open.
+**With SmartLists** every Home Assistant user has their own watch lists, stored in Home Assistant (see [[Offers and
+prices]]): the same in every browser and on every device, more lists with "New watch list", and Home Assistant reports
+new offers even with no dashboard open. `watch_list:` is not used then – if one is still set, the card offers to copy
+its open entries once.
 
-**Without SmartLists** the watch list comes from `watch:` in the configuration, from a to-do list (`watch_list:`, editable in the card and
-the same on all devices) or – without one – from what you enter in the tab, stored on that device only.
-
-With `notify: true` the card creates a Home Assistant notification when a watched product is newly on offer.
-**The check runs in the card**, so it reports while a dashboard with the card is open (e.g. a wall tablet). For
-notifications without an open dashboard use an automation – the README of the card has an example.
+**Without SmartLists** the watch list comes from `watch:` in the configuration, from a to-do list (`watch_list:`,
+editable in the card and the same on all devices) or – without one – from what you enter in the tab, stored in that
+browser only. With `notify: true` the card creates a Home Assistant notification when a watched product is newly on
+offer. **The check runs in the card**, so it reports while a dashboard with the card is open (e.g. a wall tablet).
 
 ## Together with SmartLists
 

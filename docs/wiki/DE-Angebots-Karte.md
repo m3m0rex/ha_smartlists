@@ -25,36 +25,23 @@ list: todo.einkauf
 
 - **Meine Liste:** zu jedem offenen Artikel die passenden Angebote je Markt, das günstigste mit ★. „Günstigste wählen“
   oder „nur REWE“ wählt für die ganze Liste; „In Liste übernehmen“ schreibt Markt, Preis und Gültigkeit an die Einträge.
+  Drei Ansichten: je Angebot eine Zeile, je Artikel eine Zeile oder eine Tabelle mit den Märkten als Spalten.
+- **Günstigster Einkauf:** ein Markt für möglichst viel – und ob sich zwei, drei oder mehr Märkte lohnen. Gerechnet wird
+  nach Preis je Kilo oder Liter; eine größere Packung, die pro Liter günstiger ist, gewinnt, und „▸ größere Packung“
+  erklärt, was man an der Kasse mehr zahlt und für dieselbe Menge spart.
 - **Alle Angebote:** ein Regal je Markt mit Suche und Kategorien – als Kacheln oder als Liste mit kleinen Bildern.
 - **⭐ Merkliste:** Produkte, bei denen du auf ein Angebot wartest.
+- **Bonus-Angebote** (z. B. REWE Bonus) sind als „nur mit der Bonus-App“ gekennzeichnet; `use_bonus: true` vergleicht sie
+  mit abgezogenem Bonus. **▲ / ▼** zeigen, ob ein Produkt vorher billiger oder teurer war.
 
 Die Karte spricht Deutsch, Englisch, Französisch, Spanisch, Italienisch und Polnisch und richtet sich nach der Sprache
 von Home Assistant.
 
 ## Optionen
 
-| Option | Standard | Bedeutung |
-|---|---|---|
-| `list` | – | To-do-Liste, mit der die Angebote abgeglichen werden |
-| `title` | „Angebote“ | Überschrift |
-| `sources` | `auto` | `auto` oder eine Liste von Quellen (siehe unten) |
-| `match` | `word` | `word` (Butter ≠ Butterkeks), `exact`, `part` |
-| `default_tab` | `list` | `list`, `all` oder `watch` |
-| `list_view` | `chips` | „Meine Liste“: `chips` (Preise nebeneinander), `rows` (ein Angebot je Zeile), `compact` (eine Zeile je Artikel) oder `table` (Märkte als Spalten) – in der Karte umschaltbar |
-| `all_view` | `tiles` | „Alle Angebote“ als `tiles` (Kacheln) oder `list` (Liste mit kleinen Bildern) |
-| `show_images` | `true` | Produktbilder |
-| `show_unit_price` | `true` | Grundpreis (€/kg, €/l) |
-| `show_valid_until` | `true` | „bis 21.11.“ |
-| `hide_without_offer` | `false` | Artikel ohne Angebot ausblenden |
-| `max_per_store` | `10` | Angebote je Markt, bevor „alle →“ erscheint (1–20) |
-| `currency` | `EUR` | ISO-Code der Währung |
-| `currency_symbol` | – | eigenes Symbol statt `currency`, z. B. `₺` |
-| `watch` | – | Merkliste: feste Produkte, z. B. `[Kaffee, Schokocreme]` |
-| `watch_list` | – | Merkliste als To-do-Liste – gilt auf allen Geräten |
-| `notify` | `false` | Benachrichtigung, wenn etwas von der Merkliste neu im Angebot ist |
-| `notify_targets` | – | zusätzlich an diese Ziele senden, z. B. `[notify.mobile_app_pixel]` (mehrere möglich) |
-| `category_map` | – | Markt-Kategorien mit eigenen verknüpfen, z. B. `{ Molkereiprodukte: Kühlung, Store: "" }` |
-| `locked` | – | Ansicht festlegen, die sich in der Karte nicht umschalten lässt: `[list_view, all_view, group_by, add_to]` oder `true` |
+Jede Option mit Standardwert und Beispielen steht im [README der Karte](https://github.com/m3m0rex/ha_smartdiscounts-card/blob/main/README.de.md)
+– dort wird sie mit jedem Release aktuell gehalten. Am häufigsten gebraucht: `list`, `sources`, `match`, `list_view`,
+`all_view`, `use_bonus`, `watch`, `notify`.
 
 ## Eigene Sensoren: alle Felder von `map:`
 
@@ -94,12 +81,16 @@ sources:
 
 ## Merkliste und Benachrichtigungen
 
-**Mit SmartLists** nutzt die Karte die Merkliste des Haushalts (siehe [Angebote und Preise](DE-Angebote-und-Preise)):
-Sie gilt auf allen Geräten, und Home Assistant meldet neue Angebote auch ohne geöffnetes Dashboard.
+**Mit SmartLists** hat jeder Benutzer von Home Assistant eigene Merklisten, gespeichert in Home Assistant (siehe
+[Angebote und Preise](DE-Angebote-und-Preise)): in jedem Browser und auf jedem Gerät gleich, weitere Listen mit „Neue
+Merkliste“, und Home Assistant meldet neue Angebote auch ohne geöffnetes Dashboard. `watch_list:` wird dann nicht
+benutzt – ist noch eine eingetragen, bietet die Karte an, ihre offenen Einträge einmal zu übernehmen.
 
-**Ohne SmartLists** kommt die Merkliste aus `watch:` in der Konfiguration, aus einer To-do-Liste (`watch_list:`) oder –
-ohne beides – aus dem, was du im Reiter einträgst, gespeichert nur auf diesem Gerät. Mit `notify: true` meldet die
-Karte neue Angebote, solange ein Dashboard mit der Karte geöffnet ist (z. B. ein Wand-Tablet).
+**Ohne SmartLists** kommt die Merkliste aus `watch:` in der Konfiguration, aus einer To-do-Liste (`watch_list:`, in der
+Karte bearbeitbar und auf allen Geräten gleich) oder – ohne beides – aus dem, was du im Reiter einträgst, nur in diesem
+Browser gespeichert. Mit `notify: true` legt die Karte eine Benachrichtigung in Home Assistant an, wenn ein gemerktes
+Produkt neu im Angebot ist. **Die Prüfung läuft in der Karte**, gemeldet wird also, solange ein Dashboard mit der Karte
+offen ist (z. B. ein Wand-Tablet).
 
 ## Zusammen mit SmartLists
 

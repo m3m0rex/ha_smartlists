@@ -1,71 +1,56 @@
 # App pairing and devices
 
-> ℹ️ **The HA SmartLists Android app is not published yet.** This page describes how the integration works with
-> it once it is available. Until then you need none of this – SmartLists works fully in Home Assistant, the card,
-> the sidebar page and the official Home Assistant app (including its home-screen widgets).
+> ℹ️ **The app SmartLists Go is not published yet.** This page describes how the integration works with it. Until then
+> you need none of this – SmartLists works fully in Home Assistant, the card, the sidebar page and the official Home
+> Assistant app (including its home-screen widgets).
 
-The **HA SmartLists** Android app pairs with the integration automatically when it can reach it:
-*App → Settings → Connection → SmartLists integration* shows "Paired · version …". Tap *Sync* to sync
-now; otherwise the app checks at most every 15 minutes while refreshing.
+**SmartLists Go** ("HA SmartLists Go: Grocery List") works on its own on the phone, or signed in to your Home
+Assistant. Signed in, SmartLists in Home Assistant does the thinking – categories, rights, offers – and the app keeps a
+copy on the phone, so it also works without a connection and sends changes later.
 
-When paired, the app:
+## Signing in
 
-- shows the same badges, naming convention, categories and offers,
-- shows combined lists from the integration as combined lists (managed in HA),
-- syncs remembered categories in both directions, including deletions,
-- registers itself as a **device**.
+*App → Settings → Home Assistant → Sign in*: enter the address at home (e.g. `http://homeassistant.local:8123`) and,
+if you like, the one from outside. The app opens the sign-in page of **your own** Home Assistant in the browser; after
+signing in you come back to the app. No long-lived token is needed, and the app never sees your password.
 
-## Backups
+- At home the app uses the home address first. With **Recognise home network** (the name of your Wi-Fi) it goes
+  straight to the outside address on other networks.
+- A self-signed certificate can be accepted on purpose (*Accept a self-signed certificate*).
+- To revoke access later: *Profile → Security → Refresh tokens* in Home Assistant, entry "SmartLists Go".
 
-When paired, *App → Settings → Backup → Back up to Home Assistant* stores the **complete** app state –
-all lists and every setting (theme, colours, font size, categories, offers, sort orders, reminders,
-notes encryption, local account) – permanently in the integration. Restoring brings everything back
-and restarts the app. Not included on purpose: the Home Assistant token and the WebDAV password (the
-current ones are kept) and device-specific data (backup folder permission). Encrypted notes stay
-encrypted with your own password.
+## What the app uses from SmartLists
 
-**Backup password** (*App → Settings → Backup → Backup password*): encrypts every backup – Home
-Assistant, WebDAV and file – with AES-256-GCM before it leaves the device. Home Assistant only stores
-unreadable data; nobody can read it without the password, not even an admin. The password is kept only
-on the device and is never part of a backup. After a reinstall the app asks for it when restoring.
-**If you forget it, the backup cannot be restored.**
+- **Lists:** every list you may see, with your rights (add, tick, rename, delete). New lists created in the app as
+  "in Home Assistant" become own SmartLists lists of the signed-in user.
+- **Moving lists:** lists that so far live only on the phone can be moved to Home Assistant (*list menu → Move to Home
+  Assistant*). The list is created there and filled; only then does it disappear from the phone.
+- **Notes:** notes lists (`todo.ha_smartlists_notes…`) appear in the app under *Notes*, one entry = one note.
+- **Naming and badges:** `@` store, `*` person, `#` tag (or your own characters) and the look of the badges.
+- **Offers:** the offers tab comes from SmartLists (`smartlists/offers`) – My list with the cheapest shopping trip,
+  your watch lists and all offers. SmartDiscounts itself is not needed for the app.
+- **Store zones:** in shopping mode the app picks the store you are standing in from the store zones.
+- Combined lists made **in the app** stay in the app: they may mix lists from the phone and from Home Assistant.
 
-## Connected devices
+## Devices
 
-*General settings → Global → Devices and notes* lists every device with user, model, app and Android version and last
-seen (⚠️ after 7 days). Each one is also an HA device under SmartLists with the sensors
-**Last seen** (usable in automations) and **App version**.
-
-Removing a device only removes it from the list; it reappears on the next sync. To revoke access delete
-the device's token under *Profile → Security → Long-lived access tokens*. Use one token per person so
-everyone gets their own settings.
+Every signed-in app shows up under SmartLists as a device "SmartLists Go (Android – user / device)" with the
+sensors **Last sync**, **Pending changes** and **App version**. Removing a device only removes it from the list; it
+comes back with the next sync. To lock an app out, revoke its refresh token (see above).
 
 Interface details for developers: [`docs/app-api.md`](https://github.com/m3m0rex/ha_smartlists/blob/main/docs/app-api.md).
 
-## Combined lists from the app
+## Backups
 
-Combined lists created **in the app** (from Home Assistant lists) are reported to the integration when
-the app syncs. You find them
+*App → Settings → Backup → Back up to Home Assistant* stores the lists and settings of the phone in Home Assistant –
+**one file per Home Assistant user** under `.storage/smartlists/backups/apps/<user>`, one entry per phone. Everyone
+only sees their own backups; admins see all. Backups stay when SmartLists is removed.
 
-- in the general settings → *Global → Devices and notes*, below the device, with **Connect**,
-- on the sidebar page as a dashed 📱 chip under *Combined lists*.
+**Backup password** (*App → Settings → Backup*): encrypts the backup on the phone with AES-256-GCM before it is sent.
+Home Assistant only stores unreadable data – nobody can read it without the password, not even an admin.
+**If you forget it, the backup cannot be restored.**
 
-Lists of the app that are still plain Local To-do lists (`todo.ha_smartlists_*`) are reported under
+## Lists of the older app
+
+Lists of the earlier app that are still plain Local To-do lists (`todo.ha_smartlists_*`) are reported under
 *Settings → Repairs*; *Fix* takes them over as own SmartLists lists.
-
-Connecting creates a real combined list in Home Assistant with the same sources. It **belongs to the
-device of the app** (it shows up on its device page) and can be edited like any combined list. From then on
-the app shows the list from Home Assistant instead of its own, so it is not there twice. Lists that
-also contain local (non-HA) lists of the app cannot be connected.
-
-Lists that also contain **local** lists of the app are not reported. In the app, open *Combined lists → ⋮ →
-Send to Home Assistant*: the local source lists are moved to Home Assistant (items included) and the combined
-list is connected right away if your HA account is an admin.
-
-## Naming convention and badge look in the app
-
-When paired, the app takes the **naming convention** (`@` store, `*` person, `#` tag – or whatever you set
-under *Global → Badges and colours*) and the **look of the badges** from Home Assistant: style per kind
-(filled, subtle, outline, text only), colours, the symbol in front, and colour/display name of individual
-stores, people and tags. The app refreshes this on every sync (at most every 15 minutes), so a change in
-Home Assistant shows up in the app without doing anything.

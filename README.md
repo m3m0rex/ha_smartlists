@@ -10,14 +10,14 @@ Type `Milk 2 l 1,19€ @REWE *Anna #organic` – SmartLists recognises **quantit
 category** while you type and files the item in the right place. (`@`, `*` and `#` are the defaults – you choose
 the characters yourself.)
 
-A standalone Home Assistant integration (HACS), independent of the HA SmartLists Android app.
+A standalone Home Assistant integration (HACS), independent of the app SmartLists Go.
 It brings the app's key feature straight into Home Assistant: **merge several to-do lists into one
 shared list** – e.g. Anna's and Max's shopping lists into one list "Weekly shop".
 
 A combined list is a regular to-do entity (`todo.weekly_shop`). It works in the to-do view, on
-dashboards, with voice assistants, in automations and in the HA SmartLists app.
+dashboards, with voice assistants, in automations and in the app SmartLists Go.
 
-> ℹ️ **The HA SmartLists Android app is not published yet.** Everything described here works without it – in
+> ℹ️ **The app SmartLists Go is not published yet.** Everything described here works without it – in
 > Home Assistant, the card, the sidebar page and the official Home Assistant app. Parts that mention the app
 > (pairing, connected devices, app notes, lists from the app) only matter once it is available.
 

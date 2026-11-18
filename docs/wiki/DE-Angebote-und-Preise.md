@@ -36,14 +36,17 @@ Für eine Währung, die nicht in der Liste steht, wähle **Eigenes Symbol …** 
 
 ## Merkliste
 
-Auf der Merkliste stehen Produkte, bei denen du auf ein Angebot wartest. Hinzufügen: im Menü eines Artikels (**Auf die
-Merkliste**) oder im Reiter ⭐ der [Angebots-Karte](DE-Angebots-Karte); entfernen unter *Einstellungen → Preise &
-Währung → Merkliste*.
+Auf der Merkliste stehen Produkte, bei denen du auf ein Angebot wartest. **Jeder Benutzer von Home Assistant hat eigene
+Merklisten** – eine Datei je Benutzer (`.storage/smartlists/watch/<Benutzer>`), in jedem Browser und auf jedem Gerät
+gleich; andere Benutzer sehen sie nie. Hinzufügen: im Menü eines Artikels (**Auf die Merkliste**), im Reiter ⭐ der
+[Angebots-Karte](DE-Angebots-Karte) oder in der App; entfernen dort oder unter *Einstellungen → Preise & Währung →
+Merkliste*. Weitere Merklisten legt jeder in der Karte an („Neue Merkliste“), ohne Admin-Rechte; „Alle Merklisten“ zeigt
+alles des Benutzers zusammen.
 
-Ist **Benachrichtigen, wenn etwas davon im Angebot ist** eingeschaltet (Admins), prüft Home Assistant die
-Angebots-Sensoren alle 30 Minuten – auch ohne geöffnetes Dashboard – und meldet jedes neue Angebot einmal. Unter **Senden an** wählst du,
-wohin die Meldung geht – mehrere Ziele sind möglich: die Benachrichtigung in Home Assistant, die App auf Smartphones
-und Tablets oder jeder andere notify-Dienst.
+Ist **Benachrichtigen, wenn etwas davon im Angebot ist** eingeschaltet, prüft Home Assistant die Angebots-Sensoren alle
+30 Minuten – auch ohne geöffnetes Dashboard – und meldet jedes neue Angebot einmal. Unter **Senden an** wählt jeder
+Benutzer seine eigenen Ziele: die App auf Smartphones und Tablets oder jeden anderen notify-Dienst. Das Ziel „In Home
+Assistant“ sieht der ganze Haushalt, deshalb können es nur Admins wählen.
 
 ## Angebote in der Einkaufsliste
 

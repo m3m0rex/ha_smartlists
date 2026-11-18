@@ -79,7 +79,7 @@ Ohne Dashboard geht es auch: Die Seite **SmartLists** in der Seitenleiste zeigt 
 | Alle Einstellungen | [Settings](https://github.com/m3m0rex/ha_smartlists/wiki/Settings) |
 | Wenn etwas nicht klappt | [Troubleshooting](https://github.com/m3m0rex/ha_smartlists/wiki/Troubleshooting) |
 
-> Die Android-App **HA SmartLists** ist noch nicht veröffentlicht. Alles hier Beschriebene funktioniert ohne sie.
+> Die App **SmartLists Go** ist noch nicht veröffentlicht. Alles hier Beschriebene funktioniert ohne sie.
 
 ## Empfohlene Integrationen – Dank an FaserF
 
@@ -105,4 +105,4 @@ Fehler und Wünsche bitte als [Issue](https://github.com/m3m0rex/ha_smartlists/i
 
 ## Lizenz
 
-MIT – siehe [LICENSE](LICENSE). Die Android-App HA SmartLists ist ein eigenes Projekt mit eigener Lizenz.
+MIT – siehe [LICENSE](LICENSE). Die App SmartLists Go ist ein eigenes Projekt mit eigener Lizenz.

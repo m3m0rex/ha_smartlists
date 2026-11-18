@@ -36,13 +36,16 @@ shown after the amount and recognised as a price while typing.
 
 ## Watch list
 
-The watch list holds products you are waiting to see on offer. Add one from an item's menu (**Add to watch list**) or
-in the ⭐ tab of the [[Offers card]]; remove it under *Settings → Prices & currency → Watch list*.
+The watch list holds products you are waiting to see on offer. **Every Home Assistant user has their own watch lists** –
+one file per user (`.storage/smartlists/watch/<user>`), the same in every browser and on every device; other users never
+see them. Add a product from an item's menu (**Add to watch list**), in the ⭐ tab of the [[Offers card]] or in the app;
+remove it there or under *Settings → Prices & currency → Watch list*. Further watch lists are created in the card ("New
+watch list"), no admin rights needed; "All watch lists" shows everything of the user together.
 
-With **Notify when one of them is on offer** switched on (admins), Home Assistant checks the offer sensors every
-30 minutes – even with no dashboard open – and reports every new offer once Under **Send to** you choose where it goes –
-several targets are possible: the notification in Home Assistant, the companion app on your phones and tablets, or any
-other notify service.
+With **Notify when one of them is on offer** switched on, Home Assistant checks the offer sensors every 30 minutes – even
+with no dashboard open – and reports every new offer once. Under **Send to** every user picks their own targets: the
+companion app on their phones and tablets or any other notify service. The target "In Home Assistant" is seen by the
+whole household, so only admins can choose it.
 
 ## Offers in the shopping list
 

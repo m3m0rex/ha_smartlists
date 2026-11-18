@@ -193,6 +193,18 @@ def fresh_for(offers: list[dict[str, Any]], terms: list[str], seen: list[str]) -
     return [(term, o) for term in terms for o in deals_for(offers, term) if _key(term, o) not in known]
 
 
+async def _admin_ids(hass: HomeAssistant, user_ids: list[str]) -> set[str]:
+    admins: set[str] = set()
+    for user_id in user_ids:
+        try:
+            user = await hass.auth.async_get_user(user_id)
+        except Exception:  # noqa: BLE001
+            user = None
+        if user is not None and user.is_admin:
+            admins.add(user_id)
+    return admins
+
+
 async def async_check_watch(hass: HomeAssistant) -> int:
     """Neue Angebote für die Merklisten melden (jedes Angebot je Benutzer nur einmal). Jeder Benutzer bekommt nur
     die Treffer seiner eigenen Listen, an seine eigenen Ziele. Liefert die Zahl der neuen Treffer."""
@@ -201,6 +213,8 @@ async def async_check_watch(hass: HomeAssistant) -> int:
         return 0
     offers: list[dict[str, Any]] | None = None
     total = 0
+    admins = await _admin_ids(hass, list(extras.watch_users))
+    extras.repair_watch_targets(admins)
     for user_id, user in list(extras.watch_users.items()):
         terms = list(dict.fromkeys(n for lst in user.get("lists") or [] for n in lst.get("names") or []))
         if not user.get("notify") or not terms:
@@ -211,7 +225,9 @@ async def async_check_watch(hass: HomeAssistant) -> int:
         if not fresh:
             continue
         extras.mark_user_watch_seen(user_id, [_key(term, o) for term, o in fresh])
-        await _watch_send(hass, user.get("targets") or [], _watch_lines(fresh), f"smartlists_watch_{user_id[:8]}")
+        # „In Home Assistant“ sieht der ganze Haushalt – dieses Ziel gilt nur bei Admins
+        targets = [t for t in user.get("targets") or [] if t.get("kind") != "hass" or user_id in admins]
+        await _watch_send(hass, targets, _watch_lines(fresh), f"smartlists_watch_{user_id[:8]}")
         total += len(fresh)
     if extras.watch_users or not extras.watch or not extras.watch_settings.get("notify"):
         return total

@@ -117,7 +117,11 @@ def _first_watch_name(hass: HomeAssistant) -> str:
     return "Merkliste" if str(hass.config.language).startswith("de") else "Watch list"
 
 
-async def _watch_payload(hass: HomeAssistant, user_id: str, list_id: str | None = None) -> dict[str, Any]:
+def _is_admin(hass: HomeAssistant, connection: Any) -> bool:
+    return bool(getattr(connection.user, "is_admin", False))
+
+
+async def _watch_payload(hass: HomeAssistant, user_id: str, list_id: str | None = None, is_admin: bool = False) -> dict[str, Any]:
     """Merkliste des Benutzers (die genannte, sonst seine Standard-Liste), seine Benachrichtigung und alle seine Listen."""
     from .notify import async_get_notifier
 
@@ -126,6 +130,8 @@ async def _watch_payload(hass: HomeAssistant, user_id: str, list_id: str | None 
     shown, items = extras.watch_view(user_id, list_id)
     return {"names": [x["name"] for x in items], "items": items, "notify": bool(user.get("notify")), "targets": list(user.get("targets") or []),
             "list": shown, "default": user.get("default"), "show_all": bool(user.get("show_all")),
+            # „In Home Assistant“ (für den ganzen Haushalt sichtbar) darf nur ein Admin als Ziel wählen
+            "household_allowed": is_admin,
             "lists": [{"id": x["id"], "name": x["name"], "count": len(x["names"])} for x in user["lists"]],
             # woraus man wählen kann: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten
             "services": notifier.services(), "entities": notifier.entities()}
@@ -136,7 +142,7 @@ async def _watch_payload(hass: HomeAssistant, user_id: str, list_id: str | None 
 async def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Merklisten des angemeldeten Benutzers (Produkte, bei denen man auf ein Angebot wartet). Jeder hat seine eigenen;
     ohne `list` kommt die Standard-Liste. Die Listen anderer Benutzer sind nicht abrufbar."""
-    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.id, msg.get("list")))
+    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.id, msg.get("list"), _is_admin(hass, connection)))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("list"): str, vol.Optional("names"): [str],
@@ -152,6 +158,9 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
     show_all merkt sich, ob der Benutzer ohne Angabe einer Liste alle zusammen sieht."""
     extras, user_id = _extras(hass), connection.user.id
     extras.watch_user(user_id, _first_watch_name(hass))
+    if "targets" in msg and not _is_admin(hass, connection):
+        # „In Home Assistant“ sieht der ganze Haushalt: nur ein Admin darf das als Ziel wählen
+        msg = {**msg, "targets": [t for t in msg["targets"] if t.get("kind") != "hass" and t.get("id") != "persistent_notification"]}
     list_id = msg.get("list")
     if list_id == WATCH_ALL and not msg.get("new_list"):
         extras.change_all_watch(user_id, [*(msg.get("names") or []), *([msg["add"]] if msg.get("add") else [])], msg.get("remove"))
@@ -162,7 +171,7 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
             from .offers import async_check_watch
 
             await async_check_watch(hass)
-        connection.send_result(msg["id"], await _watch_payload(hass, user_id, WATCH_ALL))
+        connection.send_result(msg["id"], await _watch_payload(hass, user_id, WATCH_ALL, _is_admin(hass, connection)))
         return
     try:
         if msg.get("new_list"):
@@ -185,7 +194,7 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
         from .offers import async_check_watch
 
         await async_check_watch(hass)
-    connection.send_result(msg["id"], await _watch_payload(hass, user_id, list_id))
+    connection.send_result(msg["id"], await _watch_payload(hass, user_id, list_id, _is_admin(hass, connection)))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/categorize", vol.Required("names"): [str], vol.Optional("language"): str})

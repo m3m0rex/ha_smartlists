@@ -11,7 +11,7 @@
   "wl_add_target": "Add target",
   "wl_search": "Search",
   "wl_hass": "In Home Assistant",
-  "wl_hass_sub": "Notification in the sidebar",
+  "wl_hass_sub": "Sidebar – visible to everyone in the household",
   "wl_grp_dev": "Smartphones & tablets",
   "wl_grp_other": "Other services",
   "wl_none": "None",

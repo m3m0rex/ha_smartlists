@@ -32,6 +32,11 @@ Fifteenth pre-release of 4.0.
 
 ### Fixed
 
+- **Watch lists: notifications went to the wrong person.** When the watch lists became personal (beta.13), every
+  user inherited the notification targets of the former shared list – so offers for someone else's watch list were
+  sent to whoever had set that up. Now only one user keeps them (an admin if there is one); for everyone else with
+  those same targets the notification is switched off once, and they choose their own device. The target "In Home
+  Assistant" is visible to the whole household and can only be chosen by an admin.
 - **Categories:** with several words the last one says what it is – "Cocktail Strauchtomaten" are tomatoes even if
   "Cocktail" was learned as a drink. Items taken over from an offer use the product group of the shop ("Obst &
   Gemüse") when the name alone is misleading; what you sorted or taught yourself still wins.

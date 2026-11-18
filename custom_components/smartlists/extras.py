@@ -316,15 +316,44 @@ class Extras:
     @callback
     def watch_user(self, user_id: str, first_name: str = "Merkliste") -> dict[str, Any]:
         """Merklisten eines Benutzers. Beim ersten Zugriff: eine Liste mit dem Inhalt der früheren gemeinsamen
-        Merkliste und deren Benachrichtigung – so geht beim Umstieg nichts verloren."""
+        Merkliste. Deren Benachrichtigung (an/aus und Ziele) erbt nur EIN Benutzer – der erste, der seine Merkliste
+        öffnet. Alle anderen starten ohne Benachrichtigung und wählen ihr eigenes Gerät: sonst gingen die Treffer
+        aus fremden Merklisten an die Ziele dessen, der die gemeinsame Liste eingerichtet hatte."""
         user = self.watch_users.get(user_id)
         if user is None:
             list_id = secrets.token_hex(4)
+            inherit = not self.watch_settings.get("claimed")
             user = self.watch_users[user_id] = {
                 "lists": [{"id": list_id, "name": first_name, "names": list(self.watch)}], "default": list_id,
-                "notify": bool(self.watch_settings.get("notify")), "targets": list(self.watch_settings.get("targets") or []), "seen": []}
+                "notify": bool(self.watch_settings.get("notify")) if inherit else False,
+                "targets": list(self.watch_settings.get("targets") or []) if inherit else [], "seen": []}
+            if inherit:
+                self.watch_settings["claimed"] = user_id
+                self._store.async_delay_save(self._data, 2.0)
             self._save_watch(user_id)
         return user
+
+    @callback
+    def repair_watch_targets(self, admins: set[str]) -> list[str]:
+        """Einmalig für Installationen, in denen (4.0.0-beta.13/14) JEDER Benutzer die Ziele der früheren gemeinsamen
+        Merkliste geerbt hat: behalten darf sie einer – ein Admin, sonst der erste –, bei allen anderen mit denselben
+        Zielen wird die Benachrichtigung ausgeschaltet. Wer seine Ziele schon selbst geändert hat, bleibt unberührt.
+        Liefert, bei wem ausgeschaltet wurde."""
+        if self.watch_settings.get("claimed") or not self.watch_users:
+            return []
+        legacy = sorted(str(t.get("id")) for t in self.watch_settings.get("targets") or [])
+        same = [u for u, v in self.watch_users.items() if sorted(str(t.get("id")) for t in v.get("targets") or []) == legacy]
+        keeper = next((u for u in same if u in admins), same[0] if same else next(iter(self.watch_users)))
+        changed = []
+        for user_id in same:
+            if user_id != keeper and legacy:
+                self.watch_users[user_id]["notify"] = False
+                self.watch_users[user_id]["targets"] = []
+                self._save_watch(user_id)
+                changed.append(user_id)
+        self.watch_settings["claimed"] = keeper
+        self._store.async_delay_save(self._data, 2.0)
+        return changed
 
     def watch_list(self, user_id: str, list_id: str | None = None, first_name: str = "Merkliste") -> dict[str, Any]:
         """Eine Merkliste des Benutzers: die genannte, sonst seine Standard-Liste."""

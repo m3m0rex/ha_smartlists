@@ -837,7 +837,8 @@
     const draw = (w) => {
       const set = async (patch) => { try { draw(await this._call("watch_set", patch, false)); status.textContent = "✓ " + t.saved; } catch (e) { status.textContent = (e && e.message) || t.error; } };
       // Ziele: gewählte als Kacheln, „Ziel hinzufügen“ öffnet eine Liste mit Suche und Häkchen (mehrere möglich)
-      const all = [{ id: "persistent_notification", kind: "hass", icon: "🔔", name: t.wl_hass, sub: t.wl_hass_sub, grp: "Home Assistant" },
+      // „In Home Assistant“ sieht der ganze Haushalt – das Ziel gibt es nur für Admins (ältere SmartLists: für alle)
+      const all = [...(w.household_allowed === false ? [] : [{ id: "persistent_notification", kind: "hass", icon: "🔔", name: t.wl_hass, sub: t.wl_hass_sub, grp: "Home Assistant" }]),
         ...(w.services || []).map((sv) => { const dev = sv.startsWith("mobile_app_"); return { id: "notify." + sv, kind: "service", icon: dev ? "📱" : /telegram/.test(sv) ? "✈️" : /alexa|tts|speak/.test(sv) ? "🔊" : "✉️",
           name: (dev ? sv.slice(11) : sv).replace(/_/g, " "), sub: "notify." + sv, grp: dev ? t.wl_grp_dev : t.wl_grp_other }; }),
         ...(w.entities || []).map((e) => ({ id: e.id, kind: "entity", icon: "🔔", name: e.name, sub: e.id, grp: t.wl_grp_other }))];

@@ -11,7 +11,7 @@
   "wl_add_target": "Añadir destino",
   "wl_search": "Buscar",
   "wl_hass": "En Home Assistant",
-  "wl_hass_sub": "Notificación en la barra lateral",
+  "wl_hass_sub": "Barra lateral: visible para todo el hogar",
   "wl_grp_dev": "Smartphones y tabletas",
   "wl_grp_other": "Otros servicios",
   "wl_none": "Ninguno",

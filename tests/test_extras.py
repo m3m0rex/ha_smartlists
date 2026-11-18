@@ -546,3 +546,28 @@ def test_own_barcode_service_can_get_its_own_user_agent():
     settings["barcode_custom_agent"] = ""
     asyncio.run(barcode.async_lookup(hass, "4777777777778"))
     assert calls[0][1].startswith("SmartLists-HomeAssistant/4.0.0")
+
+
+def test_only_one_user_inherits_the_notification_of_the_former_shared_watch_list():
+    ex = Extras(None)
+    ex.set_watch(["Kaffee"], {"notify": True, "targets": [{"id": "notify.mobile_app_anna", "kind": "service"}]})
+    anna, ben = ex.watch_user("anna"), ex.watch_user("ben")
+    assert anna["notify"] is True and [t["id"] for t in anna["targets"]] == ["notify.mobile_app_anna"]
+    assert ben["notify"] is False and ben["targets"] == [] and ben["lists"][0]["names"] == ["Kaffee"]   # die Produkte bekommt jeder
+    assert ex.watch_settings["claimed"] == "anna" and ex.repair_watch_targets({"ben"}) == []            # schon geregelt
+
+
+def test_repair_for_installs_where_everyone_inherited_the_targets():
+    ex = Extras(None)
+    legacy = [{"id": "persistent_notification", "kind": "hass"}, {"id": "notify.mobile_app_admin", "kind": "service"}]
+    ex.watch_settings = {"notify": True, "targets": list(legacy)}
+
+    def user(targets, notify=True):
+        return {"lists": [{"id": "l", "name": "Merkliste", "names": []}], "default": "l", "notify": notify, "targets": list(targets), "seen": []}
+
+    ex.watch_users = {"ben": user(legacy), "admin": user(legacy), "cara": user([{"id": "notify.mobile_app_cara", "kind": "service"}])}
+    assert ex.repair_watch_targets({"admin"}) == ["ben"]
+    assert ex.watch_users["admin"]["notify"] is True and len(ex.watch_users["admin"]["targets"]) == 2   # der Admin behält sie
+    assert ex.watch_users["ben"]["notify"] is False and ex.watch_users["ben"]["targets"] == []
+    assert ex.watch_users["cara"]["targets"][0]["id"] == "notify.mobile_app_cara"                       # selbst gewählt: bleibt
+    assert ex.repair_watch_targets({"admin"}) == []                                                       # nur einmal

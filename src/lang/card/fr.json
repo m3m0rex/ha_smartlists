@@ -11,7 +11,7 @@
   "wl_add_target": "Ajouter une cible",
   "wl_search": "Rechercher",
   "wl_hass": "Dans Home Assistant",
-  "wl_hass_sub": "Notification dans la barre latérale",
+  "wl_hass_sub": "Barre latérale – visible par tout le foyer",
   "wl_grp_dev": "Smartphones et tablettes",
   "wl_grp_other": "Autres services",
   "wl_none": "Aucune",

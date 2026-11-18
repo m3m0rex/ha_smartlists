@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.1] – 2026-11-18
+
+### Fixed
+
+- **Bonus offers in the list** (e.g. REWE Bonus) show "🎁 0,20 € Bonus" instead of "🏷️ Offer": you pay the normal
+  price and get the credit in the store's app. Needs SmartDiscounts 1.3.11 or newer; offers added before have to be
+  added again.
+
 ## [4.0.0] – 2026-11-18
 
 > **⚠️ To be safe, create a Home Assistant backup before updating** (*Settings → System → Backups*).

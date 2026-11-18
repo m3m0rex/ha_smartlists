@@ -1031,5 +1031,7 @@
   "pb_sub": "Hard errors SmartLists has recorded since the last start – each with a code, so they can be reported precisely.",
   "pb_none": "No problems recorded.",
   "pb_done": "Done",
-  "bug_detail": "Include the technical details of this error (may contain names of lists or entities)"
+  "bug_detail": "Include the technical details of this error (may contain names of lists or entities)",
+  "offer_bonus": "{amount} bonus",
+  "offer_bonus_help": "Bonus offer: normal price, the credit only comes with the {store} app."
 }

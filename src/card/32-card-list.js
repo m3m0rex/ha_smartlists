@@ -498,7 +498,10 @@
     const hasStoreTag = tags.some((x) => x.kind === "store" && x.label.toLowerCase() === String(o.store_label).toLowerCase());
     return h("div", { class: `offer ${o.expired ? "expired" : ""}` },
       hasStoreTag ? null : badge({ kind: "store", value: o.store, label: o.store_label, color: o.color }),
-      h("span", { class: "olabel" }, "🏷️ " + t.offer),
+      // Bonus-Aktion: man zahlt den normalen Preis und bekommt Guthaben in der App des Markts – kein „Angebot“
+      o.bonus ? h("span", { class: "olabel", title: t.offer_bonus_help.replace("{store}", o.store_label) },
+        "🎁 " + t.offer_bonus.replace("{amount}", o.bonus.kind === "pct" ? `${String(o.bonus.value).replace(".", ",")} %` : euro(o.bonus.value)))
+        : h("span", { class: "olabel" }, "🏷️ " + t.offer),
       o.price != null ? h("span", { class: "oprice" }, euro(o.price)) : null,
       o.old_price != null ? h("span", { class: "oold" }, euro(o.old_price)) : null,
       o.discount ? h("span", { class: "odisc" }, o.discount) : null,

@@ -320,6 +320,9 @@ def split_offer(note: str | None) -> tuple[str, dict[str, Any] | None, str]:
         "expired": expired,
         # Warengruppe laut Markt („Obst & Gemüse“) – hilft beim Einordnen, wenn der Name allein in die Irre führt
         "category_text": " ".join(str(data["c"]).split())[:60] if data.get("c") else None,
+        # Bonus-Aktion (z. B. REWE Bonus): Guthaben in der App des Markts statt niedrigerem Preis – b = Betrag, bk = "pct" für Prozent
+        "bonus": ({"value": _num(data.get("b")), "kind": "pct" if data.get("bk") == "pct" else "eur"}
+                  if _num(data.get("b")) else None),
     }
     return clean, offer, raw_line
 
@@ -342,6 +345,10 @@ def offer_summary(offer: dict[str, Any]) -> str:
         parts.append(price)
     if offer.get("discount"):
         parts.append(str(offer["discount"]))
+    if offer.get("bonus"):
+        b = offer["bonus"]
+        amount = f"{b['value']:g} %" if b["kind"] == "pct" else f"{b['value']:.2f}".replace(".", ",") + " €"
+        parts.append(f"🎁 {amount} Bonus".replace(".", ","))
     if offer.get("valid_until"):
         d = offer["valid_until"][:10].split("-")
         parts.append(("abgelaufen " if offer.get("expired") else "bis ") + (f"{d[2]}.{d[1]}." if len(d) == 3 else offer["valid_until"]))

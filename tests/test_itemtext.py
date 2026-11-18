@@ -128,3 +128,12 @@ def test_count_word_anywhere():
     assert p("Batterien AA4") == ("Batterien AA4", None, None, None)
     assert p("Max2x Pulver") == ("Max2x Pulver", None, None, None)
     assert p("2x") == ("2x", None, None, None)
+
+
+def test_offer_bonus():
+    _, offer, _ = t.split_offer('⚙OFFER:{"s":"REWE","p":2.49,"b":0.2}')
+    assert offer["bonus"] == {"value": 0.2, "kind": "eur"}
+    assert "🎁 0,20 € Bonus" in t.offer_summary(offer)
+    _, offer, _ = t.split_offer('⚙OFFER:{"s":"REWE","p":2.49,"b":10,"bk":"pct"}')
+    assert offer["bonus"] == {"value": 10.0, "kind": "pct"} and "🎁 10 % Bonus" in t.offer_summary(offer)
+    assert t.split_offer('⚙OFFER:{"s":"REWE","p":2.49}')[1]["bonus"] is None

@@ -429,7 +429,7 @@ function parseOfferNote(note, stores) {
     const k = (stores || []).find((x) => x.value.toLowerCase() === String(j.s).toLowerCase());
     const num = (v) => (v == null || v === "" ? null : Number(String(v).replace(",", ".").replace(/[^0-9.\-]/g, "")));
     return { note: clean, offer: { store: j.s, store_label: k ? k.value : j.s, color: k ? k.color : null, price: num(j.p), old_price: num(j.o),
-      discount: j.d || null, valid_from: j.v || null, valid_until: j.e || null, expired: !!j.e && String(j.e).slice(0, 10) < new Date().toISOString().slice(0, 10) } };
+      discount: j.d || null, valid_from: j.v || null, valid_until: j.e || null, bonus: num(j.b) ? { value: num(j.b), kind: j.bk === "pct" ? "pct" : "eur" } : null, expired: !!j.e && String(j.e).slice(0, 10) < new Date().toISOString().slice(0, 10) } };
   } catch (e) { return { note: clean, offer: null }; }
 }
 window.SmartListsText = { parseText, encodeText, openTagQuery, splitTags, parseImportText };

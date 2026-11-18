@@ -1031,5 +1031,7 @@
   "pb_sub": "Errores graves que SmartLists ha registrado desde el último inicio, cada uno con un código para informar con precisión.",
   "pb_none": "No hay problemas registrados.",
   "pb_done": "Hecho",
-  "bug_detail": "Incluir los detalles técnicos de este error (pueden contener nombres de listas o entidades)"
+  "bug_detail": "Incluir los detalles técnicos de este error (pueden contener nombres de listas o entidades)",
+  "offer_bonus": "{amount} de bonificación",
+  "offer_bonus_help": "Oferta con bonificación: precio normal, el saldo solo llega con la app de {store}."
 }

@@ -56,3 +56,17 @@ def test_unit_price_is_found_anywhere_in_the_text():
     assert unit_label("je 500-g-Pckg. (1 kg = ab 3,98)") == "3,98 €/kg"
     assert unit_label("1 Stück = 0,50 €") == "0,50 €/Stk"
     assert unit_label("versch. Sorten, teilw. koffeinhaltig") is None
+
+
+def test_bonus_offer_is_kept_once_with_its_bonus():
+    import types
+
+    from smartlists import offers
+
+    row = {"product": "Kinder Riegel", "price": "4,44 €", "base_price": "je 18 x 21-g-Pckg. (1 kg = 11,75 €)", "valid_until": "2099-11-21"}
+    states = [types.SimpleNamespace(entity_id="sensor.rewe_markt", attributes={"discounts": [row]}),
+              types.SimpleNamespace(entity_id="sensor.rewe_markt_rewe_bonus",
+                                    attributes={"discounts": [{**row, "loyalty_bonus_value": 50, "loyalty_bonus_type": "cent"}]})]
+    hass = types.SimpleNamespace(states=types.SimpleNamespace(async_all=lambda domain: states))
+    found = offers.collect(hass)
+    assert len(found) == 1 and found[0]["bonus"] == {"value": 0.5, "kind": "eur"} and found[0]["unit"] == "11,75 €/kg"

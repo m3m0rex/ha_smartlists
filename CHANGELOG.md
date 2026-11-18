@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.19] – 2026-11-18
+
+Nineteenth pre-release of 4.0.
+
+### Added
+
+- **Bonus offers** (for example REWE Bonus, `loyalty_bonus_value` / `loyalty_bonus_type`) carry `bonus` – the app
+  marks them as "only with the shop's app". The same offer from the normal and the bonus sensor counts once.
+
 ## [4.0.0-beta.18] – 2026-11-18
 
 Eighteenth pre-release of 4.0.

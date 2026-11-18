@@ -30,6 +30,9 @@ FIELDS: dict[str, tuple[str, ...]] = {
     "unit": ("price_per_unit", "base_price", "unit_price", "grundpreis"),
     "category": ("category", "categories", "group"),
     "from": ("valid_from", "start_date", "valid_start", "from", "validFrom", "starts"),
+    # Bonus-Aktion (z. B. REWE Bonus): Guthaben in der App des Markts statt eines niedrigeren Preises
+    "bonus": ("loyalty_bonus_value", "bonus_value"),
+    "bonus_type": ("loyalty_bonus_type", "bonus_type"),
 }
 # Grundpreis wie in SmartDiscounts: „… (1 l = 1,33 €) …“ irgendwo im Text der Quelle
 _UNIT_RE = re.compile(r"1\s*(kg|l|ltr|liter|stk|st|stück|m)\s*=\s*(?:ab\s*)?(?:€\s*)?(\d+(?:[.,]\d+)?)", re.I)
@@ -167,9 +170,19 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
                 offer["from"] = start  # gilt erst ab diesem Tag (z. B. das Prospekt der nächsten Woche)
             if isinstance(cat, str) and cat.strip():
                 offer["category"] = cat.strip()[:60]
-            # the same offer from two sensors (e.g. two integrations for one store) counts once
+            bonus = num(pick(row, "bonus"))
+            if bonus is not None and bonus > 0:
+                kind = str(pick(row, "bonus_type") or "").lower()
+                offer["bonus"] = {"value": round(bonus / 100, 2), "kind": "eur"} if "cent" in kind or kind == "ct" else \
+                    {"value": bonus, "kind": "pct"} if ("pro" in kind or "perc" in kind or "%" in kind) else {"value": bonus, "kind": "eur"}
+            # the same offer from two sensors (e.g. two integrations for one store, or REWE and REWE Bonus) counts
+            # once – a bonus from either goes onto the one that is kept
             key = (norm(offer["store"]), norm(offer["name"]), price, until)
             if key in seen:
+                if "bonus" in offer:
+                    first = next((o for o in out if (norm(o["store"]), norm(o["name"]), o["price"], o["until"]) == key), None)
+                    if first is not None:
+                        first.setdefault("bonus", offer["bonus"])
                 continue
             seen.add(key)
             out.append(offer)

@@ -13,3 +13,4 @@
 - [[Automations and voice]]
 - [[App pairing and devices]]
 - [[Troubleshooting]]
+- [[Error codes]]

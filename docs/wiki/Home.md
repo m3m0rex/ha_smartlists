@@ -36,6 +36,7 @@ shopping mode, statistics reset, a dashboard with one sub-page per list and a ti
 - [[App pairing and devices]] – for the HA SmartLists app (not published yet)
 - [[Shopping helpers]] – aisle order, prices, templates, share via link (tunnel/proxy), meal plan, notifications
 - [[Troubleshooting]]
+- [[Error codes]]
 
 🌐 Website: [ha-smartlists.com](https://ha-smartlists.com/) – overview of the integration and the Android app.
 

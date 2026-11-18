@@ -1,5 +1,7 @@
 # Troubleshooting
 
+A message with a code such as `SL-CAL-01`? See [[Error codes]].
+
 **"Custom element doesn't exist: smartlists-card"**
 The integration is not set up yet. Add it under *Settings → Devices & services*, restart Home
 Assistant and reload the page.

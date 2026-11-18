@@ -9,6 +9,7 @@ Twentieth pre-release of 4.0.
 
 ### Changed
 
+- **App backups: one file per Home Assistant user** under `.storage/smartlists/backups/app/<user>` (up to ten devices each). The old shared file `backups/apps` is split up on start and then moved to `backups/deleted/`.
 - **`smartlists/create_list` returns the `entity_id`** of the new list (it waits up to ten seconds for the list to
   appear). The app needs it to move a list from the phone to Home Assistant together with its items.
 

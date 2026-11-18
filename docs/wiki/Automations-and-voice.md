@@ -69,3 +69,26 @@ Polish: „Dodaj mleko do listy zakupów”, „Co jest na liście zakupów?”
 
 Quantity, unit (usual unit if only a number is said), store and category are recognised like in the
 card. Re-install the sentences after an update to get new ones.
+
+## Sensors and the item event
+
+Every list SmartLists keeps has a device with sensors: **Open** (switched on), and – switched off until you enable
+them on the device – **Last changed**, **Next due**, **Offers**, **Estimated total** and the button **Remove
+completed**. The household device has **Expenses this month**, **Due**, **Last backup** and **Problems**; every
+connected app has **Last seen**, **App version**, **User**, **Last sync**, **Pending changes**, **Latest version**
+and **Last app backup**.
+
+Whenever an item is added, removed, renamed, ticked or unticked, SmartLists fires the event `smartlists_item`:
+
+```yaml
+trigger:
+  - platform: event
+    event_type: smartlists_item
+    event_data:
+      action: add          # add | remove | rename | check | uncheck
+      entity_id: todo.ha_smartlists_list_einkauf
+action:
+  - service: notify.mobile_app_phone
+    data:
+      message: "New on the list: {{ trigger.event.data.item }}"
+```

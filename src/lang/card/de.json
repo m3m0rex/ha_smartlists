@@ -730,6 +730,7 @@
   "barcode_providers_help": "Kein Dienst ist vorausgewählt. Antippen schaltet ein/aus, die Zahl ist die Reihenfolge – der erste Treffer zählt. Gefundene Codes merkt sich SmartLists.",
   "barcode_custom": "eigener Dienst",
   "barcode_custom_url": "Adresse mit {code}",
+  "barcode_custom_agent": "Eigener User-Agent (leer = der von SmartLists)",
   "barcode_custom_field": "Feld für den Namen",
   "a_applies": "Gilt für",
   "a_menu": "Artikel-Menü",

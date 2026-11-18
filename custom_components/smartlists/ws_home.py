@@ -99,6 +99,10 @@ def ws_set_automation(hass: HomeAssistant, connection: websocket_api.ActiveConne
     for key in ("barcode_custom_url", "barcode_custom_field"):
         if isinstance(raw.get(key), str):
             settings[key] = raw[key].strip()[:300]
+    if isinstance(raw.get("barcode_custom_agent"), str):
+        from .barcode import clean_agent
+
+        settings["barcode_custom_agent"] = clean_agent(raw["barcode_custom_agent"])
     url = settings.get("barcode_custom_url")
     if url and not url.startswith("https://"):
         connection.send_error(msg["id"], "invalid", "Eigener Dienst: Adresse muss mit https:// beginnen.")

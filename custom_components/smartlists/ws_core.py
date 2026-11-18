@@ -167,6 +167,28 @@ def ws_set_user_settings(hass: HomeAssistant, connection: websocket_api.ActiveCo
     connection.send_result(msg["id"], result)
 
 
+def _counts(hass: HomeAssistant, user: Any) -> dict[str, int]:
+    """Wie viele Listen SmartLists führt, wie viele Geräte dieses Benutzers verbunden sind und wie viele harte Fehler
+    seit dem Start festgehalten wurden. Nur Zahlen – keine Namen."""
+    from . import problems
+    from .const import SUBENTRY_COMBINED, SUBENTRY_OWN, SUBENTRY_OWN_GROUP
+
+    own = combined = 0
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        for sub in entry.subentries.values():
+            if sub.subentry_type == SUBENTRY_OWN_GROUP:
+                own += len(sub.data.get("lists") or {})
+            elif sub.subentry_type == SUBENTRY_OWN:
+                own += 1
+            elif sub.subentry_type == SUBENTRY_COMBINED:
+                combined += 1
+    data = hass.data.get(DOMAIN, {})
+    notes, devices = data.get("notes"), data.get("devices")
+    return {"own_lists": own, "combined_lists": combined, "notes_lists": len(notes.entity_ids()) if notes else 0,
+            "devices": len(devices.entries(None if user.is_admin else user.id)) if devices else 0,
+            "problems": len(problems.current(hass))}
+
+
 # ----------------------------------------------------------------------
 # Koppeln (App/Karte): ist die Integration da, welche Version, was kann sie?
 # ----------------------------------------------------------------------
@@ -185,8 +207,11 @@ async def ws_info(hass: HomeAssistant, connection: websocket_api.ActiveConnectio
             "features": ["lists", "combined_lists", "categories", "suggestions", "tags", "user_settings", "devices",
                          "shopping_event", "due_items", "export", "own_lists", "app_backups", "packs", "pack_editor",
                          "notes", "store_zones", "appearance", "app_lists",
-                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history", "migrate", "item_marks", "offers"],
+                         "store_order", "prices", "templates", "share_links", "notify", "barcode", "stats", "live", "rights", "list_settings", "setup", "mealplan", "mealie", "item_history", "migrate", "item_marks", "offers", "list_sensors", "watch_all", "item_event", "counts"],
             "user": {"id": connection.user.id, "name": connection.user.name, "is_admin": connection.user.is_admin},
+            # für die Seite „Home Assistant“ der App: Zahlen auf einen Blick und die Märkte mit ihren Zonen
+            "counts": _counts(hass, connection.user),
+            "zones": _learning(hass).store_zones,
             **_learning(hass).config(),
         },
     )

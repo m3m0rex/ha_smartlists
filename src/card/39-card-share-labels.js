@@ -237,7 +237,9 @@
           h("input", { value: cur.barcode_custom_url || "", placeholder: "https://example.org/api/{code}", "aria-label": t.barcode_custom_url,
             onchange: (e) => save({ barcode_custom_url: e.target.value.trim() }) }),
           h("input", { value: cur.barcode_custom_field || "", placeholder: "product.name", "aria-label": t.barcode_custom_field,
-            onchange: (e) => save({ barcode_custom_field: e.target.value.trim() }) })) : null);
+            onchange: (e) => save({ barcode_custom_field: e.target.value.trim() }) }),
+          h("input", { value: cur.barcode_custom_agent || "", placeholder: "MyApp/1.0 (me@example.org)", "aria-label": t.barcode_custom_agent, title: t.barcode_custom_agent, maxlength: "120",
+            onchange: (e) => save({ barcode_custom_agent: e.target.value.trim() }) })) : null);
     };
     draw();
     return box;

@@ -505,3 +505,44 @@ def test_all_watch_lists_together():
     # mit nur einer Liste gibt es nichts zusammenzufassen
     ex.set_user_watch("ben", None, None, {"show_all": True})
     assert ex.watch_view("ben")[0] == ex.watch_user("ben")["default"]
+
+
+def test_own_barcode_service_can_get_its_own_user_agent():
+    """Der eigene User-Agent gilt nur für den eigenen Dienst – die öffentlichen bekommen immer den von SmartLists."""
+    from smartlists import barcode
+    from smartlists.const import DOMAIN
+
+    assert barcode.clean_agent("  Mein\r\nDienst/1.0 (ich@example.org) ä ") == "MeinDienst/1.0 (ich@example.org)"
+    assert barcode.clean_agent(None) == "" and len(barcode.clean_agent("x" * 300)) == 120
+    calls = []
+
+    class _Resp:
+        status = 200
+
+        async def json(self, content_type=None):
+            return {}
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *a):
+            return False
+
+    class _Session:
+        def get(self, url, headers=None, timeout=None):
+            calls.append((url, headers["User-Agent"]))
+            return _Resp()
+
+    barcode.async_get_clientsession = lambda hass: _Session()
+    settings = {"barcode_lookup": True, "barcode_providers": ["custom", "off"], "barcode_custom_url": "https://example.org/api/{code}",
+                "barcode_custom_field": "name", "barcode_custom_agent": "MeinDienst/1.0"}
+    data = {"version": "4.0.0", "extras": types.SimpleNamespace(barcodes={}, remember_barcode=lambda c, i: None),
+            "learning": types.SimpleNamespace(automation=settings)}
+    hass = types.SimpleNamespace(config=types.SimpleNamespace(language="de"), data={DOMAIN: data})
+    asyncio.run(barcode.async_lookup(hass, "4777777777777"))
+    assert calls[0] == ("https://example.org/api/4777777777777", "MeinDienst/1.0")
+    assert calls[1][1].startswith("SmartLists-HomeAssistant/4.0.0")
+    calls.clear()
+    settings["barcode_custom_agent"] = ""
+    asyncio.run(barcode.async_lookup(hass, "4777777777778"))
+    assert calls[0][1].startswith("SmartLists-HomeAssistant/4.0.0")

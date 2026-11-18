@@ -5,6 +5,7 @@ Dienste nacheinander (Einstellung automation["barcode_providers"], Standard: kei
 immer nur der Code, ohne Konto. Nur wenn barcode_lookup = True (Standard: aus) – sonst nur eigener Speicher.
 
 Eigener Dienst: automation["barcode_custom_url"] mit {code}, z. B. https://example.org/api/{code}, und
+automation["barcode_custom_agent"] = eigener User-Agent nur für diesen Dienst (leer = der von SmartLists),
 automation["barcode_custom_field"] = Pfad zum Namen in der JSON-Antwort, z. B. "product.title" oder
 "items.0.title".
 """
@@ -74,6 +75,11 @@ def _path(data: Any, path: str) -> Any:
     return data
 
 
+def clean_agent(text: Any) -> str:
+    """Eigener User-Agent für den eigenen Dienst: nur druckbare ASCII-Zeichen (kein Zeilenumbruch), höchstens 120."""
+    return "".join(c for c in str(text or "") if 32 <= ord(c) < 127).strip()[:120]
+
+
 def _parse(provider: str, data: Any, lang: str, custom_field: str = "") -> dict[str, Any] | None:
     if provider == "upcitemdb":
         item = (_path(data, "items.0") or {}) if isinstance(data, dict) else {}
@@ -117,7 +123,10 @@ async def async_lookup(hass: HomeAssistant, code: str) -> dict[str, Any]:
         if paused.get(provider, 0) > time.monotonic():
             continue  # der Dienst hat „zu viele Anfragen“ gemeldet – erst nach der Pause wieder fragen
         try:
-            async with session.get(url.replace("{lang}", lang).replace("{code}", code), headers=headers, timeout=8) as resp:
+            # der eigene Dienst kann einen eigenen User-Agent verlangen – die öffentlichen bekommen immer den von SmartLists
+            own_agent = clean_agent(settings.get("barcode_custom_agent")) if provider == "custom" else ""
+            send = {**headers, "User-Agent": own_agent} if own_agent else headers
+            async with session.get(url.replace("{lang}", lang).replace("{code}", code), headers=send, timeout=8) as resp:
                 if resp.status == 429:
                     paused[provider] = time.monotonic() + PAUSE_SECONDS.get(provider, PAUSE_DEFAULT)
                     _LOGGER.warning("SmartLists: Strichcode-Dienst %s meldet zu viele Anfragen – Pause", provider)

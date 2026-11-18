@@ -730,6 +730,7 @@
   "barcode_providers_help": "Ningún servicio viene preseleccionado. Toca para activar/desactivar, el número es el orden – cuenta el primer resultado. SmartLists recuerda los códigos encontrados.",
   "barcode_custom": "servicio propio",
   "barcode_custom_url": "URL con {code}",
+  "barcode_custom_agent": "User-Agent propio (vacío = el de SmartLists)",
   "barcode_custom_field": "Campo con el nombre",
   "a_applies": "Se aplica a",
   "a_menu": "Menú del artículo",

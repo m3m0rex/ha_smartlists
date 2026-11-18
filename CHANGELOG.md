@@ -3,6 +3,39 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.15] – 2026-11-18
+
+Fifteenth pre-release of 4.0.
+
+### Added
+
+- **Sensors per list.** Every list SmartLists keeps (own and combined) gets "Open", "Last changed", "Next due",
+  "Offers" (open items with a current offer) and "Estimated total", plus a button "Remove completed". Only "Open"
+  is switched on when created – enable the others on the device of the list.
+- **Sensors for the household:** "Last backup" and "Problems" (how many hard errors were noted since the start; the
+  codes are in the attributes).
+- **Sensors per app device:** "User", "Last sync", "Pending changes", "Latest version" and "Last app backup". They
+  stay empty until the app reports the values.
+- **Event `smartlists_item`** on the Home Assistant bus whenever an item is added, removed, renamed, ticked or
+  unticked (`entity_id`, `action`, `item`, `user_id`) – as a trigger for automations.
+- **Own barcode service: own User-Agent.** Only sent to your own service; the public databases always get the one of
+  SmartLists.
+- `smartlists/info` returns `counts` (lists, devices, problems) and `zones` for the Home Assistant page of the app.
+- **Error codes** SL-STORE-02 (a storage file could not be read), SL-BACKUP-02 (a backup could not be restored) and
+  SL-NOTIFY-01 (a notification could not be delivered) are now reported where they happen.
+
+### Changed
+
+- **Integration page: the owner is in the second line.** Since beta.13 the device of a list was called "Name
+  (owner)"; Home Assistant then put that in front of the list name ("Barcodes (Admin) Barcodes"). The device is
+  called like the list again, the owner stands below: "Owner: Anna · Ben: tick".
+
+### Fixed
+
+- **Categories:** with several words the last one says what it is – "Cocktail Strauchtomaten" are tomatoes even if
+  "Cocktail" was learned as a drink. Items taken over from an offer use the product group of the shop ("Obst &
+  Gemüse") when the name alone is misleading; what you sorted or taught yourself still wins.
+
 ## [4.0.0-beta.14] – 2026-11-18
 
 Fourteenth pre-release of 4.0. **Make a Home Assistant backup before updating:** the watch lists move into files of

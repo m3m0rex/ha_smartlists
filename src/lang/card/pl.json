@@ -730,6 +730,7 @@
   "barcode_providers_help": "Żadna usługa nie jest wstępnie wybrana. Dotknij, aby włączyć/wyłączyć, liczba to kolejność – liczy się pierwszy wynik. SmartLists zapamiętuje znalezione kody.",
   "barcode_custom": "własna usługa",
   "barcode_custom_url": "Adres z {code}",
+  "barcode_custom_agent": "Własny User-Agent (puste = ten od SmartLists)",
   "barcode_custom_field": "Pole z nazwą",
   "a_applies": "Dotyczy",
   "a_menu": "Menu produktu",

@@ -50,7 +50,7 @@ class AppBackups:
 
         try:
             parsed = json.loads(data)
-            # frühere App: "smartlists_encrypted"; SmartLists App: kind = "smartlists-backup-encrypted"
+            # frühere App: "smartlists_encrypted"; SmartLists Go: kind = "smartlists-backup-encrypted"
             encrypted = parsed.get("smartlists_encrypted") == 1 or parsed.get("kind") == "smartlists-backup-encrypted"
         except (ValueError, AttributeError):
             encrypted = False

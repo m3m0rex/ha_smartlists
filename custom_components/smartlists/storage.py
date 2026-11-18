@@ -1,7 +1,7 @@
 """Wo SmartLists seine Dateien ablegt: alles unter `.storage/smartlists/`.
 
     .storage/smartlists/<name>                       Speicherdateien (extras, learning, shares, own.<Kennung>, …)
-    .storage/smartlists/backups/apps                 Sicherungen aus SmartLists App
+    .storage/smartlists/backups/apps                 Sicherungen aus SmartLists Go
     .storage/smartlists/backups/integration/*.json   Sicherungen von SmartLists selbst (von Hand, beim Entfernen)
     .storage/smartlists/backups/integration/before-move/   Kopie der alten Dateien vom Umzug (für ein Zurück auf eine ältere Version)
     .storage/smartlists/backups/deleted/             Speicherdateien gelöschter Listen (die letzten KEEP_DELETED)

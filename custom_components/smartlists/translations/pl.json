@@ -195,11 +195,11 @@
       "initiate_flow": {
         "user": "Notatki"
       },
-      "entry_type": "Listy aplikacji SmartLists App",
+      "entry_type": "Listy aplikacji SmartLists Go",
       "step": {
         "user": {
           "title": "Nowa lista notatek",
-          "description": "Lista notatek to lokalna lista zadań Home Assistant, której SmartLists App używa do notatek. Widzi ją tylko właściciel.",
+          "description": "Lista notatek to lokalna lista zadań Home Assistant, której SmartLists Go używa do notatek. Widzi ją tylko właściciel.",
           "data": {
             "name": "Nazwa (opcjonalnie)",
             "owner": "Właściciel"

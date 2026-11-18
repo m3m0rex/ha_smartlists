@@ -20,8 +20,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .devices import SIGNAL_DEVICES_CHANGED, Devices
 
-MANUFACTURER_FALLBACK = "SmartLists App"
-# parent device of all connected apps (they are shown as "connected via SmartLists App")
+MANUFACTURER_FALLBACK = "SmartLists Go"
+# parent device of all connected apps (they are shown as "connected via SmartLists Go")
 APPS_DEVICE = (DOMAIN, "apps")
 
 
@@ -48,9 +48,9 @@ def app_device_info(hass: HomeAssistant, device_id: str) -> DeviceInfo | None:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     devices: Devices = hass.data[DOMAIN]["devices"]
     known: set[str] = set()
-    # "SmartLists App" as the parent of all connected apps: the apps are listed below it (connected via)
+    # "SmartLists Go" as the parent of all connected apps: the apps are listed below it (connected via)
     dr.async_get(hass).async_get_or_create(
-        config_entry_id=entry.entry_id, identifiers={APPS_DEVICE}, name="SmartLists App", manufacturer="SmartLists",
+        config_entry_id=entry.entry_id, identifiers={APPS_DEVICE}, name="SmartLists Go", manufacturer="SmartLists",
         model="App", entry_type=dr.DeviceEntryType.SERVICE,
     )
 

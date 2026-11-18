@@ -371,3 +371,49 @@ def test_barcode_request_identifies_the_app_and_respects_429():
     calls.clear()
     asyncio.run(barcode.async_lookup(hass, "4888888888888"))
     assert len(calls) == 1 and "openfoodfacts" in calls[0][0]
+
+
+def test_watch_lists_are_per_user_and_there_can_be_several():
+    import pytest
+
+    from smartlists.extras import MAX_WATCH_LISTS, Extras
+
+    ex = Extras(None)
+    ex.set_watch(["Kaffee", "Nutella"], {"notify": True, "targets": [{"id": "persistent_notification", "kind": "hass"}]})
+    # erster Zugriff: die frühere gemeinsame Merkliste als Kopie, samt Benachrichtigung
+    anna = ex.watch_user("anna")
+    assert [x["names"] for x in anna["lists"]] == [["Kaffee", "Nutella"]] and anna["notify"] is True and anna["lists"][0]["name"] == "Merkliste"
+    ex.set_user_watch("anna", None, ["Kaffee", "Nutella", "Butter"])
+    assert ex.watch_list("ben")["names"] == ["Kaffee", "Nutella"]            # Ben sieht Annas Änderung nicht
+    assert ex.watch == ["Kaffee", "Nutella"]                                 # die alte Liste bleibt, wie sie war
+    # mehrere Listen je Benutzer
+    party = ex.add_watch_list("anna", "Party")
+    ex.set_user_watch("anna", party, ["Chips", " chips ", "Cola"])
+    assert ex.watch_list("anna", party)["names"] == ["Chips", "Cola"]
+    assert ex.watch_list("anna")["names"] == ["Kaffee", "Nutella", "Butter"]  # ohne Angabe: die Standard-Liste
+    assert ex.watch_list("anna", "gibtsnicht")["names"] == ["Kaffee", "Nutella", "Butter"]
+    with pytest.raises(ValueError):
+        ex.add_watch_list("anna", "party")                                   # gleicher Name
+    ex.change_watch_list("anna", party, name="Feier", default=True)
+    assert ex.watch_list("anna")["name"] == "Feier"
+    first = anna["lists"][0]["id"]
+    ex.change_watch_list("anna", party, delete=True)
+    assert [x["id"] for x in anna["lists"]] == [first] and anna["default"] == first
+    with pytest.raises(ValueError):
+        ex.change_watch_list("anna", first, delete=True)                     # die letzte bleibt
+    for i in range(MAX_WATCH_LISTS - 1):
+        ex.add_watch_list("anna", f"Liste {i}")
+    with pytest.raises(ValueError):
+        ex.add_watch_list("anna", "eine zu viel")
+    ex.mark_user_watch_seen("anna", ["a", "b"])
+    assert anna["seen"] == ["a", "b"] and ex.watch_user("ben")["seen"] == []
+
+
+def test_new_offers_for_a_watch_list_are_found_once():
+    from smartlists.offers import _key, fresh_for
+
+    offers = [{"name": "Jacobs Kaffee 500 g", "price": 4.99, "until": "2026-11-22", "store": "REWE"},
+              {"name": "Butter", "price": 1.49, "until": None, "store": "ALDI"}]
+    fresh = fresh_for(offers, ["Kaffee", "Milch"], [])
+    assert [(t, o["store"]) for t, o in fresh] == [("Kaffee", "REWE")]
+    assert fresh_for(offers, ["Kaffee"], [_key("Kaffee", offers[0])]) == []

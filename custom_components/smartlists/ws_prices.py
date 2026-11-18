@@ -113,41 +113,65 @@ def ws_stats(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     connection.send_result(msg["id"], stats(_learning(hass), _extras(hass), msg["days"]))
 
 
-async def _watch_payload(hass: HomeAssistant) -> dict[str, Any]:
+def _first_watch_name(hass: HomeAssistant) -> str:
+    return "Merkliste" if str(hass.config.language).startswith("de") else "Watch list"
+
+
+async def _watch_payload(hass: HomeAssistant, user_id: str, list_id: str | None = None) -> dict[str, Any]:
+    """Merkliste des Benutzers (die genannte, sonst seine Standard-Liste), seine Benachrichtigung und alle seine Listen."""
     from .notify import async_get_notifier
 
     extras, notifier = _extras(hass), await async_get_notifier(hass)
-    return {"names": list(extras.watch), "notify": bool(extras.watch_settings.get("notify")),
-            "targets": list(extras.watch_settings.get("targets") or []),
+    current = extras.watch_list(user_id, list_id, _first_watch_name(hass))
+    user = extras.watch_user(user_id)
+    return {"names": list(current["names"]), "notify": bool(user.get("notify")), "targets": list(user.get("targets") or []),
+            "list": current["id"], "default": user.get("default"),
+            "lists": [{"id": x["id"], "name": x["name"], "count": len(x["names"])} for x in user["lists"]],
             # woraus man wählen kann: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten
             "services": notifier.services(), "entities": notifier.entities()}
 
 
-@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch"})
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch", vol.Optional("list"): str})
 @websocket_api.async_response
 async def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Merkliste des Haushalts (Produkte, bei denen man auf ein Angebot wartet) und ihre Benachrichtigung."""
-    connection.send_result(msg["id"], await _watch_payload(hass))
+    """Merklisten des angemeldeten Benutzers (Produkte, bei denen man auf ein Angebot wartet). Jeder hat seine eigenen;
+    ohne `list` kommt die Standard-Liste. Die Listen anderer Benutzer sind nicht abrufbar."""
+    connection.send_result(msg["id"], await _watch_payload(hass, connection.user.id, msg.get("list")))
 
 
-@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("names"): [str], vol.Optional("add"): str,
-                                  vol.Optional("remove"): str, vol.Optional("notify"): bool, vol.Optional("targets"): [dict]})
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("list"): str, vol.Optional("names"): [str],
+                                  vol.Optional("add"): str, vol.Optional("remove"): str, vol.Optional("notify"): bool,
+                                  vol.Optional("targets"): [dict], vol.Optional("new_list"): str, vol.Optional("rename"): str,
+                                  vol.Optional("make_default"): bool, vol.Optional("delete_list"): bool})
 @websocket_api.async_response
 async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen, Benachrichtigung und ihre Ziele (alle Benutzer)."""
-    extras = _extras(hass)
-    names = list(msg["names"]) if "names" in msg else list(extras.watch)
+    """Eigene Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen, Benachrichtigung und ihre Ziele.
+    Listen verwalten: new_list (Name) legt eine an, rename / make_default / delete_list gelten für `list`."""
+    extras, user_id = _extras(hass), connection.user.id
+    extras.watch_user(user_id, _first_watch_name(hass))
+    list_id = msg.get("list")
+    try:
+        if msg.get("new_list"):
+            list_id = extras.add_watch_list(user_id, msg["new_list"])
+        if list_id and (msg.get("rename") is not None or msg.get("make_default") or msg.get("delete_list")):
+            extras.change_watch_list(user_id, list_id, name=msg.get("rename"), default=bool(msg.get("make_default")), delete=bool(msg.get("delete_list")))
+            if msg.get("delete_list"):
+                list_id = None
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+        return
+    names = list(msg["names"]) if "names" in msg else list(extras.watch_list(user_id, list_id)["names"])
     if msg.get("add"):
         names.append(msg["add"])
     if msg.get("remove"):
         names = [n for n in names if n.lower() != msg["remove"].strip().lower()]
     settings = {k: msg[k] for k in ("notify", "targets") if k in msg}
-    extras.set_watch(names, settings or None)
+    extras.set_user_watch(user_id, list_id, names, settings or None)
     if settings.get("notify"):
         from .offers import async_check_watch
 
         await async_check_watch(hass)
-    connection.send_result(msg["id"], await _watch_payload(hass))
+    connection.send_result(msg["id"], await _watch_payload(hass, user_id, list_id))
 
 
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/categorize", vol.Required("names"): [str], vol.Optional("language"): str})

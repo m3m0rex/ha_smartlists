@@ -164,32 +164,63 @@ def _key(term: str, offer: dict[str, Any]) -> str:
     return f"{norm(term)}|{offer['store']}|{offer['name']}|{offer['price']}|{offer['until'] or ''}"
 
 
-async def async_check_watch(hass: HomeAssistant) -> int:
-    """Neue Angebote für die Merkliste melden (jedes Angebot nur einmal). Liefert die Zahl der neuen Treffer."""
-    extras = hass.data.get(DOMAIN, {}).get("extras")
-    if extras is None or not extras.watch or not extras.watch_settings.get("notify"):
-        return 0
-    offers = collect(hass, extras.watch_settings.get("sources"))
-    fresh = [(term, o) for term in extras.watch for o in deals_for(offers, term) if _key(term, o) not in extras.watch_seen]
-    if not fresh:
-        return 0
-    extras.mark_watch_seen([_key(term, o) for term, o in fresh])
+def _watch_lines(fresh: list[tuple[str, dict[str, Any]]]) -> str:
     lines = [f"{term}: {o['name']} – {o['price']:.2f}".replace(".", ",") + f" ({o['store']}"
              + (f", bis {o['until'][8:10]}.{o['until'][5:7]}." if o["until"] else "") + ")" for term, o in fresh[:12]]
     if len(fresh) > 12:
         lines.append(f"+{len(fresh) - 12}")
-    title, message = "🏷️ Angebot für deine Merkliste", "\n".join(lines)
+    return "\n".join(lines)
+
+
+async def _watch_send(hass: HomeAssistant, targets: list[dict[str, Any]], message: str, tag: str) -> None:
     from .notify import async_get_notifier
 
-    for target in extras.watch_settings.get("targets") or []:
+    title = "🏷️ Angebot für deine Merkliste"
+    for target in targets:
         try:
             if target.get("kind") == "hass":
                 await hass.services.async_call("persistent_notification", "create",
-                                               {"title": title, "message": message, "notification_id": "smartlists_watch"}, blocking=False)
+                                               {"title": title, "message": message, "notification_id": tag}, blocking=False)
             else:  # notify-Dienst oder -Entität: derselbe Weg wie die Benachrichtigungen der Listen
-                await (await async_get_notifier(hass))._deliver(target, title, message, "smartlists_watch")
+                await (await async_get_notifier(hass))._deliver(target, title, message, tag)
         except Exception:  # noqa: BLE001 – ein falsches Ziel darf die anderen nicht aufhalten
             _LOGGER.warning("Merkliste: Benachrichtigung an %s fehlgeschlagen", target.get("id"), exc_info=True)
+
+
+def fresh_for(offers: list[dict[str, Any]], terms: list[str], seen: list[str]) -> list[tuple[str, dict[str, Any]]]:
+    """Angebote zu den gemerkten Produkten, die noch nicht gemeldet wurden."""
+    known = set(seen)
+    return [(term, o) for term in terms for o in deals_for(offers, term) if _key(term, o) not in known]
+
+
+async def async_check_watch(hass: HomeAssistant) -> int:
+    """Neue Angebote für die Merklisten melden (jedes Angebot je Benutzer nur einmal). Jeder Benutzer bekommt nur
+    die Treffer seiner eigenen Listen, an seine eigenen Ziele. Liefert die Zahl der neuen Treffer."""
+    extras = hass.data.get(DOMAIN, {}).get("extras")
+    if extras is None:
+        return 0
+    offers: list[dict[str, Any]] | None = None
+    total = 0
+    for user_id, user in list(extras.watch_users.items()):
+        terms = list(dict.fromkeys(n for lst in user.get("lists") or [] for n in lst.get("names") or []))
+        if not user.get("notify") or not terms:
+            continue
+        if offers is None:
+            offers = collect(hass, extras.watch_settings.get("sources"))
+        fresh = fresh_for(offers, terms, user.get("seen") or [])
+        if not fresh:
+            continue
+        extras.mark_user_watch_seen(user_id, [_key(term, o) for term, o in fresh])
+        await _watch_send(hass, user.get("targets") or [], _watch_lines(fresh), f"smartlists_watch_{user_id[:8]}")
+        total += len(fresh)
+    if extras.watch_users or not extras.watch or not extras.watch_settings.get("notify"):
+        return total
+    # noch niemand hat seit dem Update seine Merkliste geöffnet: die frühere gemeinsame Merkliste meldet weiter
+    fresh = fresh_for(collect(hass, extras.watch_settings.get("sources")), extras.watch, extras.watch_seen)
+    if not fresh:
+        return 0
+    extras.mark_watch_seen([_key(term, o) for term, o in fresh])
+    await _watch_send(hass, extras.watch_settings.get("targets") or [], _watch_lines(fresh), "smartlists_watch")
     return len(fresh)
 
 

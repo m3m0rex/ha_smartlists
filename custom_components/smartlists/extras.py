@@ -28,6 +28,7 @@ STORAGE_KEY = storage.key("extras")
 MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
 MAX_BARCODES = 3000
+MAX_WATCH_LISTS = 10  # Merklisten je Benutzer
 MAX_PRICE_LOG = 12  # Einträge im Preis-Verlauf je Artikel
 REPEATS = ("daily", "weekly", "monthly")
 
@@ -143,6 +144,10 @@ class Extras:
         self.watch: list[str] = []
         self.watch_settings: dict[str, Any] = {}
         self.watch_seen: list[str] = []  # schon gemeldete Angebote
+        # Merklisten je Benutzer (ab 4.0.0-beta.13): {benutzer: {"lists": [{"id", "name", "names"}], "default": id,
+        # "notify": bool, "targets": [...], "seen": [...]}}. self.watch ist die frühere gemeinsame Merkliste – jeder
+        # Benutzer bekommt sie beim ersten Zugriff als Kopie in seine erste Liste.
+        self.watch_users: dict[str, dict[str, Any]] = {}
 
     async def async_load(self) -> None:
         data = await self._store.async_load() or {}
@@ -164,6 +169,7 @@ class Extras:
             self.watch_settings["targets"] = [{"id": "persistent_notification", "kind": "hass"},
                                               *([{"id": old, "kind": "service"}] if old.startswith("notify.") else [])]
         self.watch_seen = list(data.get("watch_seen") or [])[-500:]
+        self.watch_users = {str(u): dict(v) for u, v in (data.get("watch_users") or {}).items() if isinstance(v, dict) and v.get("lists")}
         self.price_log = {k: list(v)[-MAX_PRICE_LOG:] for k, v in (data.get("price_log") or {}).items() if isinstance(v, list)}
         self.mealplan = {k: [x for x in v if isinstance(x, str)] for k, v in (data.get("mealplan") or {}).items() if isinstance(v, list)}
 
@@ -172,7 +178,8 @@ class Extras:
                 "templates": self.templates, "barcodes": self.barcodes, "checked_at": self.checked_at, "trips": self.trips,
                 "list_settings": self.list_settings, "mealplan": self.mealplan,
                 "item_prices": self.item_prices, "price_log": self.price_log, "item_marks": self.item_marks,
-                "watch": self.watch, "watch_settings": self.watch_settings, "watch_seen": self.watch_seen}
+                "watch": self.watch, "watch_settings": self.watch_settings, "watch_seen": self.watch_seen,
+                "watch_users": self.watch_users}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
@@ -240,6 +247,92 @@ class Extras:
     @callback
     def mark_watch_seen(self, keys: list[str]) -> None:
         self.watch_seen = [*self.watch_seen, *keys][-500:]
+        self._save()
+
+    # ----- Merklisten je Benutzer: jeder hat seine eigenen (mehrere möglich), niemand sieht die der anderen
+    @staticmethod
+    def _watch_names(names: Any) -> list[str]:
+        seen: set[str] = set()
+        return [n for n in (" ".join(str(x).split())[:60] for x in names or []) if n and not (n.lower() in seen or seen.add(n.lower()))][:60]
+
+    @callback
+    def watch_user(self, user_id: str, first_name: str = "Merkliste") -> dict[str, Any]:
+        """Merklisten eines Benutzers. Beim ersten Zugriff: eine Liste mit dem Inhalt der früheren gemeinsamen
+        Merkliste und deren Benachrichtigung – so geht beim Umstieg nichts verloren."""
+        user = self.watch_users.get(user_id)
+        if user is None:
+            list_id = secrets.token_hex(4)
+            user = self.watch_users[user_id] = {
+                "lists": [{"id": list_id, "name": first_name, "names": list(self.watch)}], "default": list_id,
+                "notify": bool(self.watch_settings.get("notify")), "targets": list(self.watch_settings.get("targets") or []), "seen": []}
+            self._save()
+        return user
+
+    def watch_list(self, user_id: str, list_id: str | None = None, first_name: str = "Merkliste") -> dict[str, Any]:
+        """Eine Merkliste des Benutzers: die genannte, sonst seine Standard-Liste."""
+        user = self.watch_user(user_id, first_name)
+        lists = user["lists"]
+        return (next((x for x in lists if x["id"] == list_id), None) if list_id else None) or next(
+            (x for x in lists if x["id"] == user.get("default")), lists[0])
+
+    @callback
+    def set_user_watch(self, user_id: str, list_id: str | None = None, names: list[str] | None = None,
+                       settings: dict[str, Any] | None = None) -> dict[str, Any]:
+        user = self.watch_user(user_id)
+        target = self.watch_list(user_id, list_id)
+        if names is not None:
+            target["names"] = self._watch_names(names)
+        if settings:
+            if "notify" in settings:
+                user["notify"] = bool(settings["notify"])
+            if "targets" in settings:
+                user["targets"] = clean_watch_targets(settings["targets"])
+        self._save()
+        return target
+
+    @callback
+    def add_watch_list(self, user_id: str, name: str) -> str:
+        user, name = self.watch_user(user_id), " ".join(str(name).split())[:40]
+        if not name:
+            raise ValueError("Name fehlt")
+        if len(user["lists"]) >= MAX_WATCH_LISTS:
+            raise ValueError(f"Höchstens {MAX_WATCH_LISTS} Merklisten")
+        if any(x["name"].lower() == name.lower() for x in user["lists"]):
+            raise ValueError("Eine Merkliste mit diesem Namen gibt es schon")
+        list_id = secrets.token_hex(4)
+        user["lists"].append({"id": list_id, "name": name, "names": []})
+        self._save()
+        return list_id
+
+    @callback
+    def change_watch_list(self, user_id: str, list_id: str, *, name: str | None = None, default: bool = False, delete: bool = False) -> None:
+        """Umbenennen, zur Standard-Liste machen oder löschen. Die letzte Liste bleibt immer."""
+        user = self.watch_user(user_id)
+        target = next((x for x in user["lists"] if x["id"] == list_id), None)
+        if target is None:
+            raise ValueError("Diese Merkliste gibt es nicht")
+        if delete:
+            if len(user["lists"]) == 1:
+                raise ValueError("Die letzte Merkliste kann nicht gelöscht werden")
+            user["lists"].remove(target)
+            if user.get("default") == list_id:
+                user["default"] = user["lists"][0]["id"]
+        else:
+            if name is not None:
+                name = " ".join(str(name).split())[:40]
+                if not name:
+                    raise ValueError("Name fehlt")
+                if any(x is not target and x["name"].lower() == name.lower() for x in user["lists"]):
+                    raise ValueError("Eine Merkliste mit diesem Namen gibt es schon")
+                target["name"] = name
+            if default:
+                user["default"] = list_id
+        self._save()
+
+    @callback
+    def mark_user_watch_seen(self, user_id: str, keys: list[str]) -> None:
+        user = self.watch_user(user_id)
+        user["seen"] = [*(user.get("seen") or []), *keys][-500:]
         self._save()
 
     def price_history(self, name: str) -> list[dict[str, Any]]:

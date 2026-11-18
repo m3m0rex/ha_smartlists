@@ -3,6 +3,47 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.13] – 2026-11-18
+
+Thirteenth pre-release of 4.0. **Make a Home Assistant backup before updating:** own lists are regrouped.
+
+### Breaking changes
+
+- **Watch lists are per user.** The watch list is no longer shared by the household: every user has their own and can
+  keep several. Each user is notified about their own lists, at their own targets. On the first visit everyone gets a
+  copy of the former shared list and its notification settings, so nothing is lost. The picker for the lists is in
+  SmartDiscounts 1.3.0.
+- **Own lists: one group for all owners.** The integration page shows one group "Own lists" with a row per list –
+  the owner in brackets, the rights below ("Anna: edit · Ben: tick" or "Owner only") – instead of a group per owner.
+  The former groups are merged on the first start; entity ids, names, areas and items stay. Changing the owner no
+  longer moves a list between groups.
+
+### Added
+
+- **Price history of offers in Home Assistant.** SmartLists remembers the prices of all offers (every 30 minutes,
+  also while no card is open) so that "was it cheaper before?" is the same in every browser and in the app. Prices
+  not seen for 90 days are dropped; the last five prices of an offer are kept. Used by SmartDiscounts 1.2.0 or newer.
+- **Copy as a normal to-do list.** *Settings → Backup*: tick SmartLists lists and get a local to-do list of Home
+  Assistant for each, with text, note, done/open and due date – the way back for those who remove SmartLists.
+- **Lists of other services are marked.** A list that belongs to Bring!, Todoist, Local to-do … shows a chain and
+  "via Bring!" in the card and a chain in the list bar of the sidebar page.
+- **Error codes.** Hard errors get a code (`SL-STORE-01`, `SL-CAL-01`, `SL-WS-01` …). *Settings → Info → Problems*
+  lists what was recorded since the last start; each entry can be reported with the code filled in. The card shows
+  a notice with "Reload" instead of staying empty when drawing fails. See the wiki page "Error codes".
+- **Integration page: group "Notes"** with a row per notes list (owner in brackets, who sees it below) and a button
+  "+ Notes" that creates a notes list. The gear of the group assigns an owner.
+
+### Changed
+
+- **Report a problem** only asks where the problem occurred and then opens GitHub or copies the text.
+- Combined lists show their owner in brackets on the integration page.
+
+### Fixed
+
+- **Tomatoes are no drinks.** Categories now look at the end of a compound word: "Cocktail-Strauchtomaten" and
+  "Bio-Sherry-Tomaten" are vegetables even when "Cocktail" or "Sherry" count as drinks, "wein" inside
+  "Schweinefilet" is no drink, and a brand ("REWE Bio …") no longer hides what the product is.
+
 ## [4.0.0-beta.12] – 2026-11-18
 
 Twelfth pre-release of 4.0. **Make a Home Assistant backup before updating:** this version moves its files.

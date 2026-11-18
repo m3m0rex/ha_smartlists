@@ -70,7 +70,7 @@ Remembered and learned categories always take precedence over every pack.
   `suessigkeiten`, `haushalt`, `drogerie`, `tiefkuehl`, `tierbedarf`, `sonstiges`.
 - The app's format (`category_pack_v2.json` with `items` / `keyword` / `aliases` / `category`) is
   accepted as well. Entries with an unknown category are skipped and counted.
-- Up to 50,000 keywords per pack. Custom packs are stored in `.storage/smartlists.packs`.
+- Up to 50,000 keywords per pack. Custom packs are stored in `.storage/smartlists/packs`.
 
 Want to improve a starter pack? The sources are simple word lists in `scripts/packsrc/<language>.py`
 (`python scripts/build_starter_packs.py` rebuilds `packs/*.json`) – pull requests welcome.

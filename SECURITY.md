@@ -29,7 +29,7 @@ HA SmartLists Android app (separate project).
 
 ## How SmartLists handles data
 
-- All data stays in your Home Assistant instance (`.storage/smartlists.*`). There is no telemetry. The
+- All data stays in your Home Assistant instance (`.storage/smartlists/`). There is no telemetry. The
   integration connects to the outside only in two cases:
   - **Barcode lookup** (off by default): if you switch it on, the scanned code is sent to the lookup services
     you have selected, one after the other until one knows the product. No service is preselected – a service

@@ -3,6 +3,40 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.12] – 2026-11-18
+
+Twelfth pre-release of 4.0. **Make a Home Assistant backup before updating:** this version moves its files.
+
+### Breaking changes
+
+- **Files moved to `.storage/smartlists/`.** Until now SmartLists kept its files as `smartlists.*` directly in
+  `.storage` and its backups loose in the configuration folder. On the first start they are moved: each file is
+  copied, the copy is checked, and only then the old file is deleted. A file that cannot be moved stays where it is
+  and Home Assistant shows a notification (SL-STORE-01). A copy of the old files is kept in
+  `.storage/smartlists/backups/integration/before-move/`. Going back to an older version afterwards needs that copy
+  (or your Home Assistant backup).
+- **Removing the integration deletes its files.** Only `.storage/smartlists/backups/` stays: the backups of
+  SmartLists itself (`backups/integration/`) and those from SmartLists Go (`backups/apps`). Setting SmartLists up
+  again offers to restore the newest backup, as before.
+- **A list that is part of a combined list cannot be deleted.** Remove it from the combined list first. Until now the
+  combined list was left pointing at a list that no longer existed.
+
+### Changed
+
+- **Report a problem** no longer assumes the sidebar page. It asks where the problem occurred and shows what is sent
+  (in plain words, and the exact text on request) before the issue opens on GitHub.
+- **Integration page:** the buttons read "+ Combined list" and "+ Own list".
+- **Connected apps** are listed below a device "SmartLists Go"; the device name follows the name set in the app.
+- Files of deleted lists are kept in `.storage/smartlists/backups/deleted/` (the last 30) instead of staying loose
+  in `.storage`.
+
+### Fixed
+
+- **Calendar event stayed after ticking.** SmartLists now remembers the id of the event it created and finds it
+  again by that id (otherwise by day and title). If the calendar cannot be reached or refuses, removing is retried
+  for ten minutes and then reported in Home Assistant instead of failing silently.
+- **"Remind me tomorrow"** now moves the calendar event along with the due date.
+
 ## [4.0.0-beta.11] – 2026-11-17
 
 Eleventh pre-release of 4.0.

@@ -81,7 +81,7 @@ statistics and expenses · shopping **dashboard with one sub-page per list** · 
 
 ## Shared memory
 
-Shared by all lists and all HA users, stored in `.storage/smartlists.learning`:
+Shared by all lists and all HA users, stored in `.storage/smartlists/learning`:
 
 - **Remembered categories:** once an item is assigned to a category by hand, similar items follow
   ("Hafermilch" → chilled also matches "Hafermilch Barista" later). Order as in the app:
@@ -281,7 +281,7 @@ icon in the card; admins can change the global settings there as well – both s
 
 - Combined lists cannot be nested (protection against loops).
 - In "this combined list only" mode the local checkmarks are stored in Home Assistant
-  (`.storage/smartlists.<id>`) and removed together with the integration.
+  (`.storage/smartlists/<id>`) and removed together with the integration.
 - Items without a unique ID (very old integrations) are skipped.
 - Requires Home Assistant 2025.3 or newer (sub-entries for the lists).
 - The user interface (card, sidebar page, setup dialogs, Assist sentences) is available in German, English,

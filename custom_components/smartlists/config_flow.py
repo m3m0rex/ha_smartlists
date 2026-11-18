@@ -427,7 +427,13 @@ class OwnListsSubentryFlow(OwnListSubentryFlow):
             return self.async_abort(reason="reconfigure_successful")
         if user_input is not None:
             if user_input.get("delete"):
-                async_remove_list(self.hass, self._list_id)
+                try:
+                    async_remove_list(self.hass, self._list_id)
+                except ValueError:  # noch Teil einer kombinierten Liste: im Dialog sagen, nichts löschen
+                    schema = await self._schema({CONF_NAME: current.get("title", ""), "owner": group.data.get("owner"), "shares": current.get("shares") or {}})
+                    schema = schema.extend({vol.Optional("delete", default=False): selector.BooleanSelector()})
+                    return self.async_show_form(step_id="edit", data_schema=schema, errors={"base": "list_in_use"},
+                                                description_placeholders={"list": current.get("title", "")})
             elif user_input.get(CONF_NAME, "").strip():
                 title, data = self._data(user_input)
                 await async_update_list(self.hass, self._list_id, title=title, shares=data["shares"], owner=data["owner"])

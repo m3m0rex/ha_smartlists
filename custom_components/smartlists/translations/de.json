@@ -34,7 +34,7 @@
   "config_subentries": {
     "combined_list": {
       "initiate_flow": {
-        "user": "Kombinierte Liste hinzufügen"
+        "user": "+ Kombinierte Liste"
       },
       "entry_type": "Kombinierte Liste",
       "step": {
@@ -112,7 +112,7 @@
     },
     "own_list": {
       "initiate_flow": {
-        "user": "Eigene Liste hinzufügen"
+        "user": "+ Eigene Liste"
       },
       "entry_type": "Eigene Liste",
       "step": {
@@ -145,7 +145,7 @@
     },
     "own_lists": {
       "initiate_flow": {
-        "user": "Eigene Liste hinzufügen"
+        "user": "+ Eigene Liste"
       },
       "entry_type": "Eigene Listen",
       "step": {
@@ -186,6 +186,9 @@
       "abort": {
         "list_added": "Liste angelegt – sie steht unter „Eigene Listen“ ihres Besitzers.",
         "reconfigure_successful": "Gespeichert."
+      },
+      "error": {
+        "list_in_use": "Diese Liste gehört noch zu einer kombinierten Liste. Nimm sie dort zuerst heraus, dann lässt sie sich löschen."
       }
     }
   },

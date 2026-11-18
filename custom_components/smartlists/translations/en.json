@@ -34,7 +34,7 @@
   "config_subentries": {
     "combined_list": {
       "initiate_flow": {
-        "user": "Add combined list"
+        "user": "+ Combined list"
       },
       "entry_type": "Combined list",
       "step": {
@@ -112,7 +112,7 @@
     },
     "own_list": {
       "initiate_flow": {
-        "user": "Add own list"
+        "user": "+ Own list"
       },
       "entry_type": "Own list",
       "step": {
@@ -145,7 +145,7 @@
     },
     "own_lists": {
       "initiate_flow": {
-        "user": "Add own list"
+        "user": "+ Own list"
       },
       "entry_type": "Own lists",
       "step": {
@@ -186,6 +186,9 @@
       "abort": {
         "list_added": "List created – it is listed under its owner's “Own lists”.",
         "reconfigure_successful": "Saved."
+      },
+      "error": {
+        "list_in_use": "This list is still part of a combined list. Remove it there first, then it can be deleted."
       }
     }
   },

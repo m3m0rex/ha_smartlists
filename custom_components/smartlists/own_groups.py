@@ -19,7 +19,7 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, SUBENTRY_OWN, SUBENTRY_OWN_GROUP
+from .const import DOMAIN, SUBENTRY_COMBINED, SUBENTRY_OWN, SUBENTRY_OWN_GROUP
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -121,12 +121,27 @@ def _remove_from_group(hass: HomeAssistant, entry: ConfigEntry, g: ConfigSubentr
         hass.config_entries.async_remove_subentry(entry, g.subentry_id)
 
 
+def combined_using(entry: ConfigEntry, entity_id: str | None) -> list[str]:
+    """Namen der kombinierten Listen, in denen diese Liste als Quelle steckt."""
+    if not entity_id:
+        return []
+    return [s.title for s in entry.subentries.values()
+            if s.subentry_type == SUBENTRY_COMBINED and entity_id in (s.data.get("sources") or [])]
+
+
 def async_remove_list(hass: HomeAssistant, list_id: str) -> None:
-    """Liste löschen: die Entität verschwindet, der Artikel-Speicher wandert nach backups/deleted/."""
+    """Liste löschen: die Entität verschwindet, der Artikel-Speicher wandert nach backups/deleted/.
+    Steckt die Liste noch in einer kombinierten Liste, wird sie nicht gelöscht – erst dort herausnehmen
+    (sonst zeigte die kombinierte Liste auf eine Liste, die es nicht mehr gibt)."""
     entry = main_entry(hass)
     g, _ = find(entry, list_id) if entry else (None, None)
     if g is None:
         raise ValueError("Keine eigene SmartLists-Liste.")
+    if used := combined_using(entry, _entity_id_of(hass, list_id)):
+        names = ", ".join(f"„{n}“" for n in used)
+        raise ValueError(f"Diese Liste gehört zur kombinierten Liste {names}. Nimm sie dort zuerst heraus, dann lässt sie sich löschen."
+                         if str(hass.config.language).startswith("de") else
+                         f"This list is part of the combined list {', '.join(used)}. Remove it there first, then it can be deleted.")
     _drop_entity(hass, list_id)
     title = str(((g.data.get("lists") or {}).get(list_id) or {}).get("title") or "")
     _remove_from_group(hass, entry, g, list_id)

@@ -166,7 +166,11 @@ def ws_delete_list(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
     elif getattr(entity, "grouped", False):
         from .own_groups import async_remove_list
 
-        async_remove_list(hass, entity.list_id)
+        try:
+            async_remove_list(hass, entity.list_id)
+        except ValueError as err:  # z. B. noch Teil einer kombinierten Liste
+            connection.send_error(msg["id"], "in_use", str(err))
+            return
     else:
         hass.config_entries.async_remove_subentry(_main_entry(hass), entity.subentry.subentry_id)
     connection.send_result(msg["id"], {})

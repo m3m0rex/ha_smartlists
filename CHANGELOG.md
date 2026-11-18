@@ -3,15 +3,22 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
-## [4.0.0-beta.17] – 2026-11-18
+## [4.0.0-beta.18] – 2026-11-18
 
-Seventeenth pre-release of 4.0. **Make a Home Assistant backup before updating:** combined lists are regrouped.
+Eighteenth pre-release of 4.0.
 
 ### Changed
 
 - **Offers for the app: price per unit instead of the shop's text.** `smartlists/offers` now sends the price per unit
   as "1,33 €/l", found anywhere in the shop's text (REWE puts it at the end of a long description, which was cut
   off before), and `from` for offers that only start later.
+
+## [4.0.0-beta.17] – 2026-11-18
+
+Seventeenth pre-release of 4.0. **Make a Home Assistant backup before updating:** combined lists are regrouped.
+
+### Changed
+
 - **Integration page: one group "Combined lists".** Until now every combined list was its own entry on the page.
   Now they all stand below one heading, like "Own lists" and "Notes". "+ Combined list" adds a list to the group;
   the gear of the group asks which list to edit and offers "Delete list" there. On the first start the existing

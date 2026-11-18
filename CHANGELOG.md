@@ -3,13 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.21] – 2026-11-18
+
+Twenty-first pre-release of 4.0.
+
+### Changed
+
+- **Offers carry a product image** (`image`, web addresses only) for SmartLists Go; the app loads it only when that is switched on there.
+- **Integration page:** notes lists are described as to-do lists in Home Assistant (every entry is a note), not as lists of the app.
+
 ## [4.0.0-beta.20] – 2026-11-18
 
 Twentieth pre-release of 4.0.
 
 ### Changed
 
-- **Offers carry a product image** (`image`, web addresses only) for SmartLists Go; the app loads it only when that is switched on there.
 - **App backups: one file per Home Assistant user** under `.storage/smartlists/backups/apps/<user>` (up to ten devices each). The old shared file `backups/apps` is renamed to `apps.old`, split up on start and then moved to `backups/deleted/`. App backups are no longer part of SmartLists' own backups – they already live under `backups/` and stay when the integration is removed.
 - **`smartlists/create_list` returns the `entity_id`** of the new list (it waits up to ten seconds for the list to
   appear). The app needs it to move a list from the phone to Home Assistant together with its items.

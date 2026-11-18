@@ -96,7 +96,7 @@ def best_match(candidates: list[tuple[str, str, int]], key: str) -> tuple[str, s
     """Bestes Stichwort für einen Namen. candidates: (Stichwort, Kategorie, Vorrang) – Vorrang 1 für selbst
     Gelerntes, 0 für die Wörterlisten. Marken unter „Sonstiges“ verlieren immer; sonst gewinnt die bessere Stellung im Namen
     (match_class), dann Gelerntes, dann das längere Stichwort. Liefert (Kategorie, Stichwort)."""
-    found: tuple[tuple[int, int, int, int], str, str] | None = None
+    found: tuple[tuple[int, int, int, int, int], str, str] | None = None
     for term, category_id, priority in candidates:
         if term not in key:
             continue
@@ -105,7 +105,11 @@ def best_match(candidates: list[tuple[str, str, int]], key: str) -> tuple[str, s
             continue
         # Marken („REWE Bio“, „ja!“) stehen in den Wörterlisten unter „Sonstiges“: sie verlieren gegen jedes Stichwort,
         # das sagt, was es ist („REWE Bio Cherry Romatomaten“ → Obst & Gemüse)
-        score = (0 if category_id == FALLBACK_ID and not priority else 1, cls, priority, len(term))
+        # Bei mehreren Wörtern sagt das letzte, was es ist („Cocktail Strauchtomaten“, „Erdbeer Joghurt“): ein
+        # Stichwort am Ende des ganzen Namens schlägt eines davor – auch ein selbst gelerntes („Cocktail“ = Getränk)
+        # Nur für Stichwörter ab fünf Zeichen: „ei“ am Ende von „alkoholfrei“ sagt nichts.
+        last = 1 if cls == 2 and len(term) >= 5 and " " in key and key.endswith(term) else 0
+        score = (0 if category_id == FALLBACK_ID and not priority else 1, cls, last, priority, len(term))
         if found is None or score > found[0]:
             found = (score, category_id, term)
     return (found[1], found[2]) if found else None

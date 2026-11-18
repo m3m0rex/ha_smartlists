@@ -428,5 +428,9 @@ def test_a_learned_modifier_does_not_beat_the_product():
     learning.set_category("Cocktail", "getraenke")
     assert learning.resolve("Cocktail-Strauchtomaten") == ("obst_gemuese", "pack")
     assert learning.resolve("Cocktail") == ("getraenke", "manual")
+    # auch ohne Bindestrich: das letzte Wort sagt, was es ist
+    assert learning.resolve("Cocktail Strauchtomaten") == ("obst_gemuese", "pack")
+    assert learning.resolve("Cocktail Tomaten")[0] == "obst_gemuese"
+    assert learning.resolve("Cocktail alkoholfrei")[0] == "getraenke"
     learning.set_category("Tomaten", "grundnahrung")
     assert learning.resolve("Roma-Tomaten") == ("grundnahrung", "learned")

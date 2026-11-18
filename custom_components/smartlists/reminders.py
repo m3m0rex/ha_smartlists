@@ -50,6 +50,12 @@ async def async_check(hass: HomeAssistant) -> int:
     if extras is None or not extras.item_marks:
         return 0
     sent = 0
+    from . import calendar_sync
+
+    try:
+        await calendar_sync.async_retry(hass, extras)  # Termine, die sich beim Abhaken nicht entfernen ließen
+    except Exception:  # noqa: BLE001 – darf die Erinnerungen nicht aufhalten
+        _LOGGER.warning("Kalender-Termine nicht nachgeführt", exc_info=True)
     # wiederkehrende Einträge: am nächsten fälligen Tag wieder öffnen
     for entity_id, uid, mark in extras.to_reopen(dt_util.now()):
         try:
@@ -110,7 +116,11 @@ async def async_handle_action(hass: HomeAssistant, action: str) -> bool:
 
         await lists.update_item(hass, entity_id, uid, checked=True)
     else:
-        extras.set_item_mark(entity_id, uid, {"due": later(str(mark["due"]))})
+        due = later(str(mark["due"]))
+        extras.set_item_mark(entity_id, uid, {"due": due})
+        from . import calendar_sync
+
+        await calendar_sync.async_move(hass, extras, entity_id, uid, due)
     return True
 
 

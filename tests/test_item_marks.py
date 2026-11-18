@@ -167,3 +167,79 @@ def test_quick_actions_from_a_notification():
     mark = e.item_mark("todo.a", "u1")
     assert mark["due"] == "2026-11-21T18:00" and "sent" not in mark   # neuer Tag: es wird wieder erinnert
     assert asyncio.run(reminders.async_handle_action(hass, "SMARTLISTS_DONE_unknown")) is False
+
+
+class _Event:
+    def __init__(self, uid, summary, start, description="SmartLists · A"):
+        self.uid, self.summary, self.start, self.description = uid, summary, start, description
+
+
+class _Calendar:
+    """Kalender-Entität zum Testen: merkt sich Termine, kann das Löschen verweigern."""
+
+    def __init__(self, events, can_delete=True):
+        self.events, self.can_delete, self.deleted = list(events), can_delete, []
+
+    async def async_get_events(self, hass, start, end):
+        return list(self.events)
+
+    async def async_delete_event(self, uid):
+        if not self.can_delete:
+            raise RuntimeError("nicht erreichbar")
+        self.deleted.append(uid)
+        self.events = [e for e in self.events if e.uid != uid]
+
+
+def _cal_hass(calendar, notes=None):
+    async def call(domain, service, data, blocking=False):
+        (notes if notes is not None else []).append((domain, service, data))
+
+    return types.SimpleNamespace(data={"calendar": types.SimpleNamespace(get_entity=lambda entity_id: calendar)},
+                                 services=types.SimpleNamespace(async_call=call), config=types.SimpleNamespace(language="de"))
+
+
+def test_calendar_event_is_found_by_its_id_or_by_day_and_title(monkeypatch):
+    from datetime import date, timezone
+
+    from smartlists import calendar_sync
+
+    monkeypatch.setattr(calendar_sync.dt_util, "get_default_time_zone", lambda: timezone.utc)
+
+    cal = {"entity": "calendar.x", "due": "2026-11-20", "summary": "Bio-Bananen", "list": "A"}
+    calendar = _Calendar([_Event("other", "Bio-Bananen", date(2026, 11, 20), description="von Hand"),      # fremder Termin: bleibt
+                          _Event("e1", "Bio-Bananen", date(2026, 11, 20))])
+    assert asyncio.run(calendar_sync.async_remove(_cal_hass(calendar), cal)) is True
+    assert calendar.deleted == ["e1"]
+    assert asyncio.run(calendar_sync.async_remove(_cal_hass(calendar), cal)) is True                       # schon weg: auch gut
+    renamed = _Calendar([_Event("e2", "Bananen (umbenannt)", date(2026, 11, 20))])
+    assert asyncio.run(calendar_sync.async_remove(_cal_hass(renamed), {**cal, "uid": "e2"})) is True       # über die Kennung
+    assert renamed.deleted == ["e2"]
+
+
+def test_calendar_event_that_could_not_be_removed_is_tried_again(monkeypatch):
+    from datetime import date, timezone
+
+    from smartlists import calendar_sync
+
+    monkeypatch.setattr(calendar_sync.dt_util, "get_default_time_zone", lambda: timezone.utc)
+
+    calendar = _Calendar([_Event("e1", "Bio-Bananen", date(2026, 11, 20))], can_delete=False)
+    notes = []
+    hass = _cal_hass(calendar, notes)
+    e = _extras()
+    e.set_item_mark("todo.a", "u1", {"due": "2026-11-20"})
+    e.set_item_mark("todo.a", "u1", {"cal": {"entity": "calendar.x", "due": "2026-11-20", "summary": "Bio-Bananen", "list": "A", "uid": "e1"}})
+    asyncio.run(calendar_sync.async_follow(hass, e, "todo.a", "u1", True))
+    assert e.item_mark("todo.a", "u1")["cal"]["pending"] is True
+    assert asyncio.run(calendar_sync.async_retry(hass, e)) == 0 and e.item_mark("todo.a", "u1")["cal"]["tries"] == 1
+    calendar.can_delete = True
+    assert asyncio.run(calendar_sync.async_retry(hass, e)) == 1
+    assert calendar.deleted == ["e1"] and "pending" not in e.item_mark("todo.a", "u1")["cal"] and notes == []
+    # bleibt es dabei, kommt nach RETRIES Versuchen eine Meldung
+    calendar2 = _Calendar([_Event("e1", "Bio-Bananen", date(2026, 11, 20))], can_delete=False)
+    hass2 = _cal_hass(calendar2, notes)
+    e.set_item_mark("todo.a", "u1", {"cal": {"entity": "calendar.x", "due": "2026-11-20", "summary": "Bio-Bananen", "pending": True, "off": True}})
+    for _ in range(calendar_sync.RETRIES):
+        asyncio.run(calendar_sync.async_retry(hass2, e))
+    assert len(notes) == 1 and notes[0][:2] == ("persistent_notification", "create")
+    assert "pending" not in e.item_mark("todo.a", "u1")["cal"]

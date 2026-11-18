@@ -58,5 +58,6 @@ The app uses the same scheme. Where the meaning is the same as in the integratio
 | SL-AUTH-02 | The sign-in was refused |
 | SL-AUTH-03 | The sign-in was cancelled |
 | SL-SYNC-01 | An item was changed differently on the phone and in Home Assistant – the app asks which version applies |
+| SL-SYNC-02 | A list could not be moved to Home Assistant completely – it stays on the phone |
 | SL-APP-01 | The app ran into an unexpected error |
 | SL-APP-02 | Another, unknown error |

@@ -512,7 +512,7 @@
   _stepQty(it, delta) {
     const multi = it.pack_count > 1;
     if (multi) it.pack_count = Math.max(1, it.pack_count + delta);
-    else it.quantity = Math.max(0, Math.round(((it.quantity || 0) + delta) * 1000) / 1000);
+    else it.quantity = Math.max(1, Math.round(((it.quantity ?? 1) + delta) * 1000) / 1000);  // ohne Anzahl gilt 1
     this._qtyPending = this._qtyPending || {};
     const entry = this._qtyPending[it.uid] || { original: it.text, timer: null };
     clearTimeout(entry.timer);
@@ -523,7 +523,9 @@
     entry.timer = setTimeout(() => {
       delete this._qtyPending[it.uid];
       const parsed = parseText(entry.original, this._cfg.tag_rules, this._cfg.known_stores);
-      const text = encodeText({ ...parsed, quantity: it.quantity, pack_count: it.pack_count }, this._cfg.tag_rules);
+      // zurück auf 1 ohne Einheit: wieder ohne Zahl schreiben („Cola“ statt „1 Cola“)
+      const plainOne = !(it.pack_count > 1) && it.quantity === 1 && !parsed.unit;
+      const text = encodeText({ ...parsed, quantity: plainOne ? null : it.quantity, pack_count: it.pack_count }, this._cfg.tag_rules);
       if (text === entry.original) return;
       this._change(`${it.name}: ${this._t.qty_changed}`, "update_item", { uid: it.uid, text },
         () => () => this._call("update_item", { uid: it.uid, text: entry.original }), { snack: false });

@@ -136,7 +136,8 @@ const STYLE = `
   .stepper .sbtn { border:none !important; }
   .stepper .sbtn { width:24px; height:24px; border-radius:50%; border:1px solid var(--divider-color,#ddd); background:none; padding:0;
     display:inline-flex; align-items:center; justify-content:center; color:var(--secondary-text-color); cursor:pointer; flex:none; }
-  .stepper .sbtn:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
+  .stepper .sbtn:hover:not(:disabled) { border-color:var(--sl-accent); color:var(--sl-accent); }
+  .stepper .sbtn:disabled { opacity:.32; cursor:default; }
   .stepper .sval { min-width:1.6em; text-align:center; }
   .shopping .row.large .stepper .sbtn { width:30px; height:30px; }
   .row:hover { background:var(--secondary-background-color,#f6f6f6); }

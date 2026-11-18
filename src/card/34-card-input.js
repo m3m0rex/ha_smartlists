@@ -608,9 +608,11 @@
           it.soft_by ? t.soft_checked_by.replace("{name}", it.soft_by) : t.soft_checked) : null,
         it.link_added && !it.checked ? h("div", { class: "softchk", title: t.link_added_help }, "🔗 ",
           it.link_by ? t.link_added_by.replace("{name}", it.link_by) : t.link_added) : null),
-      h("span", { class: "stepcol" }, p.rename && !shop && it.quantity != null && this._config.show_stepper !== false
+      // − + bei jedem Eintrag (ohne Anzahl gilt 1); „−“ ist ausgegraut, solange es nichts abzuziehen gibt
+      h("span", { class: "stepcol" }, p.rename && !shop && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
-          h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
+          h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, disabled: (it.pack_count > 1 ? it.pack_count : (it.quantity ?? 1)) <= 1,
+            onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
           h("button", { class: "sbtn", type: "button", title: t.qty_more, "aria-label": t.qty_more, onclick: () => this._stepQty(it, 1) }, svg(ICON.plus, 14)))
         : null),
       h("div", { class: "actions" },

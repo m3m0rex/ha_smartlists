@@ -43,3 +43,19 @@ Mal aus. Namen von Listen, Einträgen, Notizen, Benutzern, Adressen und Passwör
 
 Von Home Assistant aus wird nichts verschickt: Der Bericht öffnet sich auf GitHub, und öffentlich wird er erst,
 wenn du ihn dort abschickst.
+
+## Kennungen der App HA SmartLists Go
+
+Die App nutzt dasselbe Muster. Wo die Bedeutung dieselbe ist wie in der Integration, ist es auch die Kennung.
+
+| Kennung | Bedeutung |
+| --- | --- |
+| SL-WS-01 | Home Assistant hat eine Änderung aus der App abgelehnt (z. B. fehlendes Recht) |
+| SL-CONN-01 | Home Assistant war nicht erreichbar |
+| SL-CONN-02 | Das Zertifikat von Home Assistant wurde nicht angenommen |
+| SL-CONN-03 | Es ist keine Adresse von Home Assistant eingetragen |
+| SL-AUTH-01 | Die Anmeldung ist abgelaufen – neu anmelden (es geht nichts verloren) |
+| SL-AUTH-02 | Die Anmeldung wurde abgelehnt |
+| SL-AUTH-03 | Die Anmeldung wurde abgebrochen |
+| SL-APP-01 | Die App ist auf einen unerwarteten Fehler gestoßen |
+| SL-APP-02 | Ein anderer, unbekannter Fehler |

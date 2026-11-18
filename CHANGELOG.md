@@ -16,6 +16,9 @@ Seventeenth pre-release of 4.0. **Make a Home Assistant backup before updating:*
   before and after the move can both be restored. On Home Assistant versions that cannot move entities between
   entries, everything stays as it was.
 - **Renaming a list** now waits for the rename and reports an error instead of failing silently.
+- **− + on every item.** The quantity buttons now show on every item, not only on items with a number (no
+  number counts as 1). "−" is greyed out while there is nothing to take away, and going back to 1 writes the item
+  without a number again.
 
 ## [4.0.0-beta.16] – 2026-11-18
 

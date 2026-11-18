@@ -43,3 +43,19 @@ users, addresses and passwords are never part of a report.
 
 Nothing is sent from Home Assistant: the report opens as a new issue on GitHub, and it only becomes public when you
 submit it there.
+
+## Codes of the app HA SmartLists Go
+
+The app uses the same scheme. Where the meaning is the same as in the integration, the code is the same.
+
+| Code | Meaning |
+| --- | --- |
+| SL-WS-01 | Home Assistant refused a change from the app (for example a missing right) |
+| SL-CONN-01 | Home Assistant could not be reached |
+| SL-CONN-02 | The certificate of Home Assistant was not accepted |
+| SL-CONN-03 | No address of Home Assistant is set |
+| SL-AUTH-01 | The sign-in expired – sign in again (nothing is lost) |
+| SL-AUTH-02 | The sign-in was refused |
+| SL-AUTH-03 | The sign-in was cancelled |
+| SL-APP-01 | The app ran into an unexpected error |
+| SL-APP-02 | Another, unknown error |

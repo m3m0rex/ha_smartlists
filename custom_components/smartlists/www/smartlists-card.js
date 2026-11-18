@@ -995,7 +995,8 @@ const STYLE = `
   .stepper .sbtn { border:none !important; }
   .stepper .sbtn { width:24px; height:24px; border-radius:50%; border:1px solid var(--divider-color,#ddd); background:none; padding:0;
     display:inline-flex; align-items:center; justify-content:center; color:var(--secondary-text-color); cursor:pointer; flex:none; }
-  .stepper .sbtn:hover { border-color:var(--sl-accent); color:var(--sl-accent); }
+  .stepper .sbtn:hover:not(:disabled) { border-color:var(--sl-accent); color:var(--sl-accent); }
+  .stepper .sbtn:disabled { opacity:.32; cursor:default; }
   .stepper .sval { min-width:1.6em; text-align:center; }
   .shopping .row.large .stepper .sbtn { width:30px; height:30px; }
   .row:hover { background:var(--secondary-background-color,#f6f6f6); }
@@ -2579,7 +2580,7 @@ class SmartListsCard extends HTMLElement {
   _stepQty(it, delta) {
     const multi = it.pack_count > 1;
     if (multi) it.pack_count = Math.max(1, it.pack_count + delta);
-    else it.quantity = Math.max(0, Math.round(((it.quantity || 0) + delta) * 1000) / 1000);
+    else it.quantity = Math.max(1, Math.round(((it.quantity ?? 1) + delta) * 1000) / 1000);  // ohne Anzahl gilt 1
     this._qtyPending = this._qtyPending || {};
     const entry = this._qtyPending[it.uid] || { original: it.text, timer: null };
     clearTimeout(entry.timer);
@@ -2590,7 +2591,9 @@ class SmartListsCard extends HTMLElement {
     entry.timer = setTimeout(() => {
       delete this._qtyPending[it.uid];
       const parsed = parseText(entry.original, this._cfg.tag_rules, this._cfg.known_stores);
-      const text = encodeText({ ...parsed, quantity: it.quantity, pack_count: it.pack_count }, this._cfg.tag_rules);
+      // zurück auf 1 ohne Einheit: wieder ohne Zahl schreiben („Cola“ statt „1 Cola“)
+      const plainOne = !(it.pack_count > 1) && it.quantity === 1 && !parsed.unit;
+      const text = encodeText({ ...parsed, quantity: plainOne ? null : it.quantity, pack_count: it.pack_count }, this._cfg.tag_rules);
       if (text === entry.original) return;
       this._change(`${it.name}: ${this._t.qty_changed}`, "update_item", { uid: it.uid, text },
         () => () => this._call("update_item", { uid: it.uid, text: entry.original }), { snack: false });
@@ -3255,9 +3258,11 @@ class SmartListsCard extends HTMLElement {
           it.soft_by ? t.soft_checked_by.replace("{name}", it.soft_by) : t.soft_checked) : null,
         it.link_added && !it.checked ? h("div", { class: "softchk", title: t.link_added_help }, "🔗 ",
           it.link_by ? t.link_added_by.replace("{name}", it.link_by) : t.link_added) : null),
-      h("span", { class: "stepcol" }, p.rename && !shop && it.quantity != null && this._config.show_stepper !== false
+      // − + bei jedem Eintrag (ohne Anzahl gilt 1); „−“ ist ausgegraut, solange es nichts abzuziehen gibt
+      h("span", { class: "stepcol" }, p.rename && !shop && this._config.show_stepper !== false
         ? h("span", { class: "stepper" },
-          h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
+          h("button", { class: "sbtn", type: "button", title: t.qty_less, "aria-label": t.qty_less, disabled: (it.pack_count > 1 ? it.pack_count : (it.quantity ?? 1)) <= 1,
+            onclick: () => this._stepQty(it, -1) }, svg(ICON.minus, 14)),
           h("button", { class: "sbtn", type: "button", title: t.qty_more, "aria-label": t.qty_more, onclick: () => this._stepQty(it, 1) }, svg(ICON.plus, 14)))
         : null),
       h("div", { class: "actions" },

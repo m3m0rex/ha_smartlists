@@ -217,6 +217,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await async_merge_combined(hass, entry)
     await _async_tidy_files(hass, entry)
+    # Geräte gelöschter eigener Listen, die bis beta.21 stehen blieben
+    from .own_groups import async_tidy_devices
+
+    try:
+        if gone := async_tidy_devices(hass, entry):
+            _LOGGER.info("SmartLists: Geräte gelöschter Listen entfernt: %s", ", ".join(gone))
+    except Exception:  # noqa: BLE001 – Aufräumen darf den Start nicht aufhalten
+        _LOGGER.warning("Geräte gelöschter Listen nicht aufgeräumt", exc_info=True)
     # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
     entry.async_on_unload(automation.async_setup_due_timer(hass))
     # Hinweise unter Einstellungen → Reparaturen (fehlende Quell-Listen, lange nicht gesehene Geräte)

@@ -188,8 +188,31 @@ def _entity_id_of(hass: HomeAssistant, list_id: str) -> str | None:
 
 
 def _drop_entity(hass: HomeAssistant, list_id: str) -> None:
+    """Entität UND Gerät der Liste entfernen – sonst bliebe die Liste auf der Integrationsseite stehen (mit den
+    Sensoren und dem Knopf daran), obwohl sie gelöscht ist."""
     if (eid := _entity_id_of(hass, list_id)) is not None:
         _registry().async_get(hass).async_remove(eid)
+    from homeassistant.helpers import device_registry as dr
+
+    devreg = dr.async_get(hass)
+    if (device := devreg.async_get_device(identifiers={(DOMAIN, f"list_own_{list_id}")})) is not None:
+        devreg.async_remove_device(device.id)
+
+
+def async_tidy_devices(hass: HomeAssistant, entry: ConfigEntry) -> list[str]:
+    """Geräte früher gelöschter eigener Listen entfernen (bis beta.21 blieben sie beim Löschen stehen)."""
+    from homeassistant.helpers import device_registry as dr
+
+    alive = {f"list_own_{list_id}" for _, list_id, _ in iter_lists(entry)}
+    alive |= {f"list_own_{sub.subentry_id}" for sub in entry.subentries.values() if sub.subentry_type == SUBENTRY_OWN}
+    devreg = dr.async_get(hass)
+    gone = []
+    for device in dr.async_entries_for_config_entry(devreg, entry.entry_id):
+        own = [str(i[1]) for i in device.identifiers if i[0] == DOMAIN and str(i[1]).startswith("list_own_")]
+        if own and not any(i in alive for i in own):
+            devreg.async_remove_device(device.id)
+            gone.append(device.name or own[0])
+    return gone
 
 
 def _can_move_entities(hass: HomeAssistant) -> bool:

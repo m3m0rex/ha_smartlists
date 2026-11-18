@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.22] – 2026-11-18
+
+Twenty-second pre-release of 4.0.
+
+### Fixed
+
+- **Deleting an own list** (Own lists → Configure → pick list → Delete) also removes its device, so the list no
+  longer stays on the integration page. Devices of lists deleted earlier are cleaned up on start.
+
 ## [4.0.0-beta.21] – 2026-11-18
 
 Twenty-first pre-release of 4.0.

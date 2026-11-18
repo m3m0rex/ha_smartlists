@@ -17,7 +17,6 @@ from typing import Any
 
 from homeassistant.core import HomeAssistant
 
-from . import lists
 from .const import DOMAIN
 from .itemtext import split_offer
 
@@ -26,6 +25,8 @@ MAX_ITEMS = 2000
 
 def candidates(hass: HomeAssistant) -> list[dict[str, Any]]:
     """Alle SmartLists-Listen (eigene und kombinierte), ohne Notizlisten."""
+    from . import lists  # erst hier: lists zieht die To-do-Plattform von Home Assistant nach
+
     data = hass.data.get(DOMAIN, {})
     out = []
     for kind, entities in (("combined", data.get("entities", {})), ("own", data.get("own", {}))):
@@ -73,6 +74,8 @@ async def _create_list(hass: HomeAssistant, name: str) -> tuple[str, str]:
 
 async def async_export(hass: HomeAssistant, entity_ids: list[str]) -> dict[str, Any]:
     """Die genannten SmartLists-Listen kopieren. Liefert je Liste Name, neue Entität und Zahl der Einträge."""
+    from . import lists
+
     known = {c["entity_id"]: c for c in candidates(hass)}
     wanted = [e for e in dict.fromkeys(entity_ids) if e in known]
     if not wanted:

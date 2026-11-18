@@ -24,6 +24,7 @@ from .const import (
     LEGACY_UNIQUE_ID,
     STORAGE_VERSION,
     SUBENTRY_COMBINED,
+    SUBENTRY_COMBINED_GROUP,
     SUBENTRY_OWN,
     SUBENTRY_OWN_GROUP,
 )
@@ -51,10 +52,25 @@ _TEXT = {
 }
 
 
+def expand(subentries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Die Gruppe „Kombinierte Listen“ (ab 4.0.0-beta.17) in einzelne kombinierte Listen auflösen – so, wie sie bis
+    beta.16 als Unter-Einträge in der Sicherung standen (Schlüssel als LEGACY_UNIQUE_ID). Alles andere bleibt."""
+    out: list[dict[str, Any]] = []
+    for sub in subentries:
+        if sub.get("subentry_type") != SUBENTRY_COMBINED_GROUP:
+            out.append(sub)
+            continue
+        for key, item in ((sub.get("data") or {}).get("lists") or {}).items():
+            data = {k: v for k, v in dict(item).items() if k != "title"}
+            out.append({"subentry_id": key, "subentry_type": SUBENTRY_COMBINED, "title": item.get("title") or "",
+                        "data": {**data, LEGACY_UNIQUE_ID: key}})
+    return out
+
+
 def store_keys(subentries: list[dict[str, Any]]) -> list[str]:
     """Namen der Speicherdateien aller Listen: kombinierte unter ihrem Schlüssel, eigene unter own.<Kennung>."""
     keys: list[str] = []
-    for sub in subentries:
+    for sub in expand(subentries):
         data = sub.get("data") or {}
         kind = sub.get("subentry_type")
         if kind == SUBENTRY_OWN_GROUP:
@@ -88,7 +104,7 @@ def build(version: str, options: dict[str, Any], subentries: list[dict[str, Any]
 def summary(backup: dict[str, Any]) -> dict[str, int]:
     """Was in einer Sicherung steckt – für die Rückfrage im Einrichtungs-Assistenten."""
     own = combined = 0
-    for sub in backup.get("subentries") or []:
+    for sub in expand(backup.get("subentries") or []):
         kind = sub.get("subentry_type")
         if kind == SUBENTRY_OWN_GROUP:
             own += len((sub.get("data") or {}).get("lists") or {})
@@ -109,7 +125,7 @@ def report(backup: dict[str, Any], path: str = "", size: int = 0, verified: bool
     users = backup.get("users") or {}
     own: list[dict[str, Any]] = []
     combined: list[dict[str, Any]] = []
-    for sub in backup.get("subentries") or []:
+    for sub in expand(backup.get("subentries") or []):
         data = sub.get("data") or {}
         kind = sub.get("subentry_type")
         if kind == SUBENTRY_OWN_GROUP:
@@ -141,7 +157,7 @@ def subentries_for_restore(backup: dict[str, Any]) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     for sub in backup.get("subentries") or []:
         kind = sub.get("subentry_type")
-        if kind not in (SUBENTRY_COMBINED, SUBENTRY_OWN_GROUP):
+        if kind not in (SUBENTRY_COMBINED, SUBENTRY_OWN_GROUP, SUBENTRY_COMBINED_GROUP):
             continue  # die alte Form eigener Listen (vor 3.7) hängt an der Kennung des Unter-Eintrags – nicht übertragbar
         data = dict(sub.get("data") or {})
         if kind == SUBENTRY_COMBINED and not data.get(LEGACY_UNIQUE_ID):
@@ -192,7 +208,7 @@ async def _foreign_items(hass: Any, subentries: list[dict[str, Any]]) -> dict[st
     """Artikel der Quell-Listen kombinierter Listen, soweit sie nicht SmartLists selbst gehören. Sie liegen bei
     anderen Integrationen und werden beim Wiederherstellen nicht zurückgeschrieben – die Kopie ist zur Sicherheit."""
     wanted: list[str] = []
-    for sub in subentries:
+    for sub in expand(subentries):
         if sub.get("subentry_type") == SUBENTRY_COMBINED:
             wanted += [e for e in ((sub.get("data") or {}).get("sources") or []) if e not in wanted]
     wanted = [e for e in wanted if hass.states.get(e) is not None]

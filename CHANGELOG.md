@@ -3,6 +3,20 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.17] – 2026-11-18
+
+Seventeenth pre-release of 4.0. **Make a Home Assistant backup before updating:** combined lists are regrouped.
+
+### Changed
+
+- **Integration page: one group "Combined lists".** Until now every combined list was its own entry on the page.
+  Now they all stand below one heading, like "Own lists" and "Notes". "+ Combined list" adds a list to the group;
+  the gear of the group asks which list to edit and offers "Delete list" there. On the first start the existing
+  combined lists move into the group – entity ids, ticks, areas and automations stay as they are. Backups made
+  before and after the move can both be restored. On Home Assistant versions that cannot move entities between
+  entries, everything stays as it was.
+- **Renaming a list** now waits for the rename and reports an error instead of failing silently.
+
 ## [4.0.0-beta.16] – 2026-11-18
 
 Sixteenth pre-release of 4.0.

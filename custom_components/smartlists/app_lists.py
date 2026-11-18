@@ -43,9 +43,11 @@ def connected(hass: HomeAssistant) -> dict[str, str]:
     out: dict[str, str] = {}
     if entry is None:
         return out
-    for sub in entry.subentries.values():
-        if sub.subentry_type == SUBENTRY_COMBINED and sub.data.get(CONF_APP_DEVICE) and sub.data.get(CONF_APP_LIST):
-            out[f"{sub.data[CONF_APP_DEVICE]}/{sub.data[CONF_APP_LIST]}"] = sub.subentry_id
+    from .combined_group import refs
+
+    for ref in refs(entry):
+        if ref.data.get(CONF_APP_DEVICE) and ref.data.get(CONF_APP_LIST):
+            out[f"{ref.data[CONF_APP_DEVICE]}/{ref.data[CONF_APP_LIST]}"] = ref.key
     return out
 
 
@@ -98,6 +100,6 @@ def connect(hass: HomeAssistant, device_id: str, list_id: str) -> str:
         data["owner"], data["shares"] = device["user_id"], {}
     if lst.get("default_add") in sources:
         data[CONF_DEFAULT_ADD] = lst["default_add"]
-    sub = ConfigSubentry(data=MappingProxyType(data), subentry_type=SUBENTRY_COMBINED, title=lst["name"], unique_id=None)
-    hass.config_entries.async_add_subentry(entry, sub)
-    return sub.subentry_id
+    from .combined_group import async_add
+
+    return async_add(hass, lst["name"], data)

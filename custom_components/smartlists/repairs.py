@@ -28,12 +28,12 @@ STALE_DAYS = 30
 @callback
 def async_check(hass: HomeAssistant, entry: ConfigEntry) -> None:
     wanted: set[str] = set()
-    for sub in entry.subentries.values():
-        if sub.subentry_type != SUBENTRY_COMBINED:
-            continue
+    from .combined_group import refs
+
+    for sub in refs(entry):
         missing = [s for s in sub.data.get("sources") or [] if hass.states.get(s) is None]
         if missing:
-            issue_id = f"missing_source_{sub.subentry_id}"
+            issue_id = f"missing_source_{sub.key}"
             wanted.add(issue_id)
             ir.async_create_issue(hass, DOMAIN, issue_id, is_fixable=False, severity=ir.IssueSeverity.WARNING,
                                   translation_key="missing_source",

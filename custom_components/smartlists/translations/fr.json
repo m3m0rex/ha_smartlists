@@ -222,6 +222,94 @@
       "error": {
         "notes_failed": "La liste de notes n'a pas pu être créée. Le nom existe-t-il déjà, ou « Tâches locales » manque-t-il ?"
       }
+    },
+    "combined_lists": {
+      "initiate_flow": {
+        "user": "Liste combinée"
+      },
+      "entry_type": "Fusionnée à partir de plusieurs listes",
+      "step": {
+        "user": {
+          "title": "Créer une liste combinée",
+          "description": "Regroupe plusieurs listes de tâches en une liste commune.",
+          "data": {
+            "name": "Nom de la liste combinée",
+            "sources": "Listes à combiner",
+            "default_add_entity": "Liste par défaut pour les nouveaux éléments",
+            "mode": "Cocher s'applique à",
+            "source_label": "Afficher la liste source dans le nom de l'élément",
+            "sort": "Ordre de tri",
+            "foreign_entities": "Listes étrangères (cocher uniquement, pas de renommage/suppression)",
+            "source_as_person": "Afficher la liste source comme personne",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir",
+            "label_show": "Le badge d'origine affiche",
+            "label_sources": "Seules ces listes sources affichent un badge"
+          },
+          "data_description": {
+            "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
+            "default_add_entity": "Les éléments ajoutés à la liste combinée arrivent ici. Vide = ajout désactivé.",
+            "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
+            "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
+            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés.",
+            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste.",
+            "label_show": "Liste : nom de la liste source. Propriétaire : propriétaire de la liste source. Propriétaire + liste : « Propriétaire Liste ». Les listes sans propriétaire (Local To-do, liste de courses …) affichent toujours le nom.",
+            "label_sources": "Vide = toutes les listes sources."
+          }
+        },
+        "reconfigure": {
+          "title": "Modifier les listes combinées",
+          "description": "Quelle liste veux-tu modifier ?",
+          "data": {
+            "list": "Liste"
+          }
+        },
+        "edit": {
+          "title": "Modifier la liste « {list} »",
+          "data": {
+            "name": "Nom de la liste combinée",
+            "sources": "Listes à combiner",
+            "default_add_entity": "Liste par défaut pour les nouveaux éléments",
+            "mode": "Cocher s'applique à",
+            "source_label": "Afficher la liste source dans le nom de l'élément",
+            "sort": "Ordre de tri",
+            "foreign_entities": "Listes étrangères (cocher uniquement, pas de renommage/suppression)",
+            "source_as_person": "Afficher la liste source comme personne",
+            "owner": "Propriétaire",
+            "editors": "Peuvent modifier",
+            "checkers": "Peuvent cocher",
+            "viewers": "Peuvent seulement voir",
+            "label_show": "Le badge d'origine affiche",
+            "label_sources": "Seules ces listes sources affichent un badge",
+            "delete": "Supprimer la liste"
+          },
+          "data_description": {
+            "sources": "N'importe quelles listes de tâches, par ex. les listes de courses de plusieurs personnes.",
+            "default_add_entity": "Les éléments ajoutés à la liste combinée arrivent ici. Vide = ajout désactivé.",
+            "mode": "Bidirectionnel : cocher écrit dans la liste source. Local : les coches restent uniquement dans la liste combinée.",
+            "foreign_entities": "Listes d'autres personnes que vous pouvez seulement cocher.",
+            "source_as_person": "Les éléments de par ex. todo.peter reçoivent le badge 👤 Peter – comme *Peter dans le nom. Les mots de remplissage comme « liste de courses » sont supprimés.",
+            "owner": "« — » = visible et modifiable par tous (comme avant). Avec un propriétaire, seuls lui, les admins et les personnes choisies ici voient la liste.",
+            "label_show": "Liste : nom de la liste source. Propriétaire : propriétaire de la liste source. Propriétaire + liste : « Propriétaire Liste ». Les listes sans propriétaire (Local To-do, liste de courses …) affichent toujours le nom.",
+            "label_sources": "Vide = toutes les listes sources.",
+            "delete": "Les listes sources et leurs articles restent. La liste combinée disparaît de toutes les cartes, automatisations et de l'app."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Veuillez sélectionner au moins une liste.",
+        "nested_combined_list": "Les listes combinées ne peuvent pas être imbriquées.",
+        "default_not_in_sources": "La liste par défaut doit faire partie des listes sélectionnées.",
+        "foreign_not_in_sources": "Les listes étrangères doivent aussi être sélectionnées ci-dessus.",
+        "default_is_foreign": "Une liste étrangère ne peut pas être la liste par défaut.",
+        "labels_not_in_sources": "Choisis seulement des listes sélectionnées comme sources ci-dessus."
+      },
+      "abort": {
+        "reconfigure_successful": "Enregistré.",
+        "list_added": "Liste créée – elle figure sous « Listes combinées »."
+      }
     }
   },
   "options": {

@@ -190,6 +190,9 @@ async def _async_tidy_files(hass: HomeAssistant, entry: ConfigEntry) -> None:
     known = {name for name in storage.GLOBAL_STORES if name != "app_backups"} | {f"own.{list_id}" for _, list_id, _ in iter_lists(entry)}
     for sub in entry.subentries.values():
         known.add(f"own.{sub.subentry_id}" if sub.subentry_type == SUBENTRY_OWN else list_key(sub))
+    from .combined_group import refs
+
+    known |= {ref.key for ref in refs(entry)}
     try:
         moved = await hass.async_add_executor_job(storage.set_aside_unknown, hass.config.config_dir, known)
         if moved:
@@ -209,6 +212,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     from .own_groups import async_merge_groups
 
     await async_merge_groups(hass, entry)
+    # bis 4.0.0-beta.16 war jede kombinierte Liste ein Unter-Eintrag → eine gemeinsame Gruppe „Kombinierte Listen“
+    from .combined_group import async_merge as async_merge_combined
+
+    await async_merge_combined(hass, entry)
     await _async_tidy_files(hass, entry)
     # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
     entry.async_on_unload(automation.async_setup_due_timer(hass))

@@ -222,6 +222,94 @@
       "error": {
         "notes_failed": "Nie udało się utworzyć listy notatek. Czy nazwa już istnieje albo brakuje „Lokalnych zadań”?"
       }
+    },
+    "combined_lists": {
+      "initiate_flow": {
+        "user": "Lista połączona"
+      },
+      "entry_type": "Połączona z kilku list",
+      "step": {
+        "user": {
+          "title": "Utwórz listę połączoną",
+          "description": "Łączy kilka list zadań w jedną wspólną listę.",
+          "data": {
+            "name": "Nazwa listy połączonej",
+            "sources": "Listy do połączenia",
+            "default_add_entity": "Domyślna lista dla nowych produktów",
+            "mode": "Odhaczanie wpływa na",
+            "source_label": "Pokaż listę źródłową w nazwie produktu",
+            "sort": "Sortowanie",
+            "foreign_entities": "Cudze listy (tylko odhaczanie, bez zmiany nazwy/usuwania)",
+            "source_as_person": "Pokaż listę źródłową jako osobę",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko widzieć",
+            "label_show": "Plakietka pochodzenia pokazuje",
+            "label_sources": "Tylko te listy źródłowe pokazują plakietkę"
+          },
+          "data_description": {
+            "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
+            "default_add_entity": "Nowe produkty dodane do listy połączonej trafiają tutaj. Puste = dodawanie wyłączone.",
+            "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
+            "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
+            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane.",
+            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj.",
+            "label_show": "Lista: nazwa listy źródłowej. Właściciel: właściciel listy źródłowej. Właściciel + lista: „Właściciel Lista”. Listy bez właściciela (Local To-do, lista zakupów …) zawsze pokazują nazwę.",
+            "label_sources": "Puste = wszystkie listy źródłowe."
+          }
+        },
+        "reconfigure": {
+          "title": "Edytuj listy połączone",
+          "description": "Którą listę chcesz edytować?",
+          "data": {
+            "list": "Lista"
+          }
+        },
+        "edit": {
+          "title": "Edytuj listę „{list}”",
+          "data": {
+            "name": "Nazwa listy połączonej",
+            "sources": "Listy do połączenia",
+            "default_add_entity": "Domyślna lista dla nowych produktów",
+            "mode": "Odhaczanie wpływa na",
+            "source_label": "Pokaż listę źródłową w nazwie produktu",
+            "sort": "Sortowanie",
+            "foreign_entities": "Cudze listy (tylko odhaczanie, bez zmiany nazwy/usuwania)",
+            "source_as_person": "Pokaż listę źródłową jako osobę",
+            "owner": "Właściciel",
+            "editors": "Mogą edytować",
+            "checkers": "Mogą odhaczać",
+            "viewers": "Mogą tylko widzieć",
+            "label_show": "Plakietka pochodzenia pokazuje",
+            "label_sources": "Tylko te listy źródłowe pokazują plakietkę",
+            "delete": "Usuń listę"
+          },
+          "data_description": {
+            "sources": "Dowolne listy zadań, np. listy zakupów kilku osób.",
+            "default_add_entity": "Nowe produkty dodane do listy połączonej trafiają tutaj. Puste = dodawanie wyłączone.",
+            "mode": "Dwukierunkowo: odhaczenie zapisuje się w liście źródłowej. Lokalnie: odhaczenia pozostają tylko w liście połączonej.",
+            "foreign_entities": "Listy innych osób, które możesz tylko odhaczać.",
+            "source_as_person": "Produkty z np. todo.peter dostają plakietkę 👤 Peter – jak *Peter w nazwie. Słowa wypełniające, takie jak „lista zakupów”, są pomijane.",
+            "owner": "„—” = widoczna i edytowalna dla wszystkich (jak dotąd). Z właścicielem listę widzą tylko on, admini i osoby wybrane tutaj.",
+            "label_show": "Lista: nazwa listy źródłowej. Właściciel: właściciel listy źródłowej. Właściciel + lista: „Właściciel Lista”. Listy bez właściciela (Local To-do, lista zakupów …) zawsze pokazują nazwę.",
+            "label_sources": "Puste = wszystkie listy źródłowe.",
+            "delete": "Listy źródłowe i ich pozycje pozostają. Lista połączona znika ze wszystkich kart, automatyzacji i aplikacji."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Wybierz co najmniej jedną listę.",
+        "nested_combined_list": "Listy połączone nie mogą być zagnieżdżane.",
+        "default_not_in_sources": "Lista domyślna musi być jedną z wybranych list.",
+        "foreign_not_in_sources": "Cudze listy muszą być również wybrane powyżej.",
+        "default_is_foreign": "Cudza lista nie może być listą domyślną.",
+        "labels_not_in_sources": "Wybierz tylko listy wybrane powyżej jako źródła."
+      },
+      "abort": {
+        "reconfigure_successful": "Zapisano.",
+        "list_added": "Lista utworzona – znajduje się w „Listy połączone”."
+      }
     }
   },
   "options": {

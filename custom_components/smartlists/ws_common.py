@@ -71,13 +71,15 @@ def _main_entry(hass: HomeAssistant):
 
 
 def _combined_subentry(hass: HomeAssistant, entity_id: str):
-    from .todo import list_key
+    """Die kombinierte Liste als `combined_group.Ref` (title, data, key …) – in der Gruppe oder in der alten Form.
+    Ändern: combined_group.async_update / async_remove."""
+    from .combined_group import find
 
     entity = lists.combined_entity(hass, entity_id)
     entry = _main_entry(hass)
     if entity is None or entry is None:
         return None
-    return next((s for s in entry.subentries.values() if s.subentry_type == SUBENTRY_COMBINED and list_key(s) == entity.unique_id), None)
+    return find(entry, entity.unique_id)
 
 
 def _own_list(hass: HomeAssistant, entity_id: str) -> tuple[Any, dict[str, Any] | None]:
@@ -180,8 +182,10 @@ async def async_reset(hass: HomeAssistant, settings: bool, data: bool, links: bo
     if combined:
         entry = _main_entry(hass)
         if entry is not None:
-            subs = [s.subentry_id for s in entry.subentries.values() if s.subentry_type == SUBENTRY_COMBINED]
-            for sid in subs:
-                hass.config_entries.async_remove_subentry(entry, sid)
+            from .combined_group import async_remove, refs
+
+            subs = refs(entry)
+            for ref in reversed(subs):
+                async_remove(hass, ref)
             out["combined"] = len(subs)
     return out

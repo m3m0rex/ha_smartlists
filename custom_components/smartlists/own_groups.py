@@ -125,12 +125,13 @@ async def async_rename_list(hass: HomeAssistant, entity: Any, title: str) -> boo
     if getattr(entity, "grouped", False):
         await async_update_list(hass, entity.list_id, title=title)
         return True
-    from .const import LEGACY_UNIQUE_ID
+    from .combined_group import async_update, find
 
+    if (ref := find(entry, str(getattr(entity, "unique_id", "") or ""))) is not None:
+        async_update(hass, ref, title=title)
+        return True
     for sub in entry.subentries.values():
-        own = sub.subentry_type == SUBENTRY_OWN and sub.subentry_id == getattr(entity, "list_id", None)
-        combined = sub.subentry_type == SUBENTRY_COMBINED and str(sub.data.get(LEGACY_UNIQUE_ID) or sub.subentry_id) == entity.unique_id
-        if own or combined:
+        if sub.subentry_type == SUBENTRY_OWN and sub.subentry_id == getattr(entity, "list_id", None):
             hass.config_entries.async_update_subentry(entry, sub, title=title)
             return True
     return False
@@ -148,8 +149,9 @@ def combined_using(entry: ConfigEntry, entity_id: str | None) -> list[str]:
     """Namen der kombinierten Listen, in denen diese Liste als Quelle steckt."""
     if not entity_id:
         return []
-    return [s.title for s in entry.subentries.values()
-            if s.subentry_type == SUBENTRY_COMBINED and entity_id in (s.data.get("sources") or [])]
+    from .combined_group import refs
+
+    return [r.title for r in refs(entry) if entity_id in (r.data.get("sources") or [])]
 
 
 def async_remove_list(hass: HomeAssistant, list_id: str) -> None:

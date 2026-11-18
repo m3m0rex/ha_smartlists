@@ -29,7 +29,10 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
     packs = data.get("packs")
     now = time.time()
     subentries = []
-    for sub in entry.subentries.values():
+    from .combined_group import refs
+    from .const import SUBENTRY_COMBINED, SUBENTRY_COMBINED_GROUP
+
+    for sub in [*(s for s in entry.subentries.values() if s.subentry_type not in (SUBENTRY_COMBINED, SUBENTRY_COMBINED_GROUP)), *refs(entry)]:
         sources = list(sub.data.get("sources") or [])
         subentries.append({
             "type": sub.subentry_type,

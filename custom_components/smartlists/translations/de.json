@@ -222,6 +222,94 @@
       "error": {
         "notes_failed": "Die Notizliste konnte nicht angelegt werden. Gibt es den Namen schon, oder fehlt „Lokale To-do“?"
       }
+    },
+    "combined_lists": {
+      "initiate_flow": {
+        "user": "Kombinierte Liste"
+      },
+      "entry_type": "Aus mehreren Listen zusammengeführt",
+      "step": {
+        "user": {
+          "title": "Kombinierte Liste anlegen",
+          "description": "Führt mehrere To-do-Listen zu einer gemeinsamen Liste zusammen (z.B. für den Großeinkauf).",
+          "data": {
+            "name": "Name der kombinierten Liste",
+            "sources": "Listen, die zusammengeführt werden",
+            "default_add_entity": "Standard-Liste für neue Artikel",
+            "mode": "Abhaken wirkt sich aus auf",
+            "source_label": "Herkunft im Artikelnamen anzeigen",
+            "sort": "Sortierung",
+            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)",
+            "source_as_person": "Herkunft als Person anzeigen",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen",
+            "label_show": "Herkunfts-Badge zeigt",
+            "label_sources": "Nur diese Quell-Listen zeigen ein Badge"
+          },
+          "data_description": {
+            "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
+            "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
+            "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
+            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
+            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen.",
+            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist.",
+            "label_show": "Liste: Name der Quell-Liste. Besitzer: der Besitzer der Quell-Liste. Besitzer + Liste: „Besitzer Liste“. Quell-Listen ohne Besitzer (Local To-do, Einkaufsliste …) zeigen immer den Listennamen.",
+            "label_sources": "Leer = alle Quell-Listen."
+          }
+        },
+        "reconfigure": {
+          "title": "Kombinierte Listen bearbeiten",
+          "description": "Welche Liste möchtest du bearbeiten?",
+          "data": {
+            "list": "Liste"
+          }
+        },
+        "edit": {
+          "title": "Liste „{list}“ bearbeiten",
+          "data": {
+            "name": "Name der kombinierten Liste",
+            "sources": "Listen, die zusammengeführt werden",
+            "default_add_entity": "Standard-Liste für neue Artikel",
+            "mode": "Abhaken wirkt sich aus auf",
+            "source_label": "Herkunft im Artikelnamen anzeigen",
+            "sort": "Sortierung",
+            "foreign_entities": "Fremde Listen (nur abhaken, nicht umbenennen/löschen)",
+            "source_as_person": "Herkunft als Person anzeigen",
+            "owner": "Besitzer",
+            "editors": "Dürfen bearbeiten",
+            "checkers": "Dürfen abhaken",
+            "viewers": "Dürfen nur sehen",
+            "label_show": "Herkunfts-Badge zeigt",
+            "label_sources": "Nur diese Quell-Listen zeigen ein Badge",
+            "delete": "Liste löschen"
+          },
+          "data_description": {
+            "sources": "Beliebige To-do-Listen, z.B. Einkaufslisten mehrerer Personen.",
+            "default_add_entity": "Neue Artikel in der kombinierten Liste landen in dieser Liste. Leer = Hinzufügen deaktiviert.",
+            "mode": "Beidseitig: Abhaken schreibt direkt in die Ursprungsliste. Nur lokal: Häkchen bleiben in der kombinierten Liste, die Ursprungslisten bleiben unverändert.",
+            "foreign_entities": "Listen anderer Personen, deren Artikel du nur abhaken, aber nicht ändern oder löschen sollst.",
+            "source_as_person": "Artikel aus z.B. todo.peter bekommen das Badge 👤 Peter – wie *Peter im Namen. Füllwörter wie „Einkaufsliste“ werden weggelassen.",
+            "owner": "„—“ = für alle sichtbar und bearbeitbar (wie bisher). Mit Besitzer sehen die Liste nur er, Admins und die hier Freigegebenen – in Karte, Seite, App und Assist.",
+            "label_show": "Liste: Name der Quell-Liste. Besitzer: der Besitzer der Quell-Liste. Besitzer + Liste: „Besitzer Liste“. Quell-Listen ohne Besitzer (Local To-do, Einkaufsliste …) zeigen immer den Listennamen.",
+            "label_sources": "Leer = alle Quell-Listen.",
+            "delete": "Die Quell-Listen und ihre Artikel bleiben. Die kombinierte Liste verschwindet aus allen Karten, Automationen und der App."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Bitte mindestens eine Liste auswählen.",
+        "nested_combined_list": "Kombinierte Listen können nicht ineinander verschachtelt werden.",
+        "default_not_in_sources": "Die Standard-Liste muss eine der ausgewählten Listen sein.",
+        "foreign_not_in_sources": "Fremde Listen müssen auch oben ausgewählt sein.",
+        "default_is_foreign": "Eine fremde Liste kann nicht die Standard-Liste sein.",
+        "labels_not_in_sources": "Nur Listen auswählen, die oben als Quelle gewählt sind."
+      },
+      "abort": {
+        "reconfigure_successful": "Gespeichert.",
+        "list_added": "Liste angelegt – sie steht unter „Kombinierte Listen“."
+      }
     }
   },
   "options": {

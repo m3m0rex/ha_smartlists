@@ -180,8 +180,9 @@ def _counts(hass: HomeAssistant, user: Any) -> dict[str, int]:
                 own += len(sub.data.get("lists") or {})
             elif sub.subentry_type == SUBENTRY_OWN:
                 own += 1
-            elif sub.subentry_type == SUBENTRY_COMBINED:
-                combined += 1
+        from .combined_group import refs
+
+        combined += len(refs(entry))
     data = hass.data.get(DOMAIN, {})
     notes, devices = data.get("notes"), data.get("devices")
     return {"own_lists": own, "combined_lists": combined, "notes_lists": len(notes.entity_ids()) if notes else 0,

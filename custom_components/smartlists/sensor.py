@@ -248,10 +248,9 @@ def list_uniques(entry: Any) -> list[tuple[str, str]]:
             out += [(f"own_{list_id}", sub.subentry_id) for list_id in (sub.data.get("lists") or {})]
         elif sub.subentry_type == SUBENTRY_OWN:
             out.append((f"own_{sub.subentry_id}", sub.subentry_id))
-        elif sub.subentry_type == SUBENTRY_COMBINED:
-            from .const import LEGACY_UNIQUE_ID
+    from .combined_group import refs
 
-            out.append((str(sub.data.get(LEGACY_UNIQUE_ID) or sub.subentry_id), sub.subentry_id))
+    out += [(ref.key, ref.subentry_id) for ref in refs(entry)]
     return out
 
 

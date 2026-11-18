@@ -77,7 +77,9 @@ async def ws_share(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         if not data.get("owner"):
             connection.send_error(msg["id"], "invalid", "Erst einen Besitzer festlegen.")
             return
-        hass.config_entries.async_update_subentry(_main_entry(hass), csub, data={**csub.data, "shares": shares})
+        from .combined_group import async_update
+
+        async_update(hass, csub, data={**csub.data, "shares": shares})
     elif getattr(entity, "grouped", False):
         from .own_groups import async_update_list
 
@@ -112,7 +114,9 @@ async def ws_set_owner(hass: HomeAssistant, connection: websocket_api.ActiveConn
         new = {**csub.data, "owner": owner, "shares": shares if owner else {}}
         if not owner:
             new.pop("owner", None)
-        hass.config_entries.async_update_subentry(_main_entry(hass), csub, data=new)
+        from .combined_group import async_update
+
+        async_update(hass, csub, data=new)
     elif getattr(entity, "grouped", False):
         if not owner:
             connection.send_error(msg["id"], "invalid", "Eigene Listen brauchen einen Besitzer.")
@@ -146,8 +150,9 @@ async def ws_set_labels(hass: HomeAssistant, connection: websocket_api.ActiveCon
         return
     sources = [s for s in dict.fromkeys(msg["sources"]) if s in (sub.data.get(CONF_SOURCES) or [])]
     colors = {s: c.lower() for s, c in msg["colors"].items() if c and s in (sub.data.get(CONF_SOURCES) or [])}
-    hass.config_entries.async_update_subentry(_main_entry(hass), sub, data={
-        **sub.data, CONF_LABEL_SHOW: msg["show"], CONF_LABEL_SOURCES: sources, CONF_LABEL_COLORS: colors})
+    from .combined_group import async_update
+
+    async_update(hass, sub, data={**sub.data, CONF_LABEL_SHOW: msg["show"], CONF_LABEL_SOURCES: sources, CONF_LABEL_COLORS: colors})
     connection.send_result(msg["id"], {"show": msg["show"], "sources": sources, "colors": colors})
 
 
@@ -162,7 +167,9 @@ def ws_delete_list(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
         connection.send_error(msg["id"], websocket_api.ERR_UNAUTHORIZED, "Nur der Besitzer kann die Liste löschen.")
         return
     if (csub := _combined_subentry(hass, msg["entity_id"])) is not None:
-        hass.config_entries.async_remove_subentry(_main_entry(hass), csub.subentry_id)  # Quell-Listen bleiben
+        from .combined_group import async_remove
+
+        async_remove(hass, csub)  # Quell-Listen bleiben
     elif getattr(entity, "grouped", False):
         from .own_groups import async_remove_list
 

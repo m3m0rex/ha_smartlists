@@ -251,8 +251,9 @@ async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
             name = msg["combine_name"].strip()[:60]
             data = {CONF_SOURCES: lists_sel, CONF_MODE: MODE_BIDIRECTIONAL, CONF_SOURCE_LABEL: LABEL_SUFFIX,
                     CONF_SORT: SORT_CATEGORY, CONF_FOREIGN: [], CONF_SOURCE_AS_PERSON: True, CONF_DEFAULT_ADD: lists_sel[0]}
-            sub = ConfigSubentry(data=MappingProxyType(data), subentry_type=SUBENTRY_COMBINED, title=name, unique_id=None)
-            hass.config_entries.async_add_subentry(entry, sub)
+            from .combined_group import async_add
+
+            async_add(hass, name, data)
             main_list = f"todo.ha_smartlists_list_merged_{slugify(name) or 'list'}"
             done.append("combined_list")
         if msg["stores"]:

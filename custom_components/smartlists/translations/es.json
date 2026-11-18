@@ -222,6 +222,94 @@
       "error": {
         "notes_failed": "No se pudo crear la lista de notas. ¿Ya existe el nombre o falta «Tareas locales»?"
       }
+    },
+    "combined_lists": {
+      "initiate_flow": {
+        "user": "Lista combinada"
+      },
+      "entry_type": "Combinada a partir de varias listas",
+      "step": {
+        "user": {
+          "title": "Crear lista combinada",
+          "description": "Combina varias listas de tareas en una lista compartida.",
+          "data": {
+            "name": "Nombre de la lista combinada",
+            "sources": "Listas que combinar",
+            "default_add_entity": "Lista predeterminada para elementos nuevos",
+            "mode": "Marcar afecta a",
+            "source_label": "Mostrar la lista de origen en el nombre del elemento",
+            "sort": "Orden",
+            "foreign_entities": "Listas ajenas (solo marcar, sin renombrar/eliminar)",
+            "source_as_person": "Mostrar la lista de origen como persona",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver",
+            "label_show": "La etiqueta de origen muestra",
+            "label_sources": "Solo estas listas de origen muestran etiqueta"
+          },
+          "data_description": {
+            "sources": "Cualquier lista de tareas, p. ej., las listas de la compra de varias personas.",
+            "default_add_entity": "Los elementos añadidos a la lista combinada van aquí. Vacío = añadir desactivado.",
+            "mode": "Bidireccional: marcar escribe en la lista de origen. Local: las marcas se quedan solo en la lista combinada.",
+            "foreign_entities": "Listas de otras personas que solo puedes marcar.",
+            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra».",
+            "owner": "«—» = visible y editable para todos (como antes). Con propietario, solo él, los admins y las personas elegidas aquí ven la lista.",
+            "label_show": "Lista: nombre de la lista de origen. Propietario: propietario de la lista de origen. Propietario + lista: «Propietario Lista». Las listas sin propietario (Local To-do, lista de la compra …) muestran siempre el nombre.",
+            "label_sources": "Vacío = todas las listas de origen."
+          }
+        },
+        "reconfigure": {
+          "title": "Editar listas combinadas",
+          "description": "¿Qué lista quieres editar?",
+          "data": {
+            "list": "Lista"
+          }
+        },
+        "edit": {
+          "title": "Editar la lista «{list}»",
+          "data": {
+            "name": "Nombre de la lista combinada",
+            "sources": "Listas que combinar",
+            "default_add_entity": "Lista predeterminada para elementos nuevos",
+            "mode": "Marcar afecta a",
+            "source_label": "Mostrar la lista de origen en el nombre del elemento",
+            "sort": "Orden",
+            "foreign_entities": "Listas ajenas (solo marcar, sin renombrar/eliminar)",
+            "source_as_person": "Mostrar la lista de origen como persona",
+            "owner": "Propietario",
+            "editors": "Pueden editar",
+            "checkers": "Pueden marcar",
+            "viewers": "Solo pueden ver",
+            "label_show": "La etiqueta de origen muestra",
+            "label_sources": "Solo estas listas de origen muestran etiqueta",
+            "delete": "Eliminar lista"
+          },
+          "data_description": {
+            "sources": "Cualquier lista de tareas, p. ej., las listas de la compra de varias personas.",
+            "default_add_entity": "Los elementos añadidos a la lista combinada van aquí. Vacío = añadir desactivado.",
+            "mode": "Bidireccional: marcar escribe en la lista de origen. Local: las marcas se quedan solo en la lista combinada.",
+            "foreign_entities": "Listas de otras personas que solo puedes marcar.",
+            "source_as_person": "Los elementos de p. ej. todo.peter reciben la etiqueta 👤 Peter – como *Peter en el nombre. Se eliminan palabras de relleno como «lista de la compra».",
+            "owner": "«—» = visible y editable para todos (como antes). Con propietario, solo él, los admins y las personas elegidas aquí ven la lista.",
+            "label_show": "Lista: nombre de la lista de origen. Propietario: propietario de la lista de origen. Propietario + lista: «Propietario Lista». Las listas sin propietario (Local To-do, lista de la compra …) muestran siempre el nombre.",
+            "label_sources": "Vacío = todas las listas de origen.",
+            "delete": "Las listas de origen y sus artículos se mantienen. La lista combinada desaparece de todas las tarjetas, automatizaciones y la app."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Selecciona al menos una lista.",
+        "nested_combined_list": "Las listas combinadas no se pueden anidar.",
+        "default_not_in_sources": "La lista predeterminada debe ser una de las listas seleccionadas.",
+        "foreign_not_in_sources": "Las listas ajenas también deben estar seleccionadas arriba.",
+        "default_is_foreign": "Una lista ajena no puede ser la lista predeterminada.",
+        "labels_not_in_sources": "Elige solo listas seleccionadas como origen arriba."
+      },
+      "abort": {
+        "reconfigure_successful": "Guardado.",
+        "list_added": "Lista creada: aparece en «Listas combinadas»."
+      }
     }
   },
   "options": {

@@ -209,7 +209,10 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
         # eigene Listen: ein Unter-Eintrag „Eigene Listen“ für alle Besitzer, siehe own_groups.py
         from .const import SUBENTRY_NOTES
 
-        return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow, SUBENTRY_NOTES: NotesSubentryFlow}
+        # kombinierte Listen: ein Unter-Eintrag „Kombinierte Listen“ für alle, siehe combined_group.py
+        from .const import SUBENTRY_COMBINED_GROUP
+
+        return {SUBENTRY_COMBINED_GROUP: CombinedListsSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow, SUBENTRY_NOTES: NotesSubentryFlow}
 
     @staticmethod
     @callback
@@ -341,6 +344,73 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
         schema = self.add_suggested_values_to_schema(await self._schema(current), user_input if user_input is not None else
                                                      {k: v for k, v in current.items() if k not in ("owner", "shares")})
         return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)
+
+
+class CombinedListsSubentryFlow(CombinedListSubentryFlow):
+    """Die Gruppe „Kombinierte Listen“: „+ Kombinierte Liste“ trägt eine neue Liste in die Gruppe ein (die Gruppe wird
+    bei Bedarf angelegt); ⚙ an der Gruppe: Liste wählen → bearbeiten oder löschen."""
+
+    _key: str | None = None
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = validate_combined(self.hass, user_input)
+            if not errors:
+                from .combined_group import async_add
+
+                data = _apply_access(user_input)
+                name = data.pop(CONF_NAME)
+                async_add(self.hass, name, data)
+                return self.async_abort(reason="list_added")
+        schema = await self._schema({})
+        if user_input is not None:
+            schema = self.add_suggested_values_to_schema(schema, user_input)
+        return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        from .combined_group import refs
+
+        group = self._get_reconfigure_subentry()
+        mine = [r for r in refs(self._get_entry()) if r.grouped and r.subentry_id == group.subentry_id]
+        if user_input is not None and any(r.key == user_input.get("list") for r in mine):
+            self._key = user_input["list"]
+            return await self.async_step_edit()
+        if len(mine) == 1:
+            self._key = mine[0].key
+            return await self.async_step_edit()
+        options = [selector.SelectOptionDict(value=r.key, label=r.title or r.key) for r in mine]
+        return self.async_show_form(step_id="reconfigure", data_schema=vol.Schema({
+            vol.Required("list"): selector.SelectSelector(selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.LIST)),
+        }))
+
+    async def async_step_edit(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        from .combined_group import async_remove, async_update, find
+
+        ref = find(self._get_entry(), self._key or "")
+        if ref is None:
+            return self.async_abort(reason="reconfigure_successful")
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            if user_input.get("delete"):
+                async_remove(self.hass, ref)  # die Quell-Listen bleiben
+                return self.async_abort(reason="reconfigure_successful")
+            values = {k: v for k, v in user_input.items() if k != "delete"}
+            errors = validate_combined(self.hass, values)
+            if not errors:
+                data = _apply_access(values)
+                name = data.pop(CONF_NAME)
+                # die Verknüpfung mit der App (Liste gehört zum Gerät) bleibt
+                keep = {k: v for k, v in ref.data.items() if k in ("app_device", "app_list")}
+                async_update(self.hass, ref, title=name, data={**keep, **data})
+                return self.async_abort(reason="reconfigure_successful")
+        current = {**DEFAULTS, **ref.data, CONF_NAME: ref.title}
+        if "owner" not in ref.data:
+            current["owner"] = None
+        schema = (await self._schema(current)).extend({vol.Optional("delete", default=False): selector.BooleanSelector()})
+        schema = self.add_suggested_values_to_schema(schema, user_input if user_input is not None else
+                                                     {k: v for k, v in current.items() if k not in ("owner", "shares")})
+        return self.async_show_form(step_id="edit", data_schema=schema, errors=errors, description_placeholders={"list": ref.title})
 
 
 # ----------------------------------------------------------------------

@@ -206,14 +206,15 @@ async def async_setup_entry(
             async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning)],
                                config_subentry_id=subentry.subentry_id)
             continue
-        if subentry.subentry_type != SUBENTRY_COMBINED:
-            continue
-        key = list_key(subentry)
-        store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, storage.key(key))
+    # kombinierte Listen: in der Gruppe „Kombinierte Listen“ oder (alte Form) je ein Unter-Eintrag (combined_group.py)
+    from .combined_group import refs
+
+    for ref in refs(entry):
+        store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, storage.key(ref.key))
         stored = await _load(store, "combined list")
         async_add_entities(
-            [CombinedTodoListEntity(hass, dict(subentry.data), subentry.title, key, store, stored, learning)],
-            config_subentry_id=subentry.subentry_id,
+            [CombinedTodoListEntity(hass, dict(ref.data), ref.title, ref.key, store, stored, learning)],
+            config_subentry_id=ref.subentry_id,
         )
 
 

@@ -222,6 +222,94 @@
       "error": {
         "notes_failed": "Impossibile creare la lista di note. Il nome esiste già o manca «Cose da fare locali»?"
       }
+    },
+    "combined_lists": {
+      "initiate_flow": {
+        "user": "Lista combinata"
+      },
+      "entry_type": "Unita da più liste",
+      "step": {
+        "user": {
+          "title": "Crea lista combinata",
+          "description": "Unisce più liste di cose da fare in un'unica lista condivisa.",
+          "data": {
+            "name": "Nome della lista combinata",
+            "sources": "Liste da combinare",
+            "default_add_entity": "Lista predefinita per i nuovi articoli",
+            "mode": "La spunta ha effetto su",
+            "source_label": "Mostra la lista di origine nel nome dell'articolo",
+            "sort": "Ordinamento",
+            "foreign_entities": "Liste altrui (solo spuntare, non rinominare/eliminare)",
+            "source_as_person": "Mostra la lista di origine come persona",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo vedere",
+            "label_show": "Il badge di origine mostra",
+            "label_sources": "Solo queste liste di origine mostrano un badge"
+          },
+          "data_description": {
+            "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
+            "default_add_entity": "I nuovi articoli aggiunti alla lista combinata finiscono qui. Vuoto = aggiunta disattivata.",
+            "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
+            "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
+            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse.",
+            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista.",
+            "label_show": "Lista: nome della lista di origine. Proprietario: proprietario della lista di origine. Proprietario + lista: «Proprietario Lista». Le liste senza proprietario (Local To-do, lista della spesa …) mostrano sempre il nome.",
+            "label_sources": "Vuoto = tutte le liste di origine."
+          }
+        },
+        "reconfigure": {
+          "title": "Modifica liste combinate",
+          "description": "Quale lista vuoi modificare?",
+          "data": {
+            "list": "Lista"
+          }
+        },
+        "edit": {
+          "title": "Modifica la lista «{list}»",
+          "data": {
+            "name": "Nome della lista combinata",
+            "sources": "Liste da combinare",
+            "default_add_entity": "Lista predefinita per i nuovi articoli",
+            "mode": "La spunta ha effetto su",
+            "source_label": "Mostra la lista di origine nel nome dell'articolo",
+            "sort": "Ordinamento",
+            "foreign_entities": "Liste altrui (solo spuntare, non rinominare/eliminare)",
+            "source_as_person": "Mostra la lista di origine come persona",
+            "owner": "Proprietario",
+            "editors": "Possono modificare",
+            "checkers": "Possono spuntare",
+            "viewers": "Possono solo vedere",
+            "label_show": "Il badge di origine mostra",
+            "label_sources": "Solo queste liste di origine mostrano un badge",
+            "delete": "Elimina lista"
+          },
+          "data_description": {
+            "sources": "Qualsiasi lista di cose da fare, ad es. le liste della spesa di più persone.",
+            "default_add_entity": "I nuovi articoli aggiunti alla lista combinata finiscono qui. Vuoto = aggiunta disattivata.",
+            "mode": "Bidirezionale: la spunta viene scritta nella lista di origine. Locale: le spunte restano solo nella lista combinata.",
+            "foreign_entities": "Liste di altre persone che puoi solo spuntare.",
+            "source_as_person": "Gli articoli di ad es. todo.peter ricevono il badge 👤 Peter – come *Peter nel nome. Parole di riempimento come “lista della spesa” vengono omesse.",
+            "owner": "«—» = visibile e modificabile da tutti (come prima). Con un proprietario, solo lui, gli admin e le persone scelte qui vedono la lista.",
+            "label_show": "Lista: nome della lista di origine. Proprietario: proprietario della lista di origine. Proprietario + lista: «Proprietario Lista». Le liste senza proprietario (Local To-do, lista della spesa …) mostrano sempre il nome.",
+            "label_sources": "Vuoto = tutte le liste di origine.",
+            "delete": "Le liste di origine e i loro articoli restano. La lista combinata scompare da tutte le schede, automazioni e dall'app."
+          }
+        }
+      },
+      "error": {
+        "no_sources": "Seleziona almeno una lista.",
+        "nested_combined_list": "Le liste combinate non possono essere annidate.",
+        "default_not_in_sources": "La lista predefinita deve essere una delle liste selezionate.",
+        "foreign_not_in_sources": "Le liste altrui devono essere selezionate anche sopra.",
+        "default_is_foreign": "Una lista altrui non può essere la lista predefinita.",
+        "labels_not_in_sources": "Scegli solo liste selezionate come origine sopra."
+      },
+      "abort": {
+        "reconfigure_successful": "Salvato.",
+        "list_added": "Lista creata: si trova in «Liste combinate»."
+      }
     }
   },
   "options": {

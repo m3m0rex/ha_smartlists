@@ -289,7 +289,7 @@ icon in the card; admins can change the global settings there as well – both s
 
 ## License
 
-MIT – see [LICENSE](LICENSE). The app SmartLists Go is a separate project with its own license.
+MIT – see [LICENSE](LICENSE). The SmartLists App is a separate project with its own license.
 
 ## Legal notice
 

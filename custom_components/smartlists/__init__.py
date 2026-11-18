@@ -265,7 +265,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Integration gelöscht: erst alles sichern (removal_backup.py), dann alle Dateien unter .storage/smartlists/
-    entfernen – nur backups/ bleibt (Sicherungen von SmartLists und aus SmartLists Go). Beim erneuten Einrichten
+    entfernen – nur backups/ bleibt (Sicherungen von SmartLists und aus SmartLists App). Beim erneuten Einrichten
     bietet der Assistent an, die neueste Sicherung wiederherzustellen."""
     from . import storage
     from .removal_backup import async_backup_on_remove

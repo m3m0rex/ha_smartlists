@@ -195,11 +195,11 @@
       "initiate_flow": {
         "user": "+ Notizen"
       },
-      "entry_type": "Listen der App SmartLists Go",
+      "entry_type": "Listen der SmartLists App",
       "step": {
         "user": {
           "title": "Neue Notizliste",
-          "description": "Eine Notizliste ist eine lokale To-do-Liste von Home Assistant, die SmartLists Go für Notizen nutzt. Nur ihr Besitzer sieht sie.",
+          "description": "Eine Notizliste ist eine lokale To-do-Liste von Home Assistant, die SmartLists App für Notizen nutzt. Nur ihr Besitzer sieht sie.",
           "data": {
             "name": "Name (optional)",
             "owner": "Besitzer"

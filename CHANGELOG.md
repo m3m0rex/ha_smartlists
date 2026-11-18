@@ -3,6 +3,31 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0] – 2026-11-18
+
+First stable release of 4.0 – it contains everything from 4.0.0-beta.1 to 4.0.0-beta.23 (details below).
+Coming from 3.9: update in HACS, restart Home Assistant and reload the page (Ctrl+F5). Lists, settings, learned
+categories and share links are kept; nothing has to be changed. Overview:
+[Wiki → New in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/New-in-4.0).
+
+### Highlights
+
+- **New list design:** count before and size after the name, always highlighted; tinted categories that can be
+  collapsed; store, tag, person, price and note as badges below the name (order configurable).
+- **Offers:** the separate card [`custom:smartdiscounts-card`](https://github.com/m3m0rex/ha_smartdiscounts-card)
+  (HACS, type *Dashboard*) shows supermarket offers matched with your list; 🏷️ hint on items that are on offer and
+  a note when offers on the list have expired. Prices of offers are remembered in Home Assistant (▲ / ▼).
+- **Watch list per user:** products you are waiting for; Home Assistant notifies you when they are on offer, even
+  with no dashboard open.
+- **Prices:** household currency or own symbol, price history per item, automatic fill-in can be switched off.
+- **Sharing:** share links can be edited afterwards (rights, duration, password); shared page in the new design.
+- **Settings:** restructured into areas, "Info" at the end, better on the smartphone; six languages.
+- **App SmartLists Go:** pairing, devices with sensors, backups per user, notes lists, offers and watch list.
+- **Integration page:** one group each for own lists, combined lists, notes and SmartLists Go; sensors per list
+  and for the household; deleted lists leave nothing behind.
+- **Copy as a normal to-do list** (with progress) – the way back if you remove SmartLists and keep your lists.
+- **Privacy:** no barcode lookup service is preselected; every outbound service is listed in SECURITY.md.
+
 ## [4.0.0-beta.23] – 2026-11-18
 
 Twenty-third pre-release of 4.0.

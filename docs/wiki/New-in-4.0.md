@@ -2,8 +2,7 @@
 
 🇩🇪 [Deutsche Fassung](DE-Neu-in-4.0)
 
-For everyone coming from 3.9. 4.0 is first released as a **beta**: in HACS open SmartLists → ⋮ → *Redownload* and
-switch on **"Show beta versions"**. The full list is in the
+For everyone coming from 3.9: update in HACS as usual and restart Home Assistant. The full list is in the
 [changelog](https://github.com/m3m0rex/ha_smartlists/blob/main/CHANGELOG.md).
 
 ## What looks different
@@ -29,6 +28,8 @@ switch on **"Show beta versions"**. The full list is in the
 | 💱 **Currency** | Choose the household currency or your own symbol. |
 | 📈 **Price history** | What an item cost, when and where; automatic fill-in of the last price can be switched off. |
 | ✏️ **Edit share links** | Change rights, duration and password afterwards – the link stays the same. |
+| 📱 **App SmartLists Go** | Lists, offers and watch list on the phone, also offline – see [[App pairing and devices]]. |
+| 🧩 **Integration page** | One group each for own lists, combined lists, notes and SmartLists Go; sensors per list and for the household. |
 | ⚙️ **Settings** | Restructured into areas, with "Info" (run setup again) and a better view on the smartphone. |
 
 ## Do I have to change anything?
@@ -36,4 +37,4 @@ switch on **"Show beta versions"**. The full list is in the
 No. Lists, settings, learned categories and share links are kept. New card options (`show_title`,
 `show_offer_hints`, `shop_finish`) have defaults that match the new design.
 
-If you used a third-party offers card: the SmartDiscounts card can replace it, but you can also keep both. Since 4.0.0-beta.7 it is installed separately through HACS – see [[Offers card]].
+If you used a third-party offers card: the SmartDiscounts card can replace it, but you can also keep both. It is installed separately through HACS – see [[Offers card]].

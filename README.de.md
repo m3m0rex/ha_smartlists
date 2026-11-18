@@ -31,17 +31,19 @@ Zum Ausprobieren ohne Installation: Auf [ha-smartlists.com](https://ha-smartlist
 </tr>
 </table>
 
-## Neu in 4.0 (Beta)
+## Neu in 4.0
 
 - **Neues Listen-Design:** Anzahl und Größe fest markiert, getönte Kategorien zum Einklappen, Badges unter dem Namen.
-- **Angebots-Karte `custom:smartdiscounts-card`:** Supermarkt-Angebote, abgeglichen mit deiner Liste, mit Merkliste und Benachrichtigung. Sie gehört seit 4.0.0-beta.7 nicht mehr zu SmartLists und wird über HACS aus ihrem [eigenen Repository](https://github.com/m3m0rex/ha_smartdiscounts-card) installiert (Typ *Dashboard*); fehlt sie, weist SmartLists unter *Einstellungen → Reparaturen* darauf hin.
+- **Angebots-Karte `custom:smartdiscounts-card`:** Supermarkt-Angebote, abgeglichen mit deiner Liste, mit Merkliste und Benachrichtigung. Sie ist ein eigenes Projekt und wird über HACS aus ihrem [eigenen Repository](https://github.com/m3m0rex/ha_smartdiscounts-card) installiert (Typ *Dashboard*); fehlt sie, weist SmartLists unter *Einstellungen → Reparaturen* darauf hin.
 - **Angebote in der Einkaufsliste:** Hinweis 🏷️ am Artikel, abgelaufene Angebote mit einem Tipp entfernen.
 - **Preise:** Währung wählbar (auch eigenes Symbol), Preis-Verlauf je Artikel, automatisches Eintragen abschaltbar.
 - **Merkliste:** Produkte merken und benachrichtigt werden, sobald sie im Angebot sind – auch ohne geöffnetes Dashboard.
 - **Teilen:** Links nachträglich bearbeiten – Rechte, Laufzeit, Passwort.
 - **Einstellungen:** neu gegliedert, Reihenfolge der Badges einstellbar, bessere Ansicht am Smartphone.
+- **App SmartLists Go:** Listen, Angebote und Merkliste am Smartphone, auch offline; verbundene Apps stehen auf der Seite der Integration in einer eigenen Gruppe.
+- **Seite der Integration:** je eine Gruppe für eigene Listen, kombinierte Listen, Notizen und SmartLists Go; Sensoren je Liste und für den Haushalt.
 
-Alle Änderungen: [CHANGELOG.md](CHANGELOG.md) · Umstieg von 3.9: [Wiki → Neu in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Neu-in-4.0). Betas erscheinen in HACS nur mit **„Beta-Versionen anzeigen“**.
+Alle Änderungen: [CHANGELOG.md](CHANGELOG.md) · Umstieg von 3.9: [Wiki → Neu in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/DE-Neu-in-4.0).
 
 ## Installation
 

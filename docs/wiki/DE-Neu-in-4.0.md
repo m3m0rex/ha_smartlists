@@ -2,8 +2,7 @@
 
 🇬🇧 [English version](New-in-4.0)
 
-Für alle, die von 3.9 kommen. 4.0 erscheint zuerst als **Beta**: in HACS SmartLists öffnen → ⋮ → *Erneut
-herunterladen* und **„Beta-Versionen anzeigen“** einschalten. Die vollständige Liste steht im
+Für alle, die von 3.9 kommen: in HACS wie gewohnt aktualisieren und Home Assistant neu starten. Die vollständige Liste steht im
 [Changelog](https://github.com/m3m0rex/ha_smartlists/blob/main/CHANGELOG.md).
 
 ## Was anders aussieht
@@ -31,6 +30,8 @@ herunterladen* und **„Beta-Versionen anzeigen“** einschalten. Die vollständ
 | 📈 **Preis-Verlauf** | Was ein Artikel wann und wo gekostet hat, mit kleiner Kurve; automatisches Eintragen des letzten Preises abschaltbar. |
 | ✏️ **Teilen-Links bearbeiten** | Rechte, Laufzeit und Passwort nachträglich ändern – der Link bleibt. |
 | 🧾 **Vorlagen** | Schneller anlegen: Vorschläge aus „Häufig gekauft“, aus Erledigtem, eingefügter Text wird aufgeräumt. |
+| 📱 **App SmartLists Go** | Listen, Angebote und Merkliste am Smartphone, auch offline – siehe [App-Kopplung und Geräte](App-pairing-and-devices). |
+| 🧩 **Seite der Integration** | Je eine Gruppe für eigene Listen, kombinierte Listen, Notizen und SmartLists Go; Sensoren je Liste und für den Haushalt. |
 | ⚙️ **Einstellungen** | Neu gegliedert, mit „Info“ (Einrichtung erneut starten) und besserer Ansicht am Smartphone. |
 
 ## Muss ich etwas ändern?
@@ -39,4 +40,4 @@ Nein. Listen, Einstellungen, gelernte Kategorien und Teilen-Links bleiben erhalt
 (`show_title`, `show_offer_hints`, `shop_finish`) haben Standardwerte, die zum neuen Design passen.
 
 Wenn du bisher eine andere Angebots-Karte genutzt hast: Die SmartDiscounts-Karte kann sie ersetzen, du kannst aber auch beide
-behalten. Sie wird seit 4.0.0-beta.7 getrennt über HACS installiert – siehe [Angebots-Karte](DE-Angebots-Karte).
+behalten. Sie wird getrennt über HACS installiert – siehe [Angebots-Karte](DE-Angebots-Karte).

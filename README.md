@@ -46,6 +46,13 @@ dashboards, with voice assistants, in automations and in the app SmartLists Go.
 | 🔗 **Share** | With people in Home Assistant ("Who may do what?") or via **link / QR code** – optional password, notes on/off, through a Cloudflare Tunnel or your own proxy so your HA address stays private. |
 | 📲 **As an app** | Save the sidebar page as an icon on the phone's home screen – opens a list straight in shopping mode. |
 
+**New in 4.0:** new list design (count and size highlighted, tinted collapsible categories, badges below the name) ·
+offers card [`custom:smartdiscounts-card`](https://github.com/m3m0rex/ha_smartdiscounts-card) (separate HACS repository) ·
+offer hints in the list · watch list with notifications · currency and price history · editable share links ·
+restructured settings · app **SmartLists Go** · groups on the integration page (own lists, combined lists, notes,
+SmartLists Go) and sensors per list. From 3.9 nothing has to be changed – see
+[Wiki → New in 4.0](https://github.com/m3m0rex/ha_smartlists/wiki/New-in-4.0).
+
 **New in 3.9:** share links via Cloudflare Quick Tunnel or your own proxy · notes and meal plan as optional
 *Extras* · shopping mode: tap the whole row, 3-second undo · app icon for the home screen · suggestions and
 "bought often" per list · **plain lists** that remember nothing (e.g. hardware store) · categories off per list ·

@@ -57,5 +57,6 @@ Die App nutzt dasselbe Muster. Wo die Bedeutung dieselbe ist wie in der Integrat
 | SL-AUTH-01 | Die Anmeldung ist abgelaufen – neu anmelden (es geht nichts verloren) |
 | SL-AUTH-02 | Die Anmeldung wurde abgelehnt |
 | SL-AUTH-03 | Die Anmeldung wurde abgebrochen |
+| SL-SYNC-01 | Ein Eintrag wurde auf dem Smartphone und in Home Assistant verschieden geändert – die App fragt, welcher Stand gilt |
 | SL-APP-01 | Die App ist auf einen unerwarteten Fehler gestoßen |
 | SL-APP-02 | Ein anderer, unbekannter Fehler |

@@ -52,6 +52,9 @@ def item_fields(item: dict[str, Any], mark: dict[str, Any] | None = None) -> dic
     return fields
 
 
+PROGRESS_EVENT = "smartlists_export_progress"
+
+
 async def _create_list(hass: HomeAssistant, name: str) -> tuple[str, str]:
     """Neue lokale To-do-Liste; gibt es den Namen schon, mit Zusatz. Liefert (entity_id, Name)."""
     before = {s.entity_id for s in hass.states.async_all("todo")}
@@ -82,8 +85,14 @@ async def async_export(hass: HomeAssistant, entity_ids: list[str]) -> dict[str, 
         raise ValueError("Bitte mindestens eine SmartLists-Liste wählen.")
     extras = hass.data.get(DOMAIN, {}).get("extras")
     created = []
-    for entity_id in wanted:
+
+    def progress(index: int, name: str, done: int, total: int) -> None:
+        # für den Fortschritt in den Einstellungen (Ereignis, das die Seite während des Kopierens abonniert)
+        hass.bus.async_fire(PROGRESS_EVENT, {"list": index + 1, "lists": len(wanted), "name": name, "done": done, "total": total})
+
+    for index, entity_id in enumerate(wanted):
         items = (await lists.raw_items(hass, entity_id))[:MAX_ITEMS]
+        progress(index, str(known[entity_id]["name"]), 0, len(items))
         target, name = await _create_list(hass, str(known[entity_id]["name"]))
         copied = 0
         done: list[int] = []  # Stellen der erledigten Einträge in der neuen Liste
@@ -99,6 +108,7 @@ async def async_export(hass: HomeAssistant, entity_ids: list[str]) -> dict[str, 
             if item.get("checked"):
                 done.append(copied)
             copied += 1
+            progress(index, name, copied, len(items))
         if done:  # abhaken über die Kennung (zwei Einträge können gleich heißen): die neue Liste hat sie in der Reihenfolge des Anlegens
             answer = await hass.services.async_call("todo", "get_items", {"entity_id": target}, blocking=True, return_response=True)
             new_items = ((answer or {}).get(target) or {}).get("items") or []

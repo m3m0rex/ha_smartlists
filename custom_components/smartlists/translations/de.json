@@ -310,6 +310,15 @@
         "reconfigure_successful": "Gespeichert.",
         "list_added": "Liste angelegt – sie steht unter „Kombinierte Listen“."
       }
+    },
+    "apps": {
+      "initiate_flow": {
+        "user": "App verbinden"
+      },
+      "entry_type": "SmartLists Go – verbundene Apps",
+      "abort": {
+        "apps_how": "Eine App verbindest du in SmartLists Go: dort bei Home Assistant anmelden. Danach steht das Smartphone hier."
+      }
     }
   },
   "options": {

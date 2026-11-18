@@ -3,6 +3,23 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.23] – 2026-11-18
+
+Twenty-third pre-release of 4.0.
+
+### Changed
+
+- **Connected apps get their own group** on the integration page: "SmartLists Go" with the phones and their sensors,
+  instead of "Devices that don't belong to a sub-entry". Existing app devices move there on start; names and entity
+  IDs stay. "+ Connect app" explains that apps are connected in SmartLists Go itself.
+- **Copy as a normal to-do list** shows progress (list, items copied, percent).
+
+### Fixed
+
+- The watch list no longer says SmartDiscounts is missing when it is installed but no dashboard was opened yet
+  (the dashboard resources are checked too).
+- Settings pages no longer show their heading twice (e.g. "Extras").
+
 ## [4.0.0-beta.22] – 2026-11-18
 
 Twenty-second pre-release of 4.0.

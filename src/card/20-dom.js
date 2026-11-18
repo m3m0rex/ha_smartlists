@@ -129,3 +129,16 @@ function slDueText(due, t, lang) {
   try { wd = new Date(day + "T12:00").toLocaleDateString(lang || "de", { weekday: "short" }) + " "; } catch (e) { /* ohne Wochentag */ }
   return wd + slDue(d);
 }
+
+
+// SmartDiscounts installiert? Geladen oder als Dashboard-Ressource eingetragen (HACS trägt sie dort ein).
+let SL_DC_CHECK = null;
+function slDiscountsInstalled(hass) {
+  if (window.SmartDiscounts || customElements.get("smartdiscounts-card")) return Promise.resolve(true);
+  if (!SL_DC_CHECK && hass && hass.callWS) {
+    SL_DC_CHECK = hass.callWS({ type: "lovelace/resources" })
+      .then((list) => (list || []).some((r) => /smartdiscounts/i.test(String(r.url || ""))))
+      .catch(() => { SL_DC_CHECK = null; return false; });
+  }
+  return SL_DC_CHECK || Promise.resolve(false);
+}

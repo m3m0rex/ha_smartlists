@@ -45,7 +45,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "4.0.0-beta.22";
+const CARD_VERSION = "4.0.0-beta.23";
 // Fehlgeschlagene Server-Aufrufe, die die Oberfläche nicht aufhalten sollen: wenigstens in der Browser-Konsole zeigen
 const slWarn = (what, err) => { try { console.warn(`SmartLists: ${what} failed –`, (err && err.message) || err); } catch (e) { /* */ } };
 const SORT_MODES = ["category", "alpha", "added", "list"];
@@ -856,6 +856,19 @@ function slDueText(due, t, lang) {
   let wd = "";
   try { wd = new Date(day + "T12:00").toLocaleDateString(lang || "de", { weekday: "short" }) + " "; } catch (e) { /* ohne Wochentag */ }
   return wd + slDue(d);
+}
+
+
+// SmartDiscounts installiert? Geladen oder als Dashboard-Ressource eingetragen (HACS trägt sie dort ein).
+let SL_DC_CHECK = null;
+function slDiscountsInstalled(hass) {
+  if (window.SmartDiscounts || customElements.get("smartdiscounts-card")) return Promise.resolve(true);
+  if (!SL_DC_CHECK && hass && hass.callWS) {
+    SL_DC_CHECK = hass.callWS({ type: "lovelace/resources" })
+      .then((list) => (list || []).some((r) => /smartdiscounts/i.test(String(r.url || ""))))
+      .catch(() => { SL_DC_CHECK = null; return false; });
+  }
+  return SL_DC_CHECK || Promise.resolve(false);
 }
 const STYLE = `
   /* Anpassbar per Theme oder card-mod: --smartlists-accent, --smartlists-radius, --smartlists-row-height */
@@ -4309,11 +4322,21 @@ class SmartListsCard extends HTMLElement {
     };
     const run = async () => {
       busy = true; status.textContent = ""; draw();
+      // Fortschritt: SmartLists meldet je kopiertem Eintrag „Liste 1/2 · 12/40“
+      const show = (p) => {
+        const pct = p.total ? Math.round((p.done / p.total) * 100) : 0;
+        fill(status, h("div", {}, `${p.lists > 1 ? `${p.list}/${p.lists} · ` : ""}${p.name}: ${p.done}/${p.total} (${pct} %)`),
+          h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct), style: "margin:6px 0 0" }, h("div", { style: `width:${pct}%` })));
+      };
+      let unsub = null;
+      try { unsub = await this._hass.connection.subscribeEvents((ev) => show(ev.data || {}), "smartlists_export_progress"); } catch (e) { slWarn("export_progress", e); }
       try {
         const r = await this._call("export_todo", { entity_ids: [...picked] }, false);
+        fill(status);
         status.textContent = "✓ " + t.xt_done + ": " + r.lists.map((x) => `${x.name} (${x.items})`).join(", ");
         picked.clear();
-      } catch (e) { slWarn("export_todo", e); status.textContent = (e && e.message) || t.error; }
+      } catch (e) { slWarn("export_todo", e); fill(status); status.textContent = (e && e.message) || t.error; }
+      if (unsub) try { unsub(); } catch (e) { /* schon weg */ }
       busy = false; draw();
     };
     this._call("export_todo", {}, false).then((r) => { lists = r.lists || []; draw(); }).catch((e) => { slWarn("export_todo", e); fill(box, h("div", { class: "shelp" }, t.error)); });
@@ -4385,12 +4408,16 @@ class SmartListsCard extends HTMLElement {
   }
   // Die Angebots-Karte ist ein eigenes Projekt (HACS). Fehlt sie, gibt es keine Angebots-Hinweise in der Liste und
   // keine Karte fürs Dashboard – dann hier sagen, wo man sie bekommt. Die Merkliste selbst funktioniert auch ohne.
+  // Die Karte ist nur geladen, wenn vorher ein Dashboard offen war – sonst in den Ressourcen von Home Assistant
+  // nachsehen. Ist sie dort eingetragen, ist sie installiert: kein Hinweis.
   _discountsNote() {
     if (window.SmartDiscounts || customElements.get("smartdiscounts-card")) return null;
     const t = this._t, url = "https://github.com/m3m0rex/ha_smartdiscounts-card";
-    return h("div", { class: "shelp", role: "note", style: "margin:6px 0 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--warning-color,#f0a020)" },
+    const note = h("div", { class: "shelp", role: "note", hidden: true, style: "margin:6px 0 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--warning-color,#f0a020)" },
       h("b", {}, t.dc_missing), h("br"), t.dc_missing_sub, " ",
       h("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, "SmartDiscounts"));
+    slDiscountsInstalled(this._hass).then((yes) => { note.hidden = yes; }).catch(() => { note.hidden = false; });
+    return note;
   }
   _appearanceSection() {
     const t = this._t;
@@ -6004,8 +6031,22 @@ class SmartListsCard extends HTMLElement {
     const main = h("div", { class: "smain" },
       h("button", { class: "sback", type: "button", onclick: () => { this._setChosen = false; this._renderSettings(); } }, "← " + t.settings),
       h("header", {}, h("h2", {}, cur.label), cur.sub ? h("p", {}, cur.sub) : null),
-      h("div", { class: "acols" }, cur.build()));
+      h("div", { class: "acols" }, this._dropTwin(cur.build(), cur)));
     fill(el, h("div", { class: "sl-settings" }, h("div", { class: `sgrid ${this._setChosen ? "detail" : ""}` }, nav, main)));
+  }
+  // Ein Bereich, dessen Abschnitt genauso heißt wie die Seite („Extras“ über „Extras“): Überschrift und Hilfetext
+  // des Abschnitts weglassen – sie stehen schon oben.
+  _dropTwin(nodes, cur) {
+    const bare = (x) => String(x || "").replace(/^[^\p{L}\p{N}]+/u, "").trim();
+    [].concat(nodes).forEach((n) => {
+      if (!n || !n.classList || !n.classList.contains("sec")) return;
+      const sh = n.querySelector(":scope > .sh"), h3 = sh && sh.querySelector("h3");
+      if (!h3 || bare(h3.textContent) !== bare(cur.label)) return;
+      sh.remove();
+      const p = n.querySelector(":scope > p.shelp");
+      if (p && bare(p.textContent) === bare(cur.sub)) p.remove();
+    });
+    return nodes;
   }
 }
 

@@ -212,7 +212,10 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
         # kombinierte Listen: ein Unter-Eintrag „Kombinierte Listen“ für alle, siehe combined_group.py
         from .const import SUBENTRY_COMBINED_GROUP
 
-        return {SUBENTRY_COMBINED_GROUP: CombinedListsSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow, SUBENTRY_NOTES: NotesSubentryFlow}
+        from .const import SUBENTRY_APPS
+
+        return {SUBENTRY_COMBINED_GROUP: CombinedListsSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow, SUBENTRY_NOTES: NotesSubentryFlow,
+                SUBENTRY_APPS: AppsSubentryFlow}
 
     @staticmethod
     @callback
@@ -469,6 +472,14 @@ class NotesSubentryFlow(ConfigSubentryFlow):
             vol.Required("owner", default=first.get("owner_id") or (users[0]["value"] if users else "")): selector.SelectSelector(
                 selector.SelectSelectorConfig(options=users, mode=selector.SelectSelectorMode.DROPDOWN)),
         }))
+
+
+class AppsSubentryFlow(ConfigSubentryFlow):
+    """Die Gruppe „SmartLists Go“ gibt es einmal und sie entsteht von selbst (apps_group.py). Eine App verbindet man
+    in der App selbst – „+ App verbinden“ sagt nur, wie."""
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        return self.async_abort(reason="apps_how")
 
 
 # ----------------------------------------------------------------------

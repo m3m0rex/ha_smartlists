@@ -57,11 +57,16 @@ def app_device_info(hass: HomeAssistant, device_id: str) -> DeviceInfo | None:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     devices: Devices = hass.data[DOMAIN]["devices"]
     known: set[str] = set()
-    # "SmartLists Go" as the parent of all connected apps: the apps are listed below it (connected via)
+    # eigene Gruppe „SmartLists Go“ auf der Seite der Integration (apps_group.py); darin das Gerät „SmartLists Go“
+    # als Eltern-Gerät aller verbundenen Apps (sie stehen darunter: „verbunden über“)
+    from . import apps_group
+
+    apps_sub = apps_group.async_ensure(hass, entry)
     dr.async_get(hass).async_get_or_create(
         config_entry_id=entry.entry_id, identifiers={APPS_DEVICE}, name="SmartLists Go", manufacturer="SmartLists",
-        model="App", entry_type=dr.DeviceEntryType.SERVICE,
+        model="App", entry_type=dr.DeviceEntryType.SERVICE, **({"config_subentry_id": apps_sub} if apps_sub else {}),
     )
+    apps_group.async_move(hass, entry, apps_sub)
 
     @callback
     def _add(device_id: str) -> None:
@@ -69,7 +74,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             return
         known.add(device_id)
         async_add_entities([cls(devices, device_id) for cls in (
-            LastSeenSensor, AppVersionSensor, AppUserSensor, AppLastSyncSensor, AppPendingSensor, AppLatestVersionSensor, AppBackupSensor)])
+            LastSeenSensor, AppVersionSensor, AppUserSensor, AppLastSyncSensor, AppPendingSensor, AppLatestVersionSensor, AppBackupSensor)],
+            **({"config_subentry_id": apps_sub} if apps_sub else {}))
 
     # Ausgaben dieses Monats (gebucht beim Abhaken von Artikeln mit Preis) – für Dashboards
     from .features import get_features

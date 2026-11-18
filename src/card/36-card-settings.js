@@ -800,11 +800,21 @@
     };
     const run = async () => {
       busy = true; status.textContent = ""; draw();
+      // Fortschritt: SmartLists meldet je kopiertem Eintrag „Liste 1/2 · 12/40“
+      const show = (p) => {
+        const pct = p.total ? Math.round((p.done / p.total) * 100) : 0;
+        fill(status, h("div", {}, `${p.lists > 1 ? `${p.list}/${p.lists} · ` : ""}${p.name}: ${p.done}/${p.total} (${pct} %)`),
+          h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct), style: "margin:6px 0 0" }, h("div", { style: `width:${pct}%` })));
+      };
+      let unsub = null;
+      try { unsub = await this._hass.connection.subscribeEvents((ev) => show(ev.data || {}), "smartlists_export_progress"); } catch (e) { slWarn("export_progress", e); }
       try {
         const r = await this._call("export_todo", { entity_ids: [...picked] }, false);
+        fill(status);
         status.textContent = "✓ " + t.xt_done + ": " + r.lists.map((x) => `${x.name} (${x.items})`).join(", ");
         picked.clear();
-      } catch (e) { slWarn("export_todo", e); status.textContent = (e && e.message) || t.error; }
+      } catch (e) { slWarn("export_todo", e); fill(status); status.textContent = (e && e.message) || t.error; }
+      if (unsub) try { unsub(); } catch (e) { /* schon weg */ }
       busy = false; draw();
     };
     this._call("export_todo", {}, false).then((r) => { lists = r.lists || []; draw(); }).catch((e) => { slWarn("export_todo", e); fill(box, h("div", { class: "shelp" }, t.error)); });
@@ -876,12 +886,16 @@
   }
   // Die Angebots-Karte ist ein eigenes Projekt (HACS). Fehlt sie, gibt es keine Angebots-Hinweise in der Liste und
   // keine Karte fürs Dashboard – dann hier sagen, wo man sie bekommt. Die Merkliste selbst funktioniert auch ohne.
+  // Die Karte ist nur geladen, wenn vorher ein Dashboard offen war – sonst in den Ressourcen von Home Assistant
+  // nachsehen. Ist sie dort eingetragen, ist sie installiert: kein Hinweis.
   _discountsNote() {
     if (window.SmartDiscounts || customElements.get("smartdiscounts-card")) return null;
     const t = this._t, url = "https://github.com/m3m0rex/ha_smartdiscounts-card";
-    return h("div", { class: "shelp", role: "note", style: "margin:6px 0 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--warning-color,#f0a020)" },
+    const note = h("div", { class: "shelp", role: "note", hidden: true, style: "margin:6px 0 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--warning-color,#f0a020)" },
       h("b", {}, t.dc_missing), h("br"), t.dc_missing_sub, " ",
       h("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, "SmartDiscounts"));
+    slDiscountsInstalled(this._hass).then((yes) => { note.hidden = yes; }).catch(() => { note.hidden = false; });
+    return note;
   }
   _appearanceSection() {
     const t = this._t;

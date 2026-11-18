@@ -58,3 +58,4 @@ SIGNAL_DATA_CHANGED = f"{DOMAIN}_data_changed"
 
 # statt einer Listen-Kennung: alle Merklisten des Benutzers zusammen
 WATCH_ALL = "all"
+SUBENTRY_APPS = "apps"  # die Gruppe „SmartLists Go“ mit den verbundenen Apps auf der Seite der Integration (apps_group.py)

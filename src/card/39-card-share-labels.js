@@ -481,8 +481,22 @@
     const main = h("div", { class: "smain" },
       h("button", { class: "sback", type: "button", onclick: () => { this._setChosen = false; this._renderSettings(); } }, "← " + t.settings),
       h("header", {}, h("h2", {}, cur.label), cur.sub ? h("p", {}, cur.sub) : null),
-      h("div", { class: "acols" }, cur.build()));
+      h("div", { class: "acols" }, this._dropTwin(cur.build(), cur)));
     fill(el, h("div", { class: "sl-settings" }, h("div", { class: `sgrid ${this._setChosen ? "detail" : ""}` }, nav, main)));
+  }
+  // Ein Bereich, dessen Abschnitt genauso heißt wie die Seite („Extras“ über „Extras“): Überschrift und Hilfetext
+  // des Abschnitts weglassen – sie stehen schon oben.
+  _dropTwin(nodes, cur) {
+    const bare = (x) => String(x || "").replace(/^[^\p{L}\p{N}]+/u, "").trim();
+    [].concat(nodes).forEach((n) => {
+      if (!n || !n.classList || !n.classList.contains("sec")) return;
+      const sh = n.querySelector(":scope > .sh"), h3 = sh && sh.querySelector("h3");
+      if (!h3 || bare(h3.textContent) !== bare(cur.label)) return;
+      sh.remove();
+      const p = n.querySelector(":scope > p.shelp");
+      if (p && bare(p.textContent) === bare(cur.sub)) p.remove();
+    });
+    return nodes;
   }
 }
 

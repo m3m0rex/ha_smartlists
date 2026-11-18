@@ -310,6 +310,15 @@
         "reconfigure_successful": "Saved.",
         "list_added": "List created – it is listed under “Combined lists”."
       }
+    },
+    "apps": {
+      "initiate_flow": {
+        "user": "Connect app"
+      },
+      "entry_type": "SmartLists Go – connected apps",
+      "abort": {
+        "apps_how": "You connect an app in SmartLists Go itself: sign in to Home Assistant there. The phone then shows up here."
+      }
     }
   },
   "options": {

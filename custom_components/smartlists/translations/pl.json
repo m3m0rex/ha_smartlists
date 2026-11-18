@@ -310,6 +310,15 @@
         "reconfigure_successful": "Zapisano.",
         "list_added": "Lista utworzona – znajduje się w „Listy połączone”."
       }
+    },
+    "apps": {
+      "initiate_flow": {
+        "user": "Połącz aplikację"
+      },
+      "entry_type": "SmartLists Go – połączone aplikacje",
+      "abort": {
+        "apps_how": "Aplikację łączysz w SmartLists Go: zaloguj się tam do Home Assistant. Potem smartfon pojawi się tutaj."
+      }
     }
   },
   "options": {

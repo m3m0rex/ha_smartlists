@@ -310,6 +310,15 @@
         "reconfigure_successful": "Salvato.",
         "list_added": "Lista creata: si trova in «Liste combinate»."
       }
+    },
+    "apps": {
+      "initiate_flow": {
+        "user": "Collega app"
+      },
+      "entry_type": "SmartLists Go – app collegate",
+      "abort": {
+        "apps_how": "L’app si collega da SmartLists Go: accedi lì a Home Assistant. Poi lo smartphone compare qui."
+      }
     }
   },
   "options": {

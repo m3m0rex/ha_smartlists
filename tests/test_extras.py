@@ -232,7 +232,7 @@ def test_offers_from_own_sources():
     src = clean_sources([{"entity": "sensor.mein_markt", "attribute": "results", "store": "Kaufland", "color": "#fff",
                           "map": {"name": "product.name", "price": "prices.current", "until": "validity.to", "image": "x", "bogus": "y"}},
                          {"entity": "light.x", "store": "nein"}, "kaputt", {"entity": "sensor.ohne_angaben"}])
-    assert src == [{"entity": "sensor.mein_markt", "attribute": "results", "store": "Kaufland", "map": {"name": "product.name", "price": "prices.current", "until": "validity.to"}}]
+    assert src == [{"entity": "sensor.mein_markt", "attribute": "results", "store": "Kaufland", "map": {"name": "product.name", "price": "prices.current", "until": "validity.to", "image": "x"}}]
     assert collect(hass) == [{"name": "Kaffee Gold", "price": 4.99, "until": "2999-01-01", "store": "REWE"}]
     assert collect(hass, src) == [{"name": "Kaffee Gold", "price": 4.99, "until": "2999-01-01", "store": "REWE"},
                                   {"name": "Filterkaffee", "price": 3.49, "until": "2999-02-02", "store": "Kaufland"}]

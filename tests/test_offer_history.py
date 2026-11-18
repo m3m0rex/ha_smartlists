@@ -70,3 +70,15 @@ def test_bonus_offer_is_kept_once_with_its_bonus():
     hass = types.SimpleNamespace(states=types.SimpleNamespace(async_all=lambda domain: states))
     found = offers.collect(hass)
     assert len(found) == 1 and found[0]["bonus"] == {"value": 0.5, "kind": "eur"} and found[0]["unit"] == "11,75 €/kg"
+
+
+def test_offer_image_only_web_addresses():
+    import types
+
+    from smartlists import offers
+
+    rows = [{"product": "Butter", "price": 1.19, "picture_link": "https://img.example/butter.jpg"},
+            {"product": "Milch", "price": 0.99, "image_url": "javascript:alert(1)"}]
+    hass = types.SimpleNamespace(states=types.SimpleNamespace(async_all=lambda domain: [types.SimpleNamespace(entity_id="sensor.lidl", attributes={"discounts": rows})]))
+    found = {o["name"]: o for o in offers.collect(hass)}
+    assert found["Butter"]["image"] == "https://img.example/butter.jpg" and "image" not in found["Milch"]

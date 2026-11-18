@@ -33,6 +33,8 @@ FIELDS: dict[str, tuple[str, ...]] = {
     # Bonus-Aktion (z. B. REWE Bonus): Guthaben in der App des Markts statt eines niedrigeren Preises
     "bonus": ("loyalty_bonus_value", "bonus_value"),
     "bonus_type": ("loyalty_bonus_type", "bonus_type"),
+    # Produktbild (nur http/https) – die App lädt es nur, wenn man das dort einschaltet
+    "image": ("picture_link", "image_url", "image", "picture", "img", "thumbnail"),
 }
 # Grundpreis wie in SmartDiscounts: „… (1 l = 1,33 €) …“ irgendwo im Text der Quelle
 _UNIT_RE = re.compile(r"1\s*(kg|l|ltr|liter|stk|st|stück|m)\s*=\s*(?:ab\s*)?(?:€\s*)?(\d+(?:[.,]\d+)?)", re.I)
@@ -170,6 +172,9 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
                 offer["from"] = start  # gilt erst ab diesem Tag (z. B. das Prospekt der nächsten Woche)
             if isinstance(cat, str) and cat.strip():
                 offer["category"] = cat.strip()[:60]
+            image = pick(row, "image")
+            if isinstance(image, str) and re.match(r"https?://", image.strip()) and len(image) < 600:
+                offer["image"] = image.strip()
             bonus = num(pick(row, "bonus"))
             if bonus is not None and bonus > 0:
                 kind = str(pick(row, "bonus_type") or "").lower()
@@ -183,6 +188,10 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
                     first = next((o for o in out if (norm(o["store"]), norm(o["name"]), o["price"], o["until"]) == key), None)
                     if first is not None:
                         first.setdefault("bonus", offer["bonus"])
+                if "image" in offer:
+                    first = next((o for o in out if (norm(o["store"]), norm(o["name"]), o["price"], o["until"]) == key), None)
+                    if first is not None:
+                        first.setdefault("image", offer["image"])
                 continue
             seen.add(key)
             out.append(offer)

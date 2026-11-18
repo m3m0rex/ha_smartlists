@@ -118,7 +118,7 @@
         this._version && this._version !== CARD_VERSION ? [h("span", {}, t.card || "Card"), h("b", {}, CARD_VERSION)] : null,
         h("span", {}, "Home Assistant"), h("b", {}, (this._hass.config && this._hass.config.version) || "–"))]),
       this._sec("", t.info_help, null, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
-        link("📖 " + t.info_docs, REPO + "/wiki"), link("🐞 " + t.info_issue, this._issueUrl()), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
+        link("📖 " + t.info_docs, REPO + "/wiki"), h("button", { class: "btn2", type: "button", onclick: () => this._reportBug() }, "🐞 " + t.info_issue), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
       ...(!this._isAdmin ? [] : [
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
@@ -778,17 +778,16 @@
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
     ];
   }
-  // „Fehler melden“: neues Issue mit Versionen und Umgebung vorausgefüllt (nichts Persönliches – keine Listen, Artikel oder Adressen)
-  _issueUrl() {
+  // „Fehler melden“: Angaben zur Umgebung für das Issue (nichts Persönliches – keine Listen, Artikel oder Adressen).
+  // Wo der Fehler aufgetreten ist, fragt der Dialog (slReportDialog) – es wird nicht aus der Adresse geraten.
+  _reportBug(where, code) {
     const ua = navigator.userAgent || "";
     const app = /Home ?Assistant/i.test(ua) ? "Home Assistant app" : /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
     const os = /Android/.test(ua) ? "Android" : /iPhone|iPad|iOS/.test(ua) ? "iOS" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "";
-    const where = location.pathname.startsWith("/smartlists") ? "Sidebar page" : "Dashboard card";
-    const body = ["### What happened?", "", "", "### What did you expect?", "", "", "### Steps to reproduce", "1. ", "", "### Environment",
-      `- SmartLists: ${this._version || CARD_VERSION}${this._version && this._version !== CARD_VERSION ? ` (card: ${CARD_VERSION})` : ""}`,
-      `- Home Assistant: ${(this._hass.config && this._hass.config.version) || "?"}`, `- Where: ${where}`, `- Browser / app: ${app}${os ? `, ${os}` : ""}`,
-      `- Language: ${this._lang || (this._hass && this._hass.language) || "?"}`].join("\n");
-    return `${"https://github.com/m3m0rex/ha_smartlists"}/issues/new?body=${encodeURIComponent(body)}`;
+    const lines = [`- SmartLists: ${this._version || CARD_VERSION}${this._version && this._version !== CARD_VERSION ? ` (card: ${CARD_VERSION})` : ""}`,
+      `- Home Assistant: ${(this._hass.config && this._hass.config.version) || "?"}`, `- Browser / app: ${app}${os ? `, ${os}` : ""}`,
+      `- Language: ${this._lang || (this._hass && this._hass.language) || "?"}`];
+    slReportDialog(this.shadowRoot || this, this._t, { lines, repo: "https://github.com/m3m0rex/ha_smartlists", where, code });
   }
   // Global → Preise & Währung → Merkliste: Produkte, bei denen man auf ein Angebot wartet, und die Benachrichtigung
   _watchSection() {

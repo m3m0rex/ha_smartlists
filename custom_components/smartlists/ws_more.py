@@ -153,8 +153,8 @@ def ws_share_links_all(hass: HomeAssistant, connection: websocket_api.ActiveConn
                                   vol.Optional("sort"): vol.Any(str, None), vol.Optional("show_prices"): bool,
                                   vol.Optional("categories"): bool, vol.Optional("suggest_scope"): vol.In(["list", "all"]),
                                   vol.Optional("plain"): bool})
-@callback
-def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+@websocket_api.async_response
+async def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Darstellung einer Liste für alle Geräte: Name (Anzeigename in HA), Standard-Sortierung, Preise an/aus.
     Admins; bei eigenen Listen auch der Besitzer."""
     entity_id = msg["entity_id"]
@@ -180,7 +180,14 @@ def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveCo
             from .own_groups import async_rename_list
 
             registry.async_update_entity(entity_id, name=None)
-            hass.async_create_task(async_rename_list(hass, ours, msg["name"]))
+            try:
+                renamed = await async_rename_list(hass, ours, msg["name"])
+            except ValueError as err:
+                connection.send_error(msg["id"], "invalid", str(err))
+                return
+            if not renamed:
+                connection.send_error(msg["id"], "invalid", "Diese Liste lässt sich hier nicht umbenennen.")
+                return
         else:
             registry.async_update_entity(entity_id, name=msg["name"].strip())
     settings = _extras(hass).set_list_settings(entity_id, msg.get("sort") if "sort" in msg else None, msg.get("show_prices"),

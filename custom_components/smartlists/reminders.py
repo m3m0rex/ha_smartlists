@@ -56,6 +56,9 @@ async def async_check(hass: HomeAssistant) -> int:
         await calendar_sync.async_retry(hass, extras)  # Termine, die sich beim Abhaken nicht entfernen ließen
     except Exception:  # noqa: BLE001 – darf die Erinnerungen nicht aufhalten
         _LOGGER.warning("Kalender-Termine nicht nachgeführt", exc_info=True)
+        from . import problems
+
+        problems.report(hass, "SL-TIMER-01", "calendar retry")
     # wiederkehrende Einträge: am nächsten fälligen Tag wieder öffnen
     for entity_id, uid, mark in extras.to_reopen(dt_util.now()):
         try:

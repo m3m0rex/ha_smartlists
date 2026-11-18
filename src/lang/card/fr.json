@@ -1028,5 +1028,13 @@
   "xt_none": "Aucune liste SmartLists trouvée.",
   "xt_working": "Copie en cours …",
   "linked_via": "via {name}",
-  "linked_help": "Cette liste appartient à un autre service. Les éléments y sont enregistrés ; SmartLists les affiche et y transmet les modifications."
+  "linked_help": "Cette liste appartient à un autre service. Les éléments y sont enregistrés ; SmartLists les affiche et y transmet les modifications.",
+  "crash_title": "Un problème est survenu",
+  "crash_sub": "La liste n'a pas pu être affichée.",
+  "crash_reload": "Recharger",
+  "pb_title": "Problèmes",
+  "pb_sub": "Erreurs graves enregistrées par SmartLists depuis le dernier démarrage – chacune avec un code pour les signaler précisément.",
+  "pb_none": "Aucun problème enregistré.",
+  "pb_done": "Réglé",
+  "bug_detail": "Joindre les détails techniques de cette erreur (peuvent contenir des noms de listes ou d'entités)"
 }

@@ -123,8 +123,11 @@ async def async_retry(hass: HomeAssistant, extras: Any) -> int:
                 continue
             extras.set_item_mark(entity_id, uid, {"cal": {k: v for k, v in cal.items() if k not in ("pending", "tries")}})
             german = str(hass.config.language).startswith("de")
+            from . import problems
+
+            problems.report(hass, "SL-CAL-01", str(cal.get("entity") or ""))
             await hass.services.async_call("persistent_notification", "create", {
-                "title": "SmartLists",
+                "title": "SmartLists (SL-CAL-01)",
                 "message": (f"Der Termin „{cal.get('summary')}“ ließ sich im Kalender {cal.get('entity')} nicht entfernen. Bitte dort von Hand löschen."
                             if german else
                             f"The event “{cal.get('summary')}” could not be removed from the calendar {cal.get('entity')}. Please delete it there by hand."),

@@ -121,6 +121,7 @@
       this._sec("", t.info_help, null, [h("div", { class: "acts", style: "justify-content:flex-start;flex-wrap:wrap" },
         link("📖 " + t.info_docs, REPO + "/wiki"), h("button", { class: "btn2", type: "button", onclick: () => this._reportBug() }, "🐞 " + t.info_issue), link("📝 " + t.info_changelog, REPO + "/blob/main/CHANGELOG.md"))]),
       ...(!this._isAdmin ? [] : [
+        this._problemsSection(),
         (() => { const st = h("span", { class: "ok2" }); return this._sec("", t.db_title, t.db_help, [h("div", { class: "acts", style: "justify-content:flex-start" },
           h("button", { class: "btn2", type: "button", onclick: () => this._createDashboard(st) }, t.db_create), st)]); })(),
         this._sec("", t.bk_title, t.bk_sub, [h("div", { class: "acts", style: "justify-content:flex-start" },
@@ -805,16 +806,30 @@
     this._call("export_todo", {}, false).then((r) => { lists = r.lists || []; draw(); }).catch((e) => { slWarn("export_todo", e); fill(box, h("div", { class: "shelp" }, t.error)); });
     return this._sec("", t.xt_title, t.xt_sub, [h("div", { class: "shelp" }, t.xt_help), box]);
   }
+  // Info → Probleme: harte Fehler mit Kennung, die SmartLists seit dem letzten Start festgehalten hat (problems.py).
+  // Jeder lässt sich melden (Kennung ist vorausgefüllt) oder als erledigt wegnehmen. Ohne Fälle: eine ruhige Zeile.
+  _problemsSection() {
+    const t = this._t, box = h("div", {}, h("div", { class: "shelp" }, t.loading));
+    const draw = (list) => fill(box, !list.length ? h("div", { class: "shelp" }, "✓ " + t.pb_none) : list.map((p) =>
+      h("div", { style: "padding:8px 0;border-bottom:1px solid var(--divider-color,#ddd)" },
+        h("div", {}, h("b", {}, p.code), " · ", p.text, p.count > 1 ? ` (${p.count}×)` : ""),
+        h("div", { class: "shelp" }, new Date(p.at * 1000).toLocaleString(this._hass.language || "de"), p.detail ? ` · ${p.detail}` : ""),
+        h("div", { class: "acts", style: "justify-content:flex-start;margin-top:4px" },
+          h("button", { class: "btn2", type: "button", onclick: () => this._reportBug(p.where, p.code, p.detail) }, "🐞 " + t.info_issue),
+          h("button", { class: "btn2", type: "button", onclick: () => this._call("problems", { clear: p.code }, false).then((r) => draw(r.problems)).catch(() => {}) }, t.pb_done)))));
+    this._call("problems", {}, false).then((r) => draw(r.problems || [])).catch((e) => { slWarn("problems", e); fill(box, h("div", { class: "shelp" }, t.error)); });
+    return this._sec("", t.pb_title, t.pb_sub, [box]);
+  }
   // „Fehler melden“: Angaben zur Umgebung für das Issue (nichts Persönliches – keine Listen, Artikel oder Adressen).
   // Wo der Fehler aufgetreten ist, fragt der Dialog (slReportDialog) – es wird nicht aus der Adresse geraten.
-  _reportBug(where, code) {
+  _reportBug(where, code, detail) {
     const ua = navigator.userAgent || "";
     const app = /Home ?Assistant/i.test(ua) ? "Home Assistant app" : /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
     const os = /Android/.test(ua) ? "Android" : /iPhone|iPad|iOS/.test(ua) ? "iOS" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "macOS" : /Linux/.test(ua) ? "Linux" : "";
     const lines = [`- SmartLists: ${this._version || CARD_VERSION}${this._version && this._version !== CARD_VERSION ? ` (card: ${CARD_VERSION})` : ""}`,
       `- Home Assistant: ${(this._hass.config && this._hass.config.version) || "?"}`, `- Browser / app: ${app}${os ? `, ${os}` : ""}`,
       `- Language: ${this._lang || (this._hass && this._hass.language) || "?"}`];
-    slReportDialog(this.shadowRoot || this, this._t, { lines, repo: "https://github.com/m3m0rex/ha_smartlists", where, code });
+    slReportDialog(this.shadowRoot || this, this._t, { lines, repo: "https://github.com/m3m0rex/ha_smartlists", where, code, detail });
   }
   // Global → Preise & Währung → Merkliste: Produkte, bei denen man auf ein Angebot wartet, und die Benachrichtigung
   _watchSection() {

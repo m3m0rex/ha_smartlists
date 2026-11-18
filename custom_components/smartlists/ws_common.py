@@ -51,7 +51,11 @@ def _list_command(schema: dict[Any, Any]):
                 return
             except Exception as err:  # noqa: BLE001 – Karte soll eine Meldung statt Hängen sehen
                 _LOGGER.exception("SmartLists: %s fehlgeschlagen", msg.get("type"))
-                connection.send_error(msg["id"], "smartlists_error", str(err) or type(err).__name__)
+                from . import problems
+
+                # unerwartet = ein Fehler in SmartLists: mit Kennung festhalten (Befehl und Art des Fehlers, keine Inhalte)
+                problems.report(hass, "SL-WS-01", f"{str(msg.get('type') or '').split('/')[-1]}: {type(err).__name__}")
+                connection.send_error(msg["id"], "smartlists_error", f"{str(err) or type(err).__name__} (SL-WS-01)")
                 return
             connection.send_result(msg["id"], result)
 

@@ -380,7 +380,24 @@ class SmartListsCard extends HTMLElement {
     if (this._shopping && this._ui && this._ui.shop_keep_awake) this._wake(true);
   }
 
+  // Stürzt das Zeichnen ab (unerwartete Daten, Programmfehler), bleibt die Karte nicht leer: Hinweis mit Kennung,
+  // „Neu laden“ und „Fehler melden“. Der Fehler steht in der Konsole des Browsers.
   _render() {
+    try { this._renderCard(); this._crashed = false; }
+    catch (e) {
+      slWarn("render", e);
+      if (!this.shadowRoot) return;
+      const t = this._t || {}, detail = `${(e && e.name) || "Error"}: ${String((e && e.message) || e).slice(0, 200)}`;
+      try { this._ensureSkeleton(); fill(this._headEl, ); } catch (e2) { /* */ }
+      const box = h("div", { class: "msg err", role: "alert" }, h("b", {}, (t.crash_title || "Something went wrong") + " (SL-CARD-01)"), h("br"),
+        h("span", {}, t.crash_sub || "The list could not be shown."), h("br"),
+        h("button", { class: "btn2", type: "button", style: "margin:10px 6px 0 0", onclick: () => { this._crashed = false; this._load(); } }, t.crash_reload || "Reload"),
+        h("button", { class: "btn2", type: "button", style: "margin-top:10px", onclick: () => this._reportBug("card", "SL-CARD-01", detail) }, "🐞 " + (t.info_issue || "Report a problem")));
+      if (this._listEl) fill(this._listEl, box); else this.shadowRoot.append(box);
+      this._crashed = true;
+    }
+  }
+  _renderCard() {
     if (!this.shadowRoot) return;
     this._ensureSkeleton();
     const t = this._t;

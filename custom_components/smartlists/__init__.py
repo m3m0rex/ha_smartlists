@@ -166,6 +166,9 @@ async def _async_move_files(hass: HomeAssistant) -> None:
                      f", {len(report['kept_newer'])} ältere nach backups/integration/leftover gelegt" if report["kept_newer"] else "")
     if report["failed"]:
         _LOGGER.error("SmartLists: Dateien nicht umgezogen (bleiben am alten Ort): %s", "; ".join(report["failed"]))
+        from . import problems
+
+        problems.report(hass, "SL-STORE-01", "; ".join(report["failed"]))
         german = str(hass.config.language).startswith("de")
         from homeassistant.components import persistent_notification
 
@@ -263,6 +266,9 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
         await async_backup_on_remove(hass, entry)
     except Exception:  # noqa: BLE001 – das Löschen darf an der Sicherung nicht scheitern
         _LOGGER.exception("SmartLists: Sicherung vor dem Entfernen fehlgeschlagen")
+        from . import problems
+
+        problems.report(hass, "SL-BACKUP-01", "on removal")
 
     try:
         await hass.async_add_executor_job(storage.remove_all_but_backups, hass.config.config_dir)

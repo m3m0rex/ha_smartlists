@@ -1028,5 +1028,13 @@
   "xt_none": "Nie znaleziono list SmartLists.",
   "xt_working": "Kopiowanie …",
   "linked_via": "przez {name}",
-  "linked_help": "Ta lista należy do innej usługi. Pozycje są tam zapisane; SmartLists je pokazuje i przekazuje tam zmiany."
+  "linked_help": "Ta lista należy do innej usługi. Pozycje są tam zapisane; SmartLists je pokazuje i przekazuje tam zmiany.",
+  "crash_title": "Coś poszło nie tak",
+  "crash_sub": "Nie udało się wyświetlić listy.",
+  "crash_reload": "Wczytaj ponownie",
+  "pb_title": "Problemy",
+  "pb_sub": "Poważne błędy zapisane przez SmartLists od ostatniego uruchomienia – każdy z kodem, by można je było dokładnie zgłosić.",
+  "pb_none": "Nie zapisano żadnych problemów.",
+  "pb_done": "Gotowe",
+  "bug_detail": "Dołącz szczegóły techniczne tego błędu (mogą zawierać nazwy list lub encji)"
 }

@@ -460,6 +460,18 @@ async def ws_migrate(hass: HomeAssistant, connection: websocket_api.ActiveConnec
 
 
 @websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/problems", vol.Optional("clear"): vol.Any(bool, str)})
+@callback
+def ws_problems(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Harte Fehler mit Kennung (problems.py): die gemerkten Fälle; clear=True leert die Liste, clear="SL-…" eine Kennung."""
+    from . import problems
+
+    if msg.get("clear"):
+        problems.clear(hass, msg["clear"] if isinstance(msg["clear"], str) else None)
+    connection.send_result(msg["id"], {"problems": problems.current(hass)})
+
+
+@websocket_api.require_admin
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/export_todo", vol.Optional("entity_ids"): [str]})
 @websocket_api.async_response
 async def ws_export_todo(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:

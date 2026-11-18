@@ -1028,5 +1028,13 @@
   "xt_none": "No SmartLists lists found.",
   "xt_working": "Copying …",
   "linked_via": "via {name}",
-  "linked_help": "This list belongs to another service. The items are stored there; SmartLists shows them and passes changes on."
+  "linked_help": "This list belongs to another service. The items are stored there; SmartLists shows them and passes changes on.",
+  "crash_title": "Something went wrong",
+  "crash_sub": "The list could not be shown.",
+  "crash_reload": "Reload",
+  "pb_title": "Problems",
+  "pb_sub": "Hard errors SmartLists has recorded since the last start – each with a code, so they can be reported precisely.",
+  "pb_none": "No problems recorded.",
+  "pb_done": "Done",
+  "bug_detail": "Include the technical details of this error (may contain names of lists or entities)"
 }

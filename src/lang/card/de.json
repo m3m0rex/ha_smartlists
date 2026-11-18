@@ -1028,5 +1028,13 @@
   "xt_none": "Keine SmartLists-Listen gefunden.",
   "xt_working": "Wird kopiert …",
   "linked_via": "über {name}",
-  "linked_help": "Diese Liste gehört einem anderen Dienst. Die Einträge sind dort gespeichert; SmartLists zeigt sie an und gibt Änderungen dorthin weiter."
+  "linked_help": "Diese Liste gehört einem anderen Dienst. Die Einträge sind dort gespeichert; SmartLists zeigt sie an und gibt Änderungen dorthin weiter.",
+  "crash_title": "Etwas ist schiefgelaufen",
+  "crash_sub": "Die Liste konnte nicht angezeigt werden.",
+  "crash_reload": "Neu laden",
+  "pb_title": "Probleme",
+  "pb_sub": "Harte Fehler, die SmartLists seit dem letzten Start festgehalten hat – mit Kennung, damit sie sich gezielt melden lassen.",
+  "pb_none": "Keine Probleme festgehalten.",
+  "pb_done": "Erledigt",
+  "bug_detail": "Technische Einzelheiten dieses Fehlers mitschicken (können Namen von Listen oder Entitäten enthalten)"
 }

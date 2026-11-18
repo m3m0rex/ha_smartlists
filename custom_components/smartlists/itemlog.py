@@ -12,9 +12,10 @@ from homeassistant.const import EVENT_CALL_SERVICE
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN
 
-STORAGE_KEY = f"{DOMAIN}.itemlog"
+STORAGE_KEY = storage.key("itemlog")
 PER_LIST = 400
 
 

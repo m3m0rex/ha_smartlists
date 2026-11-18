@@ -21,9 +21,10 @@ from homeassistant.helpers.storage import Store
 
 from . import itemtext
 from .categories import CATEGORY_IDS, normalize
+from . import storage
 from .const import DOMAIN
 
-STORAGE_KEY = f"{DOMAIN}.extras"
+STORAGE_KEY = storage.key("extras")
 MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
 MAX_BARCODES = 3000

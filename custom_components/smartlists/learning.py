@@ -22,9 +22,10 @@ from homeassistant.helpers.storage import Store
 
 from . import itemtext
 from .categories import FALLBACK_ID, CategoryIndex, normalize
+from . import storage
 from .const import DOMAIN, SIGNAL_LEARNING_CHANGED
 
-STORAGE_KEY = f"{DOMAIN}.learning"
+STORAGE_KEY = storage.key("learning")
 STORAGE_VERSION = 1
 HISTORY_LIMIT = 2000
 TIMES_KEPT = 12          # so viele Kaufzeitpunkte pro Artikel für den Rhythmus

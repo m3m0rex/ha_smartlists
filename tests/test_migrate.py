@@ -120,7 +120,7 @@ def test_migrate_each_and_one():
             pass
     r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna"], "each"))
     assert [x["name"] for x in r["lists"]] == ["Einkaufsliste", "Anna"] and [x["items"] for x in r["lists"]] == [2, 1]
-    first = saved[f"smartlists.own.{r['lists'][0]['list_id']}"]["items"]
+    first = saved[f"smartlists/own.{r['lists'][0]['list_id']}"]["items"]
     assert [(i["summary"], i["status"], i["description"]) for i in first] == [("Milch 2 l", "needs_action", ""), ("Brot", "completed", "Vollkorn")]
     # beide Listen in EINEM Unter-Eintrag des Besitzers
     assert len(added) == 1 and added[0].subentry_type == "own_lists" and added[0].title == "Eigene Listen · Julia"
@@ -133,7 +133,7 @@ def test_migrate_each_and_one():
     r = asyncio.run(m.async_migrate(hass, "u1", ["todo.einkaufsliste", "todo.anna", "todo.ha_smartlists_list_x"], "one", "Wocheneinkauf", "keep", "person"))
     lid = r["lists"][0]["list_id"]
     assert r["lists"] == [{"name": "Wocheneinkauf", "list_id": lid, "items": 3}] and r["old"]["todo.anna"] == "kept"
-    texts = [i["summary"] for i in saved[f"smartlists.own.{lid}"]["items"]]
+    texts = [i["summary"] for i in saved[f"smartlists/own.{lid}"]["items"]]
     assert texts == ["Milch 2 l *Einkaufsliste", "Brot *Einkaufsliste", "Seife *Anna"]
 
 

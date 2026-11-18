@@ -41,11 +41,12 @@ from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN, SIGNAL_DATA_CHANGED
 
 _LOGGER = logging.getLogger(__name__)
 
-STORAGE_KEY = f"{DOMAIN}.public"
+STORAGE_KEY = storage.key("public")
 MODES = ("ha", "tunnel", "named", "proxy")
 # Token eines benannten Tunnels; auch aus einem eingefügten Befehl („cloudflared service install eyJ…“) herauslösen
 _TOKEN = re.compile(r"eyJ[A-Za-z0-9_\-+/=]{40,}")

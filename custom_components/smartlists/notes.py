@@ -20,9 +20,10 @@ from homeassistant.const import ATTR_FRIENDLY_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN
 
-STORAGE_KEY = f"{DOMAIN}.notes"
+STORAGE_KEY = storage.key("notes")
 # Entity-Ids der App: todo.ha_smartlists_note, …_note_2, ältere todo.ha_smartlists_note_<name>/notiz_<name>
 _PREFIXES = ("ha_smartlists_note", "notiz_")
 _PRETTY = "ha smartlists notes"

@@ -15,9 +15,10 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.storage import Store
 
 from .categories import CATEGORY_IDS, MAX_TERMS, CategoryIndex, _lang, build_index, load_builtin_packs, normalize, normalize_pack
+from . import storage
 from .const import DOMAIN, SIGNAL_LEARNING_CHANGED
 
-STORAGE_KEY = f"{DOMAIN}.packs"
+STORAGE_KEY = storage.key("packs")
 MAX_CUSTOM = 20
 
 

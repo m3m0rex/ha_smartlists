@@ -17,9 +17,10 @@ from typing import Any
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN
 
-STORAGE_KEY = f"{DOMAIN}.app_backups"
+STORAGE_KEY = storage.key("app_backups")
 MAX_BYTES = 5 * 1024 * 1024  # 5 MB je Backup
 MAX_BACKUPS = 30
 

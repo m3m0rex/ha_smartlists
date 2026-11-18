@@ -54,7 +54,8 @@ def test_files_newest_valid_wins_and_old_ones_are_pruned(tmp_path):
         backup = rb.build("4.0.0", {}, SUBS, {}, now=datetime(2026, 11, day, 12, 0, 0))  # noqa: DTZ001
         path = rb.write_file(str(tmp_path), backup)
     assert path.endswith("smartlists_backup_2026-11-08_120000.json")
-    assert len(list(tmp_path.glob("smartlists_backup_*.json"))) == rb.KEEP
+    assert len(list((tmp_path / ".storage" / "smartlists" / "backups" / "integration").glob("smartlists_backup_*.json"))) == rb.KEEP
+    assert not list(tmp_path.glob("smartlists_backup_*.json"))   # nichts mehr lose im Konfigurations-Ordner
     (tmp_path / "smartlists_backup_2026-12-01_000000.json").write_text("kaputt", encoding="utf-8")
     (tmp_path / "smartlists_backup_2026-11-30_000000.json").write_text(
         json.dumps(rb.build("4.0.0", {}, [], {})), encoding="utf-8")  # ohne Listen: nicht anbieten

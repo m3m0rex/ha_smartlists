@@ -18,6 +18,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from . import storage
 from .const import (
     DOMAIN,
     LEGACY_UNIQUE_ID,
@@ -31,7 +32,7 @@ KIND = "smartlists-removal-backup"
 PREFIX = "smartlists_backup_"
 KEEP = 5  # so viele Sicherungen bleiben liegen, ältere werden aufgeräumt
 # Speicherdateien, die es einmal gibt (neben denen je Liste)
-GLOBAL_STORES = ("learning", "notes", "shares", "public", "extras", "packs", "devices", "notify", "itemlog", "app_backups")
+GLOBAL_STORES = storage.GLOBAL_STORES
 NOTIFICATION_ID = "smartlists_removed"
 
 _TEXT = {
@@ -157,16 +158,20 @@ def valid(backup: Any) -> bool:
 
 def write_file(config_dir: str, backup: dict[str, Any]) -> str:
     stamp = str(backup.get("at", "")).replace(":", "").replace("T", "_")
-    path = Path(config_dir) / f"{PREFIX}{stamp}.json"
+    folder = storage.backup_dir(config_dir)
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{PREFIX}{stamp}.json"
     path.write_text(json.dumps(backup, ensure_ascii=False, indent=1), encoding="utf-8")
-    for old in sorted(Path(config_dir).glob(f"{PREFIX}*.json"), reverse=True)[KEEP:]:
+    for old in sorted(folder.glob(f"{PREFIX}*.json"), reverse=True)[KEEP:]:
         old.unlink(missing_ok=True)
     return str(path)
 
 
 def newest(config_dir: str) -> tuple[str, dict[str, Any]] | None:
     """Neueste lesbare Sicherung mit mindestens einer Liste."""
-    for path in sorted(Path(config_dir).glob(f"{PREFIX}*.json"), reverse=True):
+    # neuer Ort; dazu der alte (Konfigurations-Ordner), falls die Integration seit dem Umzug nicht gelaufen ist
+    files = [*storage.backup_dir(config_dir).glob(f"{PREFIX}*.json"), *Path(config_dir).glob(f"{PREFIX}*.json")]
+    for path in sorted(files, key=lambda p: p.name, reverse=True):
         try:
             backup = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
@@ -214,7 +219,7 @@ async def async_create(hass: Any, entry: Any, reason: str = "manual") -> dict[st
     if reason != "manual" and not subentries:
         return None
     keys = store_keys(subentries) + [f"{DOMAIN}.{name}" for name in GLOBAL_STORES]
-    stores = {key: await Store(hass, STORAGE_VERSION, key).async_load() for key in keys}
+    stores = {key: await Store(hass, STORAGE_VERSION, storage.key_of(key)).async_load() for key in keys}  # in der Sicherung unter dem alten Namen
     users = {u.id: u.name or "" for u in await hass.auth.async_get_users() if not u.system_generated}
     version = str(hass.data.get(DOMAIN, {}).get("version") or "")
     backup = build(version, _plain(entry.options), subentries, _plain(stores), reason=reason,
@@ -252,6 +257,6 @@ async def async_restore_stores(hass: Any, backup: dict[str, Any]) -> None:
     for key, content in (backup.get("stores") or {}).items():
         if not str(key).startswith(f"{DOMAIN}."):
             continue
-        store = Store(hass, STORAGE_VERSION, key)
+        store = Store(hass, STORAGE_VERSION, storage.key_of(str(key)))
         if await store.async_load() is None:
             await store.async_save(content)

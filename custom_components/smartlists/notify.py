@@ -21,10 +21,11 @@ from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-STORAGE_KEY = f"{DOMAIN}.notify"
+STORAGE_KEY = storage.key("notify")
 BATCH_SECONDS = 60
 TEXTS = {
     "de": {"via_link": "etwas (über geteilten Link)", "added": "{who} hat {items} auf {list} gesetzt", "checked": "{who} hat {items} abgehakt ({list})",

@@ -33,6 +33,7 @@ from .itemtext import join_offer, offer_summary, person_from_list_name, split_of
 from .learning import Learning
 from .widget import build_widget
 from .own import async_user_info, permissions_for, role_for
+from . import storage
 from .const import (
     CONF_APP_DEVICE,
     CONF_APP_LIST,
@@ -148,7 +149,7 @@ async def async_setup_entry(
             # je Besitzer ein Unter-Eintrag, darin seine Listen (own_groups.py)
             owner = subentry.data.get("owner")
             for list_id, ldata in (subentry.data.get("lists") or {}).items():
-                own_store = Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{list_id}")
+                own_store = Store(hass, STORAGE_VERSION, storage.key(f"own.{list_id}"))
                 own_stored = await own_store.async_load() or {}
                 async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning, list_id=list_id,
                                                       list_data={**ldata, "owner": owner})],
@@ -156,7 +157,7 @@ async def async_setup_entry(
             continue
         if subentry.subentry_type == SUBENTRY_OWN:
             # alte Form (je Liste ein Unter-Eintrag) – nur, falls der Umzug nicht möglich war
-            own_store = Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{subentry.subentry_id}")
+            own_store = Store(hass, STORAGE_VERSION, storage.key(f"own.{subentry.subentry_id}"))
             own_stored = await own_store.async_load() or {}
             async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning)],
                                config_subentry_id=subentry.subentry_id)
@@ -164,7 +165,7 @@ async def async_setup_entry(
         if subentry.subentry_type != SUBENTRY_COMBINED:
             continue
         key = list_key(subentry)
-        store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.{key}")
+        store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, storage.key(key))
         stored = await store.async_load() or {}
         async_add_entities(
             [CombinedTodoListEntity(hass, dict(subentry.data), subentry.title, key, store, stored, learning)],

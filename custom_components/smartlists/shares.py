@@ -29,11 +29,12 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import Context, HomeAssistant, callback
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-STORAGE_KEY = f"{DOMAIN}.shares"
+STORAGE_KEY = storage.key("shares")
 MAX_LINKS = 30
 CHECK_MODES = ("off", "soft", "on")
 WRITE_LIMIT_PER_MIN = 30

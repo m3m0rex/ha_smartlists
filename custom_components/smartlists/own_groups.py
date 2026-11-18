@@ -122,13 +122,18 @@ def _remove_from_group(hass: HomeAssistant, entry: ConfigEntry, g: ConfigSubentr
 
 
 def async_remove_list(hass: HomeAssistant, list_id: str) -> None:
-    """Liste löschen (Artikel-Speicher bleibt als Sicherung liegen, Entität verschwindet)."""
+    """Liste löschen: die Entität verschwindet, der Artikel-Speicher wandert nach backups/deleted/."""
     entry = main_entry(hass)
     g, _ = find(entry, list_id) if entry else (None, None)
     if g is None:
         raise ValueError("Keine eigene SmartLists-Liste.")
     _drop_entity(hass, list_id)
+    title = str(((g.data.get("lists") or {}).get(list_id) or {}).get("title") or "")
     _remove_from_group(hass, entry, g, list_id)
+    from . import storage
+
+    # die Artikel bleiben als Sicherung – aber nicht lose, sondern unter backups/deleted/
+    hass.async_add_executor_job(storage.set_aside, hass.config.config_dir, f"own.{list_id}", title)
 
 
 def _registry():

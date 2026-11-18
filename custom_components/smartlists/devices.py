@@ -20,9 +20,10 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.storage import Store
 
+from . import storage
 from .const import DOMAIN
 
-STORAGE_KEY = f"{DOMAIN}.devices"
+STORAGE_KEY = storage.key("devices")
 STORAGE_VERSION = 1
 SIGNAL_DEVICES_CHANGED = f"{DOMAIN}_devices_changed"
 # Ab wann ein Gerät als „lange nicht gesehen“ gilt (Attribut stale am Sensor)

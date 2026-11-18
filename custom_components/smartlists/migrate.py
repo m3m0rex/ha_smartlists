@@ -19,6 +19,7 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
 
 from . import lists
+from . import storage
 from .const import DOMAIN, STORAGE_VERSION
 
 OLD_ACTIONS = ("keep",)
@@ -168,7 +169,7 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
     created = []
     for title, items, _src in groups:
         list_id = uuid.uuid4().hex
-        await Store(hass, STORAGE_VERSION, f"{DOMAIN}.own.{list_id}").async_save({"items": items})
+        await Store(hass, STORAGE_VERSION, storage.key(f"own.{list_id}")).async_save({"items": items})
         created.append((list_id, title[:60], len(items)))
     for list_id, title, _ in created:
         await async_add_list(hass, owner, title, {}, list_id=list_id)

@@ -55,7 +55,7 @@ def _hass():
     async def get_user(uid):
         return types.SimpleNamespace(name={"u1": "Julia", "u2": "Anna"}.get(uid))
 
-    hass = types.SimpleNamespace(config=types.SimpleNamespace(language="de"), auth=types.SimpleNamespace(async_get_user=get_user),
+    hass = types.SimpleNamespace(config=types.SimpleNamespace(language="de", config_dir="/nonexistent"), async_add_executor_job=lambda func, *args: None, auth=types.SimpleNamespace(async_get_user=get_user),
                                  config_entries=types.SimpleNamespace(async_entries=lambda d: [entry], async_add_subentry=add,
                                                                       async_update_subentry=update, async_remove_subentry=remove))
     return hass, entry

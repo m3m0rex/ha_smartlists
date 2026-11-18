@@ -53,6 +53,7 @@ PANEL_URL_PATH = DOMAIN
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Einmal pro HA-Start: Gedächtnis laden, WebSocket-Befehle und Karte bereitstellen."""
+    await _async_move_files(hass)  # vor allem anderen: die Dateien liegen ab 4.0.0-beta.12 unter .storage/smartlists/
     await async_get_packs(hass)
     await async_get_learning(hass)
     await async_get_devices(hass)
@@ -148,6 +149,49 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return False
 
 
+async def _async_move_files(hass: HomeAssistant) -> None:
+    """Alte Dateien (.storage/smartlists.* und Sicherungen im Konfigurations-Ordner) nach .storage/smartlists/ umziehen."""
+    from . import storage
+
+    try:
+        report = await hass.async_add_executor_job(storage.migrate_files, hass.config.config_dir)
+    except Exception:  # noqa: BLE001 – ohne Umzug laufen die alten Dateien nicht mehr mit; das muss man sehen
+        _LOGGER.exception("SmartLists: Umzug der Dateien nach .storage/smartlists fehlgeschlagen")
+        report = {"moved": [], "kept_newer": [], "failed": ["unexpected error, see the log"]}
+    if report["moved"] or report["kept_newer"]:
+        _LOGGER.info("SmartLists: %d Dateien nach .storage/smartlists umgezogen%s", len(report["moved"]),
+                     f", {len(report['kept_newer'])} ältere nach backups/integration/leftover gelegt" if report["kept_newer"] else "")
+    if report["failed"]:
+        _LOGGER.error("SmartLists: Dateien nicht umgezogen (bleiben am alten Ort): %s", "; ".join(report["failed"]))
+        german = str(hass.config.language).startswith("de")
+        from homeassistant.components import persistent_notification
+
+        persistent_notification.async_create(
+            hass, ("Einige Dateien ließen sich nicht nach `.storage/smartlists/` umziehen und liegen weiter am alten Ort. "
+                   "Die betroffenen Daten fehlen bis dahin in SmartLists:\n\n- " if german else
+                   "Some files could not be moved to `.storage/smartlists/` and are still in the old place. "
+                   "Until then that data is missing in SmartLists:\n\n- ") + "\n- ".join(report["failed"]),
+            title="SmartLists (SL-STORE-01)", notification_id="smartlists_move_failed")
+
+
+async def _async_tidy_files(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Speicherdateien früher gelöschter Listen nach backups/deleted/ legen."""
+    from . import storage
+    from .const import SUBENTRY_OWN
+    from .own_groups import iter_lists
+    from .todo import list_key
+
+    known = {name for name in storage.GLOBAL_STORES if name != "app_backups"} | {f"own.{list_id}" for _, list_id, _ in iter_lists(entry)}
+    for sub in entry.subentries.values():
+        known.add(f"own.{sub.subentry_id}" if sub.subentry_type == SUBENTRY_OWN else list_key(sub))
+    try:
+        moved = await hass.async_add_executor_job(storage.set_aside_unknown, hass.config.config_dir, known)
+        if moved:
+            _LOGGER.info("SmartLists: %d Speicherdateien gelöschter Listen nach backups/deleted gelegt", len(moved))
+    except Exception:  # noqa: BLE001 – Aufräumen darf den Start nicht aufhalten
+        _LOGGER.warning("SmartLists: Aufräumen alter Speicherdateien fehlgeschlagen", exc_info=True)
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Integration einrichten: je kombinierter Liste (Unter-Eintrag) eine To-do-Entität."""
     await _async_register_panel(hass)
@@ -155,6 +199,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     from .own_groups import async_migrate_legacy
 
     await async_migrate_legacy(hass, entry)
+    await _async_tidy_files(hass, entry)
     # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
     entry.async_on_unload(automation.async_setup_due_timer(hass))
     # Hinweise unter Einstellungen → Reparaturen (fehlende Quell-Listen, lange nicht gesehene Geräte)
@@ -205,17 +250,18 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Integration gelöscht: erst alles sichern (removal_backup.py), dann die lokalen Häkchen der kombinierten
-    Listen entfernen. Das Gedächtnis (gemerkte Kategorien, Verlauf) bleibt erhalten, falls man neu einrichtet."""
-    from homeassistant.helpers.storage import Store
-
+    """Integration gelöscht: erst alles sichern (removal_backup.py), dann alle Dateien unter .storage/smartlists/
+    entfernen – nur backups/ bleibt (Sicherungen von SmartLists und aus SmartLists Go). Beim erneuten Einrichten
+    bietet der Assistent an, die neueste Sicherung wiederherzustellen."""
+    from . import storage
     from .removal_backup import async_backup_on_remove
-    from .todo import list_key
 
     try:
         await async_backup_on_remove(hass, entry)
     except Exception:  # noqa: BLE001 – das Löschen darf an der Sicherung nicht scheitern
         _LOGGER.exception("SmartLists: Sicherung vor dem Entfernen fehlgeschlagen")
 
-    for subentry in entry.subentries.values():
-        await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{list_key(subentry)}").async_remove()
+    try:
+        await hass.async_add_executor_job(storage.remove_all_but_backups, hass.config.config_dir)
+    except Exception:  # noqa: BLE001
+        _LOGGER.exception("SmartLists: Dateien beim Entfernen nicht gelöscht")

@@ -1018,5 +1018,13 @@
   "bug_copy": "Copia testo",
   "bug_open": "Apri su GitHub",
   "bug_need_where": "Scegli prima dove si è verificato il problema.",
-  "bug_copied": "Copiato"
+  "bug_copied": "Copiato",
+  "xt_title": "Copia come normale lista di cose da fare",
+  "xt_sub": "Per chi vuole rimuovere SmartLists e tenere le proprie liste: ogni lista diventa una lista locale di Home Assistant con gli stessi elementi. La lista di SmartLists resta invariata.",
+  "xt_help": "Vengono copiati: testo, nota, fatto/aperto, scadenza. Non trasferibili: permessi, pre-selezioni, prezzi, preferiti. Una lista combinata viene copiata come un'unica lista unita.",
+  "xt_go": "Copia",
+  "xt_done": "Copiato",
+  "xt_combined": "combinata",
+  "xt_none": "Nessuna lista SmartLists trovata.",
+  "xt_working": "Copia in corso …"
 }

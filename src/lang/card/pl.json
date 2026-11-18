@@ -1018,5 +1018,13 @@
   "bug_copy": "Kopiuj tekst",
   "bug_open": "Otwórz na GitHubie",
   "bug_need_where": "Najpierw wybierz, gdzie wystąpił problem.",
-  "bug_copied": "Skopiowano"
+  "bug_copied": "Skopiowano",
+  "xt_title": "Skopiuj jako zwykłą listę zadań",
+  "xt_sub": "Dla tych, którzy chcą usunąć SmartLists i zachować listy: z każdej listy powstaje lokalna lista zadań Home Assistant z tymi samymi pozycjami. Lista SmartLists pozostaje bez zmian.",
+  "xt_help": "Kopiowane: tekst, notatka, zrobione/otwarte, termin. Nie da się przenieść: uprawnień, wstępnych zaznaczeń, cen, ulubionych. Lista połączona jest kopiowana jako jedna scalona lista.",
+  "xt_go": "Kopiuj",
+  "xt_done": "Skopiowano",
+  "xt_combined": "połączona",
+  "xt_none": "Nie znaleziono list SmartLists.",
+  "xt_working": "Kopiowanie …"
 }

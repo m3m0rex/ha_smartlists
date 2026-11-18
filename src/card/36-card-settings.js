@@ -106,7 +106,8 @@
       { g: "global", id: "auto", label: t.a_auto, sub: t.a_global_sub, kw: [t.automation, t.barcode_providers, t.barcode_lookup, "assist"], build: () => [this._automationSection()] },
       { g: "global", id: "backup", label: t.backup, sub: t.a_global_sub, kw: [t.backup, t.mg_title, "export", "import"], build: () => [
         this._exportImport(),
-        this._sec("", t.mg_title, t.mg_sub, [h("button", { class: "btn2", type: "button", onclick: () => this._migrateDialog() }, "📥 " + t.mg_title + " …")])] },
+        this._sec("", t.mg_title, t.mg_sub, [h("button", { class: "btn2", type: "button", onclick: () => this._migrateDialog() }, "📥 " + t.mg_title + " …")]),
+        this._exportTodoSection()] },
       { g: "global", id: "house", label: t.ui_house, sub: t.scope_help_household, kw: [t.ui_house, t.reset], build: () => [
         this._sec("", t.ui_house, null, [...this._controls("household"), reset("household")])] },
     ];
@@ -777,6 +778,32 @@
       this._watchSection(),
       this._sec("", t.price_how, t.price_how_note, [h("ol", { class: "pubsteps" }, [t.price_how_1, t.price_how_2, t.price_how_3, t.price_how_4].map((x) => h("li", {}, x)))]),
     ];
+  }
+  // Global → Sichern: SmartLists-Listen als normale (lokale) To-do-Listen kopieren – der Weg zurück, wenn man
+  // SmartLists entfernen und die Listen behalten will. Die Listen stehen direkt da, mit Häkchen; nichts wird verändert.
+  _exportTodoSection() {
+    const t = this._t, box = h("div", {}, h("div", { class: "shelp" }, t.loading)), status = h("div", { class: "shelp", role: "status" });
+    const picked = new Set();
+    let busy = false, lists = [];
+    const draw = () => {
+      const go = h("button", { class: "btn2", type: "button", disabled: busy || !picked.size, onclick: run }, "📤 " + (busy ? t.xt_working : t.xt_go));
+      fill(box, lists.length ? lists.map((l) => h("label", { style: "display:flex;gap:10px;align-items:center;padding:6px 0;cursor:pointer" },
+        h("input", { type: "checkbox", checked: picked.has(l.entity_id), disabled: busy, style: "width:18px;height:18px;margin:0;flex:none",
+          onchange: (e) => { if (e.target.checked) picked.add(l.entity_id); else picked.delete(l.entity_id); draw(); } }),
+        h("span", {}, l.name, l.kind === "combined" ? h("small", { style: "color:var(--secondary-text-color)" }, ` · ${t.xt_combined}`) : null))) : h("div", { class: "shelp" }, t.xt_none),
+        lists.length ? h("div", { class: "acts", style: "justify-content:flex-start;margin-top:6px" }, go) : null, status);
+    };
+    const run = async () => {
+      busy = true; status.textContent = ""; draw();
+      try {
+        const r = await this._call("export_todo", { entity_ids: [...picked] }, false);
+        status.textContent = "✓ " + t.xt_done + ": " + r.lists.map((x) => `${x.name} (${x.items})`).join(", ");
+        picked.clear();
+      } catch (e) { slWarn("export_todo", e); status.textContent = (e && e.message) || t.error; }
+      busy = false; draw();
+    };
+    this._call("export_todo", {}, false).then((r) => { lists = r.lists || []; draw(); }).catch((e) => { slWarn("export_todo", e); fill(box, h("div", { class: "shelp" }, t.error)); });
+    return this._sec("", t.xt_title, t.xt_sub, [h("div", { class: "shelp" }, t.xt_help), box]);
   }
   // „Fehler melden“: Angaben zur Umgebung für das Issue (nichts Persönliches – keine Listen, Artikel oder Adressen).
   // Wo der Fehler aufgetreten ist, fragt der Dialog (slReportDialog) – es wird nicht aus der Adresse geraten.

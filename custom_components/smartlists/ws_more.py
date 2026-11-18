@@ -460,6 +460,22 @@ async def ws_migrate(hass: HomeAssistant, connection: websocket_api.ActiveConnec
 
 
 @websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "smartlists/export_todo", vol.Optional("entity_ids"): [str]})
+@websocket_api.async_response
+async def ws_export_todo(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """SmartLists-Listen als normale (lokale) To-do-Listen kopieren – ohne entity_ids: welche Listen es gibt."""
+    from . import export_todo
+
+    if "entity_ids" not in msg:
+        connection.send_result(msg["id"], {"lists": export_todo.candidates(hass)})
+        return
+    try:
+        connection.send_result(msg["id"], await export_todo.async_export(hass, msg["entity_ids"]))
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid", str(err))
+
+
+@websocket_api.require_admin
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/backup_create"})
 @websocket_api.async_response
 async def ws_backup_create(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:

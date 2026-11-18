@@ -1018,5 +1018,13 @@
   "bug_copy": "Copier le texte",
   "bug_open": "Ouvrir sur GitHub",
   "bug_need_where": "Choisissez d'abord où le problème est apparu.",
-  "bug_copied": "Copié"
+  "bug_copied": "Copié",
+  "xt_title": "Copier comme liste de tâches normale",
+  "xt_sub": "Pour qui veut supprimer SmartLists et garder ses listes : chaque liste devient une liste de tâches locale de Home Assistant avec les mêmes éléments. La liste SmartLists reste inchangée.",
+  "xt_help": "Copiés : texte, note, fait/ouvert, échéance. Non transférables : droits, pré-sélections, prix, favoris. Une liste combinée est copiée comme une seule liste fusionnée.",
+  "xt_go": "Copier",
+  "xt_done": "Copié",
+  "xt_combined": "combinée",
+  "xt_none": "Aucune liste SmartLists trouvée.",
+  "xt_working": "Copie en cours …"
 }

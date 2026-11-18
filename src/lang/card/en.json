@@ -1018,5 +1018,13 @@
   "bug_copy": "Copy text",
   "bug_open": "Open on GitHub",
   "bug_need_where": "Choose where the problem occurred first.",
-  "bug_copied": "Copied"
+  "bug_copied": "Copied",
+  "xt_title": "Copy as a normal to-do list",
+  "xt_sub": "For everyone who wants to remove SmartLists again and keep their lists: each list becomes a local to-do list of Home Assistant with the same items. The SmartLists list stays as it is.",
+  "xt_help": "Copied: text, note, done/open, due date. Cannot be carried over: rights, soft marks, prices, favourites. A combined list is copied as one merged list.",
+  "xt_go": "Copy",
+  "xt_done": "Copied",
+  "xt_combined": "combined",
+  "xt_none": "No SmartLists lists found.",
+  "xt_working": "Copying …"
 }

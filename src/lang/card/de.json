@@ -1018,5 +1018,13 @@
   "bug_copy": "Text kopieren",
   "bug_open": "Auf GitHub öffnen",
   "bug_need_where": "Bitte wähle zuerst, wo der Fehler aufgetreten ist.",
-  "bug_copied": "Kopiert"
+  "bug_copied": "Kopiert",
+  "xt_title": "Als normale To-do-Liste kopieren",
+  "xt_sub": "Für alle, die SmartLists wieder entfernen und ihre Listen behalten wollen: Je Liste entsteht eine lokale To-do-Liste von Home Assistant mit denselben Einträgen. Die SmartLists-Liste bleibt unverändert.",
+  "xt_help": "Es kommen mit: Text, Notiz, erledigt/offen, Fälligkeit. Nicht übertragbar: Rechte, Vormerkungen, Preise, Favoriten. Eine kombinierte Liste wird als eine zusammengeführte Liste kopiert.",
+  "xt_go": "Kopieren",
+  "xt_done": "Kopiert",
+  "xt_combined": "kombiniert",
+  "xt_none": "Keine SmartLists-Listen gefunden.",
+  "xt_working": "Wird kopiert …"
 }

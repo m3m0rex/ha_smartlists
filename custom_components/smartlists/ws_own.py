@@ -11,6 +11,7 @@ from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
 from . import lists
+from .const import DOMAIN
 from .ws_common import (
     _combined_subentry,
     _denied,
@@ -41,7 +42,19 @@ async def ws_create_list(hass: HomeAssistant, connection: websocket_api.ActiveCo
     except ValueError as err:
         connection.send_error(msg["id"], "not_setup", str(err))
         return
-    connection.send_result(msg["id"], {"list_id": list_id})
+    # Die Entität entsteht erst, wenn die Integration neu geladen hat: kurz warten und ihre ID mitliefern – die App
+    # trägt danach gleich die Artikel ein (Übertragen einer Liste vom Smartphone)
+    import asyncio
+
+    from homeassistant.helpers import entity_registry as er
+
+    entity_id = None
+    for _ in range(40):
+        entity_id = er.async_get(hass).async_get_entity_id("todo", DOMAIN, f"own_{list_id}")
+        if entity_id and hass.states.get(entity_id) is not None:
+            break
+        await asyncio.sleep(0.25)
+    connection.send_result(msg["id"], {"list_id": list_id, "entity_id": entity_id})
 
 
 @websocket_api.websocket_command(

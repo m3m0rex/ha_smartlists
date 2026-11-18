@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.20] – 2026-11-18
+
+Twentieth pre-release of 4.0.
+
+### Changed
+
+- **`smartlists/create_list` returns the `entity_id`** of the new list (it waits up to ten seconds for the list to
+  appear). The app needs it to move a list from the phone to Home Assistant together with its items.
+
 ## [4.0.0-beta.19] – 2026-11-18
 
 Nineteenth pre-release of 4.0.

@@ -195,11 +195,11 @@
       "initiate_flow": {
         "user": "Notas"
       },
-      "entry_type": "Listas de la app SmartLists Go",
+      "entry_type": "Listas de notas en Home Assistant",
       "step": {
         "user": {
           "title": "Nueva lista de notas",
-          "description": "Una lista de notas es una lista de tareas local de Home Assistant que SmartLists Go usa para las notas. Solo la ve su propietario.",
+          "description": "Una lista de notas es una lista de tareas de Home Assistant en la que cada entrada es una nota. SmartLists Go la muestra en «Notas» y la sincroniza. Solo la ve su propietario.",
           "data": {
             "name": "Nombre (opcional)",
             "owner": "Propietario"

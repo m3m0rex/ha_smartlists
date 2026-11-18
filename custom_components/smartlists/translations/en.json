@@ -195,11 +195,11 @@
       "initiate_flow": {
         "user": "Notes"
       },
-      "entry_type": "Lists of the app SmartLists Go",
+      "entry_type": "Notes lists in Home Assistant",
       "step": {
         "user": {
           "title": "New notes list",
-          "description": "A notes list is a local to-do list of Home Assistant that SmartLists Go uses for notes. Only its owner sees it.",
+          "description": "A notes list is a to-do list in Home Assistant in which every entry is a note. SmartLists Go shows it under “Notes” and keeps it in sync. Only its owner sees it.",
           "data": {
             "name": "Name (optional)",
             "owner": "Owner"

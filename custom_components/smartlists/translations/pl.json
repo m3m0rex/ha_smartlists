@@ -195,11 +195,11 @@
       "initiate_flow": {
         "user": "Notatki"
       },
-      "entry_type": "Listy aplikacji SmartLists Go",
+      "entry_type": "Listy notatek w Home Assistant",
       "step": {
         "user": {
           "title": "Nowa lista notatek",
-          "description": "Lista notatek to lokalna lista zadań Home Assistant, której SmartLists Go używa do notatek. Widzi ją tylko właściciel.",
+          "description": "Lista notatek to lista zadań w Home Assistant, w której każdy wpis jest notatką. SmartLists Go pokazuje ją w „Notatkach” i synchronizuje. Widzi ją tylko właściciel.",
           "data": {
             "name": "Nazwa (opcjonalnie)",
             "owner": "Właściciel"

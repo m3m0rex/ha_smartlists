@@ -34,7 +34,7 @@
   "config_subentries": {
     "combined_list": {
       "initiate_flow": {
-        "user": "+ Combined list"
+        "user": "Combined list"
       },
       "entry_type": "Combined list",
       "step": {
@@ -112,7 +112,7 @@
     },
     "own_list": {
       "initiate_flow": {
-        "user": "+ Own list"
+        "user": "Own list"
       },
       "entry_type": "Own list",
       "step": {
@@ -145,7 +145,7 @@
     },
     "own_lists": {
       "initiate_flow": {
-        "user": "+ Own list"
+        "user": "Own list"
       },
       "entry_type": "Stored by SmartLists",
       "step": {
@@ -193,7 +193,7 @@
     },
     "notes": {
       "initiate_flow": {
-        "user": "+ Notes"
+        "user": "Notes"
       },
       "entry_type": "Lists of the SmartLists App",
       "step": {

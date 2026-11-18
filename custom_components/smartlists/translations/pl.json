@@ -34,7 +34,7 @@
   "config_subentries": {
     "combined_list": {
       "initiate_flow": {
-        "user": "+ Lista połączona"
+        "user": "Lista połączona"
       },
       "entry_type": "Lista połączona",
       "step": {
@@ -112,7 +112,7 @@
     },
     "own_list": {
       "initiate_flow": {
-        "user": "+ Własna lista"
+        "user": "Własna lista"
       },
       "entry_type": "Własna lista",
       "step": {
@@ -145,7 +145,7 @@
     },
     "own_lists": {
       "initiate_flow": {
-        "user": "+ Własna lista"
+        "user": "Własna lista"
       },
       "entry_type": "Zapisane przez SmartLists",
       "step": {
@@ -193,7 +193,7 @@
     },
     "notes": {
       "initiate_flow": {
-        "user": "+ Notatki"
+        "user": "Notatki"
       },
       "entry_type": "Listy aplikacji SmartLists App",
       "step": {

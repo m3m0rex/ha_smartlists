@@ -1,6 +1,7 @@
 """Wo SmartLists seine Dateien ablegt: alles unter `.storage/smartlists/`.
 
     .storage/smartlists/<name>                       Speicherdateien (extras, learning, shares, own.<Kennung>, …)
+    .storage/smartlists/watch/<Benutzer>             Merklisten eines Benutzers (alle seine Listen in einer Datei)
     .storage/smartlists/backups/apps                 Sicherungen aus SmartLists Go
     .storage/smartlists/backups/integration/*.json   Sicherungen von SmartLists selbst (von Hand, beim Entfernen)
     .storage/smartlists/backups/integration/before-move/   Kopie der alten Dateien vom Umzug (für ein Zurück auf eine ältere Version)
@@ -58,6 +59,23 @@ def root(config_dir: str) -> Path:
 
 def backup_dir(config_dir: str) -> Path:
     return root(config_dir) / BACKUPS / "integration"
+
+
+WATCH_DIR = "watch"
+
+
+def watch_name(user_id: str) -> str:
+    """Dateiname für die Merklisten eines Benutzers (nur Buchstaben, Ziffern, - und _)."""
+    return "".join(c for c in str(user_id) if c.isalnum() or c in "-_")[:64]
+
+
+def watch_files(config_dir: str) -> list[str]:
+    """Namen der Merklisten-Dateien unter `.storage/smartlists/watch/` (blockierend – über den Executor aufrufen)."""
+    folder = root(config_dir) / WATCH_DIR
+    try:
+        return sorted(p.name for p in folder.iterdir() if p.is_file() and not p.name.endswith(".tmp"))
+    except OSError:
+        return []
 
 
 def _same_json(a: Path, b: Path) -> bool:

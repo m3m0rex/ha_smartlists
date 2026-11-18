@@ -219,6 +219,8 @@ async def async_create(hass: Any, entry: Any, reason: str = "manual") -> dict[st
     if reason != "manual" and not subentries:
         return None
     keys = store_keys(subentries) + [f"{DOMAIN}.{name}" for name in GLOBAL_STORES]
+    # Merklisten: eine Datei je Benutzer
+    keys += [f"{DOMAIN}.{storage.WATCH_DIR}/{name}" for name in await hass.async_add_executor_job(storage.watch_files, hass.config.config_dir)]
     stores = {key: await Store(hass, STORAGE_VERSION, storage.key_of(key)).async_load() for key in keys}  # in der Sicherung unter dem alten Namen
     users = {u.id: u.name or "" for u in await hass.auth.async_get_users() if not u.system_generated}
     version = str(hass.data.get(DOMAIN, {}).get("version") or "")

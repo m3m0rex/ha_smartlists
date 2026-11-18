@@ -29,6 +29,9 @@ class _Store:
     def async_delay_save(self, func, delay):
         self.saved = func()
 
+    async def async_save(self, data):
+        self.saved = data
+
 
 class _StubMeta(type):
     def __getattr__(cls, name):

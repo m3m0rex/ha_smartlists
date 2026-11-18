@@ -10,7 +10,7 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
-from .const import DOMAIN
+from .const import DOMAIN, WATCH_ALL
 from .ws_common import (
     _denied,
     _extras,
@@ -122,10 +122,10 @@ async def _watch_payload(hass: HomeAssistant, user_id: str, list_id: str | None 
     from .notify import async_get_notifier
 
     extras, notifier = _extras(hass), await async_get_notifier(hass)
-    current = extras.watch_list(user_id, list_id, _first_watch_name(hass))
-    user = extras.watch_user(user_id)
-    return {"names": list(current["names"]), "notify": bool(user.get("notify")), "targets": list(user.get("targets") or []),
-            "list": current["id"], "default": user.get("default"),
+    user = extras.watch_user(user_id, _first_watch_name(hass))
+    shown, items = extras.watch_view(user_id, list_id)
+    return {"names": [x["name"] for x in items], "items": items, "notify": bool(user.get("notify")), "targets": list(user.get("targets") or []),
+            "list": shown, "default": user.get("default"), "show_all": bool(user.get("show_all")),
             "lists": [{"id": x["id"], "name": x["name"], "count": len(x["names"])} for x in user["lists"]],
             # woraus man wählen kann: notify-Dienste (Companion-App, Telegram, …) und notify-Entitäten
             "services": notifier.services(), "entities": notifier.entities()}
@@ -142,14 +142,28 @@ async def ws_watch(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/watch_set", vol.Optional("list"): str, vol.Optional("names"): [str],
                                   vol.Optional("add"): str, vol.Optional("remove"): str, vol.Optional("notify"): bool,
                                   vol.Optional("targets"): [dict], vol.Optional("new_list"): str, vol.Optional("rename"): str,
-                                  vol.Optional("make_default"): bool, vol.Optional("delete_list"): bool})
+                                  vol.Optional("make_default"): bool, vol.Optional("delete_list"): bool,
+                                  vol.Optional("show_all"): bool})
 @websocket_api.async_response
 async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Eigene Merkliste ändern: ganz ersetzen (names), ein Produkt hinzufügen/entfernen, Benachrichtigung und ihre Ziele.
-    Listen verwalten: new_list (Name) legt eine an, rename / make_default / delete_list gelten für `list`."""
+    Listen verwalten: new_list (Name) legt eine an, rename / make_default / delete_list gelten für `list`.
+    Mit list = "all" (alle Merklisten zusammen): Neues kommt in die Standard-Liste, Entfernen gilt für jede Liste.
+    show_all merkt sich, ob der Benutzer ohne Angabe einer Liste alle zusammen sieht."""
     extras, user_id = _extras(hass), connection.user.id
     extras.watch_user(user_id, _first_watch_name(hass))
     list_id = msg.get("list")
+    if list_id == WATCH_ALL and not msg.get("new_list"):
+        extras.change_all_watch(user_id, [*(msg.get("names") or []), *([msg["add"]] if msg.get("add") else [])], msg.get("remove"))
+        settings = {k: msg[k] for k in ("notify", "targets", "show_all") if k in msg}
+        if settings:
+            extras.set_user_watch(user_id, None, None, settings)
+        if settings.get("notify"):
+            from .offers import async_check_watch
+
+            await async_check_watch(hass)
+        connection.send_result(msg["id"], await _watch_payload(hass, user_id, WATCH_ALL))
+        return
     try:
         if msg.get("new_list"):
             list_id = extras.add_watch_list(user_id, msg["new_list"])
@@ -165,7 +179,7 @@ async def ws_watch_set(hass: HomeAssistant, connection: websocket_api.ActiveConn
         names.append(msg["add"])
     if msg.get("remove"):
         names = [n for n in names if n.lower() != msg["remove"].strip().lower()]
-    settings = {k: msg[k] for k in ("notify", "targets") if k in msg}
+    settings = {k: msg[k] for k in ("notify", "targets", "show_all") if k in msg}
     extras.set_user_watch(user_id, list_id, names, settings or None)
     if settings.get("notify"):
         from .offers import async_check_watch

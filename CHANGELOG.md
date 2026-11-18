@@ -3,6 +3,27 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0-beta.14] – 2026-11-18
+
+Fourteenth pre-release of 4.0. **Make a Home Assistant backup before updating:** the watch lists move into files of
+their own.
+
+### Changed
+
+- **Watch lists: one file per user.** Every user's watch lists are now kept in a file of their own,
+  `.storage/smartlists/watch/<user>`, with all of that user's lists inside. Until now they stood together in the
+  shared file `extras`. They move on the first start; a user only disappears from `extras` once their own file has
+  been written. Backups of SmartLists contain the new files.
+- **Integration page:** the buttons are called "Combined list", "Own list" and "Notes" – Home Assistant already puts
+  a plus sign in front.
+
+### Added
+
+- **All watch lists together.** `smartlists/watch` and `smartlists/watch_set` accept `list: "all"`: every product of
+  all your watch lists, each once. New products go to your default list, removing applies to every list. With
+  `show_all` Home Assistant remembers per user that this is the view you want. SmartDiscounts 1.3.2 offers it as
+  "All watch lists" in the picker.
+
 ## [4.0.0-beta.13] – 2026-11-18
 
 Thirteenth pre-release of 4.0. **Make a Home Assistant backup before updating:** own lists are regrouped.

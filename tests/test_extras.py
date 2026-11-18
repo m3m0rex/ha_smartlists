@@ -417,3 +417,91 @@ def test_new_offers_for_a_watch_list_are_found_once():
     fresh = fresh_for(offers, ["Kaffee", "Milch"], [])
     assert [(t, o["store"]) for t, o in fresh] == [("Kaffee", "REWE")]
     assert fresh_for(offers, ["Kaffee"], [_key("Kaffee", offers[0])]) == []
+
+
+def _watch_env(monkeypatch, files, listed):
+    """Extras mit Speicherdateien im Arbeitsspeicher: files = {Schlüssel: Inhalt}, listed = Namen unter watch/."""
+    from smartlists import extras as mod, storage
+
+    class Store:
+        def __init__(self, hass, version, key):
+            self.key = key
+
+        async def async_load(self):
+            return files.get(self.key)
+
+        async def async_save(self, data):
+            files[self.key] = data
+
+        def async_delay_save(self, func, delay):
+            files[self.key] = func()
+
+    async def job(func, *args):
+        return func(*args)
+
+    monkeypatch.setattr(mod, "Store", Store)
+    monkeypatch.setattr(storage, "watch_files", lambda config_dir: list(listed))
+    return types.SimpleNamespace(config=types.SimpleNamespace(config_dir="/config"), async_add_executor_job=job)
+
+
+def test_watch_lists_move_into_one_file_per_user(monkeypatch):
+    anna = {"lists": [{"id": "a1", "name": "Merkliste", "names": ["Kaffee"]}], "default": "a1", "notify": True, "targets": [], "seen": ["x"]}
+    ben = {"lists": [{"id": "b1", "name": "Merkliste", "names": ["Butter"]}], "default": "b1", "notify": False, "targets": [], "seen": []}
+    files = {"smartlists/extras": {"watch": ["Kaffee"], "watch_users": {"anna": anna, "ben": ben}}}
+    ex = Extras(_watch_env(monkeypatch, files, []))
+    asyncio.run(ex.async_load())
+    # jeder Benutzer hat seine eigene Datei, in extras stehen sie nicht mehr
+    assert files["smartlists/watch/anna"] == {"user": "anna", **anna} and files["smartlists/watch/ben"]["lists"][0]["names"] == ["Butter"]
+    assert "watch_users" not in files["smartlists/extras"] and files["smartlists/extras"]["watch"] == ["Kaffee"]
+    # eine Änderung landet nur in der Datei dieses Benutzers
+    before = dict(files["smartlists/watch/ben"])
+    ex.set_user_watch("anna", None, ["Kaffee", "Nutella"])
+    assert files["smartlists/watch/anna"]["lists"][0]["names"] == ["Kaffee", "Nutella"] and files["smartlists/watch/ben"] == before
+    # Neustart: geladen wird aus den Dateien; steht derselbe Benutzer noch in einer alten extras-Datei, gilt seine Datei
+    files["smartlists/extras"]["watch_users"] = {"anna": {"lists": [{"id": "old", "name": "alt", "names": []}], "default": "old"}}
+    again = Extras(_watch_env(monkeypatch, files, ["anna", "ben"]))
+    asyncio.run(again.async_load())
+    assert again.watch_list("anna")["names"] == ["Kaffee", "Nutella"] and again.watch_list("ben")["names"] == ["Butter"]
+    assert again.watch_user("anna")["seen"] == ["x"]
+
+
+def test_watch_lists_stay_in_extras_while_the_own_file_cannot_be_written(monkeypatch):
+    from smartlists import extras as mod
+
+    anna = {"lists": [{"id": "a1", "name": "Merkliste", "names": ["Kaffee"]}], "default": "a1"}
+    files = {"smartlists/extras": {"watch_users": {"anna": anna}}}
+    hass = _watch_env(monkeypatch, files, [])
+
+    async def fail(self, data):
+        raise OSError("voll")
+
+    monkeypatch.setattr(mod.Store, "async_save", fail)
+    ex = Extras(hass)
+    asyncio.run(ex.async_load())
+    assert files["smartlists/extras"]["watch_users"]["anna"]["lists"][0]["names"] == ["Kaffee"]   # nichts verloren
+    assert ex.watch_list("anna")["names"] == ["Kaffee"]
+
+
+def test_all_watch_lists_together():
+    ex = Extras(None)
+    first = ex.watch_user("anna")["default"]
+    ex.set_user_watch("anna", first, ["Kaffee", "Butter"])
+    party = ex.add_watch_list("anna", "Party")
+    ex.set_user_watch("anna", party, ["Chips", "butter"])
+    assert ex.watch_view("anna")[0] == first                                 # ohne Wunsch: die Standard-Liste
+    assert ex.watch_view("anna", "all") == ("all", [
+        {"name": "Kaffee", "list": first}, {"name": "Butter", "list": first}, {"name": "Chips", "list": party}])
+    # Hinzufügen in der Gesamtansicht: in die Standard-Liste; was schon irgendwo steht, kommt nicht doppelt
+    ex.change_all_watch("anna", ["Cola", "chips"])
+    assert ex.watch_list("anna", first)["names"] == ["Kaffee", "Butter", "Cola"] and ex.watch_list("anna", party)["names"] == ["Chips", "butter"]
+    # Entfernen in der Gesamtansicht: aus jeder Liste
+    ex.change_all_watch("anna", [], "Butter")
+    assert [x["name"] for x in ex.watch_view("anna", "all")[1]] == ["Kaffee", "Cola", "Chips"] and ex.watch_list("anna", party)["names"] == ["Chips"]
+    # gemerkte Ansicht: ohne Angabe einer Liste kommen danach alle zusammen – eine genannte Liste geht weiter
+    ex.set_user_watch("anna", None, None, {"show_all": True})
+    assert ex.watch_view("anna")[0] == "all" and ex.watch_view("anna", party)[0] == party
+    ex.set_user_watch("anna", None, None, {"show_all": False})
+    assert ex.watch_view("anna")[0] == first
+    # mit nur einer Liste gibt es nichts zusammenzufassen
+    ex.set_user_watch("ben", None, None, {"show_all": True})
+    assert ex.watch_view("ben")[0] == ex.watch_user("ben")["default"]

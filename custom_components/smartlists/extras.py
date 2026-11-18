@@ -11,6 +11,7 @@ Alles optional: ohne Einträge verhält sich SmartLists wie bisher.
 
 from __future__ import annotations
 
+import logging
 import re
 import secrets
 import time
@@ -22,8 +23,9 @@ from homeassistant.helpers.storage import Store
 from . import itemtext
 from .categories import CATEGORY_IDS, normalize
 from . import storage
-from .const import DOMAIN
+from .const import DOMAIN, WATCH_ALL
 
+_LOGGER = logging.getLogger(__name__)
 STORAGE_KEY = storage.key("extras")
 MAX_EXPENSES = 5000
 MAX_TEMPLATES = 60
@@ -148,6 +150,52 @@ class Extras:
         # "notify": bool, "targets": [...], "seen": [...]}}. self.watch ist die frühere gemeinsame Merkliste – jeder
         # Benutzer bekommt sie beim ersten Zugriff als Kopie in seine erste Liste.
         self.watch_users: dict[str, dict[str, Any]] = {}
+        # Ab 4.0.0-beta.14 liegt jeder Benutzer in seiner eigenen Datei (.storage/smartlists/watch/<Benutzer>).
+        # _watch_legacy: Benutzer, deren Datei sich noch nicht schreiben ließ – sie bleiben so lange in extras stehen.
+        self._watch_stores: dict[str, Store[dict[str, Any]]] = {}
+        self._watch_legacy: set[str] = set()
+
+    def _watch_store(self, user_id: str) -> Store[dict[str, Any]]:
+        store = self._watch_stores.get(user_id)
+        if store is None:
+            store = self._watch_stores[user_id] = Store(self.hass, 1, storage.key(f"{storage.WATCH_DIR}/{storage.watch_name(user_id)}"))
+        return store
+
+    def _watch_data(self, user_id: str) -> dict[str, Any]:
+        return {"user": user_id, **self.watch_users.get(user_id, {})}
+
+    def _save_watch(self, user_id: str) -> None:
+        self._watch_store(user_id).async_delay_save(lambda: self._watch_data(user_id), 2.0)
+        if user_id in self._watch_legacy:
+            self._store.async_delay_save(self._data, 2.0)
+        self._changed()
+
+    async def _async_load_watch(self, legacy: dict[str, dict[str, Any]]) -> None:
+        """Merklisten laden: eine Datei je Benutzer. Was noch in extras stand (beta.13), zieht in eigene Dateien um –
+        aus extras verschwindet ein Benutzer erst, wenn seine Datei geschrieben ist."""
+        self.watch_users = {}
+        try:
+            names = await self.hass.async_add_executor_job(storage.watch_files, self.hass.config.config_dir)
+        except AttributeError:  # Tests ohne Home Assistant
+            names = []
+        for name in names:
+            store: Store[dict[str, Any]] = Store(self.hass, 1, storage.key(f"{storage.WATCH_DIR}/{name}"))
+            content = await store.async_load()
+            if isinstance(content, dict) and content.get("lists"):
+                user_id = str(content.get("user") or name)
+                self.watch_users[user_id] = {k: v for k, v in content.items() if k != "user"}
+                self._watch_stores[user_id] = store
+        for user_id, user in legacy.items():
+            if user_id in self.watch_users:
+                continue  # die eigene Datei ist neuer
+            self.watch_users[user_id] = user
+            try:
+                await self._watch_store(user_id).async_save(self._watch_data(user_id))
+            except Exception:  # noqa: BLE001 – bleibt in extras, nächster Versuch beim nächsten Start
+                _LOGGER.warning("Merklisten von %s nicht in eine eigene Datei geschrieben", user_id, exc_info=True)
+                self._watch_legacy.add(user_id)
+        if legacy:
+            self._store.async_delay_save(self._data, 2.0)
 
     async def async_load(self) -> None:
         data = await self._store.async_load() or {}
@@ -169,7 +217,7 @@ class Extras:
             self.watch_settings["targets"] = [{"id": "persistent_notification", "kind": "hass"},
                                               *([{"id": old, "kind": "service"}] if old.startswith("notify.") else [])]
         self.watch_seen = list(data.get("watch_seen") or [])[-500:]
-        self.watch_users = {str(u): dict(v) for u, v in (data.get("watch_users") or {}).items() if isinstance(v, dict) and v.get("lists")}
+        await self._async_load_watch({str(u): dict(v) for u, v in (data.get("watch_users") or {}).items() if isinstance(v, dict) and v.get("lists")})
         self.price_log = {k: list(v)[-MAX_PRICE_LOG:] for k, v in (data.get("price_log") or {}).items() if isinstance(v, list)}
         self.mealplan = {k: [x for x in v if isinstance(x, str)] for k, v in (data.get("mealplan") or {}).items() if isinstance(v, list)}
 
@@ -179,10 +227,13 @@ class Extras:
                 "list_settings": self.list_settings, "mealplan": self.mealplan,
                 "item_prices": self.item_prices, "price_log": self.price_log, "item_marks": self.item_marks,
                 "watch": self.watch, "watch_settings": self.watch_settings, "watch_seen": self.watch_seen,
-                "watch_users": self.watch_users}
+                **({"watch_users": {u: self.watch_users[u] for u in self._watch_legacy if u in self.watch_users}} if self._watch_legacy else {})}
 
     def _save(self) -> None:
         self._store.async_delay_save(self._data, 2.0)
+        self._changed()
+
+    def _changed(self) -> None:
         from homeassistant.helpers.dispatcher import async_dispatcher_send
 
         from .const import SIGNAL_DATA_CHANGED
@@ -265,7 +316,7 @@ class Extras:
             user = self.watch_users[user_id] = {
                 "lists": [{"id": list_id, "name": first_name, "names": list(self.watch)}], "default": list_id,
                 "notify": bool(self.watch_settings.get("notify")), "targets": list(self.watch_settings.get("targets") or []), "seen": []}
-            self._save()
+            self._save_watch(user_id)
         return user
 
     def watch_list(self, user_id: str, list_id: str | None = None, first_name: str = "Merkliste") -> dict[str, Any]:
@@ -274,6 +325,39 @@ class Extras:
         lists = user["lists"]
         return (next((x for x in lists if x["id"] == list_id), None) if list_id else None) or next(
             (x for x in lists if x["id"] == user.get("default")), lists[0])
+
+    def watch_items(self, user_id: str) -> list[dict[str, str]]:
+        """Alle gemerkten Produkte eines Benutzers über seine Listen hinweg, jedes einmal (die erste Liste, in der es steht)."""
+        seen: set[str] = set()
+        out: list[dict[str, str]] = []
+        for lst in self.watch_user(user_id)["lists"]:
+            for name in lst.get("names") or []:
+                if name.lower() not in seen:
+                    seen.add(name.lower())
+                    out.append({"name": name, "list": lst["id"]})
+        return out
+
+    def watch_view(self, user_id: str, list_id: str | None = None) -> tuple[str, list[dict[str, str]]]:
+        """Was der Benutzer sieht: (Kennung, Produkte). "all" = alle seine Merklisten zusammen – auf Wunsch
+        (list_id = "all") oder ohne Angabe einer Liste, wenn er das als seine Ansicht gewählt hat (show_all)."""
+        user = self.watch_user(user_id)
+        if list_id == WATCH_ALL or (list_id is None and user.get("show_all") and len(user["lists"]) > 1):
+            return WATCH_ALL, self.watch_items(user_id)
+        current = self.watch_list(user_id, list_id)
+        return current["id"], [{"name": n, "list": current["id"]} for n in current["names"]]
+
+    @callback
+    def change_all_watch(self, user_id: str, add: list[str], remove: str | None = None) -> None:
+        """Änderungen in der Ansicht „alle zusammen“: Neues kommt in die Standard-Liste (was schon in irgendeiner
+        Liste steht, nicht noch einmal), Entfernen gilt für jede Liste."""
+        have = {x["name"].lower() for x in self.watch_items(user_id)}
+        new = [n for n in add if " ".join(str(n).split()).lower() not in have]
+        if new:
+            self.set_user_watch(user_id, None, [*self.watch_list(user_id)["names"], *new])
+        gone = (remove or "").strip().lower()
+        for lst in list(self.watch_user(user_id)["lists"]) if gone else []:
+            if any(n.lower() == gone for n in lst["names"]):
+                self.set_user_watch(user_id, lst["id"], [n for n in lst["names"] if n.lower() != gone])
 
     @callback
     def set_user_watch(self, user_id: str, list_id: str | None = None, names: list[str] | None = None,
@@ -287,7 +371,9 @@ class Extras:
                 user["notify"] = bool(settings["notify"])
             if "targets" in settings:
                 user["targets"] = clean_watch_targets(settings["targets"])
-        self._save()
+            if "show_all" in settings:
+                user["show_all"] = bool(settings["show_all"])
+        self._save_watch(user_id)
         return target
 
     @callback
@@ -301,7 +387,7 @@ class Extras:
             raise ValueError("Eine Merkliste mit diesem Namen gibt es schon")
         list_id = secrets.token_hex(4)
         user["lists"].append({"id": list_id, "name": name, "names": []})
-        self._save()
+        self._save_watch(user_id)
         return list_id
 
     @callback
@@ -327,13 +413,13 @@ class Extras:
                 target["name"] = name
             if default:
                 user["default"] = list_id
-        self._save()
+        self._save_watch(user_id)
 
     @callback
     def mark_user_watch_seen(self, user_id: str, keys: list[str]) -> None:
         user = self.watch_user(user_id)
         user["seen"] = [*(user.get("seen") or []), *keys][-500:]
-        self._save()
+        self._save_watch(user_id)
 
     def price_history(self, name: str) -> list[dict[str, Any]]:
         """Neueste zuerst."""

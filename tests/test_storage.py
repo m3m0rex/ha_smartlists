@@ -92,3 +92,16 @@ def test_every_store_is_registered():
     for path in BASE.glob("*.py"):
         used |= set(re.findall(r'storage\.key\("([a-z_]+)"\)', path.read_text(encoding="utf-8")))
     assert used and used <= set(storage.GLOBAL_STORES), used - set(storage.GLOBAL_STORES)
+
+
+def test_watch_files_one_per_user(tmp_path):
+    assert storage.watch_files(str(tmp_path)) == []
+    folder = storage.root(str(tmp_path)) / storage.WATCH_DIR
+    folder.mkdir(parents=True)
+    (folder / "abc123").write_text("{}", encoding="utf-8")
+    (folder / "abc123.tmp").write_text("{}", encoding="utf-8")
+    assert storage.watch_files(str(tmp_path)) == ["abc123"]
+    assert storage.watch_name("ab/../c 1-2_3") == "abc1-2_3"
+    # der Ordner gilt beim Aufräumen nicht als Rest einer gelöschten Liste, beim Entfernen verschwindet er
+    assert storage.set_aside_unknown(str(tmp_path), set()) == []
+    assert storage.remove_all_but_backups(str(tmp_path)) == ["watch"]

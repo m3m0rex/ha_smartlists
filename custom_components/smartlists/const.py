@@ -54,3 +54,6 @@ STORAGE_VERSION = 1
 SIGNAL_LEARNING_CHANGED = f"{DOMAIN}_learning_changed"
 # Haushaltsdaten geändert (Preise, Vorlagen, Reihenfolgen, Links, Notizen …) → offene Karten laden neu
 SIGNAL_DATA_CHANGED = f"{DOMAIN}_data_changed"
+
+# statt einer Listen-Kennung: alle Merklisten des Benutzers zusammen
+WATCH_ALL = "all"

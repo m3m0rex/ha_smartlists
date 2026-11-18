@@ -205,6 +205,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     from .own_groups import async_migrate_legacy
 
     await async_migrate_legacy(hass, entry)
+    # bis 4.0.0-beta.12 gab es je Besitzer eine Gruppe → eine gemeinsame Gruppe „Eigene Listen“
+    from .own_groups import async_merge_groups
+
+    await async_merge_groups(hass, entry)
     await _async_tidy_files(hass, entry)
     # fällige Artikel stündlich auf die eingestellte Liste (Konfigurieren → Sprache & Automationen)
     entry.async_on_unload(automation.async_setup_due_timer(hass))
@@ -218,6 +222,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(async_setup_reminders(hass))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    # Gruppe „Notizen“ auf der Seite der Integration (je Notizliste eine Zeile)
+    from . import notes_group
+
+    entry.async_on_unload(notes_group.async_setup(hass, entry))
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
 

@@ -147,7 +147,7 @@
       "initiate_flow": {
         "user": "+ Liste propre"
       },
-      "entry_type": "Listes propres",
+      "entry_type": "Enregistrées par SmartLists",
       "step": {
         "user": {
           "title": "Liste propre",
@@ -184,11 +184,43 @@
         }
       },
       "abort": {
-        "list_added": "Liste créée – elle figure sous « Listes propres » de son propriétaire.",
+        "list_added": "Liste créée – elle figure sous « Listes propres ».",
         "reconfigure_successful": "Enregistré."
       },
       "error": {
         "list_in_use": "Cette liste fait encore partie d'une liste combinée. Retirez-la d'abord de celle-ci, puis vous pourrez la supprimer."
+      }
+    },
+    "notes": {
+      "initiate_flow": {
+        "user": "+ Notes"
+      },
+      "entry_type": "Listes de l'app SmartLists Go",
+      "step": {
+        "user": {
+          "title": "Nouvelle liste de notes",
+          "description": "Une liste de notes est une liste de tâches locale de Home Assistant que SmartLists Go utilise pour les notes. Seul son propriétaire la voit.",
+          "data": {
+            "name": "Nom (facultatif)",
+            "owner": "Propriétaire"
+          }
+        },
+        "reconfigure": {
+          "title": "Propriétaire d'une liste de notes",
+          "description": "Choisissez une liste de notes et son propriétaire.",
+          "data": {
+            "list": "Liste de notes",
+            "owner": "Propriétaire"
+          }
+        }
+      },
+      "abort": {
+        "notes_added": "Liste de notes créée – elle figure sous « Notes ».",
+        "reconfigure_successful": "Enregistré.",
+        "no_notes": "Il n'y a pas encore de liste de notes."
+      },
+      "error": {
+        "notes_failed": "La liste de notes n'a pas pu être créée. Le nom existe-t-il déjà, ou « Tâches locales » manque-t-il ?"
       }
     }
   },

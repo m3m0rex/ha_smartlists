@@ -90,10 +90,10 @@ def _own_list(hass: HomeAssistant, entity_id: str) -> tuple[Any, dict[str, Any] 
     if entity is None or entry is None:
         return None, None
     if getattr(entity, "grouped", False):
-        from .own_groups import find
+        from .own_groups import find, owner_of
 
         g, data = find(entry, entity.list_id)
-        return (entity, {**data, "owner": g.data.get("owner")}) if g and data is not None else (None, None)
+        return (entity, {**data, "owner": owner_of(g, data)}) if g and data is not None else (None, None)
     sub = entry.subentries.get(entity.subentry.subentry_id)
     return (entity, dict(sub.data)) if sub else (None, None)
 

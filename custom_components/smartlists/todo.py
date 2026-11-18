@@ -114,6 +114,24 @@ _MODEL = {
 }
 
 
+# Rechte in der Zeile einer eigenen Liste: (bearbeiten, abhaken, sehen, „Nur Besitzer“, „kein Besitzer“)
+_RIGHTS = {
+    "de": ("bearbeiten", "abhaken", "sehen", "Nur Besitzer", "kein Besitzer"), "en": ("edit", "tick", "view", "Owner only", "no owner"),
+    "fr": ("modifier", "cocher", "voir", "Propriétaire seulement", "sans propriétaire"), "es": ("editar", "marcar", "ver", "Solo el propietario", "sin propietario"),
+    "it": ("modificare", "spuntare", "vedere", "Solo il proprietario", "senza proprietario"), "pl": ("edycja", "odhaczanie", "podgląd", "Tylko właściciel", "bez właściciela"),
+}
+
+
+def own_device_line(hass: HomeAssistant, title: str, owner_name: str, share_names: dict[str, str]) -> tuple[str, str]:
+    """Name und zweite Zeile des Geräts einer eigenen Liste: („Wocheneinkauf (Anna)“, „Ben: abhaken · Max: sehen“).
+    Mehr als drei Freigaben werden gekürzt („… · +2“)."""
+    edit, tick, view, only, nobody = _RIGHTS.get((hass.config.language or "en").split("-")[0], _RIGHTS["en"])
+    label = {"editor": edit, "checker": tick, "viewer": view}
+    parts = [f"{name}: {label.get(role, role)}" for name, role in share_names.items()]
+    line = " · ".join(parts[:3]) + (f" · +{len(parts) - 3}" if len(parts) > 3 else "") if parts else only
+    return f"{title} ({owner_name or nobody})", line[:250]
+
+
 def list_device(hass: HomeAssistant, key: str, title: str, entity_id: str, sources: list[str] | None = None,
                 via: tuple[str, str] | None = None) -> DeviceInfo:
     """Ein Gerät je SmartLists-Liste. So erscheint unter jedem Unter-Eintrag der Integration ein anklickbarer
@@ -147,8 +165,8 @@ async def async_setup_entry(
     for subentry in entry.subentries.values():
         if subentry.subentry_type == SUBENTRY_OWN_GROUP:
             # je Besitzer ein Unter-Eintrag, darin seine Listen (own_groups.py)
-            owner = subentry.data.get("owner")
             for list_id, ldata in (subentry.data.get("lists") or {}).items():
+                owner = ldata.get("owner") or subentry.data.get("owner")  # ab beta.13 bei der Liste, vorher bei der Gruppe
                 own_store = Store(hass, STORAGE_VERSION, storage.key(f"own.{list_id}"))
                 own_stored = await own_store.async_load() or {}
                 async_add_entities([OwnTodoListEntity(hass, subentry, own_store, own_stored, learning, list_id=list_id,
@@ -510,10 +528,13 @@ class CombinedTodoListEntity(_AccessMixin, TodoListEntity):
         if entry is None or not info:
             return
         model = list_device(self.hass, self._attr_unique_id, self._attr_name or "", self.entity_id, self._sources)["model"]
-        if entry.model != model:
+        # wie bei eigenen Listen: der Besitzer in Klammern hinter dem Namen (ohne Besitzer gilt die Liste für alle)
+        owner = getattr(self, "_owner_name", "") if self.data.get("owner") else ""
+        name = f"{self._attr_name} ({owner})" if owner else str(self._attr_name or "")
+        if entry.model != model or entry.name != name:
             from homeassistant.helpers import device_registry as dr
 
-            dr.async_get(self.hass).async_update_device(entry.id, model=model)
+            dr.async_get(self.hass).async_update_device(entry.id, model=model, name=name)
 
     async def _async_refresh(self) -> None:
         self._update_device_model()
@@ -734,10 +755,9 @@ class OwnTodoListEntity(_AccessMixin, TodoListEntity):
         # Liste übernommen → deren Entitäts-ID weiterverwenden (Automationen, Dashboards und die App passen weiter)
         self.entity_id = self.data.get("entity_id") or f"todo.ha_smartlists_list_{slugify(title) or 'list'}"
         if self.grouped:
-            # ein Gerät je Besitzer („Eigene Listen – Peter“) mit allen seinen Listen
-            self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, f"owner_{subentry.subentry_id}")}, name=subentry.title,
-                                                manufacturer="SmartLists", model=_MODEL.get((hass.config.language or "en").split("-")[0], _MODEL["en"])[0],
-                                                configuration_url="homeassistant://smartlists")
+            # ein Gerät je Liste: auf der Seite der Integration steht unter „Eigene Listen“ jede Liste als Zeile –
+            # „Name (Besitzer)“ und darunter die Rechte (beides wird nachgetragen, sobald die Namen bekannt sind)
+            self._attr_device_info = list_device(hass, f"own_{self.list_id}", title, self.entity_id)
         else:
             self._attr_device_info = list_device(hass, f"own_{subentry.subentry_id}", title, self.entity_id)
         self._owner_name = ""
@@ -752,7 +772,20 @@ class OwnTodoListEntity(_AccessMixin, TodoListEntity):
         for uid, role in (self.data.get("shares") or {}).items():
             _, name = await async_user_info(self.hass, uid)
             self._share_names[name or uid] = role
+        self._update_device_line()
         self.async_write_ha_state()
+
+    @callback
+    def _update_device_line(self) -> None:
+        """Zeile auf der Seite der Integration: „Wocheneinkauf (Anna)“ und darunter „Ben: abhaken · Max: sehen“."""
+        entry = self.device_entry
+        if entry is None or not self.grouped:
+            return
+        name, model = own_device_line(self.hass, str(self._attr_name or ""), self._owner_name, self._share_names)
+        if entry.name != name or entry.model != model:
+            from homeassistant.helpers import device_registry as dr
+
+            dr.async_get(self.hass).async_update_device(entry.id, name=name, model=model)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

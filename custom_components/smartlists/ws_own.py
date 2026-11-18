@@ -31,7 +31,7 @@ async def ws_users(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/create_list", vol.Required("name"): vol.All(str, vol.Length(min=1, max=60))})
 @websocket_api.async_response
 async def ws_create_list(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Neue eigene Liste; Besitzer ist, wer sie anlegt (landet in dessen Gruppe „Eigene Listen · …“)."""
+    """Neue eigene Liste; Besitzer ist, wer sie anlegt (landet in der Gruppe „Eigene Listen“)."""
     if _denied(hass, connection, msg, "create_lists"):
         return
     from .own_groups import async_add_list

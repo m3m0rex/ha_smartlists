@@ -8,7 +8,8 @@ DOMAIN = "smartlists"
 SUBENTRY_COMBINED = "combined_list"
 # Unter-Eintrag-Typ für eigene Listen (mit Besitzer und Freigaben, siehe own.py)
 SUBENTRY_OWN = "own_list"  # bis 3.6: je Liste ein Unter-Eintrag (wird umgezogen)
-SUBENTRY_OWN_GROUP = "own_lists"  # ab 3.7: je Besitzer ein Unter-Eintrag mit seinen Listen (own_groups.py)
+SUBENTRY_OWN_GROUP = "own_lists"  # ab 3.7 je Besitzer, ab 4.0.0-beta.13 EIN Unter-Eintrag mit allen eigenen Listen (own_groups.py)
+SUBENTRY_NOTES = "notes"  # die Gruppe „Notizen“ auf der Seite der Integration (notes_group.py)
 # Aus der Migration: unique_id der Entität vor 1.2 (damit entity_id gleich bleibt)
 LEGACY_UNIQUE_ID = "legacy_unique_id"
 

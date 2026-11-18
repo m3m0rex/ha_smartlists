@@ -1,5 +1,7 @@
 # Error codes
 
+*Deutsch: [[DE Fehler Kennungen]]*
+
 SmartLists gives every hard error a short code (`SL-…`). The code is shown in the message and filled in when you
 use **Report a problem**, so a report says exactly what happened.
 
@@ -32,9 +34,8 @@ recorded again.
 
 ## What a report contains
 
-**Report a problem** first asks where the problem occurred and then shows what is sent, in plain words and – on
-request – as the exact text. It contains the versions of SmartLists and Home Assistant, the place, the browser or
-app, the language and the error code.
+**Report a problem** asks where the problem occurred and then opens a new issue on GitHub (or copies the text). It
+contains the versions of SmartLists and Home Assistant, the place, the browser or app, the language and the error code.
 
 The technical detail of an error (for example the id of a calendar) may contain names of lists or entities. It is
 only included when you tick the box for it in that report; the box is off every time. Names of lists, items, notes,

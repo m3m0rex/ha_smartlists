@@ -164,7 +164,7 @@ async def async_migrate(hass: HomeAssistant, owner: str, sources: list[str], mod
 
     from .own_groups import async_add_list
 
-    # Artikel zuerst speichern, dann die Listen beim Besitzer eintragen (Gruppe „Eigene Listen · …“) –
+    # Artikel zuerst speichern, dann die Listen beim Besitzer eintragen (Gruppe „Eigene Listen“) –
     # das Neuladen der Integration fasst mehrere neue Listen zu einem zusammen (__init__.py)
     created = []
     for title, items, _src in groups:

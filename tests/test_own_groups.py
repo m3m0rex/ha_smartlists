@@ -61,7 +61,7 @@ def _hass():
     return hass, entry
 
 
-def test_legacy_lists_move_into_owner_groups():
+def test_legacy_lists_move_into_the_one_group():
     og, reg = _setup()
     hass, entry = _hass()
     for title, owner in (("Angebote", "u1"), ("Barcodes", "u1"), ("Drogerie", "u2")):
@@ -71,61 +71,53 @@ def test_legacy_lists_move_into_owner_groups():
     old_ids = list(entry.subentries)
     assert asyncio.run(og.async_migrate_legacy(hass, entry)) == 3
     groups = og.groups(entry)
-    assert sorted(g.title for g in groups) == ["Eigene Listen · Anna", "Eigene Listen · Julia"]
+    assert [g.title for g in groups] == ["Eigene Listen"] and groups[0].unique_id == "own_lists"   # eine Gruppe für alle Besitzer
     assert not any(s.subentry_type == "own_list" for s in entry.subentries.values())
-    julia = og.group_of_owner(entry, "u1")
-    # list_id = alte subentry_id → unique_id/Speicher/Entitäts-ID bleiben gleich
-    assert list(julia.data["lists"]) == old_ids[:2]
-    assert julia.data["lists"][old_ids[0]] == {"title": "Angebote", "shares": {"u2": "checker"}}
+    group = og.the_group(entry)
+    # list_id = alte subentry_id → unique_id/Speicher/Entitäts-ID bleiben gleich; der Besitzer steht bei der Liste
+    assert list(group.data["lists"]) == old_ids
+    assert group.data["lists"][old_ids[0]] == {"title": "Angebote", "owner": "u1", "shares": {"u2": "checker"}}
+    assert [og.owner_of(group, d) for d in group.data["lists"].values()] == ["u1", "u1", "u2"]
     # Entitäten wurden an den neuen Eintrag gehängt und vom alten Gerät gelöst
-    assert ("todo.angebote", julia.subentry_id, None) in reg["updates"] and len(reg["updates"]) == 3
+    assert ("todo.angebote", group.subentry_id, None) in reg["updates"] and len(reg["updates"]) == 3
 
 
-def test_add_move_remove():
+def test_groups_per_owner_are_merged_into_one():
+    """3.7 bis 4.0.0-beta.12: je Besitzer ein Unter-Eintrag – beim Start werden sie zusammengeführt."""
+    og, reg = _setup()
+    hass, entry = _hass()
+    julia = _Sub(MappingProxyType({"owner": "u1", "lists": {"a": {"title": "Einkauf", "shares": {"u2": "editor"}, "entity_id": "todo.einkauf"},
+                                                            "b": {"title": "Garten", "shares": {}}}}), "own_lists", "Eigene Listen · Julia", "owner_u1")
+    anna = _Sub(MappingProxyType({"owner": "u2", "lists": {"c": {"title": "Geschenke", "shares": {}}}}), "own_lists", "Eigene Listen · Anna", "owner_u2")
+    for s in (julia, anna):
+        entry.subentries[s.subentry_id] = s
+    reg["entities"].update({"todo.einkauf": "own_a", "todo.garten": "own_b", "todo.geschenke": "own_c"})
+    assert og.owner_of(julia, julia.data["lists"]["a"]) == "u1"                       # alte Form: Besitzer von der Gruppe
+    assert asyncio.run(og.async_merge_groups(hass, entry)) == 3
+    assert [g.title for g in og.groups(entry)] == ["Eigene Listen"]
+    group = og.the_group(entry)
+    assert group.data["lists"] == {"a": {"title": "Einkauf", "owner": "u1", "shares": {"u2": "editor"}, "entity_id": "todo.einkauf"},
+                                   "b": {"title": "Garten", "owner": "u1", "shares": {}}, "c": {"title": "Geschenke", "owner": "u2", "shares": {}}}
+    assert {u[:2] for u in reg["updates"]} == {("todo.einkauf", group.subentry_id), ("todo.garten", group.subentry_id), ("todo.geschenke", group.subentry_id)}
+    assert reg["removed"] == []                                                       # keine Entität ging verloren
+    assert asyncio.run(og.async_merge_groups(hass, entry)) == 0                       # zweiter Start: nichts zu tun
+
+
+def test_add_change_owner_remove():
     og, reg = _setup()
     hass, entry = _hass()
     a = asyncio.run(og.async_add_list(hass, "u1", "Einkauf"))
-    b = asyncio.run(og.async_add_list(hass, "u1", "Garten", {"u2": "editor"}))
-    assert len(og.groups(entry)) == 1 and len(og.group_of_owner(entry, "u1").data["lists"]) == 2
+    b = asyncio.run(og.async_add_list(hass, "u2", "Garten", {"u1": "editor"}))
+    group = og.the_group(entry)
+    assert len(og.groups(entry)) == 1 and list(group.data["lists"]) == [a, b]         # auch bei zwei Besitzern eine Gruppe
     reg["entities"]["todo.garten"] = f"own_{b}"
-    # Besitzer wechseln: Liste wandert zu Anna (neuer Eintrag), Anna verliert ihre Freigabe (sie ist jetzt Besitzerin)
-    asyncio.run(og.async_update_list(hass, b, owner="u2"))
-    anna = og.group_of_owner(entry, "u2")
-    assert anna.data["lists"][b] == {"title": "Garten", "shares": {}}
-    assert b not in og.group_of_owner(entry, "u1").data["lists"]
-    assert ("todo.garten", anna.subentry_id, None) in reg["updates"]
-    # letzte Liste weg → Eintrag des Besitzers verschwindet
+    # Besitzer wechseln: wird bei der Liste umgetragen; die neue Besitzerin verliert ihre Freigabe (sie darf jetzt alles)
+    asyncio.run(og.async_update_list(hass, b, owner="u1"))
+    assert og.find(entry, b)[1] == {"title": "Garten", "owner": "u1", "shares": {}}
+    assert reg["updates"] == [] and "todo.garten" in reg["entities"]                  # die Entität wurde dafür nicht angefasst
     og.async_remove_list(hass, b)
-    assert og.group_of_owner(entry, "u2") is None and reg["removed"] == ["todo.garten"]
+    assert list(og.the_group(entry).data["lists"]) == [a] and reg["removed"] == ["todo.garten"]
     asyncio.run(og.async_update_list(hass, a, title="Wocheneinkauf"))
     assert og.find(entry, a)[1]["title"] == "Wocheneinkauf"
-
-
-def test_owner_change_of_only_list_keeps_entity():
-    """War es die einzige Liste des alten Besitzers, verschwindet dessen Unter-Eintrag – und Home Assistant löscht dabei
-    alle Entitäten, die noch daran hängen. Die Entität muss deshalb vorher umgehängt sein."""
-    og, reg = _setup()
-    hass, entry = _hass()
-    a = asyncio.run(og.async_add_list(hass, "u1", "Einkauf"))
-    reg["entities"]["todo.einkauf"] = f"own_{a}"
-    old = og.group_of_owner(entry, "u1").subentry_id
-    at = {"todo.einkauf": old}  # Entität → Unter-Eintrag, wie in der Registry von Home Assistant
-    plain_remove = hass.config_entries.async_remove_subentry
-
-    def remove(e, sid):
-        for eid in [x for x, s in at.items() if s == sid]:
-            del at[eid], reg["entities"][eid]
-        plain_remove(e, sid)
-
-    hass.config_entries.async_remove_subentry = remove
-    real_update = sys.modules["homeassistant.helpers.entity_registry"].async_get(hass).async_update_entity.__func__
-
-    def update(self, entity_id, *, config_subentry_id=None, device_id=None, name=None):
-        at[entity_id] = config_subentry_id
-        real_update(self, entity_id, config_subentry_id=config_subentry_id, device_id=device_id)
-
-    type(sys.modules["homeassistant.helpers.entity_registry"].async_get(hass)).async_update_entity = update
-    asyncio.run(og.async_update_list(hass, a, owner="u2"))
-    anna = og.group_of_owner(entry, "u2")
-    assert og.group_of_owner(entry, "u1") is None and list(anna.data["lists"]) == [a]
-    assert at == {"todo.einkauf": anna.subentry_id} and "todo.einkauf" in reg["entities"]
+    og.async_remove_list(hass, a)                                                     # letzte Liste weg → die Gruppe verschwindet
+    assert og.groups(entry) == []

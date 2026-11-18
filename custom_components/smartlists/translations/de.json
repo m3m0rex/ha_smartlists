@@ -147,7 +147,7 @@
       "initiate_flow": {
         "user": "+ Eigene Liste"
       },
-      "entry_type": "Eigene Listen",
+      "entry_type": "Von SmartLists gespeichert",
       "step": {
         "user": {
           "title": "Eigene Liste",
@@ -184,11 +184,43 @@
         }
       },
       "abort": {
-        "list_added": "Liste angelegt – sie steht unter „Eigene Listen“ ihres Besitzers.",
+        "list_added": "Liste angelegt – sie steht unter „Eigene Listen“.",
         "reconfigure_successful": "Gespeichert."
       },
       "error": {
         "list_in_use": "Diese Liste gehört noch zu einer kombinierten Liste. Nimm sie dort zuerst heraus, dann lässt sie sich löschen."
+      }
+    },
+    "notes": {
+      "initiate_flow": {
+        "user": "+ Notizen"
+      },
+      "entry_type": "Listen der App SmartLists Go",
+      "step": {
+        "user": {
+          "title": "Neue Notizliste",
+          "description": "Eine Notizliste ist eine lokale To-do-Liste von Home Assistant, die SmartLists Go für Notizen nutzt. Nur ihr Besitzer sieht sie.",
+          "data": {
+            "name": "Name (optional)",
+            "owner": "Besitzer"
+          }
+        },
+        "reconfigure": {
+          "title": "Besitzer einer Notizliste",
+          "description": "Wähle eine Notizliste und wem sie gehört.",
+          "data": {
+            "list": "Notizliste",
+            "owner": "Besitzer"
+          }
+        }
+      },
+      "abort": {
+        "notes_added": "Notizliste angelegt – sie steht unter „Notizen“.",
+        "reconfigure_successful": "Gespeichert.",
+        "no_notes": "Es gibt noch keine Notizlisten."
+      },
+      "error": {
+        "notes_failed": "Die Notizliste konnte nicht angelegt werden. Gibt es den Namen schon, oder fehlt „Lokale To-do“?"
       }
     }
   },

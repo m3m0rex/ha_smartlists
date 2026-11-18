@@ -14,3 +14,4 @@
 - [[App pairing and devices]]
 - [[Troubleshooting]]
 - [[Error codes]]
+- [[Fehler-Kennungen (Deutsch)|DE Fehler Kennungen]]

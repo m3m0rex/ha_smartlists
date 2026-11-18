@@ -44,44 +44,41 @@ function slPlatformName(platform, t) {
   return known[platform] || (platform ? String(platform).replace(/_/g, " ").replace(/\b\w/g, (x) => x.toUpperCase()) : t.mg_pf_other);
 }
 
-/* „Fehler melden“: erst fragen, wo der Fehler aufgetreten ist (nichts vorbelegt – wer über die Seitenleiste in die
- * Einstellungen kommt, hat den Fehler nicht unbedingt dort gesehen), dann zeigen, was verschickt wird: in normalen Worten
- * und auf Wunsch der genaue Text. Verschickt wird nichts von hier – „Auf GitHub öffnen“ öffnet ein vorausgefülltes Issue.
- * env: {lines: [„- SmartLists: …“, …], repo, where?} – where nur, wenn der Dialog aus einer Fehlermeldung kommt. */
+/* „Fehler melden“: fragt nur, wo der Fehler aufgetreten ist (nichts vorbelegt – wer über die Seitenleiste in die
+ * Einstellungen kommt, hat den Fehler nicht unbedingt dort gesehen). Danach „Auf GitHub öffnen“ (dort sieht und
+ * bearbeitet man den Text ohnehin, bevor man ihn abschickt) oder „Text kopieren“. Verschickt wird von hier nichts.
+ * env: {lines: [„- SmartLists: …“, …], repo, where?, code?, detail?} – where/code nur, wenn der Dialog aus einer
+ * Fehlermeldung kommt; detail (kann Namen enthalten) kommt nur mit Haken in den Text, und der ist jedes Mal aus. */
 function slReportDialog(root, t, env) {
   const WHERE = [["card", t.bug_w_card, "Dashboard card"], ["side", t.bug_w_side, "Sidebar page"], ["share", t.bug_w_share, "Share page"],
     ["settings", t.bug_w_settings, "Settings"], ["other", t.bug_w_other, "Other"]];
-  // Einzelheiten des Fehlers können Namen von Listen oder Entitäten enthalten: nur mit Haken, und der ist bei jedem Bericht aus
   const more = h("input", { type: "checkbox", style: "width:18px;height:18px;margin:0;flex:none" });
   const sel = h("select", { "aria-label": t.bug_where, style: "width:100%;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--divider-color,#ccc);background:var(--card-background-color,#fff);color:var(--primary-text-color)" },
     h("option", { value: "" }, t.bug_choose), WHERE.map(([id, label]) => h("option", { value: id, selected: env.where === id }, label)));
   const body = () => { const w = WHERE.find((x) => x[0] === sel.value);
     return ["### What happened?", "", "", "### What did you expect?", "", "", "### Steps to reproduce", "1. ", "", "### Environment",
       ...env.lines, `- Where: ${w ? w[2] : "?"}`, ...(env.code ? [`- Error: ${env.code}`] : []), ...(env.detail && more.checked ? [`- Detail: ${env.detail}`] : [])].join("\n"); };
-  const text = h("textarea", { rows: "12", "aria-label": t.bug_exact, style: "width:100%;box-sizing:border-box;font:12px/1.5 monospace;margin-top:8px;color:var(--primary-text-color);background:none;border:1px solid var(--divider-color,#ccc);border-radius:8px;padding:8px" });
-  let edited = false;
-  text.value = body();
-  text.addEventListener("input", () => { edited = true; });
   const err = h("div", { role: "alert", style: "color:var(--error-color,#db4437);font-size:13px;min-height:18px;margin-top:4px" });
-  sel.addEventListener("change", () => { err.textContent = ""; if (!edited) text.value = body(); });
-  more.addEventListener("change", () => { edited = false; text.value = body(); });
+  sel.addEventListener("change", () => { err.textContent = ""; });
   const status = h("span", { style: "font-size:13px;color:var(--secondary-text-color);margin-right:auto" });
   const close = () => { back.remove(); document.removeEventListener("keydown", onKey, true); };
   const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); close(); } };
   const need = () => { if (sel.value) return true; err.textContent = t.bug_need_where; sel.focus(); return false; };
-  const copy = async () => { if (!need()) return; try { await navigator.clipboard.writeText(text.value); } catch (e) { text.select(); try { document.execCommand("copy"); } catch (e2) { /* */ } } status.textContent = "✓ " + t.bug_copied; };
-  const open = () => { if (!need()) return; window.open(`${env.repo}/issues/new?body=${encodeURIComponent(text.value)}`, "_blank", "noopener"); close(); };
-  const back = h("div", { class: "dlg-back", onpointerdown: (ev) => { back._down = ev.target === back; }, onclick: (ev) => { if (ev.target === back && back._down && !edited) close(); } },
+  const copy = async () => {
+    if (!need()) return;
+    const text = body();
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) { const ta = h("textarea", { style: "position:fixed;opacity:0" }); ta.value = text; back.append(ta); ta.select(); try { document.execCommand("copy"); } catch (e2) { /* */ } ta.remove(); }
+    status.textContent = "✓ " + t.bug_copied;
+  };
+  const open = () => { if (!need()) return; window.open(`${env.repo}/issues/new?body=${encodeURIComponent(body())}`, "_blank", "noopener"); close(); };
+  const back = h("div", { class: "dlg-back", onpointerdown: (ev) => { back._down = ev.target === back; }, onclick: (ev) => { if (ev.target === back && back._down) close(); } },
     h("style", {}, DIALOG_STYLE),
-    h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": t.bug_title, style: "max-width:520px;max-height:92vh;overflow:auto" },
+    h("div", { class: "dlg", role: "dialog", "aria-modal": "true", "aria-label": t.bug_title, style: "max-width:460px" },
       h("h2", {}, t.bug_title),
       h("label", { style: "display:block;font-weight:600;margin:4px 0 6px" }, t.bug_where), sel, err,
-      h("div", { style: "font-weight:600;margin:10px 0 4px" }, t.bug_sends),
-      h("ul", { style: "margin:0 0 8px;padding-left:20px" }, [t.bug_s1, t.bug_s2, t.bug_s3].map((x) => h("li", {}, x))),
-      h("p", { style: "margin:0 0 8px;color:var(--secondary-text-color)" }, t.bug_not),
-      env.detail ? h("label", { style: "display:flex;gap:10px;align-items:flex-start;margin:0 0 8px;cursor:pointer" }, more, h("span", {}, t.bug_detail, h("br"), h("small", { style: "color:var(--secondary-text-color)" }, env.detail))) : null,
-      h("details", {}, h("summary", { style: "cursor:pointer;color:var(--primary-color,#03a9f4)" }, t.bug_exact), text),
-      h("p", { style: "margin:10px 0 0;font-size:13px;color:var(--secondary-text-color)" }, t.bug_note),
+      env.detail ? h("label", { style: "display:flex;gap:10px;align-items:flex-start;margin:4px 0 8px;cursor:pointer" }, more, h("span", {}, t.bug_detail, h("br"), h("small", { style: "color:var(--secondary-text-color)" }, env.detail))) : null,
+      h("p", { style: "margin:6px 0 0;font-size:13px;color:var(--secondary-text-color)" }, t.bug_note),
       h("div", { class: "row", style: "flex-wrap:wrap" }, status, h("button", { type: "button", onclick: close }, t.cancel),
         h("button", { type: "button", onclick: copy }, t.bug_copy), h("button", { type: "button", class: "ok", onclick: open }, t.bug_open))));
   document.addEventListener("keydown", onKey, true);

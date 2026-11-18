@@ -113,8 +113,8 @@ def report(backup: dict[str, Any], path: str = "", size: int = 0, verified: bool
         data = sub.get("data") or {}
         kind = sub.get("subentry_type")
         if kind == SUBENTRY_OWN_GROUP:
-            owner = str(data.get("owner") or "")
             for list_id, entry in (data.get("lists") or {}).items():
+                owner = str(entry.get("owner") or data.get("owner") or "")  # ab beta.13 bei der Liste, vorher bei der Gruppe
                 items = (stores.get(f"{DOMAIN}.own.{list_id}") or {}).get("items") or []
                 own.append({"title": entry.get("title") or "", "owner": users.get(owner, owner), "shares": len(entry.get("shares") or {}),
                             "items": len(items), "open": sum(1 for i in items if not _done(i))})

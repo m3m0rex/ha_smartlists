@@ -13,6 +13,7 @@ class _Sub:
     def __init__(self, data, subentry_type, title, unique_id):
         _Sub.n += 1
         self.data, self.subentry_type, self.title, self.subentry_id = data, subentry_type, title, f"sub{_Sub.n}"
+        self.unique_id = unique_id
 
 
 class _Store:
@@ -123,8 +124,8 @@ def test_migrate_each_and_one():
     first = saved[f"smartlists/own.{r['lists'][0]['list_id']}"]["items"]
     assert [(i["summary"], i["status"], i["description"]) for i in first] == [("Milch 2 l", "needs_action", ""), ("Brot", "completed", "Vollkorn")]
     # beide Listen in EINEM Unter-Eintrag des Besitzers
-    assert len(added) == 1 and added[0].subentry_type == "own_lists" and added[0].title == "Eigene Listen · Julia"
-    assert added[0].data["owner"] == "u1" and [v["title"] for v in added[0].data["lists"].values()] == ["Einkaufsliste", "Anna"]
+    assert len(added) == 1 and added[0].subentry_type == "own_lists" and added[0].title == "Eigene Listen"
+    assert {v["owner"] for v in added[0].data["lists"].values()} == {"u1"} and [v["title"] for v in added[0].data["lists"].values()] == ["Einkaufsliste", "Anna"]
     # alte Listen bleiben unverändert
     assert r["old"] == {"todo.einkaufsliste": "kept", "todo.anna": "kept"}
     assert removed == [] and removed_entries == []

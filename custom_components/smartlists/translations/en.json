@@ -147,7 +147,7 @@
       "initiate_flow": {
         "user": "+ Own list"
       },
-      "entry_type": "Own lists",
+      "entry_type": "Stored by SmartLists",
       "step": {
         "user": {
           "title": "Own list",
@@ -184,11 +184,43 @@
         }
       },
       "abort": {
-        "list_added": "List created – it is listed under its owner's “Own lists”.",
+        "list_added": "List created – it is listed under “Own lists”.",
         "reconfigure_successful": "Saved."
       },
       "error": {
         "list_in_use": "This list is still part of a combined list. Remove it there first, then it can be deleted."
+      }
+    },
+    "notes": {
+      "initiate_flow": {
+        "user": "+ Notes"
+      },
+      "entry_type": "Lists of the app SmartLists Go",
+      "step": {
+        "user": {
+          "title": "New notes list",
+          "description": "A notes list is a local to-do list of Home Assistant that SmartLists Go uses for notes. Only its owner sees it.",
+          "data": {
+            "name": "Name (optional)",
+            "owner": "Owner"
+          }
+        },
+        "reconfigure": {
+          "title": "Owner of a notes list",
+          "description": "Choose a notes list and who owns it.",
+          "data": {
+            "list": "Notes list",
+            "owner": "Owner"
+          }
+        }
+      },
+      "abort": {
+        "notes_added": "Notes list created – it is listed under “Notes”.",
+        "reconfigure_successful": "Saved.",
+        "no_notes": "There are no notes lists yet."
+      },
+      "error": {
+        "notes_failed": "The notes list could not be created. Is the name already taken, or is “Local to-do” missing?"
       }
     }
   },

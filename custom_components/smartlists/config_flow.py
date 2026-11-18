@@ -201,8 +201,10 @@ class SmartListsConfigFlow(ConfigFlow, domain=DOMAIN):
     @classmethod
     @callback
     def async_get_supported_subentry_types(cls, config_entry: ConfigEntry) -> dict[str, type[ConfigSubentryFlow]]:
-        # eigene Listen: ein Unter-Eintrag je Besitzer („Eigene Listen · Peter“), siehe own_groups.py
-        return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow}
+        # eigene Listen: ein Unter-Eintrag „Eigene Listen“ für alle Besitzer, siehe own_groups.py
+        from .const import SUBENTRY_NOTES
+
+        return {SUBENTRY_COMBINED: CombinedListSubentryFlow, SUBENTRY_OWN_GROUP: OwnListsSubentryFlow, SUBENTRY_NOTES: NotesSubentryFlow}
 
     @staticmethod
     @callback
@@ -337,6 +339,64 @@ class CombinedListSubentryFlow(ConfigSubentryFlow):
 
 
 # ----------------------------------------------------------------------
+# Notizen: „+ Notizen“ legt eine Notizliste an; ⚙ an der Gruppe weist einer Notizliste einen Besitzer zu
+# ----------------------------------------------------------------------
+class NotesSubentryFlow(ConfigSubentryFlow):
+    """Notizlisten sind lokale To-do-Listen von Home Assistant (notes.py). Die Gruppe „Notizen“ gibt es einmal –
+    „+ Notizen“ legt deshalb keinen weiteren Unter-Eintrag an, sondern eine neue Notizliste."""
+
+    async def _users(self) -> list[selector.SelectOptionDict]:
+        from .own import async_household_users
+
+        return [selector.SelectOptionDict(value=u["id"], label=u["name"]) for u in await async_household_users(self.hass)]
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        from . import notes_group
+        from .notes import async_create_notes_list
+
+        users = await self._users()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            owner = await self.hass.auth.async_get_user(user_input["owner"])
+            try:
+                if owner is None:
+                    raise ValueError("owner")
+                await async_create_notes_list(self.hass, owner, user_input.get(CONF_NAME, "").strip())
+            except ValueError:
+                errors["base"] = "notes_failed"
+            else:
+                await notes_group.async_sync(self.hass, self._get_entry())
+                return self.async_abort(reason="notes_added")
+        default = self.context.get("user_id") or (users[0]["value"] if users else "")
+        return self.async_show_form(step_id="user", errors=errors, data_schema=vol.Schema({
+            vol.Optional(CONF_NAME, default=""): selector.TextSelector(),
+            vol.Required("owner", default=default): selector.SelectSelector(selector.SelectSelectorConfig(options=users, mode=selector.SelectSelectorMode.DROPDOWN)),
+        }))
+
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        from . import notes_group
+        from .notes import get_notes
+
+        notes = get_notes(self.hass)
+        described = notes.describe()["lists"] if notes is not None else []
+        if not described:
+            return self.async_abort(reason="no_notes")
+        if user_input is not None and user_input.get("list") in {x["entity_id"] for x in described}:
+            notes.update(owners={user_input["list"]: user_input["owner"]})
+            await notes_group.async_sync(self.hass, self._get_entry())
+            return self.async_abort(reason="reconfigure_successful")
+        group = notes_group.texts(self.hass)[0]
+        options = [selector.SelectOptionDict(value=x["entity_id"], label=notes_group.short_name(x["name"], group)) for x in described]
+        users = await self._users()
+        first = described[0]
+        return self.async_show_form(step_id="reconfigure", data_schema=vol.Schema({
+            vol.Required("list", default=first["entity_id"]): selector.SelectSelector(selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.DROPDOWN)),
+            vol.Required("owner", default=first.get("owner_id") or (users[0]["value"] if users else "")): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=users, mode=selector.SelectSelectorMode.DROPDOWN)),
+        }))
+
+
+# ----------------------------------------------------------------------
 # Eigene Liste (Unter-Eintrag) mit Besitzer und Freigaben
 # ----------------------------------------------------------------------
 class OwnListSubentryFlow(ConfigSubentryFlow):
@@ -413,7 +473,11 @@ class OwnListsSubentryFlow(OwnListSubentryFlow):
         if len(lists_) == 1:
             self._list_id = next(iter(lists_))
             return await self.async_step_edit()
-        options = [selector.SelectOptionDict(value=k, label=v.get("title") or k) for k, v in lists_.items()]
+        from .own import async_household_users
+
+        names = {u["id"]: u["name"] for u in await async_household_users(self.hass)}
+        options = [selector.SelectOptionDict(value=k, label=f"{v.get('title') or k} ({names.get(v.get('owner') or group.data.get('owner'), '–')})")
+                   for k, v in lists_.items()]
         return self.async_show_form(step_id="reconfigure", data_schema=vol.Schema({
             vol.Required("list"): selector.SelectSelector(selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.LIST)),
         }))
@@ -430,7 +494,7 @@ class OwnListsSubentryFlow(OwnListSubentryFlow):
                 try:
                     async_remove_list(self.hass, self._list_id)
                 except ValueError:  # noch Teil einer kombinierten Liste: im Dialog sagen, nichts löschen
-                    schema = await self._schema({CONF_NAME: current.get("title", ""), "owner": group.data.get("owner"), "shares": current.get("shares") or {}})
+                    schema = await self._schema({CONF_NAME: current.get("title", ""), "owner": current.get("owner") or group.data.get("owner"), "shares": current.get("shares") or {}})
                     schema = schema.extend({vol.Optional("delete", default=False): selector.BooleanSelector()})
                     return self.async_show_form(step_id="edit", data_schema=schema, errors={"base": "list_in_use"},
                                                 description_placeholders={"list": current.get("title", "")})
@@ -438,7 +502,7 @@ class OwnListsSubentryFlow(OwnListSubentryFlow):
                 title, data = self._data(user_input)
                 await async_update_list(self.hass, self._list_id, title=title, shares=data["shares"], owner=data["owner"])
             return self.async_abort(reason="reconfigure_successful")
-        schema = await self._schema({CONF_NAME: current.get("title", ""), "owner": group.data.get("owner"), "shares": current.get("shares") or {}})
+        schema = await self._schema({CONF_NAME: current.get("title", ""), "owner": current.get("owner") or group.data.get("owner"), "shares": current.get("shares") or {}})
         schema = schema.extend({vol.Optional("delete", default=False): selector.BooleanSelector()})
         return self.async_show_form(step_id="edit", data_schema=schema, description_placeholders={"list": current.get("title", "")})
 

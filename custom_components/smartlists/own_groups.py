@@ -1,7 +1,11 @@
-"""Eigene Listen, gruppiert je Besitzer: ein Unter-Eintrag „Eigene Listen · Peter“ (Typ own_lists) mit
+"""Eigene Listen: EIN Unter-Eintrag „Eigene Listen“ (Typ own_lists, unique_id „own_lists“) für alle Besitzer mit
 
-    owner: HA-Benutzer-ID des Besitzers
-    lists: {list_id: {"title": "Angebote", "shares": {benutzer_id: rolle}, ["entity_id": …]}}
+    lists: {list_id: {"title": "Angebote", "owner": benutzer_id, "shares": {benutzer_id: rolle}, ["entity_id": …]}}
+
+So steht auf der Seite der Integration eine Gruppe „Eigene Listen“ mit allen Listen darunter (Name, Besitzer in
+Klammern, Rechte in der zweiten Zeile) statt einer Gruppe je Besitzer. Von 3.7 bis 4.0.0-beta.12 gab es je Besitzer
+einen Unter-Eintrag mit `owner` oben und den Listen ohne eigenes `owner`; `async_merge_groups` führt sie beim Start
+zusammen, `owner_of` versteht beide Formen (falls die HA-Version Entitäten nicht umhängen kann und es beim Alten bleibt).
 
 list_id ist die frühere subentry_id der Liste (bis 3.6 war jede Liste ein eigener Unter-Eintrag own_list) –
 damit bleiben unique_id (own_<list_id>), Speicher (smartlists.own.<list_id>) und Entitäts-ID unverändert.
@@ -45,8 +49,17 @@ def groups(entry: ConfigEntry) -> list[ConfigSubentry]:
     return [s for s in entry.subentries.values() if s.subentry_type == SUBENTRY_OWN_GROUP]
 
 
-def group_of_owner(entry: ConfigEntry, owner: str) -> ConfigSubentry | None:
-    return next((g for g in groups(entry) if g.data.get("owner") == owner), None)
+SINGLE_ID = "own_lists"  # unique_id der einen Gruppe für alle Besitzer
+
+
+def the_group(entry: ConfigEntry) -> ConfigSubentry | None:
+    """Die eine Gruppe „Eigene Listen“ (ab 4.0.0-beta.13)."""
+    return next((g for g in groups(entry) if getattr(g, "unique_id", None) == SINGLE_ID), None)
+
+
+def owner_of(g: ConfigSubentry | None, data: dict[str, Any] | None) -> str | None:
+    """Besitzer einer Liste: steht bei der Liste; in der alten Form (Gruppe je Besitzer) bei der Gruppe."""
+    return (data or {}).get("owner") or (g.data.get("owner") if g is not None else None) or None
 
 
 def iter_lists(entry: ConfigEntry):
@@ -71,11 +84,11 @@ async def async_add_list(hass: HomeAssistant, owner: str, title: str, shares: di
     if entry is None:
         raise ValueError("SmartLists ist nicht eingerichtet.")
     list_id = list_id or uuid.uuid4().hex
-    item = {"title": title.strip()[:60] or "Liste", "shares": dict(shares or {})}
-    g = group_of_owner(entry, owner)
+    item = {"title": title.strip()[:60] or "Liste", "owner": owner, "shares": dict(shares or {})}
+    g = the_group(entry)
     if g is None:
-        sub = ConfigSubentry(data=MappingProxyType({"owner": owner, "lists": {list_id: item}}), subentry_type=SUBENTRY_OWN_GROUP,
-                             title=f"{group_label(hass)} · {await _owner_name(hass, owner)}", unique_id=f"owner_{owner}")
+        sub = ConfigSubentry(data=MappingProxyType({"lists": {list_id: item}}), subentry_type=SUBENTRY_OWN_GROUP,
+                             title=group_label(hass), unique_id=SINGLE_ID)
         hass.config_entries.async_add_subentry(entry, sub)
     else:
         hass.config_entries.async_update_subentry(entry, g, data={**g.data, "lists": {**(g.data.get("lists") or {}), list_id: item}})
@@ -84,7 +97,7 @@ async def async_add_list(hass: HomeAssistant, owner: str, title: str, shares: di
 
 async def async_update_list(hass: HomeAssistant, list_id: str, *, title: str | None = None,
                             shares: dict[str, str] | None = None, owner: str | None = None) -> None:
-    """Name/Freigaben ändern; anderer Besitzer → Liste wandert in dessen Gruppe (Entität bleibt dieselbe)."""
+    """Name, Freigaben oder Besitzer ändern (die Entität bleibt dieselbe)."""
     entry = main_entry(hass)
     g, data = find(entry, list_id) if entry else (None, None)
     if g is None or data is None:
@@ -94,22 +107,10 @@ async def async_update_list(hass: HomeAssistant, list_id: str, *, title: str | N
         new["title"] = title.strip()[:60]
     if shares is not None:
         new["shares"] = dict(shares)
-    if owner and owner != g.data.get("owner"):
+    if owner and owner != owner_of(g, data):
+        # der Besitzer steht bei der Liste: nur umtragen (früher wanderte die Liste dafür in eine andere Gruppe)
+        new["owner"] = owner
         new["shares"] = {u: r for u, r in new.get("shares", {}).items() if u != owner}
-        # Reihenfolge wie beim Umzug alter Listen: erst in die neue Gruppe und die Entität umhängen, dann aus der alten
-        # nehmen. War es die einzige Liste des alten Besitzers, entfernt Home Assistant mit dessen Unter-Eintrag auch
-        # alle Entitäten, die noch daran hängen – Name, Symbol und Bereich wären sonst weg.
-        old_id = g.subentry_id
-        await async_add_list(hass, owner, new["title"], new["shares"], list_id=list_id)
-        target = group_of_owner(entry, owner)
-        if target is not None and "entity_id" in data:
-            hass.config_entries.async_update_subentry(entry, target, data={**target.data, "lists": {
-                **target.data["lists"], list_id: {**target.data["lists"][list_id], "entity_id": data["entity_id"]}}})
-        _repoint_entity(hass, list_id, target.subentry_id if target else None)
-        old = entry.subentries.get(old_id)
-        if old is not None:
-            _remove_from_group(hass, entry, old, list_id)
-        return
     hass.config_entries.async_update_subentry(entry, g, data={**g.data, "lists": {**g.data["lists"], list_id: new}})
 
 
@@ -201,7 +202,7 @@ async def async_migrate_legacy(hass: HomeAssistant, entry: ConfigEntry) -> int:
             data["entity_id"] = sub.data["entity_id"]
         owner = sub.data.get("owner") or ""
         await async_add_list(hass, owner, data["title"], data["shares"], list_id=sub.subentry_id)
-        g = group_of_owner(entry, owner)
+        g = the_group(entry)
         if g is not None and "entity_id" in data:
             hass.config_entries.async_update_subentry(entry, g, data={**g.data, "lists": {
                 **g.data["lists"], sub.subentry_id: {**g.data["lists"][sub.subentry_id], "entity_id": data["entity_id"]}}})
@@ -209,3 +210,34 @@ async def async_migrate_legacy(hass: HomeAssistant, entry: ConfigEntry) -> int:
         hass.config_entries.async_remove_subentry(entry, sub.subentry_id)
     _LOGGER.info("SmartLists: %s eigene Liste(n) in Gruppen je Besitzer umgezogen", len(legacy))
     return len(legacy)
+
+
+async def async_merge_groups(hass: HomeAssistant, entry: ConfigEntry) -> int:
+    """3.7 bis 4.0.0-beta.12: je Besitzer ein Unter-Eintrag → alle Listen in die eine Gruppe „Eigene Listen“.
+    Erst in die neue Gruppe eintragen und die Entität umhängen, dann die alte Gruppe entfernen – so bleiben Name,
+    Symbol, Bereich und Entitäts-ID erhalten. Kann diese HA-Version Entitäten nicht umhängen, bleibt alles, wie es
+    ist (die alte Form funktioniert weiter). Liefert die Zahl der umgezogenen Listen."""
+    old_groups = [g for g in groups(entry) if getattr(g, "unique_id", None) != SINGLE_ID]
+    if not old_groups:
+        return 0
+    if not _can_move_entities(hass):
+        _LOGGER.warning("SmartLists: eigene Listen bleiben je Besitzer gruppiert – diese Home-Assistant-Version kann "
+                        "Entitäten nicht zwischen Unter-Einträgen verschieben.")
+        return 0
+    moved = 0
+    for old in old_groups:
+        owner = str(old.data.get("owner") or "")
+        for list_id, data in list((old.data.get("lists") or {}).items()):
+            await async_add_list(hass, str(data.get("owner") or owner), str(data.get("title") or ""), dict(data.get("shares") or {}), list_id=list_id)
+            target = the_group(entry)
+            if target is None:
+                continue
+            if "entity_id" in data:
+                hass.config_entries.async_update_subentry(entry, target, data={**target.data, "lists": {
+                    **target.data["lists"], list_id: {**target.data["lists"][list_id], "entity_id": data["entity_id"]}}})
+            _repoint_entity(hass, list_id, target.subentry_id)
+            moved += 1
+        if entry.subentries.get(old.subentry_id) is not None:
+            hass.config_entries.async_remove_subentry(entry, old.subentry_id)
+    _LOGGER.info("SmartLists: %s eigene Liste(n) in die gemeinsame Gruppe „%s“ umgezogen", moved, group_label(hass))
+    return moved

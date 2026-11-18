@@ -147,7 +147,7 @@
       "initiate_flow": {
         "user": "+ Lista propria"
       },
-      "entry_type": "Liste proprie",
+      "entry_type": "Salvate da SmartLists",
       "step": {
         "user": {
           "title": "Lista propria",
@@ -184,11 +184,43 @@
         }
       },
       "abort": {
-        "list_added": "Lista creata – compare sotto «Liste proprie» del proprietario.",
+        "list_added": "Lista creata – si trova sotto «Liste proprie».",
         "reconfigure_successful": "Salvato."
       },
       "error": {
         "list_in_use": "Questa lista fa ancora parte di una lista combinata. Rimuovila prima da lì, poi potrai eliminarla."
+      }
+    },
+    "notes": {
+      "initiate_flow": {
+        "user": "+ Note"
+      },
+      "entry_type": "Liste dell'app SmartLists Go",
+      "step": {
+        "user": {
+          "title": "Nuova lista di note",
+          "description": "Una lista di note è una lista locale di Home Assistant che SmartLists Go usa per le note. La vede solo il proprietario.",
+          "data": {
+            "name": "Nome (facoltativo)",
+            "owner": "Proprietario"
+          }
+        },
+        "reconfigure": {
+          "title": "Proprietario di una lista di note",
+          "description": "Scegli una lista di note e a chi appartiene.",
+          "data": {
+            "list": "Lista di note",
+            "owner": "Proprietario"
+          }
+        }
+      },
+      "abort": {
+        "notes_added": "Lista di note creata – si trova sotto «Note».",
+        "reconfigure_successful": "Salvato.",
+        "no_notes": "Non ci sono ancora liste di note."
+      },
+      "error": {
+        "notes_failed": "Impossibile creare la lista di note. Il nome esiste già o manca «Cose da fare locali»?"
       }
     }
   },

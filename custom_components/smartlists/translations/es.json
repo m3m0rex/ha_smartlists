@@ -147,7 +147,7 @@
       "initiate_flow": {
         "user": "+ Lista propia"
       },
-      "entry_type": "Listas propias",
+      "entry_type": "Guardadas por SmartLists",
       "step": {
         "user": {
           "title": "Lista propia",
@@ -184,11 +184,43 @@
         }
       },
       "abort": {
-        "list_added": "Lista creada – aparece en «Listas propias» de su propietario.",
+        "list_added": "Lista creada: aparece en «Listas propias».",
         "reconfigure_successful": "Guardado."
       },
       "error": {
         "list_in_use": "Esta lista todavía forma parte de una lista combinada. Quítala primero de allí y después podrás eliminarla."
+      }
+    },
+    "notes": {
+      "initiate_flow": {
+        "user": "+ Notas"
+      },
+      "entry_type": "Listas de la app SmartLists Go",
+      "step": {
+        "user": {
+          "title": "Nueva lista de notas",
+          "description": "Una lista de notas es una lista de tareas local de Home Assistant que SmartLists Go usa para las notas. Solo la ve su propietario.",
+          "data": {
+            "name": "Nombre (opcional)",
+            "owner": "Propietario"
+          }
+        },
+        "reconfigure": {
+          "title": "Propietario de una lista de notas",
+          "description": "Elige una lista de notas y a quién pertenece.",
+          "data": {
+            "list": "Lista de notas",
+            "owner": "Propietario"
+          }
+        }
+      },
+      "abort": {
+        "notes_added": "Lista de notas creada: aparece en «Notas».",
+        "reconfigure_successful": "Guardado.",
+        "no_notes": "Todavía no hay listas de notas."
+      },
+      "error": {
+        "notes_failed": "No se pudo crear la lista de notas. ¿Ya existe el nombre o falta «Tareas locales»?"
       }
     }
   },

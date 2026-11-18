@@ -147,7 +147,7 @@
       "initiate_flow": {
         "user": "+ Własna lista"
       },
-      "entry_type": "Własne listy",
+      "entry_type": "Zapisane przez SmartLists",
       "step": {
         "user": {
           "title": "Własna lista",
@@ -184,11 +184,43 @@
         }
       },
       "abort": {
-        "list_added": "Lista utworzona – jest w „Własne listy” jej właściciela.",
+        "list_added": "Lista utworzona – znajduje się w „Własne listy”.",
         "reconfigure_successful": "Zapisano."
       },
       "error": {
         "list_in_use": "Ta lista nadal należy do listy połączonej. Najpierw usuń ją stamtąd, potem można ją skasować."
+      }
+    },
+    "notes": {
+      "initiate_flow": {
+        "user": "+ Notatki"
+      },
+      "entry_type": "Listy aplikacji SmartLists Go",
+      "step": {
+        "user": {
+          "title": "Nowa lista notatek",
+          "description": "Lista notatek to lokalna lista zadań Home Assistant, której SmartLists Go używa do notatek. Widzi ją tylko właściciel.",
+          "data": {
+            "name": "Nazwa (opcjonalnie)",
+            "owner": "Właściciel"
+          }
+        },
+        "reconfigure": {
+          "title": "Właściciel listy notatek",
+          "description": "Wybierz listę notatek i jej właściciela.",
+          "data": {
+            "list": "Lista notatek",
+            "owner": "Właściciel"
+          }
+        }
+      },
+      "abort": {
+        "notes_added": "Lista notatek utworzona – znajduje się w „Notatki”.",
+        "reconfigure_successful": "Zapisano.",
+        "no_notes": "Nie ma jeszcze list notatek."
+      },
+      "error": {
+        "notes_failed": "Nie udało się utworzyć listy notatek. Czy nazwa już istnieje albo brakuje „Lokalnych zadań”?"
       }
     }
   },

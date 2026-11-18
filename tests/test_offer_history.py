@@ -46,3 +46,13 @@ def test_background_record_from_the_sensors():
     h = OfferHistory(None)
     assert h.record([{"name": "Bio-Bananen", "price": 1.79, "store": "REWE", "until": None}]) == 1
     assert "rewe|bio-bananen" in h.seen
+
+
+def test_unit_price_is_found_anywhere_in_the_text():
+    from smartlists.offers import unit_label
+
+    assert unit_label("versch. Sorten, teilw. koffeinhaltig, je 1,25-l-Fl., zzgl. 0,25 € Pfand (1 l = 1,33 €)") == "1,33 €/l"
+    assert unit_label("1 kg = 5,16 €") == "5,16 €/kg"
+    assert unit_label("je 500-g-Pckg. (1 kg = ab 3,98)") == "3,98 €/kg"
+    assert unit_label("1 Stück = 0,50 €") == "0,50 €/Stk"
+    assert unit_label("versch. Sorten, teilw. koffeinhaltig") is None

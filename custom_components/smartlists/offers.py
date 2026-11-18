@@ -29,7 +29,22 @@ FIELDS: dict[str, tuple[str, ...]] = {
     "old": ("old_price", "regular_price", "original_price", "price_before", "was_price", "uvp"),
     "unit": ("price_per_unit", "base_price", "unit_price", "grundpreis"),
     "category": ("category", "categories", "group"),
+    "from": ("valid_from", "start_date", "valid_start", "from", "validFrom", "starts"),
 }
+# Grundpreis wie in SmartDiscounts: „… (1 l = 1,33 €) …“ irgendwo im Text der Quelle
+_UNIT_RE = re.compile(r"1\s*(kg|l|ltr|liter|stk|st|stück|m)\s*=\s*(?:ab\s*)?(?:€\s*)?(\d+(?:[.,]\d+)?)", re.I)
+
+
+def unit_label(text: Any) -> str | None:
+    """Grundpreis aus dem Text der Quelle als „1,33 €/l“ (None = keiner zu erkennen). Gesucht wird im GANZEN Text –
+    REWE schreibt ihn ans Ende einer langen Beschreibung („versch. Sorten, …, je 1,25-l-Fl. (1 l = 1,33 €)“)."""
+    m = _UNIT_RE.search(str(text or "").replace("\u00a0", " "))
+    if not m:
+        return None
+    unit = m.group(1).lower()
+    unit = "l" if unit.startswith("l") else "Stk" if unit.startswith("st") else unit
+    value = float(m.group(2).replace(",", "."))
+    return f"{value:.2f}".replace(".", ",") + f" €/{unit}"
 STORES = (("rewe", "REWE"), ("edeka", "EDEKA"), ("lidl", "Lidl"), ("aldi", "ALDI"), ("norma", "Norma"), ("penny", "Penny"),
           ("kaufland", "Kaufland"), ("netto", "Netto"), ("rossmann", "Rossmann"), ("globus", "Globus"))
 WATCH_INTERVAL = timedelta(minutes=30)
@@ -144,7 +159,12 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
             if old is not None and old > price:
                 offer["old"] = old
             if isinstance(unit, (str, int, float)) and str(unit).strip():
-                offer["unit"] = str(unit).strip()[:40]
+                # nur der Grundpreis („1,33 €/l“) – die Beschreibung der Quelle („versch. Sorten, …“) sagt nichts
+                if (label_ := unit_label(unit)) is not None:
+                    offer["unit"] = label_
+            start = str(pick(row, "from") or "")[:10]
+            if re.fullmatch(r"\d{4}-\d\d-\d\d", start) and start > today:
+                offer["from"] = start  # gilt erst ab diesem Tag (z. B. das Prospekt der nächsten Woche)
             if isinstance(cat, str) and cat.strip():
                 offer["category"] = cat.strip()[:60]
             # the same offer from two sensors (e.g. two integrations for one store) counts once

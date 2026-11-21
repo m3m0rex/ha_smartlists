@@ -54,6 +54,10 @@ Mit Angebots-Sensoren in Home Assistant zeigt die Listen-Karte einen **🏷️-H
 Ein Tipp öffnet die Angebote; die Auswahl hängt Markt, Preis und Gültigkeit an den Artikel. Artikel mit `@Markt`
 zeigen nur Angebote dieses Markts. Je Karte abschaltbar mit `show_offer_hints: false`.
 
+Kommt ein Angebot aus der **Vorschau der nächsten Woche**, steht am Artikel „⏳ gilt erst ab 23.11.“ statt „bis …“;
+am Starttag verschwindet der Hinweis von selbst. Sensoren mit „preview“, „vorschau“ oder „next_week“ im Namen
+zählen als Vorschau. Die Merkliste meldet solche Angebote erst, wenn sie gelten.
+
 ## Abgelaufene Angebote
 
 Ist ein an einen Artikel gehängtes Angebot abgelaufen, zeigen beide Karten einen Hinweis mit **Entfernen** und

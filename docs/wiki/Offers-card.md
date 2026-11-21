@@ -22,21 +22,25 @@ type: custom:smartdiscounts-card
 list: todo.shopping
 ```
 
-- **My list:** for every open item the matching offers per store, the cheapest marked ★. "Pick cheapest" or "only
-  REWE" selects for the whole list; "Apply to list" writes store, price and validity to the items. Three views: one
-  row per offer, one row per item, or a table with the stores as columns.
-- **All offers:** one shelf per store with search and categories – as tiles or as a list with small images.
-- **⭐ Watch list:** products you are waiting to see on offer.
-- **Bonus offers** (e.g. REWE Bonus) are marked "only with the bonus app"; `use_bonus: true` compares them with the
-  bonus taken off. **▲ / ▼** show whether a product was cheaper or dearer before.
+- **🛒 My shopping list:** the items of the connected list – on top what came from offers (store, price, "until"),
+  below "Not valid yet" (from next week's preview) and the other items. Change the count and tick off right here;
+  with a combined list every item names its source list. `shop_view: smartlists` shows the list in the SmartLists
+  card instead.
+- **All offers:** one shelf per store with search and categories – as tiles or as a list with small images. "On your
+  list" at the top shows what is already on the list. When a sensor delivers next week's offers, a switch
+  "Now / from …" appears.
+- **⭐ Watch list:** products you are waiting to see on offer. Offers from the preview are listed with "from …"; they
+  are only reported once they are valid.
+- **Bonus offers** (e.g. REWE Bonus) carry "🎁 0,20 € bonus"; `use_bonus: true` compares them with the bonus taken
+  off. **▲ / ▼** show whether a product was cheaper or dearer before.
 
 The card speaks German, English, French, Spanish, Italian and Polish and follows the language of Home Assistant.
 
 ## Options
 
 Every option with its default and examples is listed in the [README of the card](https://github.com/m3m0rex/ha_smartdiscounts-card#readme)
-– the one place that is kept up to date with each release. Most used: `list`, `sources`, `match`, `list_view`,
-`all_view`, `use_bonus`, `watch`, `notify`.
+– the one place that is kept up to date with each release. Most used: `list`, `add_to`, `tabs`, `shop_view`,
+`all_view`, `category_source`, `preview_entities`, `use_bonus`, `watch`, `notify`.
 
 ## Your own sensors: all fields of `map:`
 

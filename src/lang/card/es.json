@@ -1034,5 +1034,6 @@
   "bug_detail": "Incluir los detalles técnicos de este error (pueden contener nombres de listas o entidades)",
   "offer_bonus": "{amount} de bonificación",
   "offer_bonus_help": "Oferta con bonificación: precio normal, el saldo solo llega con la app de {store}.",
-  "l_show_clear_done": "Botón «Quitar completados»"
+  "l_show_clear_done": "Botón «Quitar completados»",
+  "offer_from": "válido desde el"
 }

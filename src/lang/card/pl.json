@@ -1034,5 +1034,6 @@
   "bug_detail": "Dołącz szczegóły techniczne tego błędu (mogą zawierać nazwy list lub encji)",
   "offer_bonus": "{amount} bonusu",
   "offer_bonus_help": "Akcja bonusowa: zwykła cena, bonus tylko w aplikacji {store}.",
-  "l_show_clear_done": "Przycisk „Usuń ukończone”"
+  "l_show_clear_done": "Przycisk „Usuń ukończone”",
+  "offer_from": "ważne od"
 }

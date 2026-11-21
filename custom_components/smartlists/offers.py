@@ -130,6 +130,30 @@ def clean_sources(raw: Any) -> list[dict[str, Any]]:
     return out[:20]
 
 
+_PREVIEW_RE = re.compile(r"preview|vorschau|next_?week|naechste_?woche|nachste_?woche|upcoming|kommende")
+
+
+def _preview_starts(out: list[dict[str, Any]], today: str) -> None:
+    """Vorschau ohne Startdatum: ab dem Tag nach dem Ende der laufenden Angebote desselben Markts (das häufigste „bis“),
+    sonst ab dem nächsten Montag."""
+    from collections import Counter
+    from datetime import timedelta
+
+    ends: dict[str, Counter] = {}
+    for o in out:
+        if not o.get("_preview") and not o.get("from") and o.get("until") and re.fullmatch(r"\d{4}-\d\d-\d\d", str(o["until"])):
+            ends.setdefault(o["store"], Counter())[o["until"]] += 1
+    now = date.today()
+    monday = now + timedelta(days=(7 - now.weekday()) % 7 or 7)
+    for o in out:
+        if not o.pop("_preview", False):
+            continue
+        counts = ends.get(o["store"])
+        start = (date.fromisoformat(sorted(counts, key=lambda d: (-counts[d], d))[0]) + timedelta(days=1)) if counts else monday
+        if start.isoformat() > today:
+            o["from"] = start.isoformat()
+
+
 def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     """Alle gültigen Angebote: Sensoren mit einer Angebotsliste in einem Attribut (automatisch erkannt) und
     eigene Quellen mit Feld-Zuordnung, wie sie in einer Angebots-Karte eingetragen sind."""
@@ -144,6 +168,8 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
         if not isinstance(rows, list) or not rows:
             continue
         label, fmap = src.get("store") or _store_label(entity_id, state.attributes), src.get("map") or {}
+        # Vorschau-Sensor (Prospekt der nächsten Woche): seine Angebote gelten erst später – wie in der Angebots-Karte
+        preview = bool(src.get("preview")) if "preview" in src else bool(_PREVIEW_RE.search(norm(f"{entity_id} {state.attributes.get('friendly_name') or ''}")))
 
         def pick(row: dict[str, Any], field: str) -> Any:
             return _get(row, fmap[field]) if field in fmap else _pick(row, field)
@@ -170,6 +196,8 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
             start = str(pick(row, "from") or "")[:10]
             if re.fullmatch(r"\d{4}-\d\d-\d\d", start) and start > today:
                 offer["from"] = start  # gilt erst ab diesem Tag (z. B. das Prospekt der nächsten Woche)
+            elif preview and not re.fullmatch(r"\d{4}-\d\d-\d\d", start):
+                offer["_preview"] = True  # Startdatum fehlt: wird unten aus dem Ende der laufenden Angebote bestimmt
             if isinstance(cat, str) and cat.strip():
                 offer["category"] = cat.strip()[:60]
             image = pick(row, "image")
@@ -195,6 +223,7 @@ def collect(hass: HomeAssistant, custom: list[dict[str, Any]] | None = None) -> 
                 continue
             seen.add(key)
             out.append(offer)
+    _preview_starts(out, today)
     return out
 
 
@@ -232,7 +261,8 @@ async def _watch_send(hass: HomeAssistant, targets: list[dict[str, Any]], messag
 def fresh_for(offers: list[dict[str, Any]], terms: list[str], seen: list[str]) -> list[tuple[str, dict[str, Any]]]:
     """Angebote zu den gemerkten Produkten, die noch nicht gemeldet wurden."""
     known = set(seen)
-    return [(term, o) for term in terms for o in deals_for(offers, term) if _key(term, o) not in known]
+    # Angebote aus der Vorschau (gelten erst ab einem späteren Tag) werden erst gemeldet, wenn sie gelten
+    return [(term, o) for term in terms for o in deals_for(offers, term) if not o.get("from") and _key(term, o) not in known]
 
 
 async def _admin_ids(hass: HomeAssistant, user_ids: list[str]) -> set[str]:

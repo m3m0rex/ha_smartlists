@@ -507,7 +507,9 @@
       o.price != null ? h("span", { class: "oprice" }, euro(o.price)) : null,
       o.old_price != null ? h("span", { class: "oold" }, euro(o.old_price)) : null,
       o.discount ? h("span", { class: "odisc" }, o.discount) : null,
-      o.valid_until ? h("span", { class: "odate" }, o.expired ? `${t.offer_expired} ${day(o.valid_until)}` : `${t.offer_until} ${day(o.valid_until)}`) : null);
+      // aus der Vorschau der nächsten Woche: das Angebot gilt noch nicht
+      o.valid_from && String(o.valid_from).slice(0, 10) > slToday() ? h("span", { class: "odate soon" }, `⏳ ${t.offer_from} ${day(o.valid_from)}`)
+        : o.valid_until ? h("span", { class: "odate" }, o.expired ? `${t.offer_expired} ${day(o.valid_until)}` : `${t.offer_until} ${day(o.valid_until)}`) : null);
   }
 
   /* ---------------- Mengen-Stepper ----------------

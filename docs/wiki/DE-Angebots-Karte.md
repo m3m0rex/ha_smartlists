@@ -23,13 +23,17 @@ type: custom:smartdiscounts-card
 list: todo.einkauf
 ```
 
-- **Meine Liste:** zu jedem offenen Artikel die passenden Angebote je Markt, das günstigste mit ★. „Günstigste wählen“
-  oder „nur REWE“ wählt für die ganze Liste; „In Liste übernehmen“ schreibt Markt, Preis und Gültigkeit an die Einträge.
-  Drei Ansichten: je Angebot eine Zeile, je Artikel eine Zeile oder eine Tabelle mit den Märkten als Spalten.
+- **🛒 Meine Einkaufsliste:** die Einträge der verbundenen Liste – oben, was aus Angeboten kam (Markt, Preis, „bis“),
+  darunter „Noch nicht gültig“ (aus der Vorschau der nächsten Woche) und die übrigen Einträge. Anzahl ändern und abhaken
+  geht direkt hier; mit einer kombinierten Liste steht an jedem Eintrag seine Quell-Liste. `shop_view: smartlists`
+  zeigt die Liste stattdessen in der SmartLists-Karte.
 - **Alle Angebote:** ein Regal je Markt mit Suche und Kategorien – als Kacheln oder als Liste mit kleinen Bildern.
-- **⭐ Merkliste:** Produkte, bei denen du auf ein Angebot wartest.
-- **Bonus-Angebote** (z. B. REWE Bonus) sind als „nur mit der Bonus-App“ gekennzeichnet; `use_bonus: true` vergleicht sie
-  mit abgezogenem Bonus. **▲ / ▼** zeigen, ob ein Produkt vorher billiger oder teurer war.
+  Oben steht „Auf deiner Liste“ mit dem, was schon auf der Liste ist. Liefert ein Sensor die Angebote der nächsten
+  Woche, erscheint der Umschalter „Jetzt / ab …“.
+- **⭐ Merkliste:** Produkte, bei denen du auf ein Angebot wartest. Angebote aus der Vorschau stehen dort mit „ab …“;
+  gemeldet werden sie erst, wenn sie gelten.
+- **Bonus-Angebote** (z. B. REWE Bonus) tragen „🎁 0,20 € Bonus“; `use_bonus: true` vergleicht sie mit abgezogenem
+  Bonus. **▲ / ▼** zeigen, ob ein Produkt vorher billiger oder teurer war.
 
 Die Karte spricht Deutsch, Englisch, Französisch, Spanisch, Italienisch und Polnisch und richtet sich nach der Sprache
 von Home Assistant.
@@ -37,8 +41,8 @@ von Home Assistant.
 ## Optionen
 
 Jede Option mit Standardwert und Beispielen steht im [README der Karte](https://github.com/m3m0rex/ha_smartdiscounts-card/blob/main/README.de.md)
-– dort wird sie mit jedem Release aktuell gehalten. Am häufigsten gebraucht: `list`, `sources`, `match`, `list_view`,
-`all_view`, `use_bonus`, `watch`, `notify`.
+– dort wird sie mit jedem Release aktuell gehalten. Am häufigsten gebraucht: `list`, `add_to`, `tabs`, `shop_view`,
+`all_view`, `category_source`, `preview_entities`, `use_bonus`, `watch`, `notify`.
 
 ## Eigene Sensoren: alle Felder von `map:`
 

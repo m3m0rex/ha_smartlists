@@ -3,6 +3,24 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.3] – 2026-11-21
+
+### Added
+
+- **Offers from next week's preview** are marked on the item: "⏳ valid from 23.11." instead of "until …". The mark
+  goes away on the day the offer starts. Needs SmartDiscounts 1.3.26 or newer, which writes the start date.
+- **Preview sensors** (with "preview", "vorschau" or "next_week" in their name) count as next week's offers in the
+  background too: without a start date they start the day after the store's current offers end, otherwise next
+  Monday.
+
+### Changed
+
+- **Watch list:** an offer from the preview is only reported once it is valid.
+
+### Fixed
+
+- **Total below the list** left out an item whose offer price was only in its note.
+
 ## [4.0.2] – 2026-11-21
 
 ### Added

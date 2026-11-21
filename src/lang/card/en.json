@@ -1034,5 +1034,6 @@
   "bug_detail": "Include the technical details of this error (may contain names of lists or entities)",
   "offer_bonus": "{amount} bonus",
   "offer_bonus_help": "Bonus offer: normal price, the credit only comes with the {store} app.",
-  "l_show_clear_done": "\"Remove completed\" button"
+  "l_show_clear_done": "\"Remove completed\" button",
+  "offer_from": "valid from"
 }

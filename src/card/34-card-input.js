@@ -525,8 +525,9 @@
       out.push(h("div", { class: "tiles" }, tiles.map((i) => this._tile(i, d))));
     } else if (rows.length) out.push(h("div", { class: `items ${emoji ? "emoji" : ""}` }, rows));
     // Summe, sobald Preise bekannt sind: offen und (im Einkaufsmodus) im Wagen
-    const sumOf = (list) => list.reduce((a, i) => a + (i.price && i.price.total ? i.price.total : 0), 0);
-    if (this._config.show_prices !== false && d.items.some((i) => i.price)) {
+    // ein Angebot am Artikel zählt auch dann, wenn der Preis nicht eigens mitgeliefert wurde (Angebots-Zeile in der Notiz)
+    const sumOf = (list) => list.reduce((a, i) => a + (i.price && i.price.total ? i.price.total : i.offer && i.offer.price != null ? i.offer.price : 0), 0);
+    if (this._config.show_prices !== false && d.items.some((i) => i.price || (i.offer && i.offer.price != null))) {
       // „im Wagen“ = seit dem letzten „Einkauf beendet“ abgehakt
       const inTrip = done.filter((i) => !d.trip_start || (i.checked_at && i.checked_at >= d.trip_start));
       const openSum = sumOf(openAll), cartSum = sumOf(inTrip);

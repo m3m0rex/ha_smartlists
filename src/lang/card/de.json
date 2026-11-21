@@ -1034,5 +1034,6 @@
   "bug_detail": "Technische Einzelheiten dieses Fehlers mitschicken (können Namen von Listen oder Entitäten enthalten)",
   "offer_bonus": "{amount} Bonus",
   "offer_bonus_help": "Bonus-Aktion: normaler Preis, das Guthaben gibt es nur mit der {store}-App.",
-  "l_show_clear_done": "Knopf „Erledigte entfernen“"
+  "l_show_clear_done": "Knopf „Erledigte entfernen“",
+  "offer_from": "gilt erst ab"
 }

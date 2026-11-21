@@ -53,6 +53,10 @@ With offer sensors in Home Assistant (the same ones the [[Offers card]] uses) th
 items that are on offer. A tap opens the offers; choosing one attaches store, price and validity to the item. Items
 with an `@store` only show offers of that store. Switch it off per card with `show_offer_hints: false`.
 
+When an offer comes from **next week's preview**, the item shows "⏳ valid from 23.11." instead of "until …"; the
+mark goes away on the day the offer starts. Sensors with "preview", "vorschau" or "next_week" in their name count as
+a preview. The watch list only reports such offers once they are valid.
+
 ## Expired offers
 
 When an offer attached to an item has run out, both cards show a note with **Remove** and **Later**. "Remove" takes

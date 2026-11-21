@@ -1034,5 +1034,6 @@
   "bug_detail": "Includi i dettagli tecnici di questo errore (possono contenere nomi di liste o entità)",
   "offer_bonus": "{amount} di bonus",
   "offer_bonus_help": "Offerta bonus: prezzo normale, il credito arriva solo con l’app {store}.",
-  "l_show_clear_done": "Pulsante «Rimuovi completati»"
+  "l_show_clear_done": "Pulsante «Rimuovi completati»",
+  "offer_from": "valido dal"
 }

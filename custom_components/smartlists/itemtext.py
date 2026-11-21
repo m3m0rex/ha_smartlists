@@ -349,6 +349,13 @@ def offer_summary(offer: dict[str, Any]) -> str:
         b = offer["bonus"]
         amount = f"{b['value']:g} %" if b["kind"] == "pct" else f"{b['value']:.2f}".replace(".", ",") + " €"
         parts.append(f"🎁 {amount} Bonus".replace(".", ","))
+    from datetime import date
+
+    start = str(offer.get("valid_from") or "")[:10]
+    if start and start > date.today().isoformat():  # aus der Vorschau: gilt noch nicht
+        d = start.split("-")
+        if len(d) == 3:
+            parts.append(f"ab {d[2]}.{d[1]}.{d[0]}")
     if offer.get("valid_until"):
         d = offer["valid_until"][:10].split("-")
         parts.append(("abgelaufen " if offer.get("expired") else "bis ") + (f"{d[2]}.{d[1]}." if len(d) == 3 else offer["valid_until"]))

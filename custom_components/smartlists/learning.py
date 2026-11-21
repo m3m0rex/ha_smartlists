@@ -141,11 +141,13 @@ class Learning:
 
     @callback
     def _changed(self, *, categories: bool = False) -> None:
+        self._resolved = {}  # gemerkte Zuordnungen gelten nur bis zur nächsten Änderung
         self._store.async_delay_save(self._data, 2.0)
         if categories:
             async_dispatcher_send(self.hass, SIGNAL_LEARNING_CHANGED)
 
     def _resort(self) -> None:
+        self._resolved = {}
         self._learned_sorted = sorted(self.learned.items(), key=lambda kv: len(kv[0]), reverse=True)
 
     # ------------------------------------------------------------------
@@ -171,6 +173,18 @@ class Learning:
         key = normalize(name)
         if not key:
             return FALLBACK_ID, "fallback"
+        # Die Suche in den Wörterlisten kostet je Artikel rund 1 ms – bei 200 Einträgen und jedem Laden der Liste zu viel.
+        # Deshalb je Name merken; verworfen bei jeder Änderung (siehe _changed) und wenn die Wörterlisten wechseln.
+        cache = getattr(self, "_resolved", None)
+        if cache is None or cache.get("") is not self.categories:
+            cache = self._resolved = {"": self.categories}
+        if key not in cache:
+            if len(cache) > 5000:
+                cache = self._resolved = {"": self.categories}
+            cache[key] = self._resolve(key)
+        return cache[key]
+
+    def _resolve(self, key: str) -> tuple[str, str]:
         if (cid := self.manual.get(key)) and self.categories.valid(cid):
             return cid, "manual"
         # Gelerntes und Wörterlisten zusammen: es gewinnt, was am Ende eines Wortes steht („Cocktail-Strauchtomaten“

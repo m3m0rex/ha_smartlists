@@ -13,6 +13,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 ### Fixed
 
 - **Ticking an item shows at once.** The check mark appears immediately; saving and reloading happen afterwards.
+- **Long lists load faster.** The category of an item is remembered instead of being looked up in the word lists on
+  every load – with 200 items that lookup took most of the time and held up Home Assistant meanwhile.
 
 ## [4.0.1] – 2026-11-18
 

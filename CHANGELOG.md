@@ -3,6 +3,12 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.2] – 2026-11-21
+
+### Fixed
+
+- **Ticking an item shows at once.** The check mark appears immediately; saving and reloading happen afterwards.
+
 ## [4.0.1] – 2026-11-18
 
 ### Fixed

@@ -45,7 +45,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "4.0.1";
+const CARD_VERSION = "4.0.2";
 // Fehlgeschlagene Server-Aufrufe, die die Oberfläche nicht aufhalten sollen: wenigstens in der Browser-Konsole zeigen
 const slWarn = (what, err) => { try { console.warn(`SmartLists: ${what} failed –`, (err && err.message) || err); } catch (e) { /* */ } };
 const SORT_MODES = ["category", "alpha", "added", "list"];
@@ -2369,6 +2369,8 @@ class SmartListsCard extends HTMLElement {
 
   async _toggleItem(it) {
     const checked = !it.checked;
+    // sofort zeigen – gespeichert und neu geladen wird danach (schlägt es fehl, stellt das Neuladen den alten Stand her)
+    it.checked = checked; this._render();
     // Einkaufsmodus: jedes Abhaken mit Rückgängig-Leiste unten (3 s) – fängt Fehltipper auf der ganzen Zeile auf.
     // Sonst reicht ↶ im Kopf.
     await this._change(`${it.name} ${checked ? this._t.checked_off : this._t.unchecked}`, "update_item", { uid: it.uid, checked },

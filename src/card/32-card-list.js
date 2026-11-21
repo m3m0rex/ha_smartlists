@@ -288,6 +288,8 @@
 
   async _toggleItem(it) {
     const checked = !it.checked;
+    // sofort zeigen – gespeichert und neu geladen wird danach (schlägt es fehl, stellt das Neuladen den alten Stand her)
+    it.checked = checked; this._render();
     // Einkaufsmodus: jedes Abhaken mit Rückgängig-Leiste unten (3 s) – fängt Fehltipper auf der ganzen Zeile auf.
     // Sonst reicht ↶ im Kopf.
     await this._change(`${it.name} ${checked ? this._t.checked_off : this._t.unchecked}`, "update_item", { uid: it.uid, checked },

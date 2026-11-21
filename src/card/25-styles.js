@@ -312,6 +312,7 @@ const STYLE = `
   .offer .oprice { font-weight:700; color:var(--primary-text-color); }
   .offer .oold { text-decoration:line-through; }
   .offer .odisc { font-weight:700; color:var(--error-color,#db4437); }
+  .offer .oeach { color:var(--secondary-text-color); }
   .offer .odate.soon { color:var(--warning-color,#e65100); font-weight:600; }
   .offer.expired .olabel, .offer.expired .odate { color:var(--error-color,#db4437); }
   .offer.expired .oprice { color:var(--secondary-text-color); }

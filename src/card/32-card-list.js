@@ -504,7 +504,9 @@
       o.bonus ? h("span", { class: "olabel", title: t.offer_bonus_help.replace("{store}", o.store_label) },
         "🎁 " + t.offer_bonus.replace("{amount}", o.bonus.kind === "pct" ? `${String(o.bonus.value).replace(".", ",")} %` : euro(o.bonus.value)))
         : h("span", { class: "olabel" }, "🏷️ " + t.offer),
-      o.price != null ? h("span", { class: "oprice" }, euro(o.price)) : null,
+      // mehrere Packungen: Gesamtpreis, dahinter der Preis je Packung („4,98 € · 2,49 €“)
+      o.price != null ? h("span", { class: "oprice" }, euro(it.price && it.price.source === "offer" && it.price.total ? it.price.total : o.price)) : null,
+      o.price != null && it.price && it.price.source === "offer" && Math.abs(it.price.total - o.price) > 0.004 ? h("span", { class: "oeach" }, `· ${euro(o.price)}`) : null,
       o.old_price != null ? h("span", { class: "oold" }, euro(o.old_price)) : null,
       o.discount ? h("span", { class: "odisc" }, o.discount) : null,
       // aus der Vorschau der nächsten Woche: das Angebot gilt noch nicht

@@ -327,6 +327,13 @@ def split_offer(note: str | None) -> tuple[str, dict[str, Any] | None, str]:
     return clean, offer, raw_line
 
 
+def offer_packs(info: dict[str, Any]) -> float:
+    """Wie viele Packungen ein Eintrag meint: „2× Butter“ → 2, „4× 150 g“ → 4, „Kartoffeln 2,5 kg“ → 1."""
+    if info.get("unit"):
+        return float(info.get("pack_count") or 1)
+    return float(info.get("quantity") or 1) * float(info.get("pack_count") or 1)
+
+
 def join_offer(note: str, raw_line: str) -> str:
     """Notiz + rohe Angebots-Zeile wieder zusammensetzen (Format wie in der App)."""
     note = (note or "").rstrip()

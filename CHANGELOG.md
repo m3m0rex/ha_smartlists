@@ -3,6 +3,14 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.4] – 2026-11-21
+
+### Fixed
+
+- **An offer price counts per pack.** "2× Burger Buns" at 2,49 € now add up to 4,98 € (shown as "4,98 € · 2,49 €");
+  before, the offer price was taken as the price for everything on the line. A size such as "2,5 kg" is not a count.
+  The total below the list, the sensor "Estimated total" and the booked expenses follow.
+
 ## [4.0.3] – 2026-11-21
 
 ### Added

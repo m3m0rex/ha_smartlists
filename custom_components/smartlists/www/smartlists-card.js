@@ -45,7 +45,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "4.0.3";
+const CARD_VERSION = "4.0.4";
 // Fehlgeschlagene Server-Aufrufe, die die Oberfläche nicht aufhalten sollen: wenigstens in der Browser-Konsole zeigen
 const slWarn = (what, err) => { try { console.warn(`SmartLists: ${what} failed –`, (err && err.message) || err); } catch (e) { /* */ } };
 const SORT_MODES = ["category", "alpha", "added", "list"];
@@ -1184,6 +1184,7 @@ const STYLE = `
   .offer .oprice { font-weight:700; color:var(--primary-text-color); }
   .offer .oold { text-decoration:line-through; }
   .offer .odisc { font-weight:700; color:var(--error-color,#db4437); }
+  .offer .oeach { color:var(--secondary-text-color); }
   .offer .odate.soon { color:var(--warning-color,#e65100); font-weight:600; }
   .offer.expired .olabel, .offer.expired .odate { color:var(--error-color,#db4437); }
   .offer.expired .oprice { color:var(--secondary-text-color); }
@@ -2586,7 +2587,9 @@ class SmartListsCard extends HTMLElement {
       o.bonus ? h("span", { class: "olabel", title: t.offer_bonus_help.replace("{store}", o.store_label) },
         "🎁 " + t.offer_bonus.replace("{amount}", o.bonus.kind === "pct" ? `${String(o.bonus.value).replace(".", ",")} %` : euro(o.bonus.value)))
         : h("span", { class: "olabel" }, "🏷️ " + t.offer),
-      o.price != null ? h("span", { class: "oprice" }, euro(o.price)) : null,
+      // mehrere Packungen: Gesamtpreis, dahinter der Preis je Packung („4,98 € · 2,49 €“)
+      o.price != null ? h("span", { class: "oprice" }, euro(it.price && it.price.source === "offer" && it.price.total ? it.price.total : o.price)) : null,
+      o.price != null && it.price && it.price.source === "offer" && Math.abs(it.price.total - o.price) > 0.004 ? h("span", { class: "oeach" }, `· ${euro(o.price)}`) : null,
       o.old_price != null ? h("span", { class: "oold" }, euro(o.old_price)) : null,
       o.discount ? h("span", { class: "odisc" }, o.discount) : null,
       // aus der Vorschau der nächsten Woche: das Angebot gilt noch nicht

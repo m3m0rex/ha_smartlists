@@ -137,3 +137,10 @@ def test_offer_bonus():
     _, offer, _ = t.split_offer('⚙OFFER:{"s":"REWE","p":2.49,"b":10,"bk":"pct"}')
     assert offer["bonus"] == {"value": 10.0, "kind": "pct"} and "🎁 10 % Bonus" in t.offer_summary(offer)
     assert t.split_offer('⚙OFFER:{"s":"REWE","p":2.49}')[1]["bonus"] is None
+
+
+def test_offer_packs():
+    assert t.offer_packs(t.parse("Burger Buns 2", R).as_dict()) == 2
+    assert t.offer_packs(t.parse("Kartoffeln 2,5 kg", R).as_dict()) == 1
+    assert t.offer_packs(t.parse("Joghurt 4x 150g", R).as_dict()) == 4
+    assert t.offer_packs(t.parse("Butter", R).as_dict()) == 1

@@ -25,9 +25,6 @@ list: todo.shopping
 - **My list:** for every open item the matching offers per store, the cheapest marked ★. "Pick cheapest" or "only
   REWE" selects for the whole list; "Apply to list" writes store, price and validity to the items. Three views: one
   row per offer, one row per item, or a table with the stores as columns.
-- **Cheapest shopping trip:** one store for as much as possible – and whether two, three or more stores are worth it.
-  Worked out by price per kilo or litre; a bigger pack that is cheaper per litre wins, and "▸ bigger pack" explains
-  what you pay more at the till and what you save for the same amount.
 - **All offers:** one shelf per store with search and categories – as tiles or as a list with small images.
 - **⭐ Watch list:** products you are waiting to see on offer.
 - **Bonus offers** (e.g. REWE Bonus) are marked "only with the bonus app"; `use_bonus: true` compares them with the

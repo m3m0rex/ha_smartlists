@@ -26,9 +26,6 @@ list: todo.einkauf
 - **Meine Liste:** zu jedem offenen Artikel die passenden Angebote je Markt, das günstigste mit ★. „Günstigste wählen“
   oder „nur REWE“ wählt für die ganze Liste; „In Liste übernehmen“ schreibt Markt, Preis und Gültigkeit an die Einträge.
   Drei Ansichten: je Angebot eine Zeile, je Artikel eine Zeile oder eine Tabelle mit den Märkten als Spalten.
-- **Günstigster Einkauf:** ein Markt für möglichst viel – und ob sich zwei, drei oder mehr Märkte lohnen. Gerechnet wird
-  nach Preis je Kilo oder Liter; eine größere Packung, die pro Liter günstiger ist, gewinnt, und „▸ größere Packung“
-  erklärt, was man an der Kasse mehr zahlt und für dieselbe Menge spart.
 - **Alle Angebote:** ein Regal je Markt mit Suche und Kategorien – als Kacheln oder als Liste mit kleinen Bildern.
 - **⭐ Merkliste:** Produkte, bei denen du auf ein Angebot wartest.
 - **Bonus-Angebote** (z. B. REWE Bonus) sind als „nur mit der Bonus-App“ gekennzeichnet; `use_bonus: true` vergleicht sie

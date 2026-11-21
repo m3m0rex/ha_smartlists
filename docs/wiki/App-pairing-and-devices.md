@@ -27,7 +27,7 @@ signing in you come back to the app. No long-lived token is needed, and the app 
   Assistant*). The list is created there and filled; only then does it disappear from the phone.
 - **Notes:** notes lists (`todo.ha_smartlists_notes…`) appear in the app under *Notes*, one entry = one note.
 - **Naming and badges:** `@` store, `*` person, `#` tag (or your own characters) and the look of the badges.
-- **Offers:** the offers tab comes from SmartLists (`smartlists/offers`) – My list with the cheapest shopping trip,
+- **Offers:** the offers tab comes from SmartLists (`smartlists/offers`) – My list (offers for your open items),
   your watch lists and all offers. SmartDiscounts itself is not needed for the app.
 - **Store zones:** in shopping mode the app picks the store you are standing in from the store zones.
 - Combined lists made **in the app** stay in the app: they may mix lists from the phone and from Home Assistant.

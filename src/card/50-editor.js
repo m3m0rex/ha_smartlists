@@ -56,7 +56,7 @@ class SmartListsCardEditor extends HTMLElement {
       ]),
       section("header", "mdi:page-layout-header",
         [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-      section("input", "mdi:plus-box-outline", [b("show_title"), b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan"), b("show_offer_hints")]),
+      section("input", "mdi:plus-box-outline", [b("show_title"), b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan"), b("show_offer_hints"), b("show_clear_done")]),
       section("list", "mdi:format-list-bulleted",
         [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_prices"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
       section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed")]),

@@ -5,6 +5,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 ## [4.0.2] – 2026-11-21
 
+### Added
+
+- **Card option `show_clear_done: false`** (visual editor: "Remove completed" button) hides the button that removes
+  all completed items – e.g. on a shared tablet.
+
 ### Fixed
 
 - **Ticking an item shows at once.** The check mark appears immediately; saving and reloading happen afterwards.

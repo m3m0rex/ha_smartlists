@@ -542,7 +542,7 @@
       out.push(h("div", { class: `done-head ${collapsed ? "collapsed" : ""}`,
         onclick: () => { this._collapsedDone = !this._collapsedDone; this._renderList(); } },
         svg(ICON.chevron, 18, "chev"), `${t.done} (${done.length})`, h("span", { class: "grow" }),
-        d.permissions.delete && !searching ? iconBtn(ICON.sweep, t.clear, (e) => { e.stopPropagation(); this._deleteItems(done, `${done.length} ${t.removed}`); }) : null));
+        d.permissions.delete && !searching && this._config.show_clear_done !== false ? iconBtn(ICON.sweep, t.clear, (e) => { e.stopPropagation(); this._deleteItems(done, `${done.length} ${t.removed}`); }) : null));
       const doneSorted = mode === "added" ? done : [...done].sort(byName);
       if (!collapsed) out.push(h("div", { class: "items emoji" }, doneSorted.map((i) => this._row(i, d, true))));
     }

@@ -722,6 +722,10 @@
     "discounts_card_missing": {
       "title": "The offers card has to be installed again",
       "description": "The **SmartDiscounts** card (`custom:smartdiscounts-card`) has been a project of its own since SmartLists 4.0 and is no longer shipped with the integration. You use it on a dashboard or keep a watch list.\n\nWhat to do:\n1. Open HACS → top right **Custom repositories** → add `{url}` as **Dashboard**.\n2. Download **SmartDiscounts**.\n3. Reload the browser (Ctrl+F5).\n\nYour cards and settings are kept. The background check of the watch list keeps running regardless."
+    },
+    "public_share_moved": {
+      "title": "Shared links: the built-in tunnel has been removed",
+      "description": "SmartLists no longer starts `cloudflared` and no longer runs a share server of its own on port 8126. Shared links are now always served by Home Assistant itself.\n\nWhat to do:\n1. Point your tunnel or reverse proxy (e.g. the Cloudflared add-on, Caddy, nginx) at Home Assistant instead of port 8126 and forward only these paths: {paths}.\n2. If the proxy sends `X-Forwarded-For`, add it to `trusted_proxies` in the `http:` section of Home Assistant.\n3. Check the address under SmartLists → Settings → Sharing and permissions → Public address and save once – this notice then disappears.\n\nA Quick Tunnel (…trycloudflare.com) had no fixed address: enter your own address there or choose \"Home Assistant address\". Until an address is entered no new links are created – they are never built with your Home Assistant address instead. A `cloudflared` file you put into `/config` is no longer used and can be deleted."
     }
   }
 }

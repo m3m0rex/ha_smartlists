@@ -194,8 +194,8 @@ class Shares:
                base: str | None = None, notes: bool = False, password: str | None = None,
                approve: bool = False) -> dict[str, Any]:
         """Neuer Link. hours = Gültigkeit (z. B. 2, 24, 168, 720), None = unbegrenzt bis zum Widerruf.
-        base = öffentliche Adresse (Tunnel/Proxy, siehe public.py) – gemerkt, um später zu zeigen, wenn sich die
-        Tunnel-Adresse geändert hat und der Link deshalb nicht mehr geht. None = Adresse von Home Assistant."""
+        base = eigene öffentliche Adresse (siehe public.py) – gemerkt, um später zu zeigen, wenn sich die
+        Adresse geändert hat und der Link deshalb nicht mehr geht. None = Adresse von Home Assistant."""
         if check not in CHECK_MODES:
             raise ValueError("check: off, soft, on")
         self._cleanup()

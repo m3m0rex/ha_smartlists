@@ -27,7 +27,6 @@ const STYLE = `
     .head .count { margin-right:auto; }
   }
   .head .grow { flex:1 1 0; }
-  .pubhelp summary { cursor:pointer; color:var(--sl-accent); font-size:.85rem; padding:4px 0; }
   .pubsteps { margin:4px 0 8px; padding-left:20px; line-height:1.5; } .pubsteps li { margin:2px 0; }
   .badge.offline { background:color-mix(in srgb, var(--warning-color,#ff9800) 25%, transparent); color:var(--warning-color,#ff9800); font-weight:600; }
   .badge.public { background:color-mix(in srgb, var(--warning-color,#ff9800) 22%, transparent); color:var(--warning-color,#ff9800); font-weight:600; }

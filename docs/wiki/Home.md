@@ -34,7 +34,7 @@ shopping mode, statistics reset, a dashboard with one sub-page per list and a ti
 - [[Categories and suggestions]] – keyword packs, suggestions per list, plain lists
 - [[Automations and voice]] – "I'm at the store", store reminder, Assist, due items
 - [[App pairing and devices]] – for the app SmartLists Go (not published yet)
-- [[Shopping helpers]] – aisle order, prices, templates, share via link (tunnel/proxy), meal plan, notifications
+- [[Shopping helpers]] – aisle order, prices, templates, share via link (own proxy), meal plan, notifications
 - [[Troubleshooting]]
 - [[Error codes]]
 

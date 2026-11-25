@@ -48,7 +48,7 @@ def ws_share_create(hass: HomeAssistant, connection: websocket_api.ActiveConnect
         from .learning import clamp_link
 
         check, add, hours = clamp_link(_learning(hass).rights(), check, add, hours)
-    # Öffentliche Adresse (Tunnel/Proxy) – ist sie gewählt, aber nicht bereit, gibt es keinen Link (sonst
+    # Eigene öffentliche Adresse – ist sie gewählt, aber nicht eingetragen, gibt es keinen Link (sonst
     # baute die Karte ihn mit der HA-Adresse, und genau die soll nicht herausgegeben werden)
     public = hass.data[DOMAIN].get("public")
     try:
@@ -100,28 +100,18 @@ async def ws_share_pending(hass: HomeAssistant, connection: websocket_api.Active
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/share_public"})
 @websocket_api.async_response
 async def ws_share_public(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """Teilen und Rechte → Öffentliche Adresse: Einstellung und Zustand (Server, Tunnel, cloudflared).
-    Sucht cloudflared jedes Mal neu – so sieht man gleich, ob eine eben abgelegte Datei gefunden wird."""
-    from .public import find_cloudflared
-
-    public = hass.data[DOMAIN]["public"]
-    path, problem = await hass.async_add_executor_job(find_cloudflared, hass.config.config_dir)
-    # Datei inzwischen abgelegt, Tunnel stand auf „cloudflared fehlt“ → ohne erneutes Speichern starten
-    if path and public.mode in ("tunnel", "named") and str(public.error or "").startswith(("cloudflared_missing", "cloudflared_not_executable", "cloudflared_wrong")):
-        await public.async_apply()
-    connection.send_result(msg["id"], {**public.status(), "cloudflared": path, "cloudflared_problem": problem})
+    """Teilen und Rechte → Öffentliche Adresse: Einstellung und die Pfade, die ein Proxy weiterleiten muss."""
+    connection.send_result(msg["id"], hass.data[DOMAIN]["public"].status())
 
 
 @websocket_api.require_admin
 @websocket_api.websocket_command({vol.Required("type"): "smartlists/set_share_public",
-                                  vol.Optional("mode"): vol.In(["ha", "tunnel", "named", "proxy"]),
-                                  vol.Optional("port"): vol.All(int, vol.Range(min=1024, max=65535)),
-                                  vol.Optional("url"): str,
-                                  vol.Optional("token"): vol.All(str, vol.Length(max=4000))})
+                                  vol.Optional("mode"): vol.In(["ha", "proxy"]),
+                                  vol.Optional("url"): vol.All(str, vol.Length(max=2000))})
 @websocket_api.async_response
 async def ws_set_share_public(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     try:
-        status = await hass.data[DOMAIN]["public"].async_update(msg.get("mode"), msg.get("port"), msg.get("url"), msg.get("token"))
+        status = await hass.data[DOMAIN]["public"].async_update(msg.get("mode"), msg.get("url"))
     except ValueError as err:
         connection.send_error(msg["id"], "invalid", str(err))
         return

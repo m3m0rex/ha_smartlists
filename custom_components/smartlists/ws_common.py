@@ -137,7 +137,7 @@ def _may_share(hass: HomeAssistant, entity_id: str, user: Any) -> str | None:
 
 
 def _public_info(hass: HomeAssistant) -> dict[str, Any]:
-    """Für die Karte: Art der öffentlichen Adresse und die aktuelle (Links mit anderer Tunnel-Adresse gehen nicht mehr)."""
+    """Für die Karte: Art der öffentlichen Adresse und die aktuelle (Links mit anderer Adresse gehen nicht mehr)."""
     public = hass.data[DOMAIN].get("public")
     if public is None:
         return {"public_mode": "ha", "public_base": None}

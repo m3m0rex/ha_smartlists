@@ -21,7 +21,7 @@ columns; on a narrow screen you first see the areas and open one. The search fie
 | Global (admins) | Categories | keyword packs, remembered categories |
 | Global (admins) | Extras | optional areas: notes (📝 section), meal plan, statistics and expenses – off in the setup assistant by default |
 | Global (admins) | Devices and notes | connected devices, combined lists from the app, app notes |
-| Global (admins) | Sharing and permissions | who may share lists via link and how far; public address for links (HA address, Quick Tunnel, own proxy); what users without admin rights may do |
+| Global (admins) | Sharing and permissions | who may share lists via link and how far; public address for links (HA address or own proxy); what users without admin rights may do |
 | Global (admins) | Voice, backup, defaults | Assist, due items, barcode lookup services, export/import, default controls for everyone, take over existing lists, run setup again, start from scratch |
 | Insights | Statistics and expenses | bought most often, not bought for a while, expenses, bookings |
 
@@ -40,7 +40,7 @@ Admins decide under *Global → Sharing and permissions*:
   edit the list · nobody), what a link may allow at most (view only · "soft" check · check off and add) and
   the longest validity. The limits apply to users without admin rights. *Show active links of all lists*
   lists every link and lets you revoke it.
-- **Public address for links**: Home Assistant address, Cloudflare Quick Tunnel or own proxy – so people you
+- **Public address for links**: Home Assistant address or own proxy – so people you
   share with do not learn the address of your Home Assistant. See
   [Shopping helpers](Shopping-helpers#share-without-revealing-your-home-assistant-address).
 - **Allowed without admin rights**: create own lists, create and change templates, assign categories by

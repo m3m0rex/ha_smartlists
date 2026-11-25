@@ -101,7 +101,7 @@
       { g: "global", id: "cats", label: t.a_cats, sub: t.learned_help, kw: [t.packs, t.learned, t.category], build: () => [this._packsSection(), this._learnedSection()] },
       { g: "global", id: "extras", label: t.x_title, sub: t.x_help, kw: [t.notes, t.mp_title, t.x_notes, t.x_mealplan, t.x_stats, t.stats, t.exp], build: () => [this._extrasSection()] },
       { g: "global", id: "devices", label: t.a_devices, sub: t.devices_help, kw: [t.devices, t.notes, t.app_list], build: () => [this._devicesSection(), this._notesSection()] },
-      { g: "global", id: "rights", label: t.a_rights, sub: t.a_rights_sub, kw: [t.share, t.rights_who, t.pub_title, t.pub_tunnel, t.pub_proxy, "cloudflared", "tunnel", "proxy"], build: () => [this._rightsShareSection(), this._publicSection(), this._rightsOtherSection()] },
+      { g: "global", id: "rights", label: t.a_rights, sub: t.a_rights_sub, kw: [t.share, t.rights_who, t.pub_title, t.pub_proxy, "cloudflared", "tunnel", "proxy"], build: () => [this._rightsShareSection(), this._publicSection(), this._rightsOtherSection()] },
       // 4.0: „Sprache, Sichern, Standard“ ist aufgeteilt – Einrichtung, Zurücksetzen und Dashboard stehen unter „Info“ (ganz unten)
       { g: "global", id: "auto", label: t.a_auto, sub: t.a_global_sub, kw: [t.automation, t.barcode_providers, t.barcode_lookup, "assist"], build: () => [this._automationSection()] },
       { g: "global", id: "backup", label: t.backup, sub: t.a_global_sub, kw: [t.backup, t.mg_title, "export", "import"], build: () => [
@@ -168,78 +168,36 @@
     draw();
     return this._sec("", t.share, t.rights_share_help, [body]);
   }
-  // Global → Teilen und Rechte → Öffentliche Adresse: Links über Quick Tunnel oder eigenen Proxy statt über die
-  // Adresse von Home Assistant (public.py). SmartLists lädt cloudflared nie selbst herunter – nur Hinweis.
+  // Global → Teilen und Rechte → Öffentliche Adresse: Links mit der Adresse von Home Assistant oder mit einer eigenen
+  // Adresse (Reverse-Proxy, Cloudflared-Add-on), die nur die Teilen-Pfade an Home Assistant weitergibt (public.py).
   _publicSection() {
     const t = this._t;
     const fmt = (str, vars) => String(str).replace(/\{(\w+)\}/g, (_, k) => (vars[k] != null ? vars[k] : ""));
     const status = h("span", { class: "ok2" });
     const body = h("div", {}, h("div", { class: "shelp" }, t.loading));
-    let st = null, mode = "ha", port = 8126, url = "", polls = 0, portOpen = false, token = "";
-    const viaCf = (m) => m === "tunnel" || m === "named";  // beide Arten starten cloudflared
-    // „<art>|<pfad>“ (siehe public.py binary_kind) → verständlicher Satz mit der passenden Datei
-    const wrongText = (code) => {
-      const i = code.indexOf("|");
-      const kind = i < 0 ? "unknown" : code.slice(0, i), path = i < 0 ? code : code.slice(i + 1);
-      const file = (st && st.cloudflared_file) || "cloudflared-linux-arm64";
-      const key = ["amd64", "arm64", "arm", "386"].includes(kind) ? "pub_cf_arch" : "pub_cf_kind_" + kind;
-      return fmt(t[key] || t.pub_cf_kind_unknown, { path, found: `cloudflared-linux-${kind}`, file });
-    };
-    const errText = (e) => {
-      if (!e) return "";
-      if (e.startsWith("cloudflared_wrong:")) return wrongText(e.slice("cloudflared_wrong:".length));
-      const i = e.indexOf(":");
-      const code = i < 0 ? e : e.slice(0, i), arg = i < 0 ? "" : e.slice(i + 1);
-      return t["pub_err_" + code] ? fmt(t["pub_err_" + code], { port: arg, code: arg }) : e;
-    };
+    let st = null, mode = "ha", url = "";
     const load = async () => {
       try { st = await this._call("share_public", {}, false); } catch (err) { fill(body, h("div", { class: "shelp" }, (err && err.message) || t.error)); return; }
-      if (polls === 0) { mode = st.mode; port = st.port; url = st.url; }
+      mode = st.mode; url = st.url;
       draw();
-      // Tunnel startet: ein paar Mal nachfragen, bis die Adresse da ist
-      if (viaCf(st.mode) && !st.tunnel_url && !st.error && polls < 15) { polls++; setTimeout(load, 2000); } else polls = 0;
     };
     const save = async () => {
       status.textContent = t.loading;
-      // Token nur mitschicken, wenn neu eingegeben (der gespeicherte bleibt in Home Assistant)
-      try { st = await this._call("set_share_public", { mode, port: Number(port) || 8126, url, ...(token ? { token } : {}) }, false); status.textContent = "✓ " + t.saved; polls = 0; token = ""; }
+      try { st = await this._call("set_share_public", { mode, url }, false); status.textContent = "✓ " + t.saved; }
       catch (err) { status.textContent = (err && err.message) || t.error; return; }
-      if (viaCf(st.mode) && !st.tunnel_url && !st.error) { polls = 1; setTimeout(load, 2000); }
       draw();
     };
-    const a = (href, label) => h("a", { href, target: "_blank", rel: "noreferrer noopener" }, label);
-    const cfHint = () => h("div", { class: "shelp", style: "padding:6px 0;color:var(--warning-color,#ff9800)" },
-      st.cloudflared_problem ? "⚠️ " + wrongText(st.cloudflared_problem) + " " : "⚠️ " + t.pub_cf_missing + " ",
-      a(st.download, fmt(t.pub_cf_download, { file: st.cloudflared_file || "cloudflared-linux-arm64" })), " · ",
-      fmt(t.pub_cf_where, { paths: (st.cloudflared_dirs || []).join(", "), file: st.cloudflared_file || "cloudflared-linux-arm64" }), " ", t.pub_cf_or_proxy);
     const draw = () => {
       if (!st) return;
-      const live = st.mode === mode;  // gespeicherter Zustand gehört zur gewählten Art
-      const state = !live ? null
-        : viaCf(mode) ? (st.tunnel_url ? h("div", { class: "sharelink" }, "✓ " + st.tunnel_url) : st.error ? h("div", { class: "shelp", style: "color:var(--error-color,#db4437)" }, "⚠️ " + errText(st.error))
-          : h("div", { class: "shelp" }, "⏳ " + t.pub_starting))
-        : mode === "proxy" ? (st.server ? h("div", { class: "shelp" }, "✓ " + fmt(t.pub_server_ok, { port: st.port })) : h("div", { class: "shelp", style: "color:var(--error-color,#db4437)" }, "⚠️ " + errText(st.error)))
-        : null;
+      const paths = (st.paths || []).join(", ");
       fill(body,
+        // bis 4.0.4 eingebauter Tunnel bzw. eigener Server auf Port 8126: der Proxy muss jetzt auf Home Assistant zeigen
+        st.moved_from ? h("div", { class: "shelp", style: "padding:6px 0;color:var(--warning-color,#ff9800)" }, "⚠️ " + fmt(t.pub_moved, { paths })) : null,
         this._setRow(t.pub_mode, h("select", { "aria-label": t.pub_mode, onchange: (e) => { mode = e.target.value; draw(); } },
-          [["ha", t.pub_ha], ["tunnel", t.pub_tunnel], ["named", t.pub_named], ["proxy", t.pub_proxy]].map(([v, l]) => h("option", { value: v, selected: mode === v }, l)))),
-        h("div", { class: "shelp", style: "padding:4px 0" }, mode === "ha" ? "ℹ️ " + t.pub_ha_help : mode === "tunnel" ? t.pub_tunnel_help : mode === "named" ? t.pub_named_help : fmt(t.pub_proxy_help, { port })),
-        // feste Adresse: Anleitung Schritt für Schritt (Cloudflare-Menüs heißen je nach Konto leicht anders)
-        mode === "named" ? h("details", { class: "pubhelp" }, h("summary", {}, "❓ " + t.pub_help_show),
-          h("ol", { class: "shelp pubsteps" }, t.pub_named_steps.split("\n").map((x) => h("li", {}, fmt(x, { port }))))) : null,
-        viaCf(mode) && !st.cloudflared ? cfHint() : null,
-        viaCf(mode) && st.cloudflared ? h("div", { class: "shelp" }, "✓ cloudflared: " + st.cloudflared) : null,
-        mode === "named" ? this._setRow(t.pub_token, h("input", { class: "search2", style: "width:240px;margin:0", type: "password", autocomplete: "off",
-          placeholder: st.token_set ? t.pub_token_saved : "eyJ…", "aria-label": t.pub_token, oninput: (e) => { token = e.target.value.trim(); } }), t.pub_token_help) : null,
-        mode === "proxy" || mode === "named" ? this._setRow(t.pub_url, h("input", { class: "search2", style: "width:240px;margin:0", type: "url", value: url, placeholder: "https://liste.example.org",
+          [["ha", t.pub_ha], ["proxy", t.pub_proxy]].map(([v, l]) => h("option", { value: v, selected: mode === v }, l)))),
+        h("div", { class: "shelp", style: "padding:4px 0" }, mode === "ha" ? "ℹ️ " + t.pub_ha_help : fmt(t.pub_proxy_help, { paths })),
+        mode === "proxy" ? this._setRow(t.pub_url, h("input", { class: "search2", style: "width:240px;margin:0", type: "url", value: url, placeholder: "https://liste.example.org",
           "aria-label": t.pub_url, oninput: (e) => { url = e.target.value.trim(); } })) : null,
-        // Port optional: Standard 8126, nur auf Wunsch ändern
-        mode !== "ha" && !portOpen && Number(port) === 8126 ? h("div", { class: "acts", style: "justify-content:flex-start" },
-          h("button", { class: "linkbtn", type: "button", onclick: () => { portOpen = true; draw(); } }, `${t.pub_port}: 8126 · ${t.pub_port_change}`)) : null,
-        mode !== "ha" && (portOpen || Number(port) !== 8126) ? this._setRow(t.pub_port, h("input", { class: "search2", style: "width:100px;margin:0", type: "number", min: "1024", max: "65535", value: String(port),
-          "aria-label": t.pub_port, oninput: (e) => { port = e.target.value; } }), t.pub_port_help) : null,
-        state,
-        mode === "tunnel" ? h("div", { class: "shelp", style: "padding:4px 0" }, "ℹ️ " + t.pub_tunnel_note, " ", a(st.docs, "trycloudflare")) : null,
         h("div", { class: "acts" }, status, h("button", { class: "btn2 primary", type: "button", onclick: save }, t.save)));
     };
     load();

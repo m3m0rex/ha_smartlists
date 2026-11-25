@@ -34,18 +34,18 @@ Fixed in 3.9.3: while Home Assistant (re)loads, a list is briefly missing; the p
 instead. Update and choose your list once more.
 
 **A share link shows "This link has expired or was revoked"**
-With *Cloudflare Quick Tunnel* the address changes after every restart of Home Assistant, so older links no longer
-work (the share window marks them "address has changed"). Create a new link, or use your own proxy for lasting links.
+The link ran out or was revoked – or the public address was changed since it was created (the share window marks
+such links "address has changed"). Create a new link.
 
-**"Share" says the tunnel is not ready / cloudflared missing**
-SmartLists does not download `cloudflared` by itself. Put the binary at `/config/cloudflared` or
-`/config/bin/cloudflared` (see [Shopping helpers](Shopping-helpers#share-without-revealing-your-home-assistant-address))
-or choose *Own proxy or tunnel*.
+**"Share" says the public address is not ready**
+*Own proxy* is chosen but no address is entered – for example after updating from 4.0.4 or older with the Cloudflare
+Quick Tunnel, which had no fixed address. Enter your address or choose *Home Assistant address*
+(see [Shopping helpers](Shopping-helpers#share-without-revealing-your-home-assistant-address)).
 
-**"cloudflared could not be started: Exec format error"**
-The file does not fit the processor of your Home Assistant – usually `amd64` on a Raspberry Pi (needs `arm64`)
-or the other way round. Since 3.9.8 the setting says what the file is and which one is needed; replace it with
-that file (renaming is optional).
+**A shared link answers 400, 404 or 502 behind a proxy**
+*400 Bad Request*: Home Assistant does not trust the proxy – add it to `trusted_proxies` (see the link above).
+*404 / 502*: the proxy or tunnel still points to port 8126 – since 4.1.0 SmartLists no longer runs a server of its
+own there. Point it at Home Assistant (port 8123) and forward only `/smartlists-share/` and `/api/smartlists/share/`.
 
 **The 📲 button for the home screen is missing**
 It is hidden inside the Home Assistant companion app (use its widgets there) and when the page already runs as an app.

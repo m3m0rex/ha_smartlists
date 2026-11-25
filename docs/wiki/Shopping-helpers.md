@@ -80,61 +80,62 @@ active links of all lists.
 
 | Links via | What happens |
 |---|---|
-| **Home Assistant address** (default, as before) | The link points to the external URL of Home Assistant. |
-| **Cloudflare Quick Tunnel** | SmartLists starts `cloudflared` and gets a random address `https://….trycloudflare.com`. No Cloudflare account, no port forwarding. |
-| **Cloudflare Tunnel (fixed address)** | A named tunnel on your own domain; SmartLists runs cloudflared with the tunnel's token. The address stays the same after restarts. |
-| **Own proxy or tunnel** | Your own address (Caddy, nginx, Traefik, the Cloudflared add-on, …). |
+| **Home Assistant address** (default) | The link points to the external URL of Home Assistant. |
+| **Own proxy** | The link uses an address of your own. A reverse proxy or tunnel in front of Home Assistant (Cloudflared add-on, Caddy, nginx, Traefik, …) forwards only the share paths to Home Assistant. |
 
-For the tunnel and the own proxy SmartLists starts a **small server of its own (default port 8126)** that
-serves *only* the share page and the share API – no login page, no API, nothing else from Home Assistant.
-The tunnel/proxy points to that port, never to Home Assistant itself. With the tunnel the server listens on
-`127.0.0.1` only; with an own proxy on all addresses (the proxy often runs in another container or device).
-If the chosen way is not ready (tunnel still starting, port in use), **no link is created** – SmartLists
-never falls back silently to the Home Assistant address.
+Shared links are always served by Home Assistant itself: SmartLists registers `/smartlists-share/<key>` (the page)
+and `/api/smartlists/share/<key>` (its data) without login, protected by the 256-bit key in the link. SmartLists
+starts no programs and opens no port of its own. If *Own proxy* is chosen but no address is entered, **no link is
+created** – SmartLists never falls back silently to the Home Assistant address.
 
-**cloudflared** – SmartLists does **not download it by itself**. If it is already installed (in `PATH`),
-it is used. Otherwise the setting shows a hint: download it from the
-[cloudflared releases](https://github.com/cloudflare/cloudflared/releases/latest) – the setting shows which file
-fits your system (Home Assistant OS on a Raspberry Pi: `cloudflared-linux-arm64`, on x86: `cloudflared-linux-amd64`).
-Put that file into `/config` or `/config/bin` (e.g. via the Samba or File editor add-on); renaming it to
-`cloudflared` is optional, and a subfolder `cloudflared` (even nested) is searched as well. A missing execute
-permission is added automatically, and the tunnel starts by itself the next time you open the setting.
+Let the proxy forward **only these two paths** to Home Assistant (port 8123) and answer everything else with 404,
+so the login page and the API of Home Assistant are not reachable under the shared address:
 
-Good to know about Quick Tunnels: the address **changes every time Home Assistant restarts**, so links
-created before stop working (the card marks them "address has changed"). Cloudflare offers Quick Tunnels
-for testing and without uptime guarantee. For lasting links use your own proxy or a named Cloudflare Tunnel
-with your own domain.
+- `/smartlists-share/`
+- `/api/smartlists/share/`
 
-**Cloudflare Tunnel with a fixed address** – needs a free Cloudflare account and a domain managed by Cloudflare:
+If the proxy sends `X-Forwarded-For` (Caddy, nginx with `proxy_set_header`, Cloudflared), Home Assistant has to
+trust it, otherwise it answers *400 Bad Request*:
 
-1. Cloudflare dashboard → *Zero Trust → Networks → Tunnels → Create a tunnel* → type *Cloudflared*, any name.
-2. Copy the token shown in the install command (starts with `eyJ…`; pasting the whole command works too).
-3. *Routes → Add route → Published application* (older dashboards: *Public Hostname → Add a public hostname*):
-   e.g. `list.yourdomain.com`, service **HTTP** `localhost:8126` – Cloudflare creates the DNS record itself (the SmartLists share server –
-   not Home Assistant).
-4. In SmartLists choose *Cloudflare Tunnel (fixed address)*, paste the token, enter `https://list.yourdomain.com`
-   and *Save*. cloudflared must be present as described above.
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24   # add-ons on Home Assistant OS, e.g. Cloudflared
+    - 192.168.1.20     # your own proxy
+```
 
-The token is stored in Home Assistant, handed to cloudflared as an environment variable and never shown again.
-
-**Own proxy – examples** (replace `192.168.1.10` with the IP of Home Assistant):
+**Examples** (replace `192.168.1.10` with the IP of Home Assistant):
 
 ```caddyfile
 liste.example.org {
-    reverse_proxy 192.168.1.10:8126
+    @share path /smartlists-share/* /api/smartlists/share/*
+    handle @share {
+        reverse_proxy 192.168.1.10:8123
+    }
+    respond 404
 }
 ```
 
 ```nginx
 server {
     server_name liste.example.org;
-    location / { proxy_pass http://192.168.1.10:8126; }
+    location /smartlists-share/     { proxy_pass http://192.168.1.10:8123; }
+    location /api/smartlists/share/ { proxy_pass http://192.168.1.10:8123; }
+    location /                      { return 404; }
 }
 ```
 
-Cloudflare Tunnel with your own domain (e.g. the *Cloudflared* add-on): add a public hostname
-`liste.example.org` → `http://homeassistant:8126`. Then enter `https://liste.example.org` as the public
-address. A sub-path such as `https://example.org/list` works as well, as long as the proxy strips it.
+Cloudflare Tunnel with your own domain (e.g. the *Cloudflared* add-on or a tunnel managed in the Cloudflare
+dashboard): add a public hostname `liste.example.org` with the path `^/(smartlists-share|api/smartlists/share)/`
+(a regular expression) and the service `http://homeassistant:8123`; requests that match no rule get Cloudflare's
+404. Then enter `https://liste.example.org` as the public address. A sub-path such as `https://example.org/list`
+works as well, as long as the proxy strips it.
+
+**Until 4.0.4** SmartLists could start `cloudflared` itself (Quick Tunnel, tunnel with a fixed address) and ran a
+share server of its own on port 8126. Both are gone: point the tunnel or proxy at Home Assistant as shown above and
+save the setting once – a notice under *Repairs* reminds you until then. A `cloudflared` file in `/config` is no
+longer used and can be deleted.
 
 ## Notifications
 

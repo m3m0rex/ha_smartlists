@@ -43,7 +43,7 @@ dashboards, with voice assistants, in automations and in the app SmartLists Go.
 | ⌨️ **One input field** | Quantity, unit, price, store, person and tag are recognised while typing – by default `@store`, `*person`, `#tag`; the characters can be changed or switched off (naming convention). Suggestions and "bought often" per list. |
 | 🗂️ **Categories** | Sorted like in the store – keyword packs in 6 languages, remembered corrections, aisle order per store; can be switched off per list. |
 | 🛒 **Shopping mode** | Large rows (optional), tap the whole row to check off with a 3-second undo, store bar, store picked by zone. |
-| 🔗 **Share** | With people in Home Assistant ("Who may do what?") or via **link / QR code** – optional password, notes on/off, through a Cloudflare Tunnel or your own proxy so your HA address stays private. |
+| 🔗 **Share** | With people in Home Assistant ("Who may do what?") or via **link / QR code** – optional password, notes on/off, optionally under an address of your own (reverse proxy, Cloudflared add-on) so your HA address stays private. |
 | 📲 **As an app** | Save the sidebar page as an icon on the phone's home screen – opens a list straight in shopping mode. |
 
 **New in 4.0:** new list design (count and size highlighted, tinted collapsible categories, badges below the name) ·
@@ -115,8 +115,8 @@ Shared by all lists and all HA users, stored in `.storage/smartlists/learning`:
 - **Meal plan** (optional, *Settings → Global → Extras*; also as a tab on the sidebar page) with a calendar entity and optional **Mealie** import, **history per item**, a one-click
   **shopping dashboard** (one sub-page per list), **diagnostics** download and hints under **Repairs**.
 - **Sharing:** with people in Home Assistant (view, check off, edit) or **via link / QR code** – only this list,
-  limited in time, revocable. Links can go through a **Cloudflare Quick Tunnel, a Cloudflare Tunnel with a fixed address on your own domain or
-  your own proxy** instead of
+  limited in time, revocable. Links can use **an address of your own** – a reverse proxy or tunnel (e.g. the
+  Cloudflared add-on) in front of Home Assistant that forwards only the share paths – instead of
   your Home Assistant address, so nobody you share with learns that address – see the
   [wiki](https://github.com/m3m0rex/ha_smartlists/wiki/Shopping-helpers#share-without-revealing-your-home-assistant-address).
   The share window (gear of the list) has the QR code, *May check off: No · Yes · Soft*, *May add items*, *Show notes*,
@@ -318,7 +318,7 @@ custom_components/smartlists/
   own_groups.py      own lists grouped per owner (one entry per owner), move of old entries
   automation.py      shopping event, get_items, Assist intents, due items
   lists.py           read/change lists (combined and regular to-do lists)
-  shares.py, public.py   share links; share server, Quick Tunnel, own proxy
+  shares.py, public.py   share links; public address for links
   features.py        extras (notes, meal plan)
   pwa.py             web-app manifest for the home-screen icon
   repairs.py         hints and fixes under Settings → Repairs

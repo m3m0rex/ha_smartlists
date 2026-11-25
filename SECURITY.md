@@ -30,7 +30,7 @@ HA SmartLists Android app (separate project).
 ## How SmartLists handles data
 
 - All data stays in your Home Assistant instance (`.storage/smartlists/`). There is no telemetry. The
-  integration connects to the outside only in two cases:
+  integration connects to the outside only in one case:
   - **Barcode lookup** (off by default): if you switch it on, the scanned code is sent to the lookup services
     you have selected, one after the other until one knows the product. No service is preselected – a service
     is contacted only after you have picked it:
@@ -56,10 +56,13 @@ HA SmartLists Android app (separate project).
     (UPCitemdb one hour, the others five minutes) instead of asking again. A product that was found is
     remembered, so the same code is not asked twice. Without the lookup the scanner only knows codes it has
     already learned.
-  - **Cloudflare tunnel** for shared links (off by default): if you enable it, SmartLists starts `cloudflared`,
-    which connects to Cloudflare.
 
-  Both are off until you turn them on; a fresh installation makes no outbound connections.
+  It is off until you turn it on; a fresh installation makes no outbound connections.
+- SmartLists starts no programs and opens no network port of its own. Shared links are served by Home
+  Assistant's HTTP server: `/smartlists-share/{key}` and `/api/smartlists/share/{key}` need no login and are
+  protected by the 256-bit key in the link (only its hash is stored), an optional expiry, an optional password
+  and rate limits. To keep your Home Assistant address private, put your own reverse proxy or tunnel in front
+  and forward only these two paths.
 - Every command runs with the permissions of the logged-in HA user; changes to lists go through the
   regular `todo.*` services. Household settings, forgetting categories and removing devices require an
   admin.

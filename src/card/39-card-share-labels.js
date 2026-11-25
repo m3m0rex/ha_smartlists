@@ -77,7 +77,7 @@
             status))),
         d && d.type === "combined" ? h("div", { class: "shelp", style: "padding:6px 0" }, "⚠️ " + t.share_combined) : null,
         h("div", { class: "shelp", style: "padding:4px 0" }, pub.public_mode === "ha" ? "ℹ️ " + t.share_leak
-          : `🛡️ ${pub.public_mode === "tunnel" ? t.pub_tunnel : pub.public_mode === "named" ? t.pub_named : t.pub_proxy}${pub.public_base ? ": " + pub.public_base : " – " + t.pub_not_ready}`),
+          : `🛡️ ${t.pub_proxy}${pub.public_base ? ": " + pub.public_base : " – " + t.pub_not_ready}`),
         links.length ? h("div", { class: "grp" }, t.share_active) : null,
         ...links.map((l) => this._setRow([modeText(l), edit && edit.id === l.id ? h("span", { class: "own" }, ` · ${t.share_edit}`) : null],
           h("span", { style: "display:flex;gap:2px" }, iconBtn(ICON.pencil, t.share_edit, () => startEdit(l)), iconBtn(ICON.close, t.share_revoke, async () => { links = (await this._call("share_revoke", { link_id: l.id })).links; if (l.id === lastId) { url = null; lastId = null; } if (edit && edit.id === l.id) edit = null; draw(); }, "danger")),

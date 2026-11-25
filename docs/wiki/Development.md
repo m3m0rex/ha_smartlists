@@ -53,7 +53,7 @@ custom_components/smartlists/
   own_groups.py      own lists grouped per owner (one entry per owner), move of old entries
   automation.py      shopping event, get_items, Assist intents, due items
   lists.py           read/change lists (combined and regular to-do lists)
-  shares.py, public.py   share links; share server, Quick Tunnel, own proxy
+  shares.py, public.py   share links; public address for links
   features.py        extras (notes, meal plan)
   pwa.py             web-app manifest for the home-screen icon
   repairs.py         hints and fixes under Settings → Repairs

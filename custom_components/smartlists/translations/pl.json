@@ -722,6 +722,10 @@
     "discounts_card_missing": {
       "title": "Kartę promocji trzeba zainstalować ponownie",
       "description": "**SmartDiscounts** (`custom:smartdiscounts-card`) jest od SmartLists 4.0 osobnym projektem i nie jest już dostarczana z integracją. Używasz jej na pulpicie lub prowadzisz listę obserwowanych.\n\nCo zrobić:\n1. Otwórz HACS → w prawym górnym rogu **Niestandardowe repozytoria** → dodaj `{url}` jako **Pulpit**.\n2. Pobierz **SmartDiscounts**.\n3. Odśwież przeglądarkę (Ctrl+F5).\n\nTwoje karty i ustawienia zostają. Sprawdzanie listy obserwowanych w tle działa dalej."
+    },
+    "public_share_moved": {
+      "title": "Udostępnione linki: wbudowany tunel został usunięty",
+      "description": "SmartLists nie uruchamia już `cloudflared` i nie prowadzi własnego serwera udostępniania na porcie 8126. Udostępnione linki działają teraz zawsze przez sam Home Assistant.\n\nCo zrobić:\n1. Skieruj swój tunel lub reverse proxy (np. dodatek Cloudflared, Caddy, nginx) na Home Assistant zamiast na port 8126 i przekazuj tylko te ścieżki: {paths}.\n2. Jeśli proxy wysyła `X-Forwarded-For`, dodaj je do `trusted_proxies` w sekcji `http:` Home Assistant.\n3. Sprawdź adres w SmartLists → Ustawienia → Udostępnianie i uprawnienia → Adres publiczny i zapisz raz – ta informacja wtedy zniknie.\n\nQuick Tunnel (…trycloudflare.com) nie miał stałego adresu: wpisz tam własny adres lub wybierz „Adres Home Assistant”. Dopóki adres nie jest wpisany, nowe linki nie powstają – nigdy zamiast tego z adresem Home Assistant. Plik `cloudflared` umieszczony w `/config` nie jest już używany i można go usunąć."
     }
   }
 }

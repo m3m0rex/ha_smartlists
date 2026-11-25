@@ -3,6 +3,26 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.0] – 2026-11-25
+
+### Security
+
+- **SmartLists no longer starts programs or a server of its own for shared links.** The built-in Cloudflare
+  tunnel (Quick Tunnel and tunnel with a fixed address) is gone: SmartLists no longer looks for a `cloudflared`
+  file in `/config`, no longer makes it executable and no longer runs it. The separate share server on port 8126
+  is gone as well – it ran outside Home Assistant's HTTP stack, so IP bans and TLS settings did not apply to it.
+  Shared links are now always served by Home Assistant itself (`/smartlists-share/…`, `/api/smartlists/share/…`).
+
+### Changed
+
+- **Public address for links:** *Home Assistant address* or *Own proxy*. With your own proxy, a reverse proxy or
+  tunnel in front of Home Assistant (e.g. the Cloudflared add-on, Caddy, nginx) forwards only the two share paths;
+  the address you enter is used for new links. The wiki has examples, including `trusted_proxies`.
+- **After the update:** if you used the Quick Tunnel, the tunnel with a fixed address or your own proxy, a notice
+  under *Repairs* asks you to point the tunnel or proxy at Home Assistant and save the setting once. The address of
+  a tunnel with a fixed address is kept; the Quick Tunnel had none, so no new links are created until you enter an
+  address (never with your Home Assistant address instead). A stored tunnel token is deleted.
+
 ## [4.0.4] – 2026-11-21
 
 ### Fixed

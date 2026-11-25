@@ -35,7 +35,7 @@ from .packs import async_get_packs
 from .notes import async_get_notes
 from .extras import async_get_extras
 from .shares import async_get_shares, async_register_views
-from .public import async_get_public, async_setup_public
+from .public import async_get_public
 from .notify import async_get_notifier
 from .itemlog import async_get_itemlog
 from . import repairs
@@ -65,9 +65,8 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     await async_get_offer_history(hass)
     await async_get_shares(hass)
     async_register_views(hass)  # geteilte Links (ohne Anmeldung, nur mit 256-Bit-Schlüssel)
-    # Teilen ohne die HA-Adresse zu verraten: eigener kleiner Server + Quick Tunnel / eigener Proxy
+    # Öffentliche Adresse für Links (Adresse von Home Assistant oder eigener Proxy davor)
     await async_get_public(hass)
-    async_setup_public(hass)
 
     @callback
     def _entity_removed(event) -> None:

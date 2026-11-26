@@ -12,6 +12,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 - **Card option `clear_expired_done: true`** (visual editor) does the same by itself whenever the card loads the
   list. Open items keep their "expired" note.
 
+### Changed
+
+- **Visual editor:** the switches for the "Remove completed" button and for expired offers moved to the section
+  "Completed", the offer hint to "List" – they were under "Input".
+
 ## [4.1.1] – 2026-11-26
 
 ### Changed

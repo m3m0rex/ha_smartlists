@@ -4,12 +4,17 @@ Requires **Home Assistant 2025.3** or newer (2026.3+ for the integration icon).
 
 ## HACS
 
-1. HACS → ⋮ → *Custom repositories*
-2. URL `https://github.com/m3m0rex/ha_smartlists`, type **Integration** → *Add*
-3. Download **SmartLists** and restart Home Assistant.
-4. *Settings → Devices & services → Add integration → SmartLists*
+SmartLists is in the HACS default store.
 
-Add the repository **only as "Integration"**, not as "Dashboard". The card is shipped with the
+1. Open HACS and search for **SmartLists**
+   ([open it directly](https://my.home-assistant.io/redirect/hacs_repository/?owner=m3m0rex&repository=ha_smartlists&category=integration)).
+2. Download it and restart Home Assistant.
+3. *Settings → Devices & services → Add integration → SmartLists*
+
+Not listed yet in your HACS? Add `https://github.com/m3m0rex/ha_smartlists` under ⋮ → *Custom repositories*, type
+**Integration**.
+
+Install it **only as "Integration"**, not as "Dashboard". The card is shipped with the
 integration and loaded automatically – a second copy as a dashboard resource causes old versions to
 show up (see [[Troubleshooting]]).
 

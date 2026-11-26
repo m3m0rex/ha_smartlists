@@ -47,10 +47,15 @@ Alle Änderungen: [CHANGELOG.md](CHANGELOG.md) · Umstieg von 3.9: [Wiki → Neu
 
 ## Installation
 
-1. HACS → ⋮ → *Benutzerdefinierte Repositories* → `https://github.com/m3m0rex/ha_smartlists`, Typ **Integration**
-2. **SmartLists** herunterladen und Home Assistant neu starten
+SmartLists ist im HACS-Standard enthalten.
+
+1. HACS öffnen und nach **SmartLists** suchen
+   ([direkt öffnen](https://my.home-assistant.io/redirect/hacs_repository/?owner=m3m0rex&repository=ha_smartlists&category=integration))
+2. Herunterladen und Home Assistant neu starten
 3. *Einstellungen → Geräte & Dienste → Integration hinzufügen* → **SmartLists**
 4. Dem Einrichtungs-Assistenten folgen (Listen, Märkte, Sprache, Extras)
+
+Taucht SmartLists in deinem HACS noch nicht auf: unter ⋮ → *Benutzerdefinierte Repositories* `https://github.com/m3m0rex/ha_smartlists` als Typ **Integration** hinzufügen.
 
 Die Karten werden automatisch geladen – eine Dashboard-Ressource ist nicht nötig. Voraussetzung: Home Assistant 2025.3 oder neuer. Ausführlich und manuell: [Wiki → Installation](https://github.com/m3m0rex/ha_smartlists/wiki/Installation).
 

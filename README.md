@@ -244,11 +244,17 @@ app in the sibling folder `shopping_manager_app`).
 
 ## Installation
 
-### Via HACS (custom repository)
+### Via HACS
 
-1. HACS → ⋮ → *Custom repositories*
-2. URL `https://github.com/m3m0rex/ha_smartlists`, type **Integration** → Add
-3. Download "SmartLists" and restart Home Assistant.
+SmartLists is in the HACS default store.
+
+1. Open HACS and search for **SmartLists**
+   ([open it directly](https://my.home-assistant.io/redirect/hacs_repository/?owner=m3m0rex&repository=ha_smartlists&category=integration)).
+2. Download it and restart Home Assistant.
+3. *Settings → Devices & services → Add integration → SmartLists*
+
+Not listed yet in your HACS? Add `https://github.com/m3m0rex/ha_smartlists` under ⋮ → *Custom repositories*, type
+**Integration**.
 
 ### Manual
 

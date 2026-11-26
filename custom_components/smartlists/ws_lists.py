@@ -71,9 +71,10 @@ async def ws_remove_items(hass, msg, context):
     return await lists.remove_items(hass, msg["entity_id"], msg["uids"], context)
 
 
-@_list_command({vol.Required("type"): "smartlists/clear_expired_offers", vol.Required("entity_id"): str})
+@_list_command({vol.Required("type"): "smartlists/clear_expired_offers", vol.Required("entity_id"): str,
+                vol.Optional("done_only", default=False): bool})
 async def ws_clear_expired_offers(hass, msg, context):
-    return await lists.clear_expired_offers(hass, msg["entity_id"], context)
+    return await lists.clear_expired_offers(hass, msg["entity_id"], context, msg["done_only"])
 
 
 @_list_command({vol.Required("type"): "smartlists/clear_completed", vol.Required("entity_id"): str})

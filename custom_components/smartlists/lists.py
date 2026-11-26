@@ -471,13 +471,16 @@ async def remove_items(hass: HomeAssistant, entity_id: str, uids: list[str], con
     return {}
 
 
-async def clear_expired_offers(hass: HomeAssistant, entity_id: str, context: Context | None = None) -> dict[str, Any]:
-    """Abgelaufene Angebote von den Artikeln nehmen (Markt, Preis, „gültig bis“) – Artikel und Notiz bleiben."""
+async def clear_expired_offers(hass: HomeAssistant, entity_id: str, context: Context | None = None, done_only: bool = False) -> dict[str, Any]:
+    """Abgelaufene Angebote von den Artikeln nehmen (Markt, Preis, „gültig bis“) – Artikel und Notiz bleiben.
+    done_only: nur bei erledigten Einträgen (offene behalten den Hinweis „abgelaufen“)."""
     entity = combined_entity(hass, entity_id)
     removed = 0
     for item in await raw_items(hass, entity_id):
         clean, offer, raw_line = split_offer(item.get("note"))
         if not raw_line or not offer or not offer.get("expired"):
+            continue
+        if done_only and not item.get("checked"):
             continue
         if entity is not None:
             removed += bool(await entity.async_clear_offer(item["uid"]))

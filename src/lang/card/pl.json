@@ -1003,5 +1003,7 @@
   "offer_bonus": "{amount} bonusu",
   "offer_bonus_help": "Akcja bonusowa: zwykła cena, bonus tylko w aplikacji {store}.",
   "l_show_clear_done": "Przycisk „Usuń ukończone”",
-  "offer_from": "ważne od"
+  "offer_from": "ważne od",
+  "offers_expired_done": "Usuń wygasłe promocje z ukończonych",
+  "l_clear_expired_done": "Automatycznie usuwaj wygasłe promocje z ukończonych"
 }

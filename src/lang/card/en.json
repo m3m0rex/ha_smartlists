@@ -1003,5 +1003,7 @@
   "offer_bonus": "{amount} bonus",
   "offer_bonus_help": "Bonus offer: normal price, the credit only comes with the {store} app.",
   "l_show_clear_done": "\"Remove completed\" button",
-  "offer_from": "valid from"
+  "offer_from": "valid from",
+  "offers_expired_done": "Remove expired offers from completed items",
+  "l_clear_expired_done": "Remove expired offers from completed items automatically"
 }

@@ -257,6 +257,13 @@ class SmartListsCard extends HTMLElement {
       if (live && sig === this._dataSig && !this._error) return;
       if (live && this._busy()) { this._defer(() => this._load(true)); return; }
       this._dataSig = sig;
+      // Karten-Option clear_expired_done: abgelaufene Angebote an erledigten Einträgen von selbst wegräumen – einmal je
+      // Stand der Liste, nur mit dem Recht zum Ändern und nicht ohne Netz
+      if (this._config.clear_expired_done && data.permissions && data.permissions.rename && !this._isOffline() && this._autoCleared !== sig
+        && data.items.some((i) => i.checked && i.offer && i.offer.expired)) {
+        this._autoCleared = sig;
+        this._call("clear_expired_offers", { done_only: true }).then((r) => { if (r && r.removed) this._load(true); }).catch((e) => slWarn("clear_expired_offers", e));
+      }
       // Rückfall: steht die ⚙OFFER-Zeile der App noch in der Notiz, hier selbst zerlegen
       for (const it of data.items) {
         if (!it.offer && it.note) { const r = parseOfferNote(it.note, this._cfg && this._cfg.known_stores); if (r.offer) { it.offer = r.offer; it.note = r.note; } }

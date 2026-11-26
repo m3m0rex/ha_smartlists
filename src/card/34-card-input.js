@@ -543,6 +543,12 @@
       out.push(h("div", { class: `done-head ${collapsed ? "collapsed" : ""}`,
         onclick: () => { this._collapsedDone = !this._collapsedDone; this._renderList(); } },
         svg(ICON.chevron, 18, "chev"), `${t.done} (${done.length})`, h("span", { class: "grow" }),
+        // abgelaufene Angebote an erledigten Einträgen wegräumen (die Einträge bleiben)
+        d.permissions.rename && !searching && done.some((i) => i.offer && i.offer.expired) ? iconBtn(ICON.tagoff, t.offers_expired_done, async (e) => {
+          e.stopPropagation();
+          try { const r = await this._call("clear_expired_offers", { done_only: true }); this._toast(`✓ ${t.offers_expired_done}: ${r.removed}`); } catch (err) { this._toast((err && err.message) || t.error); }
+          await this._load();
+        }) : null,
         d.permissions.delete && !searching && this._config.show_clear_done !== false ? iconBtn(ICON.sweep, t.clear, (e) => { e.stopPropagation(); this._deleteItems(done, `${done.length} ${t.removed}`); }) : null));
       const doneSorted = mode === "added" ? done : [...done].sort(byName);
       if (!collapsed) out.push(h("div", { class: "items emoji" }, doneSorted.map((i) => this._row(i, d, true))));

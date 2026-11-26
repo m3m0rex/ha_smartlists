@@ -1003,5 +1003,7 @@
   "offer_bonus": "{amount} di bonus",
   "offer_bonus_help": "Offerta bonus: prezzo normale, il credito arriva solo con l’app {store}.",
   "l_show_clear_done": "Pulsante «Rimuovi completati»",
-  "offer_from": "valido dal"
+  "offer_from": "valido dal",
+  "offers_expired_done": "Rimuovi le offerte scadute dai completati",
+  "l_clear_expired_done": "Rimuovi automaticamente le offerte scadute dai completati"
 }

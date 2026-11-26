@@ -3,6 +3,15 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.2] – 2026-11-26
+
+### Added
+
+- **Remove expired offers from completed items:** a button in the "Completed" row takes store, price and "expired
+  since" off the completed items – the items stay. It only shows when there is something to remove.
+- **Card option `clear_expired_done: true`** (visual editor) does the same by itself whenever the card loads the
+  list. Open items keep their "expired" note.
+
 ## [4.1.1] – 2026-11-26
 
 ### Changed

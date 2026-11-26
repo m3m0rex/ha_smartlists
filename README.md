@@ -200,8 +200,8 @@ type: custom:smartlists-card
 entity: todo.weekly_shop
 ```
 
-The visual editor starts simple – **preset**, list, title, view, sort – and shows everything else with
-*Show advanced options*. Presets: family shopping, kitchen tablet, in the store, view only, compact
+The visual editor starts simple – **preset**, list, title, view, sort – and groups everything else in six
+sections by purpose. Presets: family shopping, kitchen tablet, in the store, view only, compact
 dashboard tile.
 
 | Option | Values |

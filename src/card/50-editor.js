@@ -23,7 +23,7 @@ class SmartListsCardEditor extends HTMLElement {
   _schema() {
     const t = this._t;
     const b = (name) => ({ name, selector: { boolean: {} } });
-    const section = (key, icon, schema) => ({ type: "expandable", name: "", flatten: true, title: t["e_sec_" + key], icon, schema });
+    const section = (key, icon, schema) => ({ type: "expandable", name: "", flatten: true, title: `${t["e_sec_" + key]} (${schema.length})`, icon, schema });
     const sel = (name, options) => ({ name, selector: { select: { mode: "dropdown", options: options.map(([value, label]) => ({ value, label })) } } });
     const basic = [
       sel("preset", [["", t.e_preset_pick], ...Object.keys(PRESETS).map((k) => [k, t["e_pre_" + k]])]),
@@ -31,21 +31,25 @@ class SmartListsCardEditor extends HTMLElement {
       { name: "title", selector: { text: {} } },
       sel("view", [["list", t.e_view_list], ["tiles", t.e_view_tiles], ["mini", t.e_view_mini]]),
       sel("sort", [["category", t.e_sort_category], ["alpha", t.sort_alpha], ["added", t.e_sort_added], ["list", t.e_sort_list]]),
-      b("advanced"),
     ];
-    if (!this._advanced) return basic;
+    // Abschnitte nach Zweck (alle eingeklappt, mit der Zahl ihrer Einstellungen) – ohne „Erweiterte Optionen“
     return [
       ...basic,
-      section("multi", "mdi:view-column-outline", [
-        { name: "entities", selector: { entity: { domain: "todo", multiple: true, ...this._noNotes() } } },
-        sel("layout", [["tabs", t.e_layout_tabs], ["columns", t.e_layout_columns], ["stack", t.e_layout_stack]]),
-      ]),
-      section("filter", "mdi:filter-outline", [
+      section("show", "mdi:eye-outline",
+        [b("show_prices"), b("show_offer"), b("show_offer_hints"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles"), b("show_count")]),
+      section("header", "mdi:page-layout-header",
+        [b("show_header"), b("show_title"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
+      section("use", "mdi:gesture-tap",
+        [b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan"), b("show_stepper"), b("drag_drop"), b("start_shopping")]),
+      section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed"), b("show_clear_done"), b("clear_expired_done")]),
+      section("filter2", "mdi:filter-outline", [
         { name: "filter_store", selector: { text: {} } },
         { name: "filter_person", selector: { text: {} } },
         { name: "filter_tag", selector: { text: {} } },
         { name: "filter_category", selector: { select: { multiple: true, mode: "dropdown", options: categoryOptions(this._lang).map(([value, label]) => ({ value, label })) } } },
         b("filter_offers"), b("filter_tags_new_items"), b("show_filter_chips"),
+        { name: "entities", selector: { entity: { domain: "todo", multiple: true, ...this._noNotes() } } },
+        sel("layout", [["tabs", t.e_layout_tabs], ["columns", t.e_layout_columns], ["stack", t.e_layout_stack]]),
       ]),
       section("look", "mdi:palette-outline", [
         sel("density", [["compact", t.e_density_compact], ["normal", t.e_density_normal], ["comfortable", t.e_density_comfortable]]),
@@ -54,13 +58,6 @@ class SmartListsCardEditor extends HTMLElement {
         { name: "accent_color", selector: { color_rgb: {} } },
         { name: "max_height", selector: { number: { min: 150, max: 2000, step: 50, mode: "box", unit_of_measurement: "px" } } },
       ]),
-      section("header", "mdi:page-layout-header",
-        [b("show_header"), b("show_count"), b("show_search"), b("show_sort"), b("show_shopping"), b("show_undo"), b("show_import"), b("show_settings")]),
-      section("input", "mdi:plus-box-outline", [b("show_title"), b("show_add"), b("show_frequent"), b("show_templates"), b("show_scan")]),
-      section("list", "mdi:format-list-bulleted",
-        [b("drag_drop"), b("show_stepper"), b("show_offer"), b("show_offer_hints"), b("show_prices"), b("show_tags"), b("show_source"), b("show_note"), b("show_category_titles")]),
-      section("done", "mdi:check-all", [b("show_completed"), b("collapse_completed"), b("show_clear_done"), b("clear_expired_done")]),
-      section("shop", "mdi:cart-outline", [b("start_shopping")]),
     ];
   }
 
@@ -93,7 +90,7 @@ class SmartListsCardEditor extends HTMLElement {
     this._form.schema = this._schema();
     this._form.data = this._data();
   }
-  _data() { return { ...CARD_DEFAULTS, ...this._config, preset: "", advanced: this._advanced }; }
+  _data() { return { ...CARD_DEFAULTS, ...this._config, preset: "" }; }
 }
 
 /* ------------------------------------------------------------------ */

@@ -1005,5 +1005,10 @@
   "l_show_clear_done": "Bouton « Supprimer les terminés »",
   "offer_from": "valable à partir du",
   "offers_expired_done": "Retirer les promos expirées des articles terminés",
-  "l_clear_expired_done": "Retirer automatiquement les promos expirées des articles terminés"
+  "l_clear_expired_done": "Retirer automatiquement les promos expirées des articles terminés",
+  "e_sec_show": "Ce que la carte affiche",
+  "e_sec_use": "Saisie et commandes",
+  "e_sec_filter2": "Filtres et plusieurs listes",
+  "hh_show_clear_done": "Le balai dans la ligne « Terminés » : supprime tous les articles terminés.",
+  "hh_clear_expired_done": "Seulement pour les articles terminés ; les ouverts gardent la mention « expirée »."
 }

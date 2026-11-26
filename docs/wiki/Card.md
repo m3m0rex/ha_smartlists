@@ -5,8 +5,9 @@ type: custom:smartlists-card
 entity: todo.weekly_shop
 ```
 
-The visual editor starts with the essentials (preset, list, title, view, sort). Turn on
-*Show advanced options* for everything else. Only values that differ from the defaults are saved.
+The visual editor starts with the essentials (preset, list, title, view, sort). Everything else sits in six
+sections below, grouped by purpose: what the card shows, header, input and controls, completed, filters and
+several lists, look. Only values that differ from the defaults are saved.
 
 ## Presets
 

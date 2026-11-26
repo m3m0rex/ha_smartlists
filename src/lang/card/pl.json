@@ -1005,5 +1005,10 @@
   "l_show_clear_done": "Przycisk „Usuń ukończone”",
   "offer_from": "ważne od",
   "offers_expired_done": "Usuń wygasłe promocje z ukończonych",
-  "l_clear_expired_done": "Automatycznie usuwaj wygasłe promocje z ukończonych"
+  "l_clear_expired_done": "Automatycznie usuwaj wygasłe promocje z ukończonych",
+  "e_sec_show": "Co pokazuje karta",
+  "e_sec_use": "Wpisywanie i obsługa",
+  "e_sec_filter2": "Filtry i kilka list",
+  "hh_show_clear_done": "Miotła w wierszu „Ukończone”: usuwa wszystkie ukończone pozycje.",
+  "hh_clear_expired_done": "Tylko przy ukończonych; otwarte zachowują dopisek „wygasła”."
 }

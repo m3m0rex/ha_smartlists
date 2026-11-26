@@ -14,8 +14,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versio
 
 ### Changed
 
-- **Visual editor:** the switches for the "Remove completed" button and for expired offers moved to the section
-  "Completed", the offer hint to "List" – they were under "Input".
+- **Visual editor regrouped by purpose:** "What the card shows", "Header", "Input and controls", "Completed",
+  "Filters and several lists" and "Look" – each with the number of its settings. The switch "Show advanced options"
+  is gone; every option is still there and existing cards do not change.
 
 ## [4.1.1] – 2026-11-26
 

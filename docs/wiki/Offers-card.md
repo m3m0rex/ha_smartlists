@@ -4,8 +4,8 @@
 
 `custom:smartdiscounts-card` shows the offers of your supermarkets and matches them with a shopping list. It is
 a project of its own with its own version number and runs with and **without SmartLists**. Since SmartLists 4.0.0-beta.7
-it is no longer shipped with SmartLists: add its [own repository](https://github.com/m3m0rex/ha_smartdiscounts-card) to HACS as a custom
-repository (type *Dashboard*), install "SmartDiscounts" and reload the browser. When it is missing although a
+it is no longer shipped with SmartLists: search for **SmartDiscounts** in HACS (it is in the HACS default store,
+[own repository](https://github.com/m3m0rex/ha_smartdiscounts-card)), download it and reload the browser. When it is missing although a
 dashboard uses it or a watch list is kept, SmartLists says so under *Settings → Repairs*. The README there lists every
 option with examples.
 

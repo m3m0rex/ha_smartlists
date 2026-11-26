@@ -721,7 +721,7 @@
     },
     "discounts_card_missing": {
       "title": "Kartę promocji trzeba zainstalować ponownie",
-      "description": "**SmartDiscounts** (`custom:smartdiscounts-card`) jest od SmartLists 4.0 osobnym projektem i nie jest już dostarczana z integracją. Używasz jej na pulpicie lub prowadzisz listę obserwowanych.\n\nCo zrobić:\n1. Otwórz HACS → w prawym górnym rogu **Niestandardowe repozytoria** → dodaj `{url}` jako **Pulpit**.\n2. Pobierz **SmartDiscounts**.\n3. Odśwież przeglądarkę (Ctrl+F5).\n\nTwoje karty i ustawienia zostają. Sprawdzanie listy obserwowanych w tle działa dalej."
+      "description": "**SmartDiscounts** (`custom:smartdiscounts-card`) jest od SmartLists 4.0 osobnym projektem i nie jest już dostarczana z integracją. Używasz jej na pulpicie lub prowadzisz listę obserwowanych.\n\nCo zrobić:\n1. Otwórz HACS i wyszukaj **SmartDiscounts** (w domyślnym katalogu HACS; repozytorium: `{url}`).\n2. Pobierz **SmartDiscounts**.\n3. Odśwież przeglądarkę (Ctrl+F5).\n\nTwoje karty i ustawienia zostają. Sprawdzanie listy obserwowanych w tle działa dalej."
     },
     "public_share_moved": {
       "title": "Udostępnione linki: wbudowany tunel został usunięty",

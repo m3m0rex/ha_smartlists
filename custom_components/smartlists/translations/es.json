@@ -721,7 +721,7 @@
     },
     "discounts_card_missing": {
       "title": "Hay que volver a instalar la tarjeta de ofertas",
-      "description": "La tarjeta **SmartDiscounts** (`custom:smartdiscounts-card`) es un proyecto propio desde SmartLists 4.0 y ya no viene con la integración. La usas en un panel o tienes una lista de seguimiento.\n\nQué hacer:\n1. Abre HACS → arriba a la derecha **Repositorios personalizados** → añade `{url}` como **Panel**.\n2. Descarga **SmartDiscounts**.\n3. Recarga el navegador (Ctrl+F5).\n\nTus tarjetas y ajustes se conservan. La comprobación en segundo plano de la lista de seguimiento sigue funcionando."
+      "description": "La tarjeta **SmartDiscounts** (`custom:smartdiscounts-card`) es un proyecto propio desde SmartLists 4.0 y ya no viene con la integración. La usas en un panel o tienes una lista de seguimiento.\n\nQué hacer:\n1. Abre HACS y busca **SmartDiscounts** (en el catálogo por defecto de HACS; repositorio: `{url}`).\n2. Descarga **SmartDiscounts**.\n3. Recarga el navegador (Ctrl+F5).\n\nTus tarjetas y ajustes se conservan. La comprobación en segundo plano de la lista de seguimiento sigue funcionando."
     },
     "public_share_moved": {
       "title": "Enlaces compartidos: se ha retirado el túnel integrado",

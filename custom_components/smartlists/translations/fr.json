@@ -721,7 +721,7 @@
     },
     "discounts_card_missing": {
       "title": "La carte des promos doit être réinstallée",
-      "description": "La tarjeta **SmartDiscounts** (`custom:smartdiscounts-card`) est un projet à part depuis SmartLists 4.0 et n'est plus fournie avec l'intégration. Tu l'utilises sur un tableau de bord ou tu tiens une liste à surveiller.\n\nMarche à suivre :\n1. Ouvre HACS → en haut à droite **Dépôts personnalisés** → ajoute `{url}` comme **Tableau de bord**.\n2. Télécharge **SmartDiscounts**.\n3. Recharge le navigateur (Ctrl+F5).\n\nTes cartes et réglages sont conservés. La vérification en arrière-plan de la liste à surveiller continue de fonctionner."
+      "description": "La tarjeta **SmartDiscounts** (`custom:smartdiscounts-card`) est un projet à part depuis SmartLists 4.0 et n'est plus fournie avec l'intégration. Tu l'utilises sur un tableau de bord ou tu tiens une liste à surveiller.\n\nMarche à suivre :\n1. Ouvre HACS et cherche **SmartDiscounts** (dans le catalogue par défaut de HACS ; dépôt : `{url}`).\n2. Télécharge **SmartDiscounts**.\n3. Recharge le navigateur (Ctrl+F5).\n\nTes cartes et réglages sont conservés. La vérification en arrière-plan de la liste à surveiller continue de fonctionner."
     },
     "public_share_moved": {
       "title": "Liens partagés : le tunnel intégré a été retiré",

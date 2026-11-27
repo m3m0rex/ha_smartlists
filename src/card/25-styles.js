@@ -449,6 +449,8 @@ const STYLE = `
 
   /* Zahnrad-Menü */
   .sl-settings { border-top:1px solid var(--divider-color,#e0e0e0); container-type:inline-size; }
+  /* Einstellungen immer in der Farbe des Themes: die Akzentfarbe der Karte (accent_color) gilt nur für die Liste */
+  .sl-settings, .dlg.lsheet, .dlg.wiz { --sl-accent: var(--primary-color); }
   .sgrid { display:grid; grid-template-columns:minmax(0,1fr); }
   .snav { padding:12px 10px 14px; }
   .snav .search2 { margin:0 0 6px; height:36px; }

@@ -744,12 +744,15 @@ class Extras:
         self._save()
 
     @callback
-    def finish_trip(self, entity_id: str) -> int:
-        """„Einkauf beendet“: Summe „im Wagen“ beginnt wieder bei 0 (Abgehaktes bleibt abgehakt)."""
-        self.trips[entity_id] = int(time.time())
-        self.checked_at.pop(entity_id, None)
+    def finish_trip(self, entity_id: str, also: list[str] | tuple[str, ...] = ()) -> int:
+        """„Einkauf beendet“: Summe „im Wagen“ beginnt wieder bei 0 (Abgehaktes bleibt abgehakt).
+        also: weitere Listen mit demselben Einkauf – bei einer kombinierten Liste ihre Quell-Listen."""
+        start = int(time.time())
+        for key in (entity_id, *also):
+            self.trips[key] = start
+            self.checked_at.pop(key, None)
         self._save()
-        return self.trips[entity_id]
+        return start
 
     @staticmethod
     def expense_id(e: dict[str, Any]) -> str:

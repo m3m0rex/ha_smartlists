@@ -3,6 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.4] – 2026-11-27
+
+### Changed
+
+- **The input field of the card has a visible border when it is not focused.** On dark themes its background barely
+  stood out from the card. Focused it keeps the accent colour.
+
+## [4.1.3] – 2026-11-27
+
+### Fixed
+
+- **"Finish shopping" in a combined list also finishes it in the source lists.** Until now only the combined list
+  started again at 0; each source list still showed the items as "in cart" (for example the list of the person
+  you shopped for).
+
 ## [4.1.2] – 2026-11-26
 
 ### Added

@@ -89,6 +89,9 @@ def test_delete_expense_and_trip():
     assert "uid1" in e.checked_at["todo.x"]
     start = e.finish_trip("todo.x")
     assert e.trips["todo.x"] == start and "todo.x" not in e.checked_at
+    e.mark_checked("todo.a", "uid2", True)
+    start = e.finish_trip("todo.kombi", ["todo.a", "todo.b"])
+    assert e.trips["todo.kombi"] == e.trips["todo.a"] == e.trips["todo.b"] == start and "todo.a" not in e.checked_at
     assert a["id"]
 
 

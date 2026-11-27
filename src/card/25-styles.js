@@ -39,7 +39,10 @@ const STYLE = `
   input, select { font:inherit; color:var(--primary-text-color); background:var(--secondary-background-color,#f2f2f2);
     border:1px solid transparent; border-radius:8px; padding:9px 11px; min-width:0; box-sizing:border-box; }
   input:focus, select:focus { outline:none; border-color:var(--sl-accent); }
-  .add .smart { flex:1; min-width:0; }
+  /* Eingabefeld auch ohne Fokus erkennbar: sichtbarer Rahmen, auf dunklen Themes hebt sich der Hintergrund kaum ab */
+  .add .smart { flex:1; min-width:0; border-color:color-mix(in srgb, var(--secondary-text-color,#888) 45%, transparent); }
+  .add .smart:hover { border-color:var(--secondary-text-color,#888); }
+  .add .smart:focus { border-color:var(--sl-accent); }
   .go { border:none; border-radius:8px; background:var(--sl-accent); color:var(--text-primary-color,#fff);
     padding:0 14px; cursor:pointer; display:flex; align-items:center; }
   .go:disabled { opacity:.45; cursor:default; }

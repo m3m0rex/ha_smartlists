@@ -118,7 +118,10 @@ async def ws_finish_shopping(hass, msg, context):
     """„Einkauf beendet“: Summe im Wagen auf 0. Mit reopen=True werden die abgehakten Artikel wieder offen
     (für Listen, die man jede Woche neu benutzt)."""
     extras = _extras(hass)
-    start = extras.finish_trip(msg["entity_id"])
+    # kombinierte Liste: der Einkauf ist auch in jeder Quell-Liste beendet, sonst bleibt dort die Summe „im Wagen“ stehen
+    combined = lists.combined_entity(hass, msg["entity_id"])
+    sources = [s["entity_id"] for s in combined.source_info] if combined is not None else []
+    start = extras.finish_trip(msg["entity_id"], sources)
     reopened = 0
     if msg["reopen"]:
         for item in await lists.raw_items(hass, msg["entity_id"]):

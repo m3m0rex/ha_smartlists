@@ -126,11 +126,23 @@ server {
 }
 ```
 
-Cloudflare Tunnel with your own domain (e.g. the *Cloudflared* add-on or a tunnel managed in the Cloudflare
-dashboard): add a public hostname `liste.example.org` with the path `^/(smartlists-share|api/smartlists/share)/`
-(a regular expression) and the service `http://homeassistant:8123`; requests that match no rule get Cloudflare's
-404. Then enter `https://liste.example.org` as the public address. A sub-path such as `https://example.org/list`
-works as well, as long as the proxy strips it.
+**Cloudflared add-on:** its own options (`external_hostname`, `additional_hosts`) cannot limit a hostname to
+certain paths – a share hostname set up there would expose all of Home Assistant. Use a tunnel managed in the
+Cloudflare dashboard instead:
+
+1. Cloudflare dashboard → *Zero Trust → Networks → Tunnels → Create a tunnel* → type *Cloudflared*, any name;
+   copy the token from the install command (starts with `eyJ…`).
+2. Add-on configuration: set `tunnel_token` to that token. The add-on then takes all routes from the dashboard and
+   ignores its other options – if you used `external_hostname` for remote access before, add that hostname as a
+   route in the dashboard too (service `http://homeassistant:8123`, no path).
+3. Add a route (*Published application*) for `liste.example.org` with the path
+   `^/(smartlists-share|api/smartlists/share)/` (a regular expression) and the service `http://homeassistant:8123`.
+   Requests that match no route get Cloudflare's 404.
+4. Home Assistant: trust the add-on as a proxy (`172.30.33.0/24`, see above) and restart.
+5. SmartLists: choose *Own proxy* and enter `https://liste.example.org`.
+
+Test: `https://liste.example.org/` answers 404, a new share link opens. A sub-path such as
+`https://example.org/list` works with other proxies as well, as long as the proxy strips it.
 
 **Until 4.0.4** SmartLists could start `cloudflared` itself (Quick Tunnel, tunnel with a fixed address) and ran a
 share server of its own on port 8126. Both are gone: point the tunnel or proxy at Home Assistant as shown above and

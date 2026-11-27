@@ -472,7 +472,7 @@
   "scan_find": "Look up",
   "scan_no_camera": "Camera scanning is not supported here (e.g. iPhone Safari, Firefox) – type the number.",
   "aisle_down": "Move down",
-  "aisle_help": "This is how shopping mode sorts when this store is selected. Drag the handle ⠿ or use the arrows.",
+  "aisle_help": "This is how shopping mode sorts when this store is selected – and every card filtered to this store. Drag the handle ⠿ or use the arrows.",
   "aisle_all_branches": "all branches",
   "aisle_reset": "Default",
   "notify_to": "Send to",

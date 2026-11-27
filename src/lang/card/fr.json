@@ -472,7 +472,7 @@
   "scan_find": "Rechercher",
   "scan_no_camera": "Le scan par caméra n'est pas pris en charge ici (ex. Safari sur iPhone, Firefox) – tape le numéro.",
   "aisle_down": "Descendre",
-  "aisle_help": "C'est l'ordre du mode courses quand ce magasin est sélectionné. Fais glisser la poignée ⠿ ou utilise les flèches.",
+  "aisle_help": "C'est l'ordre du mode courses quand ce magasin est sélectionné – et de chaque carte filtrée sur ce magasin. Fais glisser la poignée ⠿ ou utilise les flèches.",
   "aisle_all_branches": "toutes les succursales",
   "aisle_reset": "Par défaut",
   "notify_to": "Envoyer à",

@@ -472,7 +472,7 @@
   "scan_find": "Buscar",
   "scan_no_camera": "El escaneo con cámara no es compatible aquí (p. ej. Safari en iPhone, Firefox) – escribe el número.",
   "aisle_down": "Bajar",
-  "aisle_help": "Así ordena el modo compra cuando esta tienda está seleccionada. Arrastra el asa ⠿ o usa las flechas.",
+  "aisle_help": "Así ordena el modo compra cuando esta tienda está seleccionada, y cada tarjeta filtrada por esta tienda. Arrastra el asa ⠿ o usa las flechas.",
   "aisle_all_branches": "todas las sucursales",
   "aisle_reset": "Predeterminado",
   "notify_to": "Enviar a",

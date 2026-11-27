@@ -472,7 +472,7 @@
   "scan_find": "Cerca",
   "scan_no_camera": "La scansione con fotocamera qui non è supportata (es. Safari su iPhone, Firefox) – digita il numero.",
   "aisle_down": "Sposta giù",
-  "aisle_help": "Così ordina la modalità spesa quando è selezionato questo negozio. Trascina la maniglia ⠿ o usa le frecce.",
+  "aisle_help": "Così ordina la modalità spesa quando è selezionato questo negozio, e ogni scheda filtrata su questo negozio. Trascina la maniglia ⠿ o usa le frecce.",
   "aisle_all_branches": "tutte le filiali",
   "aisle_reset": "Predefinito",
   "notify_to": "Invia a",

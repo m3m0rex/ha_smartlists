@@ -472,7 +472,7 @@
   "scan_find": "Suchen",
   "scan_no_camera": "Kamera-Scan wird hier nicht unterstützt (z. B. iPhone-Safari, Firefox) – Nummer eintippen.",
   "aisle_down": "Nach unten",
-  "aisle_help": "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist. Am Griff ⠿ ziehen oder mit den Pfeilen verschieben.",
+  "aisle_help": "So sortiert der Einkaufsmodus, wenn dieser Markt gewählt ist – und jede Karte, die fest auf diesen Markt gefiltert ist. Am Griff ⠿ ziehen oder mit den Pfeilen verschieben.",
   "aisle_all_branches": "alle Filialen",
   "aisle_reset": "Standard",
   "notify_to": "Senden an",

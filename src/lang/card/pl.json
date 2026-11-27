@@ -472,7 +472,7 @@
   "scan_find": "Szukaj",
   "scan_no_camera": "Skanowanie aparatem nie jest tu obsługiwane (np. Safari na iPhonie, Firefox) – wpisz numer.",
   "aisle_down": "W dół",
-  "aisle_help": "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep. Przeciągnij uchwyt ⠿ lub użyj strzałek.",
+  "aisle_help": "Tak sortuje tryb zakupów, gdy wybrany jest ten sklep – oraz każda karta filtrowana na ten sklep. Przeciągnij uchwyt ⠿ lub użyj strzałek.",
   "aisle_all_branches": "wszystkie oddziały",
   "aisle_reset": "Domyślnie",
   "notify_to": "Wyślij do",

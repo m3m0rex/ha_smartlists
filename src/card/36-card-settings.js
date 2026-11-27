@@ -1177,12 +1177,15 @@
   }
 
   /* ---------------- 2.8: Markt-Reihenfolge, Preise, Vorlagen, Scannen, Statistik, Teilen, Benachrichtigungen ---------------- */
-  // Reihenfolge der Kategorien: im Einkaufsmodus für einen Markt dessen Gänge (Filiale vor Markt), sonst Standard
+  // Reihenfolge der Kategorien: im Einkaufsmodus für einen Markt dessen Gänge (Filiale vor Markt); eine Karte, die fest
+  // auf genau einen Markt gefiltert ist (filter_store), nimmt dessen Reihenfolge auch außerhalb des Einkaufsmodus; sonst Standard
   _catOrder(d) {
     const base = d.categories.map((c) => c.id);
     const so = (this._cfg && this._cfg.store_order) || {};
-    if (!this._shopping || !this._shopStore) return base;
-    const order = (this._shopZone && so[`${this._shopStore}@${this._shopZone}`]) || so[this._shopStore];
+    const fixed = this._fixedFilters().store;
+    const store = this._shopping && this._shopStore ? this._shopStore : fixed.length === 1 ? fixed[0].replace(/^@/, "").toLowerCase() : null;
+    if (!store) return base;
+    const order = (this._shopping && this._shopZone && so[`${store}@${this._shopZone}`]) || so[store];
     return order ? [...order, ...base.filter((c) => !order.includes(c))] : base;
   }
   // „Einkauf beendet“: Summe im Wagen auf 0 – optional alles wieder offen für den nächsten Einkauf

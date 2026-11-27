@@ -131,6 +131,8 @@ def test_list_settings_categories_and_suggest_scope():
     ex = Extras(types.SimpleNamespace(data={}))
     assert ex.set_list_settings("todo.a", categories=False, suggest_scope="all") == {"categories": False, "suggest_scope": "all"}
     assert ex.set_list_settings("todo.a", categories=True, suggest_scope="list") == {}
+    assert ex.set_list_settings("todo.a", default_store="@Go Asia") == {"default_store": "Go-Asia"}
+    assert ex.set_list_settings("todo.a", default_store="") == {}
     assert "todo.a" not in ex.list_settings
 
 

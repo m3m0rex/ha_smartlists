@@ -693,7 +693,7 @@ class Extras:
     @callback
     def set_list_settings(self, entity_id: str, sort: str | None = None, show_prices: bool | None = None,
                           categories: bool | None = None, suggest_scope: str | None = None,
-                          plain: bool | None = None) -> dict[str, Any]:
+                          plain: bool | None = None, default_store: str | None = None) -> dict[str, Any]:
         """plain=True: „einfache Liste“ – SmartLists merkt sich aus ihr nichts (kein Verlauf, keine Preise, keine
         Kategorien) und schlägt nichts vor; was dort steht, erscheint nirgends sonst (z. B. Baumarkt).
         categories=False: keine automatischen Kategorien in dieser Liste (auch nicht beim Eintippen).
@@ -721,6 +721,11 @@ class Extras:
                 cur["suggest_scope"] = "all"
             else:
                 cur.pop("suggest_scope", None)
+        if default_store is not None:  # "" = keiner; Artikel ohne Markt gelten beim Lesen als Artikel dieses Markts
+            if name := itemtext.store_name(default_store):
+                cur["default_store"] = name
+            else:
+                cur.pop("default_store", None)
         if cur:
             self.list_settings[entity_id] = cur
         else:

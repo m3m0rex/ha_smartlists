@@ -200,6 +200,7 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
     entity = combined_entity(hass, entity_id)
     items = []
     person_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "person"), None)
+    store_prefix = next((r["prefix"] for r in learning.tag_rules if r["kind"] == "store"), None)
     notes = is_notes(hass, entity_id)
     extras = _extras(hass)
     plain = bool(extras and extras.is_plain(entity_id))
@@ -233,6 +234,8 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
             if raw.get("person_color"):
                 tag["color"] = raw["person_color"]  # je Quell-Liste eine eigene Farbe
             info["tags"] = [*info["tags"], tag]
+        if store_prefix and not plain and not any(t["kind"] == "store" for t in info["tags"]):
+            info = _derived_store(learning, extras, info, store_prefix, entity_id, raw.get("source_entity"))
         foreign = bool(raw.get("foreign"))
         # Preis: Angebot der App > von Hand/zuletzt bezahlt (Integration)
         # total = für die Menge auf der Liste, unit_price = je Einheit (bzw. Stück)
@@ -303,6 +306,29 @@ async def get_list(hass: HomeAssistant, entity_id: str, user: Any | None = None,
         "pending": shares.pending_for(entity_id) if shares else [],
         "items": items,
     }
+
+
+def _derived_store(learning: Learning, extras: Any, info: dict[str, Any], prefix: str, entity_id: str,
+                   source: str | None) -> dict[str, Any]:
+    """Markt ohne @ – nur beim Lesen, der Artikel selbst bleibt unverändert (z. B. per Sprache oder aus Google Keep):
+    ein Markt des Haushalts als Wort im Namen ("Milch Rewe"), sonst der Standard-Markt der Liste (bei einer
+    kombinierten Liste ihr eigener, sonst der der Quell-Liste). derived sagt der Karte, woher der Markt kommt."""
+    from .itemtext import store_display
+
+    value, derived = None, None
+    if hit := learning.store_in_text(info["name"]):
+        value, derived = hit[0], "text"
+        cid, origin = learning.resolve(hit[1])
+        info = {**info, "name": hit[1], "category": cid, "category_source": origin}
+    elif extras:
+        settings = extras.list_settings
+        value = (settings.get(entity_id) or {}).get("default_store") or ((settings.get(source) or {}).get("default_store") if source else None)
+        derived = "default" if value else None
+    if not value:
+        return info
+    label, color = store_display(value)
+    tag = {"kind": "store", "value": value, "prefix": prefix, "label": label, "derived": derived, **({"color": color} if color else {})}
+    return {**info, "tags": [*info["tags"], tag]}
 
 
 async def all_lists(hass: HomeAssistant, user: Any | None = None) -> list[dict[str, Any]]:

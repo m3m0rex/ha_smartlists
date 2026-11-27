@@ -396,6 +396,17 @@ def test_stores_only_household():
     assert "store:kaufland" not in overview and {"store:rewe", "store:dm"} <= overview
 
 
+def test_store_in_text():
+    """Markt als Wort im Namen (Spracheingabe ohne @): nur Märkte des Haushalts, nie der ganze Name."""
+    learning = _learning()
+    assert learning.store_in_text("Milch Rewe") is None  # noch kein Markt des Haushalts
+    learning.automation["favorite_stores"] = ["REWE", "dm", "Go-Asia"]
+    assert learning.store_in_text("Milch Rewe") == ("REWE", "Milch")
+    assert learning.store_in_text("Zahnpasta DM") == ("dm", "Zahnpasta")
+    assert learning.store_in_text("Reis Go Asia") == ("Go-Asia", "Reis")
+    assert learning.store_in_text("Rewe") is None and learning.store_in_text("Milch Lidl") is None
+
+
 def test_store_suggestions_household_first():
     """@-Vorschläge: eigene Märkte zuerst, auch ungenutzt; Leerzeichen im Namen werden zu "-"."""
     learning = _learning()

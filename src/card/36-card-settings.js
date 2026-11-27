@@ -248,6 +248,7 @@
       catch (err) { status.textContent = (err && err.message) || t.error; }
     };
     const cur = (d && d.settings) || {};
+    const favStores = ((this._cfg && this._cfg.favorite_stores) || []).map(String);
     const modes = SORT_MODES.filter((m) => (m !== "list" || (d && d.type === "combined")) && !(m === "category" && this._noCats));
     const listSec = this._sec("", t.ls_list, canEdit ? t.ls_list_help : null, [
       canEdit ? this._setRow(t.ls_name, h("input", { class: "search2", style: "width:180px;margin:0", value: d.name, maxlength: "60", "aria-label": t.ls_name,
@@ -261,6 +262,12 @@
       canEdit && d.type !== "notes" && !cur.plain ? this._setRow(t.l_suggest, h("select", { "aria-label": t.l_suggest, onchange: (e) => set({ suggest_scope: e.target.value }) },
         [["list", d.type === "combined" ? t.l_suggest_sources : t.l_suggest_list], ["all", t.l_suggest_all]]
           .map(([v, l]) => h("option", { value: v, selected: (cur.suggest_scope || "list") === v }, l))), t.l_suggest_help) : null,
+      // Standard-Markt: Artikel ohne Markt gelten als Artikel dieses Markts (nur beim Anzeigen, der Text bleibt)
+      canEdit && d.type !== "notes" && !cur.plain && (favStores.length || cur.default_store) ? this._setRow(t.l_default_store,
+        h("select", { "aria-label": t.l_default_store, onchange: (e) => set({ default_store: e.target.value }) },
+          h("option", { value: "", selected: !cur.default_store }, t.l_default_store_none),
+          [...new Set([...favStores, ...(cur.default_store ? [cur.default_store] : [])])].map((s) => h("option", { value: s, selected: cur.default_store === s }, s))),
+        t.l_default_store_help) : null,
       this._setRow(t.type, h("span", { class: "val" }, type)),
       this._setRow(t.entity, h("code", { class: "val" }, this._config.entity)),
       d && (d.type === "combined" || d.type === "own") && (this._isAdmin || (d.own && d.own.role === "owner"))

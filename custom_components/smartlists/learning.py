@@ -165,6 +165,25 @@ class Learning:
         self.tag_rules = itemtext.validate_rules(rules)
         self._changed(categories=True)  # Anzeige aller Listen ändert sich
 
+    def store_in_text(self, name: str) -> tuple[str, str] | None:
+        """Markt als normales Wort im Namen ("Milch Rewe", "Reis Go Asia") – nur Märkte des Haushalts (Einrichtung /
+        Märkte & Zonen), keine beliebigen Ketten. Liefert (Markt, Name ohne dieses Wort) oder None. Der Text selbst
+        bleibt unverändert; das gilt nur beim Lesen (Spracheingabe kennt kein @)."""
+        def key(text: str) -> str:
+            return re.sub(r"[^\wäöüß]|_", "", text.lower())
+
+        stores = {key(str(v)): str(v) for v in self.automation.get("favorite_stores") or [] if len(key(str(v))) >= 2}
+        words = name.split()
+        if not stores or len(words) < 2:
+            return None
+        for size in (2, 1):  # "Go Asia" vor "Asia"
+            for i in range(len(words) - size + 1):
+                hit = stores.get(key("".join(words[i:i + size])))
+                rest = " ".join(words[:i] + words[i + size:])
+                if hit and rest:
+                    return hit, rest
+        return None
+
     # ------------------------------------------------------------------
     # Kategorien
     # ------------------------------------------------------------------

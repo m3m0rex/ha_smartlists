@@ -155,7 +155,7 @@ def ws_share_links_all(hass: HomeAssistant, connection: websocket_api.ActiveConn
                                   vol.Optional("name"): vol.All(str, vol.Length(min=1, max=60)),
                                   vol.Optional("sort"): vol.Any(str, None), vol.Optional("show_prices"): bool,
                                   vol.Optional("categories"): bool, vol.Optional("suggest_scope"): vol.In(["list", "all"]),
-                                  vol.Optional("plain"): bool})
+                                  vol.Optional("plain"): bool, vol.Optional("default_store"): vol.All(str, vol.Length(max=40))})
 @websocket_api.async_response
 async def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Darstellung einer Liste für alle Geräte: Name (Anzeigename in HA), Standard-Sortierung, Preise an/aus.
@@ -194,7 +194,8 @@ async def ws_set_list_settings(hass: HomeAssistant, connection: websocket_api.Ac
         else:
             registry.async_update_entity(entity_id, name=msg["name"].strip())
     settings = _extras(hass).set_list_settings(entity_id, msg.get("sort") if "sort" in msg else None, msg.get("show_prices"),
-                                               msg.get("categories"), msg.get("suggest_scope"), msg.get("plain"))
+                                               msg.get("categories"), msg.get("suggest_scope"), msg.get("plain"),
+                                               msg.get("default_store"))
     connection.send_result(msg["id"], {"settings": settings})
 
 

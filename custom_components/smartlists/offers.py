@@ -134,8 +134,9 @@ _PREVIEW_RE = re.compile(r"preview|vorschau|next_?week|naechste_?woche|nachste_?
 
 
 def _preview_starts(out: list[dict[str, Any]], today: str) -> None:
-    """Vorschau ohne Startdatum: ab dem Tag nach dem Ende der laufenden Angebote desselben Markts (das häufigste „bis“),
-    sonst ab dem nächsten Montag."""
+    """Vorschau ohne Startdatum: ab dem ersten Montag nach dem Ende der laufenden Angebote desselben Markts (das häufigste
+    „bis“) – enden sie am Samstag, also ab Montag, nicht ab Sonntag; ohne laufende Angebote ab dem nächsten Montag (heute
+    zählt mit)."""
     from collections import Counter
     from datetime import timedelta
 
@@ -143,13 +144,15 @@ def _preview_starts(out: list[dict[str, Any]], today: str) -> None:
     for o in out:
         if not o.get("_preview") and not o.get("from") and o.get("until") and re.fullmatch(r"\d{4}-\d\d-\d\d", str(o["until"])):
             ends.setdefault(o["store"], Counter())[o["until"]] += 1
-    now = date.today()
-    monday = now + timedelta(days=(7 - now.weekday()) % 7 or 7)
+    def on_monday(d: date) -> date:
+        return d + timedelta(days=(7 - d.weekday()) % 7)
+
+    monday = on_monday(date.today())
     for o in out:
         if not o.pop("_preview", False):
             continue
         counts = ends.get(o["store"])
-        start = (date.fromisoformat(sorted(counts, key=lambda d: (-counts[d], d))[0]) + timedelta(days=1)) if counts else monday
+        start = on_monday(date.fromisoformat(sorted(counts, key=lambda d: (-counts[d], d))[0]) + timedelta(days=1)) if counts else monday
         if start.isoformat() > today:
             o["from"] = start.isoformat()
 

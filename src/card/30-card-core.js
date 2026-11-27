@@ -531,7 +531,9 @@ class SmartListsCard extends HTMLElement {
     const f = this._fixedFilters();
     const has = (kind, values) => !values.length || (it.tags || []).some((t) => t.kind === kind && values.some((v) => v.toLowerCase() === String(t.value).toLowerCase()))
       || (kind === "store" && it.offer && values.some((v) => v.toLowerCase() === String(it.offer.store).toLowerCase()));
-    if (!has("store", f.store) || !has("person", f.person) || !has("tag", f.tag)) return false;
+    // filter_store_untagged: Artikel ganz ohne Markt bestehen den Markt-Filter (gibt es in jedem Markt)
+    const untagged = this._config.filter_store_untagged && !(it.tags || []).some((t) => t.kind === "store") && !(it.offer && it.offer.store);
+    if (!(untagged || has("store", f.store)) || !has("person", f.person) || !has("tag", f.tag)) return false;
     if (f.category.length && !f.category.includes(it.category)) return false;
     if (f.offers && !it.offer) return false;
     // Einkaufsmodus für einen Markt: nur dessen Artikel (optional auch solche ohne Markt)

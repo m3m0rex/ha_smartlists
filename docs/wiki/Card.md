@@ -30,6 +30,7 @@ several lists, look. Only values that differ from the defaults are saved.
 | `view` | `list` | `list`, `tiles`, `mini`, `mealplan` (only the week plan; `entity` = default list for the ingredients, optional) |
 | `sort` | `category` | `category`, `alpha`, `added`, `list` (combined lists) |
 | `filter_store` / `filter_person` / `filter_tag` | – | e.g. `REWE`, `Anna`, `bio`; several with commas |
+| `filter_store_untagged` | `false` | with `filter_store`: also show items without any store |
 | `filter_category` | – | list of category ids, e.g. `[kuehlung, tiefkuehl]` |
 | `filter_offers` | `false` | only offers from the app |
 | `filter_tags_new_items` | `true` | new items get the single filter tag (`@REWE`) automatically |

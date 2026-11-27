@@ -65,7 +65,7 @@ const CARD_DEFAULTS = {
   density: "normal",       // compact | normal | comfortable
   font_scale: 1, radius: null, accent_color: null,
   // feste Filter (leer = alles) und Filter-Leiste
-  filter_store: "", filter_person: "", filter_tag: "", filter_category: [], filter_offers: false,
+  filter_store: "", filter_store_untagged: false, filter_person: "", filter_tag: "", filter_category: [], filter_offers: false,
   filter_tags_new_items: true, show_filter_chips: false,
 };
 // Gleiche Kategorien wie categories.py (Reihenfolge = Sortierung)

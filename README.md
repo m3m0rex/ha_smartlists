@@ -211,6 +211,7 @@ dashboard tile.
 | `view` | `list` · `tiles` (big tiles, e.g. kitchen tablet) · `mini` (summary tile, tap to open) |
 | `sort` | `category` · `alpha` · `added` · `list` |
 | `filter_store`, `filter_person`, `filter_tag` | only items with `@REWE`, `*Anna`, `#bio` (comma-separated); new items get the tag automatically |
+| `filter_store_untagged` | with `filter_store`: also show items without any store (default `false`) |
 | `filter_category`, `filter_offers` | only these categories / only offers from the app |
 | `show_filter_chips` | filter bar with the stores, persons and tags currently on the list |
 | `density`, `font_scale`, `radius`, `accent_color` | row height, text size, corner radius, accent colour |

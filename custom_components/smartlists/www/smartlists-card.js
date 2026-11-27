@@ -46,7 +46,7 @@ const ICON = {
 };
 
 // Wird beim Release mit manifest.json hochgezählt; weicht sie von der Integration ab, ist die Karte im Browser-Cache veraltet
-const CARD_VERSION = "4.1.9";
+const CARD_VERSION = "4.1.11";
 // Fehlgeschlagene Server-Aufrufe, die die Oberfläche nicht aufhalten sollen: wenigstens in der Browser-Konsole zeigen
 const slWarn = (what, err) => { try { console.warn(`SmartLists: ${what} failed –`, (err && err.message) || err); } catch (e) { /* */ } };
 const SORT_MODES = ["category", "alpha", "added", "list"];
@@ -65,7 +65,7 @@ const CARD_DEFAULTS = {
   density: "normal",       // compact | normal | comfortable
   font_scale: 1, radius: null, accent_color: null,
   // feste Filter (leer = alles) und Filter-Leiste
-  filter_store: "", filter_person: "", filter_tag: "", filter_category: [], filter_offers: false,
+  filter_store: "", filter_store_untagged: false, filter_person: "", filter_tag: "", filter_category: [], filter_offers: false,
   filter_tags_new_items: true, show_filter_chips: false,
 };
 // Gleiche Kategorien wie categories.py (Reihenfolge = Sortierung)
@@ -1322,6 +1322,8 @@ const STYLE = `
 
   /* Zahnrad-Menü */
   .sl-settings { border-top:1px solid var(--divider-color,#e0e0e0); container-type:inline-size; }
+  /* Einstellungen immer in der Farbe des Themes: die Akzentfarbe der Karte (accent_color) gilt nur für die Liste */
+  .sl-settings, .dlg.lsheet, .dlg.wiz { --sl-accent: var(--primary-color); }
   .sgrid { display:grid; grid-template-columns:minmax(0,1fr); }
   .snav { padding:12px 10px 14px; }
   .snav .search2 { margin:0 0 6px; height:36px; }
@@ -2035,7 +2037,9 @@ class SmartListsCard extends HTMLElement {
     const f = this._fixedFilters();
     const has = (kind, values) => !values.length || (it.tags || []).some((t) => t.kind === kind && values.some((v) => v.toLowerCase() === String(t.value).toLowerCase()))
       || (kind === "store" && it.offer && values.some((v) => v.toLowerCase() === String(it.offer.store).toLowerCase()));
-    if (!has("store", f.store) || !has("person", f.person) || !has("tag", f.tag)) return false;
+    // filter_store_untagged: Artikel ganz ohne Markt bestehen den Markt-Filter (gibt es in jedem Markt)
+    const untagged = this._config.filter_store_untagged && !(it.tags || []).some((t) => t.kind === "store") && !(it.offer && it.offer.store);
+    if (!(untagged || has("store", f.store)) || !has("person", f.person) || !has("tag", f.tag)) return false;
     if (f.category.length && !f.category.includes(it.category)) return false;
     if (f.offers && !it.offer) return false;
     // Einkaufsmodus für einen Markt: nur dessen Artikel (optional auch solche ohne Markt)

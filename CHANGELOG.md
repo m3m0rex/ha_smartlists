@@ -3,6 +3,21 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.11] – 2026-11-28
+
+### Fixed
+
+- **The card's accent colour no longer changes the settings.** With `accent_color` set (for example a dark colour),
+  selected chips and links in the settings, the list settings and the setup wizard took that colour and became hard
+  to read. The settings now always use the theme colour; the list keeps the card's accent colour.
+
+## [4.1.10] – 2026-11-28
+
+### Added
+
+- **Card option `filter_store_untagged: true`:** with `filter_store`, items without any store are shown too. The
+  SmartDiscounts card uses it when its shopping list is limited to its stores (`stores_list`).
+
 ## [4.1.9] – 2026-11-27
 
 ### Fixed

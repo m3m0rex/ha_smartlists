@@ -3,6 +3,54 @@
 All notable changes to SmartLists are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.9] – 2026-11-27
+
+### Fixed
+
+- **The count in the card header follows the card's filters.** With `filter_store`, another fixed filter or a chip in
+  the filter bar, "19 open" counted every item of the list; it now counts only the items the card shows. The same
+  goes for "x/y in cart" and the progress bar in shopping mode.
+
+## [4.1.8] – 2026-11-27
+
+### Fixed
+
+- **Preview offers without a start date no longer start on Sunday** (watch list, offers in the card): they start on
+  the first Monday after the store's current offers end, as in the SmartDiscounts card.
+
+## [4.1.7] – 2026-11-27
+
+### Added
+
+- **Stores without `@` – for items added by voice** (Google Assistant, Gemini, Google Keep sync), where nobody can
+  say "@". Both only apply when SmartLists reads the list; the item text is never changed, so nothing is written back
+  to Google Keep or other synced lists.
+  - **Store word in the item:** a store of the household (setup / "Stores & zones") written as a plain word counts
+    as the item's store: "Milch Rewe" shows as "Milch" with the REWE badge, "Reis Go Asia" as "Reis" at Go-Asia.
+    Known chains the household did not choose are not matched.
+  - **Default store per list** ("Settings of this list"): items without a store count as items of this store – for
+    filters, cards with `filter_store` and shopping mode. A combined list uses its own default store, otherwise the
+    one of the item's source list.
+
+## [4.1.6] – 2026-11-27
+
+### Fixed
+
+- **A card filtered to one store sorts by that store's aisle order.** The order set under "Stores & zones" was only
+  used in shopping mode; a card with `filter_store: REWE` showed the categories in the default order. Shopping mode
+  works as before.
+
+## [4.1.5] – 2026-11-27
+
+### Fixed
+
+- **`@` suggestions start with the household's stores.** Stores chosen in the setup or added under "Stores & zones"
+  come first, even before any item uses them; a newly added store was missing until it had been typed once. Known
+  chains nobody chose only follow after them.
+- **Store names with a space.** A store tag ends at the first space, so "Go Asia" could be added but not used in an
+  item. Spaces now become a hyphen ("Go-Asia", used as `@Go-Asia`), the card says so when the store is added, and
+  stores saved with a space before are converted once.
+
 ## [4.1.4] – 2026-11-27
 
 ### Changed

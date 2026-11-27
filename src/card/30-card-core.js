@@ -414,7 +414,9 @@ class SmartListsCard extends HTMLElement {
       fill(this._listEl, h("div", { class: `msg ${this._error ? "err" : ""}` }, this._error || t.loading));
       return;
     }
-    const open = d.items.filter((i) => !i.checked);
+    // Zahl im Kopf und Fortschritt: nur was die Karte zeigt (feste Filter wie filter_store, Filter-Leiste, Markt im Einkaufsmodus)
+    const shown = d.items.filter((i) => this._passesFilters(i));
+    const open = shown.filter((i) => !i.checked);
     // Trefferzahl schon hier, der Kopf wird vor der Liste gezeichnet
     this._hitCount = this._searchQuery ? d.items.filter((i) => this._passesFilters(i) && this._matches(i, d)).length : 0;
     fill(this._headEl, 
@@ -438,7 +440,7 @@ class SmartListsCard extends HTMLElement {
         `${this._isOffline() ? "📴 " + t.offline : "⏳"}${this._offQueue().length ? " · " + this._offQueue().length : ""}`) : null,
       !this._config.show_count ? null : h("span", { class: "count" }, this._searchQuery
         ? `${this._hitCount ?? 0} ${t.hits}`
-        : this._shopping ? `${d.items.length - open.length}/${d.items.length} ${t.in_cart}` : `${open.length} ${t.open}`),
+        : this._shopping ? `${shown.length - open.length}/${shown.length} ${t.in_cart}` : `${open.length} ${t.open}`),
       // Kopfzeile schlank: Suche, Rückgängig (wenn möglich), Einkaufsmodus und ⋯ – der Rest steckt im ⋯-Menü
       this._config.show_search ? iconBtn(this._search != null ? ICON.close : ICON.search, t.search, () => this._toggleSearch()) : null,
       this._undo && this._config.show_undo ? iconBtn(ICON.undo, `${t.undo}: ${this._undo.label}`, () => this._runUndo()) : null,
@@ -450,7 +452,7 @@ class SmartListsCard extends HTMLElement {
         : this._moreItems(d).length ? iconBtn(ICON.dots, t.more, () => { this._moreOpen = !this._moreOpen; this._renderMore(); }, "morebtn") : null
     );
     this._renderMore();
-    const pct = d.items.length ? Math.round((100 * (d.items.length - open.length)) / d.items.length) : 0;
+    const pct = shown.length ? Math.round((100 * (shown.length - open.length)) / shown.length) : 0;
     fill(this._progressEl, this._shopping ? h("div", { class: "progress", role: "progressbar", "aria-valuenow": String(pct),
       "aria-valuemin": "0", "aria-valuemax": "100" }, h("div", { style: `width:${pct}%` })) : "");
     this._headEl.hidden = !this._config.show_header;

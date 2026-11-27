@@ -523,6 +523,7 @@
   "store_remove": "Aus der Auswahl nehmen",
   "stores_none": "Noch keine Märkte. Mit „＋ Markt“ hinzufügen oder einfach @REWE an einen Artikel schreiben.",
   "store_add_help2": "Name des Markts, z. B. EDEKA. Er steht dann beim Eintippen zur Auswahl; eine Zone kannst du danach verknüpfen.",
+  "store_space": "ohne Leerzeichen gespeichert, im Artikel: @{store}",
   "look_none": "Noch keine Märkte oder Personen in Benutzung.",
   "look_none_q": "Nichts gefunden.",
   "look_tag_kind": "Schlagwörter stellst du oben unter „Je Art“ ein – das gilt für alle.",

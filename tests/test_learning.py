@@ -396,6 +396,22 @@ def test_stores_only_household():
     assert "store:kaufland" not in overview and {"store:rewe", "store:dm"} <= overview
 
 
+def test_store_suggestions_household_first():
+    """@-Vorschläge: eigene Märkte zuerst, auch ungenutzt; Leerzeichen im Namen werden zu "-"."""
+    learning = _learning()
+    learning.set_favorite_store("Go Asia")
+    assert "Go-Asia" in learning.automation["favorite_stores"]
+    learning.set_favorite_store("Lidl")
+    tags = learning.suggest("Reis @", [], 6)["suggestions"]
+    assert [s["value"] for s in tags[:2]] == ["Go-Asia", "Lidl"] and tags[0]["source"] == "favorite"
+    assert [s["value"] for s in learning.suggest("Reis @go", [], 6)["suggestions"]][0] == "Go-Asia"
+    assert learning.parse("Reis @Go-Asia").tags[0]["value"] == "Go-Asia"
+    learning.automation["favorite_stores"] = ["Asia Markt", "asia-markt"]
+    learning.automation["store_zones"] = {"asia markt": ["zone.asia"]}
+    learning._fix_store_names()
+    assert learning.automation["favorite_stores"] == ["Asia-Markt"] and learning.store_zones == {"asia-markt": ["zone.asia"]}
+
+
 def test_set_automation_keeps_barcode_settings():
     """Strichcode-Dienste bleiben gespeichert, auch wenn danach z. B. nur die Sprach-Liste geändert wird."""
     learning = _learning()

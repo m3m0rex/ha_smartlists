@@ -1079,7 +1079,9 @@
           h("button", { class: "btn2", type: "button", onclick: async () => {
             const store = await slDialog(this.shadowRoot, { title: t.store_new, text: t.store_add_help2, input: true, placeholder: "EDEKA", ok: t.pack_add, cancel: t.cancel });
             if (!store) return;
-            try { draw((await this._call("favorite_store", { store }, false)).stores); status.textContent = "✓ " + store.replace(/^@/, ""); }
+            // Leerzeichen beenden einen @-Markt im Artikeltext: SmartLists speichert "Go Asia" als "Go-Asia" – das sagen
+            const name = store.trim().replace(/^@/, "").split(/\s+/).join("-");
+            try { draw((await this._call("favorite_store", { store }, false)).stores); status.textContent = "✓ " + name + (/\s/.test(store.trim()) ? ` – ${t.store_space.replace(/\{store\}/g, name)}` : ""); }
             catch (err) { status.textContent = (err && err.message) || t.error; }
           } }, "＋ " + t.store_new)));
     };

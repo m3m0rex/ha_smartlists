@@ -523,6 +523,7 @@
   "store_remove": "Remove from selection",
   "stores_none": "No stores yet. Add one with “＋ Store” or just write @REWE on an item.",
   "store_add_help2": "Name of the store, e.g. EDEKA. It is then offered while typing; you can link a zone afterwards.",
+  "store_space": "saved without spaces, in an item: @{store}",
   "look_none": "No stores or people in use yet.",
   "look_none_q": "Nothing found.",
   "look_tag_kind": "Tags are set above under “Per kind” – that applies to all of them.",

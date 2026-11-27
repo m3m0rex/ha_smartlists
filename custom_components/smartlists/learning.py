@@ -118,6 +118,7 @@ class Learning:
         self.users = dict(data.get("users", {}))
         self.ui_defaults = dict(data.get("ui_defaults", {}))
         self.automation = dict(data.get("automation", {}))
+        self._fix_store_names()
         self.appearance = validate_appearance(data.get("appearance") or {})
         self._apply_appearance()
         try:
@@ -442,7 +443,7 @@ class Learning:
     def set_store_zone(self, store: str, zone: str | None = None, zones: list[str] | None = None,
                        add: bool = False) -> dict[str, list[str]]:
         """zones = komplette Liste; zone = eine Zone (add=True: hinzufügen, sonst ersetzen; None = alle lösen)."""
-        key = store.strip().lstrip("@").lower()
+        key = itemtext.store_name(store).lower()
         if not key:
             raise ValueError("Markt fehlt")
         current = self.store_zones
@@ -458,10 +459,24 @@ class Learning:
         self._changed()
         return current
 
+    def _fix_store_names(self) -> None:
+        """Gespeicherte Marktnamen mit Leerzeichen (vor 4.1.5 möglich) so schreiben, wie sie hinter @ funktionieren."""
+        favs = self.automation.get("favorite_stores")
+        if isinstance(favs, list):
+            names = [itemtext.store_name(v) for v in favs]
+            self.automation["favorite_stores"] = list({n.lower(): n for n in reversed(names) if n}.values())[::-1]
+        zones = self.automation.get("store_zones")
+        if isinstance(zones, dict) and any(" " in str(k) for k in zones):
+            fixed: dict[str, Any] = {}
+            for key, value in zones.items():
+                fixed.setdefault(itemtext.store_name(key).lower(), value)
+            self.automation["store_zones"] = fixed
+
     @callback
     def set_favorite_store(self, value: str, remove: bool = False) -> list[str]:
-        """Markt zur Auswahl des Haushalts hinzufügen (z. B. später noch @EDEKA) bzw. wieder entfernen."""
-        value = str(value).strip().lstrip("@")[:30]
+        """Markt zur Auswahl des Haushalts hinzufügen (z. B. später noch @EDEKA) bzw. wieder entfernen.
+        Leerzeichen werden zu "-" – sonst ließe sich der Markt im Artikeltext nicht angeben."""
+        value = itemtext.store_name(value)
         if not value:
             raise ValueError("Bitte einen Marktnamen angeben")
         favs = [v for v in self.automation.get("favorite_stores") or [] if str(v).lower() != value.lower()]
@@ -682,10 +697,16 @@ class Learning:
     def _suggest_tags(self, kind: str, partial: str, limit: int) -> list[dict[str, Any]]:
         p = partial.lower()
         found: dict[str, dict[str, Any]] = {}
+        if kind == "store":
+            # zuerst die Märkte des Haushalts (Einrichtung / Märkte & Zonen) – auch wenn noch kein Artikel sie trägt
+            used = {str(t["value"]).lower(): int(t.get("count", 0)) for t in self.tag_history.values() if t.get("kind") == "store" and t.get("value")}
+            favs = [str(v) for v in self.automation.get("favorite_stores") or [] if str(v).lower().startswith(p)]
+            for value in sorted(favs, key=lambda v: -used.get(v.lower(), 0)):
+                found.setdefault(value.lower(), {"value": value, "source": "favorite"})
         for t in sorted(self.tag_history.values(), key=lambda t: (-int(t.get("count", 0)), -int(t.get("last", 0)))):
             if t["kind"] == kind and t["value"].lower().startswith(p):
                 found.setdefault(t["value"].lower(), {"value": t["value"], "source": "history"})
-        if kind == "store":
+        if kind == "store":  # bekannte Ketten, die der Haushalt nicht gewählt hat: nur noch hinten
             for key, (label, _) in itemtext.KNOWN_STORES.items():
                 if key.startswith(p):
                     found.setdefault(key, {"value": label, "source": "known"})

@@ -10,7 +10,7 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 
-from . import lists
+from . import itemtext, lists
 from .const import DOMAIN
 from .features import set_features
 from .ws_common import (
@@ -260,7 +260,7 @@ async def ws_setup(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
             main_list = f"todo.ha_smartlists_list_merged_{slugify(name) or 'list'}"
             done.append("combined_list")
         if msg["stores"]:
-            learning.automation["favorite_stores"] = [s.strip().lstrip("@")[:30] for s in msg["stores"] if s.strip()][:30]
+            learning.automation["favorite_stores"] = [itemtext.store_name(s) for s in msg["stores"] if itemtext.store_name(s)][:30]
             done.append("stores")
         if msg.get("tag_rules") is not None:
             try:

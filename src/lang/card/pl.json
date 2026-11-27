@@ -523,6 +523,7 @@
   "store_remove": "Usuń z wyboru",
   "stores_none": "Brak sklepów. Dodaj sklep przez „＋ Sklep” albo wpisz @REWE przy produkcie.",
   "store_add_help2": "Nazwa sklepu, np. EDEKA. Będzie proponowana przy wpisywaniu; strefę możesz połączyć później.",
+  "store_space": "zapisano bez spacji, w produkcie: @{store}",
   "look_none": "Nie używasz jeszcze sklepów ani osób.",
   "look_none_q": "Nic nie znaleziono.",
   "look_tag_kind": "Tagi ustawiasz wyżej w „Wg rodzaju” – dotyczy wszystkich.",

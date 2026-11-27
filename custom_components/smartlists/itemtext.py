@@ -120,6 +120,11 @@ def _tag_regex(rules: list[dict[str, str]]) -> re.Pattern[str] | None:
 STORE_OVERRIDES: dict[str, tuple[str | None, str | None]] = {}
 
 
+def store_name(value: Any) -> str:
+    """Marktname, wie er hinter @ stehen kann: ein Tag endet am Leerzeichen, deshalb "Go Asia" → "Go-Asia"."""
+    return "-".join(str(value or "").strip().lstrip("@").split())[:30]
+
+
 def store_display(value: str) -> tuple[str, str | None]:
     """Markt-Schreibweise + Farbe: eigene Anpassung, sonst bekannt (REWE, Lidl, …), sonst wie geschrieben."""
     key = value.lower()

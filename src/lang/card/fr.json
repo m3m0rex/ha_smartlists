@@ -523,6 +523,7 @@
   "store_remove": "Retirer de la sélection",
   "stores_none": "Pas encore de magasins. Ajoute-en avec « ＋ Magasin » ou écris simplement @REWE sur un article.",
   "store_add_help2": "Nom du magasin, p. ex. EDEKA. Il est ensuite proposé pendant la saisie ; tu peux lier une zone ensuite.",
+  "store_space": "enregistré sans espaces, dans un article : @{store}",
   "look_none": "Aucun magasin ni personne utilisé pour l'instant.",
   "look_none_q": "Rien trouvé.",
   "look_tag_kind": "Les étiquettes se règlent plus haut sous « Par type » – cela vaut pour toutes.",
